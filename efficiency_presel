@@ -1,0 +1,137 @@
+#!/usr/bin/env python
+
+import ROOT
+
+from rootpy.extern import argparse
+
+from helpers import AnalysisTools
+from eff_tools import IDTools_handler
+from eff_tools.auxiliary      import aux
+from eff_tools.TauIDTool      import TauIDTool
+from eff_tools.EFTau_Category import Category
+
+#-----------------------------------------------------------
+
+#--> Receive and parse argument
+parser = argparse.ArgumentParser()
+parser.add_argument("input_file_list", help="the list (txt file) of the input files")
+parser.add_argument("output_file", help="the name of the output root file")
+parser.add_argument("sample_type", help="Sample type (signal_8TeV,signal_14TeV,background_14TeV,background_data_8TeV)")
+parser.add_argument("-N","--Nentries", type=int,default=-1,help="Specify the number of events use to run")
+args = parser.parse_args()
+parser.print_usage()
+
+# --> Import data files
+tauCell=ROOT.TChain('tauCell_test')
+
+inputfile= open(args.input_file_list)
+for ifile in inputfile:
+    tauCell.Add(ifile.strip())
+
+# Get number of entries in data file
+print 'The input chain contains ',tauCell.GetEntries(),' entries'
+if args.Nentries==-1:
+    entries = tauCell.GetEntries()
+else:
+    entries = args.Nentries
+print 'The loop will use ',entries,' entries'
+
+# ---> cut values list
+cutvals = IDTools_handler.cutvals
+
+
+# --> Declaration of the different id tools
+ID_Tools = {}
+ID_Tools["bdt_presel_3var"] = TauIDTool(tauCell,IDTools_handler.inputs_lists["bdt_presel_3var"])
+ID_Tools["bdt_presel_5var"] = TauIDTool(tauCell,IDTools_handler.inputs_lists["bdt_presel_5var"])
+ID_Tools["bdt_presel_fullvarlist"] = TauIDTool(tauCell,IDTools_handler.inputs_lists["bdt_presel_fullvarlist"])
+
+# --> Plotting category
+plot_cat = ["all"]
+
+# --> Declaration of the list (python dictionary) of TEfficiency objects
+Efficiencies = {}
+for tool in ID_Tools:
+    Efficiencies[tool] = {}
+
+for var in  aux.bins:
+    if "EF" in var: continue
+    if "bdt" in var: continue
+    for tool in ID_Tools:
+        Efficiencies[tool][var] = ROOT.TEfficiency( "Efficiency_"+tool+"_"+var+"_"+plot_cat[0],"",
+                                                    len(aux.bins[var][0])-1 ,aux.bins[var][0] )
+
+h_BDT     =  {}
+# for cutval in cutvals:
+#     h_BDT[cutval] = ROOT.TH1F("h_BDT_"+cutval,"h_BDT",len(aux.bins[cutval][0])-1 ,aux.bins[cutval][0])
+
+#---------------------------------------------------------------------
+#-------------> DETERMINE THE CUT VALUE FOR SIGNAL EFF OF 95% --------
+#--------------------------------------------------------------------
+# bdtscores = {}
+# for tool in ID_Tools:
+#     bdtscores[tool] = []
+# if 'signal' in args.sample_type:
+#     for entry in xrange(entries):
+#         tauCell.GetEntry( entry )
+        
+#         if 'signal' in args.sample_type and tauCell.truth_ismatched!=1:continue
+#         if not tauCell.hasL1matched: continue
+#         if tauCell.L1matched_pt<8000.: continue
+#         if tauCell.pt<20000.: continue
+#         for tool in ID_Tools:
+#             bdtscores[tool] += [ID_Tools[tool].BDTScore()]
+
+#     for tool in ID_Tools:
+#         print len(bdtscores[tool])
+#         sorted_scores = sorted(bdtscores[tool])
+#         index_005 = int(0.05*len(bdtscores[tool]))
+#         print index_005
+#         print tool, ' cutvalue: ',sorted_scores[index_005]
+
+#--------------------------------------------------------------
+#-------------> loop OVER THE EVENTS OF THE INPUT TREE --------
+#--------------------------------------------------------------
+for entry in xrange(entries):
+    AnalysisTools.Processing(entry,entries,float(entries)/100.)
+    tauCell.GetEntry( entry )
+
+    if 'signal' in args.sample_type and tauCell.truth_ismatched!=1:continue
+
+    if not tauCell.hasL1matched: continue
+    if tauCell.L1matched_pt<8000.: continue
+    if tauCell.pt<25000.: continue
+    
+    for tool in ID_Tools:
+        ID_Tools[tool].SetCutValues(cutvals[tool])
+#         h_BDT[tool].Fill (ID_Tools[tool].BDTScore())
+        for var in  aux.bins:
+            if "bdt" in var: continue
+            if "EF" in var: continue
+            Efficiencies[tool][var].Fill( ID_Tools[tool].Decision(), getattr(tauCell,var) )
+
+
+#--------------------------------------------------------------
+#-------------> END OF THE LOOP OVER THE EVENTS        --------
+#--------------------------------------------------------------
+
+
+
+#--------------------------------------------------------------
+#-------------> EFFICIENCY STORING       - --------------------
+#--------------------------------------------------------------
+
+output = ROOT.TFile(args.output_file,"recreate")
+root_directory = output.CurrentDirectory()
+for tool in Efficiencies:
+    directory = output.mkdir(tool)
+    directory.cd()
+    for var in Efficiencies[tool]:
+        Efficiencies[tool][var].Write()
+        #     h_BDT[tool].Write()
+    root_directory.cd()
+
+root_directory.cd()
+output.Close()
+
+        

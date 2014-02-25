@@ -1,0 +1,55 @@
+#!/bin/bash
+
+VERSION=${1}
+
+TXTFILES_DIR=input_lists
+ROOTFILES_DIR=rootfiles
+DATASET_EXTE=TauPerfSkim 
+
+create_one_filelist()
+{
+    input_dataset=${1}
+    outfile_name=${2}
+    init_dir=${PWD}
+    files_dir=${init_dir}/${ROOTFILES_DIR}/v${VERSION}/${input_dataset}_${DATASET_EXTE}_v${VERSION}_merged
+
+    output_dir=${init_dir}/${TXTFILES_DIR}
+    cd ${output_dir}; mkdir -p v${VERSION}; cd v${VERSION}
+    outfile=${outfile_name}_v${VERSION}.txt
+    rm -f ${outfile}
+    echo "Add file in ${files_dir} into ${output_dir}/${outfile}"
+    for i in `ls --color=never ${files_dir}/ | grep root`
+      do 
+      echo ${files_dir}/$i >> ${outfile}
+    done
+    cd ${init_dir}
+}
+
+echo " --- Signal samples ---"
+create_one_filelist user.qbuat.user.mhodgkin.TauPi0Rec_D3PD.147818.Pythia8_AU2CTEQ6L1_Ztautau.recon.ESD.e1176_s1479_s1470_r3553.v06-00 input_Ztautau_8TeV
+create_one_filelist user.qbuat.mc12_14TeV.147818.Pythia8_AU2CTEQ6L1_Ztautau.recon.ESD.e1836_s1715_s1691_r4738_D3PD_v3 input_Ztautau_14TeV_mu20
+create_one_filelist user.qbuat.mc12_14TeV.147818.Pythia8_AU2CTEQ6L1_Ztautau.recon.ESD.e1836_s1715_s1691_r4739_D3PD_v3 input_Ztautau_14TeV_mu40
+create_one_filelist user.qbuat.mc12_14TeV.147818.Pythia8_AU2CTEQ6L1_Ztautau.recon.ESD.e1836_s1715_s1691_r4740_D3PD_v2 input_Ztautau_14TeV_mu60
+create_one_filelist user.qbuat.mc12_14TeV.147818.Pythia8_AU2CTEQ6L1_Ztautau.recon.ESD.e1836_s1715_s1691_r4741_D3PD_v2 input_Ztautau_14TeV_mu80
+
+echo " --- Background samples ---"
+create_one_filelist user.qbuat.mc12_14TeV.129160.Pythia8_AU2CTEQ6L1_perf_JF17.recon.ESD.e1313_s1682_s1691_r4710_D3PD_v1 input_JF17_14TeV_mu40
+create_one_filelist user.qbuat.mc12_14TeV.129160.Pythia8_AU2CTEQ6L1_perf_JF17.recon.ESD.e1313_s1682_s1691_r4711_D3PD_v2 input_JF17_14TeV_mu60
+
+echo " --- Data samples ---"
+create_one_filelist user.qbuat.data12_8TeV.periodA.physics_JetTauEtmiss.PhysCont.DESD_CALJET.repro14_v01_D3PD_v1 input_data_periodA 
+create_one_filelist user.qbuat.data12_8TeV.periodB.physics_JetTauEtmiss.PhysCont.DESD_CALJET.repro14_v01_D3PD_v1 input_data_periodB
+create_one_filelist user.qbuat.data12_8TeV.periodC.physics_JetTauEtmiss.PhysCont.DESD_CALJET.repro14_v01_D3PD_v1 input_data_periodC
+create_one_filelist user.qbuat.data12_8TeV.periodD.physics_JetTauEtmiss.PhysCont.DESD_CALJET.repro14_v01_D3PD_v1 input_data_periodD
+create_one_filelist user.qbuat.data12_8TeV.periodE.physics_JetTauEtmiss.PhysCont.DESD_CALJET.repro14_v01_D3PD_v1 input_data_periodE
+create_one_filelist user.qbuat.data12_8TeV.periodG.physics_JetTauEtmiss.PhysCont.DESD_CALJET.repro14_v01_D3PD_v1 input_data_periodG
+create_one_filelist user.qbuat.data12_8TeV.periodH.physics_JetTauEtmiss.PhysCont.DESD_CALJET.repro14_v01_D3PD_v1 input_data_periodH
+create_one_filelist user.qbuat.data12_8TeV.periodI.physics_JetTauEtmiss.PhysCont.DESD_CALJET.t0pro14_v01_D3PD_v1 input_data_periodI
+create_one_filelist user.qbuat.data12_8TeV.periodJ.physics_JetTauEtmiss.PhysCont.DESD_CALJET.repro14_v01_D3PD_v1 input_data_periodJ
+create_one_filelist user.qbuat.data12_8TeV.periodL.physics_JetTauEtmiss.PhysCont.DESD_CALJET.repro14_v01_D3PD_v1 input_data_periodL
+create_one_filelist user.qbuat.data12_8TeV.periodM.physics_JetTauEtmiss.PhysCont.DESD_CALJET.t0pro14_v01_D3PD_v1 input_data_periodM
+
+echo "--- Combine samples lists ---"
+cd ${TXTFILES_DIR}/v${VERSION}; cat input_data_period*_v${VERSION}.txt > input_data_v${VERSION}.txt; cd ${init_dir}
+cd ${TXTFILES_DIR}/v${VERSION}; cat input_Ztautau_14TeV*_v${VERSION}.txt > input_Ztautau_14TeV_all_v${VERSION}.txt; cd ${init_dir}
+cd ${TXTFILES_DIR}/v${VERSION}; cat input_JF17_14TeV*_v${VERSION}.txt > input_JF17_14TeV_all_v${VERSION}.txt; cd ${init_dir}

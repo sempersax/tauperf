@@ -1,0 +1,44 @@
+#!/usr/bin/env python
+
+import sys
+import ROOT
+from rootpy.extern import argparse
+
+from helpers import AnalysisTools
+
+#--> Receive and parse argument
+#--> Receive and parse argument
+parser = argparse.ArgumentParser()
+parser.add_argument("input_rootfile", help="the input rootfile name")
+args = parser.parse_args()
+parser.print_usage()
+
+
+
+input_rootfile  = sys.argv[1] #--> input file
+#--> Open input file
+print 'open file '+input_rootfile
+in_file = ROOT.TFile.Open(input_rootfile,'update')
+in_tree = in_file.Get('tauCell')
+
+out_tree_train = in_tree.CloneTree(0)
+out_tree_train.SetName("tauCell_train")
+out_tree_test  = in_tree.CloneTree(0)
+out_tree_test.SetName("tauCell_test")
+
+nEvents=in_tree.GetEntries()
+#--------------------------------------------------------------
+#-------------> LOOP OVER THE EVENTS OF THE INPUT TREE --------
+#--------------------------------------------------------------
+for i in xrange(nEvents):
+    in_tree.GetEntry(i)
+    AnalysisTools.Processing(i,nEvents,int(nEvents/100))
+    if in_tree.evtnumber%2==0:
+        out_tree_train.Fill()
+    else:
+        out_tree_test.Fill()
+
+out_tree_train.Write()
+out_tree_test.Write()
+in_file.Write()
+in_file.Close()

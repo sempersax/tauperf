@@ -1,0 +1,113 @@
+#!/usr/bin/env python
+import rootpy
+rootpy.log.basic_config_colorized()
+from rootpy.extern import argparse
+import ROOT
+
+from eff_tools.trainer import trainer
+import fileinput
+
+
+#--> Receive and parse argument
+parser = argparse.ArgumentParser()
+parser.add_argument("input_file_sig"  , help="the input sig list (txt file)")
+parser.add_argument("input_file_bkg"  , help="the input bkg list (txt file)")
+parser.add_argument("variables_file"  , help="the list of variables")
+parser.add_argument("factory_basename", help="the basename of the training result")
+parser.add_argument("--ID"            , help="the ID menu trained (full/presel)",   default='full' )
+parser.add_argument("--cat"           , help="the category used for training",   default='all' )
+parser.add_argument("--data_type"     , help="the sample type (8TeV or 14 TeV)", default="14TeV_EF")
+parser.add_argument("-N","--Nentries" , help="Specify the number of events use to run", type=int, default=-1)
+args = parser.parse_args()
+parser.print_usage()
+
+
+# --> Import signal and bkg trees
+sig_tree = ROOT.TChain('tauCell_train')
+bkg_tree = ROOT.TChain('tauCell_train')
+
+for ifile in open(args.input_file_sig): sig_tree.Add(ifile.strip())
+for ifile in open(args.input_file_bkg): bkg_tree.Add(ifile.strip())
+
+tau_cat_cut   = {}
+if 'EF' in args.data_type:
+    tau_cat_cut["all"]     = ROOT.TCut("EF_numTrack>0")
+    tau_cat_cut["1p"]      = ROOT.TCut("EF_numTrack==1")
+    tau_cat_cut["3p"]      = ROOT.TCut("EF_numTrack==3")
+    tau_cat_cut["mp"]      = ROOT.TCut("EF_numTrack>1")
+    tau_cat_cut["1p_0n"]   = ROOT.TCut("EF_numTrack==1 && pi0BDTPrimary>0.47")
+    tau_cat_cut["3p_0n"]   = ROOT.TCut("EF_numTrack==3 && pi0BDTPrimary>0.47")
+    tau_cat_cut["1p_Xn"]   = ROOT.TCut("EF_numTrack==1 && pi0BDTPrimary<0.47")
+    tau_cat_cut["3p_Xn"]   = ROOT.TCut("EF_numTrack==3 && pi0BDTPrimary<0.47")
+
+trigger_cut = {}
+trigger_cut["14TeV"] = ROOT.TCut("L2_L2_tau20_medium==1")
+trigger_cut["8TeV"]  = ROOT.TCut("EF_tauNoCut==1")
+
+#---> Signal and Bkg selection
+matching = ROOT.TCut("EF_ismatched==1 && L2_ismatched==1 && L1_ismatched==1")
+eta_cut  = ROOT.TCut("EF_eta<2.2 && EF_eta>-2.2")
+
+if 'offline' in args.data_type:
+    matching = ROOT.TCut("hasL1matched==1 && L1matched_pt>8000.")
+    eta_cut  = ROOT.TCut("eta<2.2 && eta>-2.2")
+    tau_cat_cut["all"]     = ROOT.TCut("numTrack>0")
+    tau_cat_cut["1p"]      = ROOT.TCut("numTrack==1")
+    tau_cat_cut["3p"]      = ROOT.TCut("numTrack==3")
+    tau_cat_cut["mp"]      = ROOT.TCut("numTrack>1")
+    tau_cat_cut["1p_0n"]   = ROOT.TCut("numTrack==1 && pi0BDTPrimary>0.47")
+    tau_cat_cut["3p_0n"]   = ROOT.TCut("numTrack==3 && pi0BDTPrimary>0.47")
+    tau_cat_cut["1p_Xn"]   = ROOT.TCut("numTrack==1 && pi0BDTPrimary<0.47")
+    tau_cat_cut["3p_Xn"]   = ROOT.TCut("numTrack==3 && pi0BDTPrimary<0.47")
+
+truth    = ROOT.TCut("truth_ismatched==1")
+bkgcut  =  matching
+bkgcut += eta_cut
+if 'EF' in args.data_type:
+    bkgcut  += trigger_cut[args.data_type]
+bkgcut  += tau_cat_cut[args.cat]
+sigcut  = bkgcut+truth
+print '-------- bkg cut --------'
+print bkgcut
+print '-------- sig cut --------'
+print sigcut
+
+
+# --------------------------------------------------------
+# -------------> BDT TRAINING       <---------------------
+# --------------------------------------------------------
+output_name  = 'training/'+args.factory_basename+'_'+args.cat+'_'+args.data_type+'_'+args.ID+'.root'
+factory_name = args.factory_basename+'_'+args.cat+'_'+args.data_type
+
+outputFile = ROOT.TFile(output_name,'RECREATE')
+factory    = trainer( factory_name, outputFile )
+factory.SetVariablesFromFile(args.variables_file)
+
+factory.SetInputTrees( sig_tree, bkg_tree )
+factory.PrepareTrainingAndTestTree( sigcut, bkgcut,"NormMode=EqualNumEvents:SplitMode=Block:!V" )
+factory.BookBDT()
+# Ntrees = [10,50,100,150,200,250,300,350,400]
+# NminEvents = [10,100,1000,10000]
+# for Nt in Ntrees:
+#     for Ne in NminEvents:
+#         factory.BookBDT(Ne,Nt)
+
+# --> Train MVAs using the set of training events
+factory.TrainAllMethods()
+
+# --> Evaluate all MVAs using the set of test events
+factory.TestAllMethods()
+
+# --> Evaluate and compare performance of all configured MVAs
+factory.EvaluateAllMethods()
+
+outputFile.Close()
+
+    
+
+
+
+
+
+
+        
