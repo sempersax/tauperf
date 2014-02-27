@@ -76,17 +76,25 @@ class RecoTauLoader:
                 self.EMEnergy        = self._tree.tau_seedCalo_etEMAtEMScale [self._recoIndex]
                 self.HadEnergy       = self._tree.tau_seedCalo_etHadAtEMScale [self._recoIndex]
                 self.CaloRadius      = (self.EMRadius*self.EMEnergy+self.HadRadius*self.HadEnergy)
+                self.stripWidth2     = self._tree.tau_seedCalo_stripWidth2 [self._recoIndex]
                 if (self.EMEnergy+self.HadEnergy) !=0:
                     self.CaloRadius     *=  1./(self.EMEnergy+self.HadEnergy)
                 else:
                     self.CaloRadius = -99999
+                self.numTopoClusters    = self._tree.tau_numTopoClusters[self._recoIndex]  
+                self.numEffTopoClusters = self._tree.tau_numEffTopoClusters[self._recoIndex]  
+                self.topoInvMass        = self._tree.tau_topoInvMass[self._recoIndex]  
+                self.effTopoInvMass     = self._tree.tau_effTopoInvMass[self._recoIndex]  
+                self.topoMeanDeltaR     = self._tree.tau_topoMeanDeltaR[self._recoIndex]  
+                self.effTopoMeanDeltaR  = self._tree.tau_effTopoMeanDeltaR[self._recoIndex]  
+
                 
 	    if 'cellObjects' in include:
 		self.cell4Vector, self.nCells, self.cellsamplingID     = self.getCell4Vector()
 		self.strip4Vector, self.nStrips, self.stripsamplingID     = self.getStrip4Vector()
 	
             if 'recoObjects' in include:
-                self.clusters                   = self.getClusters()
+                self.clusters = self.getClusters()
                 self.tracks,self.tracks_d0,self.tracks_z0 = self.getTracks()
 
             if 'wideTracks' in include:
@@ -275,6 +283,7 @@ class RecoTauLoader:
     def getClusters(self, eff=False):
         """Returns the clusters (all or effective)"""
         clusters = stl.vector( 'TLorentzVector' )()
+
         n = self._tree.tau_cluster_n[self._recoIndex]
         if eff: n = int(math.ceil(self._tree.tau_numEffTopoClusters[self._recoIndex]))
         for i in range(0, n):
@@ -286,6 +295,7 @@ class RecoTauLoader:
             vect = TLorentzVector()
             vect.SetPtEtaPhiM(pt, eta, phi, 0)
             clusters.push_back(vect)
+
         return clusters
         
 

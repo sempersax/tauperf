@@ -45,6 +45,8 @@ ID_Tools = {}
 ID_Tools["bdt_presel_3var"] = TauIDTool(tauCell,IDTools_handler.inputs_lists["bdt_presel_3var"])
 ID_Tools["bdt_presel_5var"] = TauIDTool(tauCell,IDTools_handler.inputs_lists["bdt_presel_5var"])
 ID_Tools["bdt_presel_fullvarlist"] = TauIDTool(tauCell,IDTools_handler.inputs_lists["bdt_presel_fullvarlist"])
+ID_Tools["bdt_presel_fullvarlist_michel1"] = TauIDTool(tauCell,IDTools_handler.inputs_lists["bdt_presel_fullvarlist_michel1"])
+ID_Tools["bdt_presel_fullvarlist_michel2"] = TauIDTool(tauCell,IDTools_handler.inputs_lists["bdt_presel_fullvarlist_michel2"])
 
 # --> Plotting category
 plot_cat = ["all"]
@@ -78,7 +80,7 @@ h_BDT     =  {}
 #         if 'signal' in args.sample_type and tauCell.truth_ismatched!=1:continue
 #         if not tauCell.hasL1matched: continue
 #         if tauCell.L1matched_pt<8000.: continue
-#         if tauCell.pt<20000.: continue
+#         if tauCell.pt<25000.: continue
 #         for tool in ID_Tools:
 #             bdtscores[tool] += [ID_Tools[tool].BDTScore()]
 

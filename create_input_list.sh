@@ -53,3 +53,5 @@ echo "--- Combine samples lists ---"
 cd ${TXTFILES_DIR}/v${VERSION}; cat input_data_period*_v${VERSION}.txt > input_data_v${VERSION}.txt; cd ${init_dir}
 cd ${TXTFILES_DIR}/v${VERSION}; cat input_Ztautau_14TeV*_v${VERSION}.txt > input_Ztautau_14TeV_all_v${VERSION}.txt; cd ${init_dir}
 cd ${TXTFILES_DIR}/v${VERSION}; cat input_JF17_14TeV*_v${VERSION}.txt > input_JF17_14TeV_all_v${VERSION}.txt; cd ${init_dir}
+cd ${TXTFILES_DIR}/v${VERSION}; cat input_Ztautau_14TeV_mu40_v${VERSION}.txt input_Ztautau_14TeV_mu60_v${VERSION}.txt > input_Ztautau_14TeV_mu4060_v${VERSION}.txt ; cd ${init_dir}
+cd ${TXTFILES_DIR}/v${VERSION}; cat input_JF17_14TeV_mu40_v${VERSION}.txt input_JF17_14TeV_mu60_v${VERSION}.txt > input_JF17_14TeV_mu4060_v${VERSION}.txt ; cd ${init_dir}

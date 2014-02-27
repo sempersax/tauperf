@@ -20,14 +20,14 @@ ROOT.gROOT.SetBatch()
 files = ordereddict.OrderedDict()
 
 
-files["Z_14TeV_all"]      = ROOT.TFile("efficiencies/efficiencies_presel_Ztautau_14TeV_all_v10.root")
-files["Z_14TeV_mu20"]      = ROOT.TFile("efficiencies/efficiencies_presel_Ztautau_14TeV_mu20_v10.root")
-files["Z_14TeV_mu40"]      = ROOT.TFile("efficiencies/efficiencies_presel_Ztautau_14TeV_mu40_v10.root")
-files["Z_14TeV_mu60"]      = ROOT.TFile("efficiencies/efficiencies_presel_Ztautau_14TeV_mu60_v10.root")
-files["Z_14TeV_mu80"]      = ROOT.TFile("efficiencies/efficiencies_presel_Ztautau_14TeV_mu80_v10.root")
-files["bkg_JF_14TeV_mu40"] = ROOT.TFile("efficiencies/efficiencies_presel_JF17_14TeV_mu40_v10.root")
-files["bkg_JF_14TeV_mu60"] = ROOT.TFile("efficiencies/efficiencies_presel_JF17_14TeV_mu60_v10.root")
-files["bkg_JF_14TeV_all"]  = ROOT.TFile("efficiencies/efficiencies_presel_JF17_14TeV_all_v10.root")
+files["Z_14TeV_all"]      = ROOT.TFile("efficiencies/efficiencies_presel_Ztautau_14TeV_all_v12.root")
+files["Z_14TeV_mu20"]      = ROOT.TFile("efficiencies/efficiencies_presel_Ztautau_14TeV_mu20_v12.root")
+files["Z_14TeV_mu40"]      = ROOT.TFile("efficiencies/efficiencies_presel_Ztautau_14TeV_mu40_v12.root")
+files["Z_14TeV_mu60"]      = ROOT.TFile("efficiencies/efficiencies_presel_Ztautau_14TeV_mu60_v12.root")
+files["Z_14TeV_mu80"]      = ROOT.TFile("efficiencies/efficiencies_presel_Ztautau_14TeV_mu80_v12.root")
+files["bkg_JF_14TeV_mu40"] = ROOT.TFile("efficiencies/efficiencies_presel_JF17_14TeV_mu40_v12.root")
+files["bkg_JF_14TeV_mu60"] = ROOT.TFile("efficiencies/efficiencies_presel_JF17_14TeV_mu60_v12.root")
+files["bkg_JF_14TeV_all"]  = ROOT.TFile("efficiencies/efficiencies_presel_JF17_14TeV_all_v12.root")
 
 
 
@@ -48,6 +48,8 @@ categories = ["all"]
 bdt_name   = ["bdt_presel_3var"]
 bdt_name   += ["bdt_presel_5var"]
 bdt_name   += ["bdt_presel_fullvarlist"]
+bdt_name   += ["bdt_presel_fullvarlist_michel1"]
+bdt_name   += ["bdt_presel_fullvarlist_michel2"]
 
 style_config = {}
 style_config["bdt_presel"]    = [ ROOT.kBlack, ROOT.kFullCircle ]
@@ -104,9 +106,11 @@ for var in aux.bins:
                                                                                  aux.bins[var][1])
 
 
-        plots["svsb_14TeV_all_"+var+"_"+cat+"_bdt_presel_3var"].cd()
-        rej_2 = RejectionCurve(files_sb["14TeV_all"]['bkg'].Get('bdt_presel_5var/Efficiency_bdt_presel_5var_'+var+'_'+cat))
-        rej_3 = RejectionCurve(files_sb["14TeV_all"]['bkg'].Get('bdt_presel_fullvarlist/Efficiency_bdt_presel_fullvarlist_'+var+'_'+cat))
+        plots["svsb_14TeV_mu60_"+var+"_"+cat+"_bdt_presel_3var"].cd()
+        rej_2 = RejectionCurve(files_sb["14TeV_mu60"]['bkg'].Get('bdt_presel_5var/Efficiency_bdt_presel_5var_'+var+'_'+cat))
+        rej_3 = RejectionCurve(files_sb["14TeV_mu60"]['bkg'].Get('bdt_presel_fullvarlist/Efficiency_bdt_presel_fullvarlist_'+var+'_'+cat))
+        rej_4 = RejectionCurve(files_sb["14TeV_mu60"]['bkg'].Get('bdt_presel_fullvarlist_michel1/Efficiency_bdt_presel_fullvarlist_michel1_'+var+'_'+cat))
+        rej_5 = RejectionCurve(files_sb["14TeV_mu60"]['bkg'].Get('bdt_presel_fullvarlist_michel2/Efficiency_bdt_presel_fullvarlist_michel2_'+var+'_'+cat))
         rej_2.SetMarkerColor(ROOT.kGreen)
         rej_2.SetLineColor(ROOT.kGreen)
         rej_2.SetMarkerStyle(ROOT.kFullTriangleUp)
@@ -115,9 +119,19 @@ for var in aux.bins:
         rej_3.SetLineColor(ROOT.kViolet)
         rej_3.SetMarkerStyle(ROOT.kFullTriangleUp)
         rej_3.SetLineStyle(ROOT.kDashed)
+        rej_4.SetMarkerColor(ROOT.kBlue)
+        rej_4.SetLineColor(ROOT.kBlue)
+        rej_4.SetMarkerStyle(ROOT.kFullTriangleUp)
+        rej_4.SetLineStyle(ROOT.kDashed)
+        rej_5.SetMarkerColor(ROOT.kGray+1)
+        rej_5.SetLineColor(ROOT.kGray+1)
+        rej_5.SetMarkerStyle(ROOT.kFullTriangleUp)
+        rej_5.SetLineStyle(ROOT.kDashed)
         rej_2.Draw("sameP")
         rej_3.Draw("sameP")
-
+        rej_4.Draw("sameP")
+        rej_5.Draw("sameP")
+        
 for key,plot in plots.iteritems():
     plot.SaveAs("./plots/"+key+".eps")
 

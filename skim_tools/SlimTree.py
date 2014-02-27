@@ -135,7 +135,7 @@ class SlimTree(FlatTree):
             self.variables[ 'ChPiEMEOverCaloEME'] = [array('f',[0.]), 'ChPiEMEOverCaloEME/F' ]
             self.variables[ 'PSSFraction'       ] = [array('f',[0.]), 'PSSFraction/F' ]
             self.variables[ 'EtOverLeadTrackPt' ] = [array('f',[0.]), 'EtOverLeadTrackPt/F' ]
-            self.variables[ 'nStrip'        ]     = [array('f',[0.]), 'nStrip/I' ]
+            self.variables[ 'nStrip'        ]     = [array('i',[0]), 'nStrip/I' ]
             self.variables[ 'nEffStripCells'    ] = [array('f',[0.]), 'nEffStripCells/F' ]
 
         if 'TauID' in self.include:
@@ -161,7 +161,14 @@ class SlimTree(FlatTree):
             self.variables['HadRadius' ]       = [ array('f',[0.]),'HadRadius/F']       
             self.variables['EMEnergy'  ]       = [ array('f',[0.]),'EMEnergy/F']        
             self.variables['HadEnergy'  ]      = [ array('f',[0.]),'HadEnergy/F']        
-            self.variables['CaloRadius']       = [ array('f',[0.]),'CaloRadius']      
+            self.variables['CaloRadius']       = [ array('f',[0.]),'CaloRadius/F']      
+            self.variables['stripWidth2']      = [ array('f',[0.]),'stripWidth2/F']
+            self.variables['numTopoClusters']    = [ array('i',[0]), 'numTopoClusters/I']
+            self.variables['numEffTopoClusters'] = [ array('f',[0.]), 'numEffTopoClusters/F' ]
+            self.variables['topoInvMass']        = [ array('f',[0.]), 'topoInvMass/F']
+            self.variables['effTopoInvMass']     = [ array('f',[0.]), 'effTopoInvMass/F']
+            self.variables['topoMeanDeltaR']     = [ array('f',[0.]),'topoMeanDeltaR/F']
+            self.variables['effTopoMeanDeltaR']  = [ array('f',[0.]),'effTopoMeanDeltaR/F']
 
         if 'cellObjects' in self.include:
             # ---> Cells variables 
@@ -183,6 +190,8 @@ class SlimTree(FlatTree):
             self.variables['clusterE'  ] = [array('f',maxn*[0.]), 'clusterE[clustern]/F'   ]
             self.variables['clustereta'] = [array('f',maxn*[0.]), 'clustereta[clustern]/F' ]
             self.variables['clusterphi'] = [array('f',maxn*[0.]), 'clusterphi[clustern]/F' ]
+            self.variables['clusters_m']     = [array('f',[0.])  , 'clusters_m/F'           ]
+            self.variables['clusters_eff_m'] = [array('f',[0.])  , 'clusters_eff_m/F'       ]
             # ---> tracks variables (used TJVA corrected tracks)
             self.variables[ 'trackM'  ] = [ array('f',maxn*[0.]), 'trackM[nTracks]/F' ]
             self.variables[ 'trackPt' ] = [ array('f',maxn*[0.]), 'trackPt[nTracks]/F' ]

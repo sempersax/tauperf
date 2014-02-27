@@ -197,8 +197,16 @@ for i in range(0, nEvents):
         slim_tree.variables['EMEnergy'   ][0][0]     = reco_tau.EMEnergy 
         slim_tree.variables['HadEnergy'  ][0][0]     = reco_tau.HadEnergy
         slim_tree.variables['CaloRadius' ][0][0]     = reco_tau.CaloRadius
-
+        slim_tree.variables['stripWidth2'][0][0]     = reco_tau.stripWidth2
         slim_tree.variables['clbased_pt'][0][0]      = reco_tau.clbased_pT
+
+        slim_tree.variables['numTopoClusters']    [0][0] = reco_tau.numTopoClusters    
+        slim_tree.variables['numEffTopoClusters'] [0][0] = reco_tau.numEffTopoClusters 
+        slim_tree.variables['topoInvMass']        [0][0] = reco_tau.topoInvMass        
+        slim_tree.variables['effTopoInvMass']     [0][0] = reco_tau.effTopoInvMass     
+        slim_tree.variables['topoMeanDeltaR']     [0][0] = reco_tau.topoMeanDeltaR     
+        slim_tree.variables['effTopoMeanDeltaR']  [0][0] = reco_tau.effTopoMeanDeltaR  
+
 
         # ----------------------------------------------------
         # ------ EVENT FILTER LEVEL VARIABLES
