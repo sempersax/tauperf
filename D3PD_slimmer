@@ -206,7 +206,9 @@ for i in range(0, nEvents):
         slim_tree.variables['effTopoInvMass']     [0][0] = reco_tau.effTopoInvMass     
         slim_tree.variables['topoMeanDeltaR']     [0][0] = reco_tau.topoMeanDeltaR     
         slim_tree.variables['effTopoMeanDeltaR']  [0][0] = reco_tau.effTopoMeanDeltaR  
-
+        slim_tree.variables['lead2ClusterEOverAllClusterE' ][0][0] = reco_tau.lead2ClusterEOverAllClusterE
+        slim_tree.variables['lead3ClusterEOverAllClusterE' ][0][0] = reco_tau.lead3ClusterEOverAllClusterE
+        slim_tree.variables['EMFractionAtEMScale']          [0][0] = reco_tau.EMFractionAtEMScale 
 
         # ----------------------------------------------------
         # ------ EVENT FILTER LEVEL VARIABLES

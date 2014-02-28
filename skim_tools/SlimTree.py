@@ -169,6 +169,9 @@ class SlimTree(FlatTree):
             self.variables['effTopoInvMass']     = [ array('f',[0.]), 'effTopoInvMass/F']
             self.variables['topoMeanDeltaR']     = [ array('f',[0.]),'topoMeanDeltaR/F']
             self.variables['effTopoMeanDeltaR']  = [ array('f',[0.]),'effTopoMeanDeltaR/F']
+            self.variables['lead2ClusterEOverAllClusterE' ] = [ array('f',[0.]),'lead2ClusterEOverAllClusterE/F' ]
+            self.variables['lead3ClusterEOverAllClusterE' ] = [ array('f',[0.]),'lead3ClusterEOverAllClusterE/F' ]
+            self.variables['EMFractionAtEMScale']           = [ array('f',[0.]),'EMFractionAtEMScale/F' ]          
 
         if 'cellObjects' in self.include:
             # ---> Cells variables 

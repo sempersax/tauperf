@@ -87,7 +87,9 @@ class RecoTauLoader:
                 self.effTopoInvMass     = self._tree.tau_effTopoInvMass[self._recoIndex]  
                 self.topoMeanDeltaR     = self._tree.tau_topoMeanDeltaR[self._recoIndex]  
                 self.effTopoMeanDeltaR  = self._tree.tau_effTopoMeanDeltaR[self._recoIndex]  
-
+                self.lead2ClusterEOverAllClusterE = self._tree.tau_seedCalo_lead2ClusterEOverAllClusterE[self._recoIndex]  
+                self.lead3ClusterEOverAllClusterE = self._tree.tau_seedCalo_lead3ClusterEOverAllClusterE[self._recoIndex]  
+                self.EMFractionAtEMScale          = self._tree.tau_calcVars_EMFractionAtEMScale         [self._recoIndex]  
                 
 	    if 'cellObjects' in include:
 		self.cell4Vector, self.nCells, self.cellsamplingID     = self.getCell4Vector()
