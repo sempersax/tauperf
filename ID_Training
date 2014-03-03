@@ -13,10 +13,11 @@ parser = argparse.ArgumentParser()
 parser.add_argument("input_file_sig"  , help="the input sig list (txt file)")
 parser.add_argument("input_file_bkg"  , help="the input bkg list (txt file)")
 parser.add_argument("variables_file"  , help="the list of variables")
-parser.add_argument("factory_basename", help="the basename of the training result")
+parser.add_argument("--factory_suffix", help="the basename of the training result", default='test')
 parser.add_argument("--ID"            , help="the ID menu trained (full/presel)",   default='full' )
 parser.add_argument("--cat"           , help="the category used for training",   default='all' )
-parser.add_argument("--data_type"     , help="the sample type (8TeV or 14 TeV)", default="14TeV_EF")
+parser.add_argument("--ecm"           , help="the center of mass energy (8TeV/14TeV)", default='14TeV')
+parser.add_argument("--object_type"     , help="the sample type (8TeV or 14 TeV)", default="EF")
 parser.add_argument("-N","--Nentries" , help="Specify the number of events use to run", type=int, default=-1)
 args = parser.parse_args()
 parser.print_usage()
@@ -30,7 +31,7 @@ for ifile in open(args.input_file_sig): sig_tree.Add(ifile.strip())
 for ifile in open(args.input_file_bkg): bkg_tree.Add(ifile.strip())
 
 tau_cat_cut   = {}
-if 'EF' in args.data_type:
+if 'EF' in args.object_type:
     tau_cat_cut["all"]     = ROOT.TCut("EF_numTrack>0")
     tau_cat_cut["1p"]      = ROOT.TCut("EF_numTrack==1")
     tau_cat_cut["3p"]      = ROOT.TCut("EF_numTrack==3")
@@ -48,7 +49,7 @@ trigger_cut["8TeV"]  = ROOT.TCut("EF_tauNoCut==1")
 matching = ROOT.TCut("EF_ismatched==1 && L2_ismatched==1 && L1_ismatched==1")
 eta_cut  = ROOT.TCut("EF_eta<2.2 && EF_eta>-2.2")
 
-if 'offline' in args.data_type:
+if 'offline' in args.object_type:
     matching = ROOT.TCut("hasL1matched==1 && L1matched_pt>8000.")
     eta_cut  = ROOT.TCut("eta<2.2 && eta>-2.2")
     tau_cat_cut["all"]     = ROOT.TCut("numTrack>0")
@@ -63,8 +64,8 @@ if 'offline' in args.data_type:
 truth    = ROOT.TCut("truth_ismatched==1")
 bkgcut  =  matching
 bkgcut += eta_cut
-if 'EF' in args.data_type:
-    bkgcut  += trigger_cut[args.data_type]
+if 'EF' in args.object_type:
+    bkgcut  += trigger_cut[args.ecm]
 bkgcut  += tau_cat_cut[args.cat]
 sigcut  = bkgcut+truth
 print '-------- bkg cut --------'
@@ -76,8 +77,8 @@ print sigcut
 # --------------------------------------------------------
 # -------------> BDT TRAINING       <---------------------
 # --------------------------------------------------------
-output_name  = 'training/'+args.factory_basename+'_'+args.cat+'_'+args.data_type+'_'+args.ID+'.root'
-factory_name = args.factory_basename+'_'+args.cat+'_'+args.data_type
+output_name  = 'training/'+args.factory_suffix+'_'+args.cat+'_'+args.ecm+'_'+args.object_type+'_'+args.ID+'.root'
+factory_name = args.factory_suffix+'_'+args.cat+'_'+args.ecm+'_'+args.object_type
 
 outputFile = ROOT.TFile(output_name,'RECREATE')
 factory    = trainer( factory_name, outputFile )

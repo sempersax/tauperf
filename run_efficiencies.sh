@@ -46,11 +46,11 @@ run_one_presel_eff()
 }
 
 
-run_one_presel_eff input_Ztautau_14TeV_all_v${VERSION}.txt 'signal_14TeV' ${EVENTS}
-run_one_presel_eff input_Ztautau_14TeV_mu20_v${VERSION}.txt 'signal_14TeV' ${EVENTS}
-run_one_presel_eff input_Ztautau_14TeV_mu40_v${VERSION}.txt 'signal_14TeV' ${EVENTS}
-run_one_presel_eff input_Ztautau_14TeV_mu60_v${VERSION}.txt 'signal_14TeV' ${EVENTS}
-run_one_presel_eff input_Ztautau_14TeV_mu80_v${VERSION}.txt 'signal_14TeV' ${EVENTS}
+# run_one_presel_eff input_Ztautau_14TeV_all_v${VERSION}.txt 'signal_14TeV' ${EVENTS}
+# run_one_presel_eff input_Ztautau_14TeV_mu20_v${VERSION}.txt 'signal_14TeV' ${EVENTS}
+# run_one_presel_eff input_Ztautau_14TeV_mu40_v${VERSION}.txt 'signal_14TeV' ${EVENTS}
+# run_one_presel_eff input_Ztautau_14TeV_mu60_v${VERSION}.txt 'signal_14TeV' ${EVENTS}
+# run_one_presel_eff input_Ztautau_14TeV_mu80_v${VERSION}.txt 'signal_14TeV' ${EVENTS}
 run_one_presel_eff input_JF17_14TeV_mu40_v${VERSION}.txt 'background_14TeV' ${EVENTS}
-run_one_presel_eff input_JF17_14TeV_mu60_v${VERSION}.txt 'background_14TeV' ${EVENTS}
-run_one_presel_eff input_JF17_14TeV_all_v${VERSION}.txt 'background_14TeV' ${EVENTS}
+# run_one_presel_eff input_JF17_14TeV_mu60_v${VERSION}.txt 'background_14TeV' ${EVENTS}
+# run_one_presel_eff input_JF17_14TeV_all_v${VERSION}.txt 'background_14TeV' ${EVENTS}

@@ -20,14 +20,14 @@ ROOT.gROOT.SetBatch()
 files = ordereddict.OrderedDict()
 
 
-files["Z_14TeV_all"]      = ROOT.TFile("efficiencies/efficiencies_presel_Ztautau_14TeV_all_v12.root")
-files["Z_14TeV_mu20"]      = ROOT.TFile("efficiencies/efficiencies_presel_Ztautau_14TeV_mu20_v12.root")
-files["Z_14TeV_mu40"]      = ROOT.TFile("efficiencies/efficiencies_presel_Ztautau_14TeV_mu40_v12.root")
-files["Z_14TeV_mu60"]      = ROOT.TFile("efficiencies/efficiencies_presel_Ztautau_14TeV_mu60_v12.root")
-files["Z_14TeV_mu80"]      = ROOT.TFile("efficiencies/efficiencies_presel_Ztautau_14TeV_mu80_v12.root")
-files["bkg_JF_14TeV_mu40"] = ROOT.TFile("efficiencies/efficiencies_presel_JF17_14TeV_mu40_v12.root")
-files["bkg_JF_14TeV_mu60"] = ROOT.TFile("efficiencies/efficiencies_presel_JF17_14TeV_mu60_v12.root")
-files["bkg_JF_14TeV_all"]  = ROOT.TFile("efficiencies/efficiencies_presel_JF17_14TeV_all_v12.root")
+# files["Z_14TeV_all"]      = ROOT.TFile("efficiencies/efficiencies_presel_Ztautau_14TeV_all_v13.root")
+# files["Z_14TeV_mu20"]      = ROOT.TFile("efficiencies/efficiencies_presel_Ztautau_14TeV_mu20_v13.root")
+files["Z_14TeV_mu40"]      = ROOT.TFile("efficiencies/efficiencies_presel_Ztautau_14TeV_mu40_v13.root")
+files["Z_14TeV_mu60"]      = ROOT.TFile("efficiencies/efficiencies_presel_Ztautau_14TeV_mu60_v13.root")
+# files["Z_14TeV_mu80"]      = ROOT.TFile("efficiencies/efficiencies_presel_Ztautau_14TeV_mu80_v13.root")
+files["bkg_JF_14TeV_mu40"] = ROOT.TFile("efficiencies/efficiencies_presel_JF17_14TeV_mu40_v13.root")
+files["bkg_JF_14TeV_mu60"] = ROOT.TFile("efficiencies/efficiencies_presel_JF17_14TeV_mu60_v13.root")
+# files["bkg_JF_14TeV_all"]  = ROOT.TFile("efficiencies/efficiencies_presel_JF17_14TeV_all_v13.root")
 
 
 
@@ -35,7 +35,7 @@ files_sb = ordereddict.OrderedDict()
 # files_sig_bkg["8TeV"]       = {'sig':files["Z_8TeV"]      ,'bkg':files["bkg_data_8TeV"] }
 files_sb["14TeV_mu40"] = {'sig':files["Z_14TeV_mu40"],'bkg':files["bkg_JF_14TeV_mu40"] }
 files_sb["14TeV_mu60"] = {'sig':files["Z_14TeV_mu60"],'bkg':files["bkg_JF_14TeV_mu60"] }
-files_sb["14TeV_all"]  = {'sig':files["Z_14TeV_all"],'bkg':files["bkg_JF_14TeV_all"] }
+# files_sb["14TeV_all"]  = {'sig':files["Z_14TeV_all"],'bkg':files["bkg_JF_14TeV_all"] }
 
 
 
@@ -44,12 +44,15 @@ files_sb["14TeV_all"]  = {'sig':files["Z_14TeV_all"],'bkg':files["bkg_JF_14TeV_a
 #--------------------------------------------------------------
 
 
-categories = ["all"]
+categories = ["all","1p","mp"]
 bdt_name   = ["bdt_presel_3var"]
 bdt_name   += ["bdt_presel_5var"]
 bdt_name   += ["bdt_presel_fullvarlist"]
 bdt_name   += ["bdt_presel_fullvarlist_michel1"]
 bdt_name   += ["bdt_presel_fullvarlist_michel2"]
+bdt_name   += ["bdt_presel_fullvarlist_michel3"]
+
+bdt_name   += ["bdt_full_quentin_new"]
 
 style_config = {}
 style_config["bdt_presel"]    = [ ROOT.kBlack, ROOT.kFullCircle ]
@@ -93,10 +96,10 @@ for var in aux.bins:
         for name in bdt_name:
             ## --------------------------------------------
             sig_file = ordereddict.OrderedDict()
-            sig_file["mu20"]  = [ files["Z_14TeV_mu20"].Get( name+'/Efficiency_'+name+'_'+var+'_'+cat  ),2,23,aux.bins[var][1],"Efficiency","mu=20"]
+#             sig_file["mu20"]  = [ files["Z_14TeV_mu20"].Get( name+'/Efficiency_'+name+'_'+var+'_'+cat  ),2,23,aux.bins[var][1],"Efficiency","mu=20"]
             sig_file["mu40"]  = [ files["Z_14TeV_mu40"].Get( name+'/Efficiency_'+name+'_'+var+'_'+cat ),3,24,aux.bins[var][1],"Efficiency","mu=40"]
             sig_file["mu60"]  = [ files["Z_14TeV_mu60"].Get( name+'/Efficiency_'+name+'_'+var+'_'+cat ),4,25,aux.bins[var][1],"Efficiency","mu=60"]
-            sig_file["mu80"]  = [ files["Z_14TeV_mu80"].Get( name+'/Efficiency_'+name+'_'+var+'_'+cat ),ROOT.kViolet,26,aux.bins[var][1],"Efficiency","mu=80"]
+#             sig_file["mu80"]  = [ files["Z_14TeV_mu80"].Get( name+'/Efficiency_'+name+'_'+var+'_'+cat ),ROOT.kViolet,26,aux.bins[var][1],"Efficiency","mu=80"]
             plots["pileup_signal_"+var+"_"+cat+"_"+name] = EfficiencyPlot("plot_sig_"+var+"_"+cat+"_"+name,"signal "+var+" "+cat,sig_file,"")
             for pair in files_sb:
                 # --------------------------------------------
@@ -111,6 +114,7 @@ for var in aux.bins:
         rej_3 = RejectionCurve(files_sb["14TeV_mu60"]['bkg'].Get('bdt_presel_fullvarlist/Efficiency_bdt_presel_fullvarlist_'+var+'_'+cat))
         rej_4 = RejectionCurve(files_sb["14TeV_mu60"]['bkg'].Get('bdt_presel_fullvarlist_michel1/Efficiency_bdt_presel_fullvarlist_michel1_'+var+'_'+cat))
         rej_5 = RejectionCurve(files_sb["14TeV_mu60"]['bkg'].Get('bdt_presel_fullvarlist_michel2/Efficiency_bdt_presel_fullvarlist_michel2_'+var+'_'+cat))
+        rej_6 = RejectionCurve(files_sb["14TeV_mu60"]['bkg'].Get('bdt_presel_fullvarlist_michel3/Efficiency_bdt_presel_fullvarlist_michel3_'+var+'_'+cat))
         rej_2.SetMarkerColor(ROOT.kGreen)
         rej_2.SetLineColor(ROOT.kGreen)
         rej_2.SetMarkerStyle(ROOT.kFullTriangleUp)
@@ -127,10 +131,15 @@ for var in aux.bins:
         rej_5.SetLineColor(ROOT.kGray+1)
         rej_5.SetMarkerStyle(ROOT.kFullTriangleUp)
         rej_5.SetLineStyle(ROOT.kDashed)
+        rej_6.SetMarkerColor(ROOT.kGray+3)
+        rej_6.SetLineColor(ROOT.kGray+3)
+        rej_6.SetMarkerStyle(ROOT.kFullTriangleUp)
+        rej_6.SetLineStyle(ROOT.kDashed)
         rej_2.Draw("sameP")
         rej_3.Draw("sameP")
         rej_4.Draw("sameP")
         rej_5.Draw("sameP")
+        rej_6.Draw("sameP")
         
 for key,plot in plots.iteritems():
     plot.SaveAs("./plots/"+key+".eps")

@@ -5,10 +5,10 @@ import ROOT
 from rootpy.extern import argparse
 
 from helpers import AnalysisTools
-from eff_tools import IDTools_handler
+from eff_tools.IDTools_retriever import get_IDTools
 from eff_tools.auxiliary      import aux
 from eff_tools.TauIDTool      import TauIDTool
-from eff_tools.EFTau_Category import Category
+from eff_tools.Tau_Category import Category
 
 #-----------------------------------------------------------
 
@@ -36,60 +36,32 @@ else:
     entries = args.Nentries
 print 'The loop will use ',entries,' entries'
 
-# ---> cut values list
-cutvals = IDTools_handler.cutvals
 
+# ---> ID_Tools and cut values list
+ID_Tools,cutvals = get_IDTools(tauCell)
 
-# --> Declaration of the different id tools
-ID_Tools = {}
-ID_Tools["bdt_presel_3var"] = TauIDTool(tauCell,IDTools_handler.inputs_lists["bdt_presel_3var"])
-ID_Tools["bdt_presel_5var"] = TauIDTool(tauCell,IDTools_handler.inputs_lists["bdt_presel_5var"])
-ID_Tools["bdt_presel_fullvarlist"] = TauIDTool(tauCell,IDTools_handler.inputs_lists["bdt_presel_fullvarlist"])
-ID_Tools["bdt_presel_fullvarlist_michel1"] = TauIDTool(tauCell,IDTools_handler.inputs_lists["bdt_presel_fullvarlist_michel1"])
-ID_Tools["bdt_presel_fullvarlist_michel2"] = TauIDTool(tauCell,IDTools_handler.inputs_lists["bdt_presel_fullvarlist_michel2"])
 
 # --> Plotting category
-plot_cat = ["all"]
+plot_cat = ["all","1p","mp"]
 
 # --> Declaration of the list (python dictionary) of TEfficiency objects
 Efficiencies = {}
 for tool in ID_Tools:
     Efficiencies[tool] = {}
 
-for var in  aux.bins:
-    if "EF" in var: continue
-    if "bdt" in var: continue
-    for tool in ID_Tools:
-        Efficiencies[tool][var] = ROOT.TEfficiency( "Efficiency_"+tool+"_"+var+"_"+plot_cat[0],"",
-                                                    len(aux.bins[var][0])-1 ,aux.bins[var][0] )
+for cat in plot_cat:
+    for var in  aux.bins:
+        if "EF" in var: continue
+        if "bdt" in var: continue
+        for tool in ID_Tools:
+            Efficiencies[tool][var+'_'+cat] = ROOT.TEfficiency( "Efficiency_"+tool+"_"+var+"_"+cat,"",
+                                                                len(aux.bins[var][0])-1 ,aux.bins[var][0] )
 
-h_BDT     =  {}
+
+
+# h_BDT     =  {}
 # for cutval in cutvals:
 #     h_BDT[cutval] = ROOT.TH1F("h_BDT_"+cutval,"h_BDT",len(aux.bins[cutval][0])-1 ,aux.bins[cutval][0])
-
-#---------------------------------------------------------------------
-#-------------> DETERMINE THE CUT VALUE FOR SIGNAL EFF OF 95% --------
-#--------------------------------------------------------------------
-# bdtscores = {}
-# for tool in ID_Tools:
-#     bdtscores[tool] = []
-# if 'signal' in args.sample_type:
-#     for entry in xrange(entries):
-#         tauCell.GetEntry( entry )
-        
-#         if 'signal' in args.sample_type and tauCell.truth_ismatched!=1:continue
-#         if not tauCell.hasL1matched: continue
-#         if tauCell.L1matched_pt<8000.: continue
-#         if tauCell.pt<25000.: continue
-#         for tool in ID_Tools:
-#             bdtscores[tool] += [ID_Tools[tool].BDTScore()]
-
-#     for tool in ID_Tools:
-#         print len(bdtscores[tool])
-#         sorted_scores = sorted(bdtscores[tool])
-#         index_005 = int(0.05*len(bdtscores[tool]))
-#         print index_005
-#         print tool, ' cutvalue: ',sorted_scores[index_005]
 
 #--------------------------------------------------------------
 #-------------> loop OVER THE EVENTS OF THE INPUT TREE --------
@@ -103,14 +75,18 @@ for entry in xrange(entries):
     if not tauCell.hasL1matched: continue
     if tauCell.L1matched_pt<8000.: continue
     if tauCell.pt<25000.: continue
-    
-    for tool in ID_Tools:
-        ID_Tools[tool].SetCutValues(cutvals[tool])
-#         h_BDT[tool].Fill (ID_Tools[tool].BDTScore())
-        for var in  aux.bins:
-            if "bdt" in var: continue
-            if "EF" in var: continue
-            Efficiencies[tool][var].Fill( ID_Tools[tool].Decision(), getattr(tauCell,var) )
+    tau_cat = Category(tauCell)
+    for cat in (set(tau_cat.categories+["all"])&set(plot_cat)):
+        for tool in ID_Tools:
+            ID_Tools[tool].SetCutValues(cutvals[tool])
+            for var in  aux.bins:
+                if "bdt" in var: continue
+                if "EF" in var: continue
+                if 'bdt_full' in ID_Tools:
+                    is_passed = ID_Tools[tool].Decision() and ID_Tools['bdt_presel_fullvarlist_michel3'].Decision()
+                    Efficiencies[tool][var+'_'+cat].Fill( is_passed, getattr(tauCell,var) )
+                else:
+                    Efficiencies[tool][var+'_'+cat].Fill( ID_Tools[tool].Decision(), getattr(tauCell,var) )
 
 
 #--------------------------------------------------------------
@@ -130,7 +106,7 @@ for tool in Efficiencies:
     directory.cd()
     for var in Efficiencies[tool]:
         Efficiencies[tool][var].Write()
-        #     h_BDT[tool].Write()
+            #     h_BDT[tool].Write()
     root_directory.cd()
 
 root_directory.cd()

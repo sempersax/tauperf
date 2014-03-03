@@ -1,4 +1,5 @@
-from EFTau_Category import Category
+# from EFTau_Category import Category
+from Tau_Category import Category
 from DecisionTool import DecisionTool
 
 
