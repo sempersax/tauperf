@@ -1,0 +1,59 @@
+#!/usr/bin/env python
+from eff_tools.IDTools_retriever import get_IDTools
+import ROOT
+
+from rootpy.extern import argparse
+from eff_tools.auxiliary      import aux
+from eff_tools.TauIDTool      import TauIDTool
+from eff_tools.Tau_Category import Category
+
+#-----------------------------------------------------------
+
+#--> Receive and parse argument
+parser = argparse.ArgumentParser()
+parser.add_argument("input_file_list", help="the list (txt file) of the input files")
+parser.add_argument("sample_type", help="Sample type (signal_8TeV,signal_14TeV,background_14TeV,background_data_8TeV)")
+parser.add_argument("--target_eff" , type=float, help="target efficiency")
+parser.add_argument("--cat", help="The tau category",default="all")
+parser.add_argument("-N","--Nentries", type=int,default=-1,help="Specify the number of events use to run")
+
+args = parser.parse_args()
+parser.print_usage()
+
+# --> Import data files
+tauCell=ROOT.TChain('tauCell_test')
+
+inputfile= open(args.input_file_list)
+for ifile in inputfile:
+    tauCell.Add(ifile.strip())
+
+# Get number of entries in data file
+print 'The input chain contains ',tauCell.GetEntries(),' entries'
+if args.Nentries==-1:
+    entries = tauCell.GetEntries()
+else:
+    entries = args.Nentries
+print 'The loop will use ',entries,' entries'
+
+
+ID_Tools,_ = get_IDTools(tauCell)
+
+bdtscores = {}
+for tool in ID_Tools:
+    bdtscores[tool] = []
+
+for entry in xrange(entries):
+    tauCell.GetEntry( entry )
+    tau_cat = Category(tauCell)
+    if 'signal' in args.sample_type and tauCell.truth_ismatched!=1:continue
+    if tauCell.L1matched_pt<8000.: continue
+    if tauCell.pt<25000.: continue
+    if args.cat in tau_cat.categories+["all"]:
+        for tool in ID_Tools:
+            bdtscores[tool] += [ID_Tools[tool].BDTScore()]
+            
+
+for tool in ID_Tools:
+    sorted_scores = sorted(bdtscores[tool])
+    index = int((1-args.target_eff)*len(bdtscores[tool]))
+    print tool, '\t --> cutvalue: ',sorted_scores[index], 'and item ',index,'/',len(bdtscores[tool])

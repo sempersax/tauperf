@@ -1,0 +1,109 @@
+#!/usr/bin/env python
+
+from helpers import AnalysisTools
+import sys
+
+from rootpy.extern import argparse
+from rootpy import stl
+from rootpy import log
+from rootpy.tree import Tree, TreeChain, TreeModel, TreeBuffer
+from rootpy.tree.filtering import EventFilter, EventFilterList
+
+                                                                                                            
+from rootpy.io import root_open
+log.basic_config_colorized()
+
+stl.vector( 'vector<int>' )
+stl.vector( 'vector<float>' )
+
+import ROOT
+
+from skim_tools.edm   import *
+from skim_tools.filters import *
+from skim_tools.objects import define_objects
+
+ROOT.gROOT.ProcessLine(".x $ROOTCOREBIN/scripts/load_packages.C")
+print 'rootcore libraries loaded'
+
+
+#--> Receive and parse argument
+parser = argparse.ArgumentParser()
+parser.add_argument("input_rootfile", help="the input rootfile name")
+parser.add_argument("output_rootfile", help="the output rootfile name")
+parser.add_argument("sample_type", help="sample type (signal_14TeV,signal_8TeV,background_14TeV,data")
+parser.add_argument("-N","--Nentries", type=int,default=-1,help="Specify the number of events use to run")
+args = parser.parse_args()
+parser.print_usage()
+
+
+#--> Open input file
+print 'open file '+args.input_rootfile
+in_file = root_open( args.input_rootfile )
+print 'get d3pd tree'
+d3pd_tree = in_file.tau
+
+#--> Create output file 
+print 'create file '+args.output_rootfile
+out_file = root_open( args.output_rootfile, "recreate" )
+slim_tree = Tree( 'tauCell', model = EventInfoBlock+RecoTauBlock+TrueTauBlock+EFTauBlock+L2TauBlock+L1TauBlock+L1_OfflineMatched_TauBlock )
+define_objects( d3pd_tree )
+
+slim_tree.define_object( name = 'tau'     , prefix= 'off_')
+slim_tree.define_object( name = 'tau_true', prefix= 'true_')
+slim_tree.define_object( name = 'tau_EF'  , prefix= 'EF_')
+slim_tree.define_object( name = 'tau_L2'  , prefix= 'L2_')
+slim_tree.define_object( name = 'tau_L1'  , prefix= 'L1_')
+slim_tree.define_object( name = 'tau_L1_OfflineMatched'  , prefix= 'L1_OfflineMatched_')
+
+#--> Get number of entries in input tree
+nEvents = d3pd_tree.GetEntries()
+if args.Nentries !=-1:
+    nEvents = args.Nentries
+print 'Number of events: ' + str(nEvents)
+
+event_filters = [Offline_Truth_matching(),
+                 Offline_EF_matching(),
+                 Offline_L1_matching(),
+                 EF_L2L1_matching(),
+                 L2_L1_matching() ]
+
+for event in d3pd_tree:
+    
+    for filter in event_filters:
+        filter.passes(event)
+
+    for tau in d3pd_tree.taus:
+        EventInfoBlock.set(event,slim_tree)
+        RecoTauBlock.set(event,slim_tree,tau)
+                    
+        # --> Offline to L1 matching
+        if tau.index_matched_L1>-1:
+            l1tau = d3pd_tree.taus_L1[tau.index_matched_L1]
+            L1TauBlock.set(event,slim_tree,l1tau)
+
+
+        # --> Offline to EF matching
+        if tau.index_matched_EF>-1:
+            eftau = d3pd_tree.taus_EF[tau.index_matched_EF]
+            EFTauBlock.set(event,slim_tree,eftau)
+            # --> EF to L2 matching
+            if eftau.index_matched_L2>-1:
+                l2tau = d3pd_tree.taus_L2[eftau.index_matched_L2]
+                L2TauBlock.set(event,slim_tree,l2tau)
+                # --> L2 to L1 matching
+                if l2tau.index_matched_L1>-1:
+                    l1tau = d3pd_tree.taus_L1[l2tau.index_matched_L1]
+                    L1TauBlock.set(event,slim_tree,l1tau)
+
+
+
+        if 'signal' in args.sample_type and tau.index_matched_truth>-1:
+            TrueTauBlock.set(event,slim_tree,event.truetaus[tau.index_matched_truth])
+                    
+            
+        slim_tree.fill(reset=True)
+
+slim_tree.FlushBaskets()
+slim_tree.Write()
+print 'Close file '+args.output_rootfile
+out_file.Close()
