@@ -1,0 +1,130 @@
+#!/usr/bin/env python
+
+import ROOT
+
+from rootpy.extern import argparse
+from rootpy.io import root_open
+from rootpy.tree import Tree, TreeChain, TreeModel, TreeBuffer
+
+
+from helpers import AnalysisTools
+from eff_tools.IDTools_retriever import get_IDTools
+from eff_tools.auxiliary      import aux
+from eff_tools.TauIDTool      import TauIDTool
+from eff_tools.Tau_Category import Category
+
+from skim_tools.edm   import *
+from skim_tools.mixins import *
+
+#-----------------------------------------------------------
+
+#--> Receive and parse argument
+parser = argparse.ArgumentParser()
+parser.add_argument("input_file_list", help="the list (txt file) of the input files")
+parser.add_argument("output_file", help="the name of the output root file")
+parser.add_argument("sample_type", help="Sample type (signal_8TeV,signal_14TeV,background_14TeV,background_data_8TeV)")
+parser.add_argument("-N","--Nentries", type=int,default=-1,help="Specify the number of events use to run")
+args = parser.parse_args()
+parser.print_usage()
+
+# --> Import data files
+file_list = []
+inputfile = open(args.input_file_list)
+for ifile in inputfile:
+    file_list.append(ifile.strip())
+
+tauCell = TreeChain('tauCell_test',file_list,events=args.Nentries)
+tauCell.define_object( name='tau', prefix='off_', mix=TauCategories )
+
+# Get number of entries in data file
+print 'The input chain contains ',tauCell.GetEntries(),' entries'
+if args.Nentries==-1:
+    entries = tauCell.GetEntries()
+else:
+    entries = args.Nentries
+print 'The loop will use ',entries,' entries'
+
+
+# ---> ID_Tools and cut values list
+ID_Tools,cutvals = get_IDTools(tauCell)
+
+
+# --> Plotting category
+plot_cat = ["all","1p","mp"]
+
+# --> Declaration of the list (python dictionary) of TEfficiency objects
+Efficiencies = {}
+for tool in ID_Tools:
+    Efficiencies[tool] = {}
+
+for cat in plot_cat:
+    for var in  aux.bins:
+        if "EF" in var: continue
+        if "bdt" in var: continue
+        for tool in ID_Tools:
+            Efficiencies[tool][var+'_'+cat] = ROOT.TEfficiency( "Efficiency_"+tool+"_"+var+"_"+cat,"",
+                                                                len(aux.bins[var][0])-1 ,aux.bins[var][0] )
+
+
+
+# h_BDT     =  {}
+# for cutval in cutvals:
+#     h_BDT[cutval] = ROOT.TH1F("h_BDT_"+cutval,"h_BDT",len(aux.bins[cutval][0])-1 ,aux.bins[cutval][0])
+
+#--------------------------------------------------------------
+#-------------> loop OVER THE EVENTS OF THE INPUT TREE --------
+#--------------------------------------------------------------
+
+for event in tauCell:
+
+    if 'signal' in args.sample_type and event.tau.index_matched_true<=-1:
+        continue
+
+#     if event.L1_OfflineMatched_index<=-1:
+#         continue
+#     print 3
+
+#     if event.L1_OfflineMatched_pt<8000.:
+#         continue
+#     print 4
+
+    if event.tau.pt<25000.:
+        continue
+    
+    for cat in (set(event.tau.category+["all"])&set(plot_cat)):
+        for tool in ID_Tools:
+            ID_Tools[tool].SetCutValues(cutvals[tool])
+            for var in  aux.bins:
+                if "bdt" in var: continue
+                if "EF" in var: continue
+                if 'bdt_full' in tool:
+                    is_passed = ID_Tools[tool].Decision() and ID_Tools['bdt_presel_fullvarlist_michel3'].Decision()
+                    Efficiencies[tool][var+'_'+cat].Fill( is_passed, getattr(event,var) )
+                else:
+                    Efficiencies[tool][var+'_'+cat].Fill( ID_Tools[tool].Decision(), getattr(event,var) )
+
+
+#--------------------------------------------------------------
+#-------------> END OF THE LOOP OVER THE EVENTS        --------
+#--------------------------------------------------------------
+
+
+
+#--------------------------------------------------------------
+#-------------> EFFICIENCY STORING       - --------------------
+#--------------------------------------------------------------
+
+output = ROOT.TFile(args.output_file,"recreate")
+root_directory = output.CurrentDirectory()
+for tool in Efficiencies:
+    directory = output.mkdir(tool)
+    directory.cd()
+    for var in Efficiencies[tool]:
+        Efficiencies[tool][var].Write()
+            #     h_BDT[tool].Write()
+    root_directory.cd()
+
+root_directory.cd()
+output.Close()
+
+        
