@@ -20,14 +20,14 @@ ROOT.gROOT.SetBatch()
 files = ordereddict.OrderedDict()
 
 
-# files["Z_14TeV_all"]      = ROOT.TFile("efficiencies/efficiencies_presel_Ztautau_14TeV_all_v13.root")
-# files["Z_14TeV_mu20"]      = ROOT.TFile("efficiencies/efficiencies_presel_Ztautau_14TeV_mu20_v13.root")
+files["Z_14TeV_all"]      = ROOT.TFile("efficiencies/efficiencies_presel_Ztautau_14TeV_all_v13.root")
+files["Z_14TeV_mu20"]      = ROOT.TFile("efficiencies/efficiencies_presel_Ztautau_14TeV_mu20_v13.root")
 files["Z_14TeV_mu40"]      = ROOT.TFile("efficiencies/efficiencies_presel_Ztautau_14TeV_mu40_v13.root")
 files["Z_14TeV_mu60"]      = ROOT.TFile("efficiencies/efficiencies_presel_Ztautau_14TeV_mu60_v13.root")
-# files["Z_14TeV_mu80"]      = ROOT.TFile("efficiencies/efficiencies_presel_Ztautau_14TeV_mu80_v13.root")
+files["Z_14TeV_mu80"]      = ROOT.TFile("efficiencies/efficiencies_presel_Ztautau_14TeV_mu80_v13.root")
 files["bkg_JF_14TeV_mu40"] = ROOT.TFile("efficiencies/efficiencies_presel_JF17_14TeV_mu40_v13.root")
 files["bkg_JF_14TeV_mu60"] = ROOT.TFile("efficiencies/efficiencies_presel_JF17_14TeV_mu60_v13.root")
-# files["bkg_JF_14TeV_all"]  = ROOT.TFile("efficiencies/efficiencies_presel_JF17_14TeV_all_v13.root")
+files["bkg_JF_14TeV_all"]  = ROOT.TFile("efficiencies/efficiencies_presel_JF17_14TeV_all_v13.root")
 
 
 
@@ -35,7 +35,7 @@ files_sb = ordereddict.OrderedDict()
 # files_sig_bkg["8TeV"]       = {'sig':files["Z_8TeV"]      ,'bkg':files["bkg_data_8TeV"] }
 files_sb["14TeV_mu40"] = {'sig':files["Z_14TeV_mu40"],'bkg':files["bkg_JF_14TeV_mu40"] }
 files_sb["14TeV_mu60"] = {'sig':files["Z_14TeV_mu60"],'bkg':files["bkg_JF_14TeV_mu60"] }
-# files_sb["14TeV_all"]  = {'sig':files["Z_14TeV_all"],'bkg':files["bkg_JF_14TeV_all"] }
+files_sb["14TeV_all"]  = {'sig':files["Z_14TeV_all"],'bkg':files["bkg_JF_14TeV_all"] }
 
 
 
@@ -91,15 +91,16 @@ for var in aux.bins:
     if 'bdt' in var: continue
     if 'EF' in var: continue
     if 'npv' in var: continue
+    if 'clbased' in var: continue
     for cat in categories:
         print "---> plot "+var+" in category "+cat
         for name in bdt_name:
             ## --------------------------------------------
             sig_file = ordereddict.OrderedDict()
-#             sig_file["mu20"]  = [ files["Z_14TeV_mu20"].Get( name+'/Efficiency_'+name+'_'+var+'_'+cat  ),2,23,aux.bins[var][1],"Efficiency","mu=20"]
+            sig_file["mu20"]  = [ files["Z_14TeV_mu20"].Get( name+'/Efficiency_'+name+'_'+var+'_'+cat  ),2,23,aux.bins[var][1],"Efficiency","mu=20"]
             sig_file["mu40"]  = [ files["Z_14TeV_mu40"].Get( name+'/Efficiency_'+name+'_'+var+'_'+cat ),3,24,aux.bins[var][1],"Efficiency","mu=40"]
             sig_file["mu60"]  = [ files["Z_14TeV_mu60"].Get( name+'/Efficiency_'+name+'_'+var+'_'+cat ),4,25,aux.bins[var][1],"Efficiency","mu=60"]
-#             sig_file["mu80"]  = [ files["Z_14TeV_mu80"].Get( name+'/Efficiency_'+name+'_'+var+'_'+cat ),ROOT.kViolet,26,aux.bins[var][1],"Efficiency","mu=80"]
+            sig_file["mu80"]  = [ files["Z_14TeV_mu80"].Get( name+'/Efficiency_'+name+'_'+var+'_'+cat ),ROOT.kViolet,26,aux.bins[var][1],"Efficiency","mu=80"]
             plots["pileup_signal_"+var+"_"+cat+"_"+name] = EfficiencyPlot("plot_sig_"+var+"_"+cat+"_"+name,"signal "+var+" "+cat,sig_file,"")
             for pair in files_sb:
                 # --------------------------------------------

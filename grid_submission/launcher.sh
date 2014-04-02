@@ -33,7 +33,7 @@ while read filename; do
     inputfile=`echo ${filename}| awk -F"/" '{print $NF}'`
     outputfile=`echo $inputfile| awk -F".root" '{print $1"_skimmed.root"}'`
     echo "############# SKIMMING/SLIMMING #######################"
-    ./D3PD_slimmer ${filename} ${outputfile} $stream
+    ./new_skimmer ${filename} ${outputfile} $stream
     echo "############# CREATE TRAINING/TESTING TREES ###########"
     ./TrainingTesting_Sample ${outputfile}
 done < $listoffiles

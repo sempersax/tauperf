@@ -79,7 +79,7 @@ for event in d3pd_tree:
         # --> Offline to L1 matching
         if tau.index_matched_L1>-1:
             l1tau = d3pd_tree.taus_L1[tau.index_matched_L1]
-            L1TauBlock.set(event,slim_tree,l1tau)
+            L1_OfflineMatched_TauBlock.set(event,slim_tree,l1tau)
 
 
         # --> Offline to EF matching
@@ -94,9 +94,8 @@ for event in d3pd_tree:
                 if l2tau.index_matched_L1>-1:
                     l1tau = d3pd_tree.taus_L1[l2tau.index_matched_L1]
                     L1TauBlock.set(event,slim_tree,l1tau)
-
-
-
+ 
+        # --> Offline to Truth matching
         if 'signal' in args.sample_type and tau.index_matched_truth>-1:
             TrueTauBlock.set(event,slim_tree,event.truetaus[tau.index_matched_truth])
                     

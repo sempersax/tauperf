@@ -13,8 +13,8 @@ dR = lambda eta1, phi1, eta2, phi2: math.sqrt((eta1 - eta2)**2 + dphi(phi1, phi2
 
 
 """
-This module contains "mixin" classes for adding
-functionality to Tree objects ("decorating" them).
+This module contains 'mixin' classes for adding
+functionality to Tree objects ('decorating' them).
 """
 
 __all__ = [
@@ -23,6 +23,7 @@ __all__ = [
     'EF_Tau',
     'L2_Tau',
     'L1_Tau',
+    'TauCategories',
     ]
 
 
@@ -75,9 +76,113 @@ class FourMomentum(MatchedObject):
             (self.__class__.__name__,self.m,self.pt,self.eta,self.phi)
 
 
-class Tau(FourMomentum):
+class ClusterBasedFourMomentum(MatchedObject):
+    def __init__(self):
+        super(ClusterBasedFourMomentum,self).__init__()
+
+    @cached_property
+    def fourvect_clbased(self):
+        vect = LorentzVector()
+        tau_numTrack = self.numTrack
+        tau_nPi0s    = self.pi0_n
+        if tau_nPi0s == 0:
+            if self.track_n>0:
+                sumTrk = LorentzVector()
+                for trk_ind in xrange(0,self.track_n):
+                    curTrk = LorentzVector()
+                    curTrk.SetPtEtaPhiM( self.track_atTJVA_pt [trk_ind],
+                                         self.track_atTJVA_eta[trk_ind],
+                                         self.track_atTJVA_phi[trk_ind],
+                                         139.8 )
+                    sumTrk += curTrk
+                vect.SetPtEtaPhiM( sumTrk.Pt(),sumTrk.Eta(),sumTrk.Phi(),sumTrk.M() )
+            else:
+                vect.SetPtEtaPhiM ( self.pt, self.eta, self.phi, self.m )
+        elif tau_nPi0s == 1 or tau_nPi0s==2:
+            if self.pi0_vistau_pt==0:
+                vect.SetPtEtaPhiM ( self.pt, self.eta, self.phi, self.m )
+            else:
+                vect.SetPtEtaPhiM ( self.pi0_vistau_pt, self.pi0_vistau_eta ,
+                                    self.pi0_vistau_phi, self.pi0_vistau_m    )
+
+        else:
+            vect.SetPtEtaPhiM ( self.pi0_vistau_pt ,
+                                self.pi0_vistau_eta,
+                                self.pi0_vistau_phi,
+                                self.pi0_vistau_m   )
+        return vect
+
+    
+class TauCategories(object):
+
+    def __init__(self):
+        self.etacat = self.getEtaCat()
+        self.prongcat = self.getProngCat()
+        self.pi0cat = self.getPi0Cat()
+        self.prongpi0cat = self.getProngPi0Cat(self.prongcat,self.pi0cat)
+        self.category = self.etacat+self.prongcat+self.prongpi0cat#getCategories()
+
+    @cached_property
+    def getCategories(self):
+        return self.prong_cat+self.etacat#+self.prongpi0_cat
+    def getProngCat(self):
+        if self.numTrack==1:
+            return ["1p"]
+        elif self.numTrack==2:
+            return ["2p","mp"]
+        elif self.numTrack==3:
+            return ["3p","mp"]
+        else:
+            return ["mp"]
+    def getPi0Cat(self):
+        if self.pi0BDTPrimary>0.47:
+            return ["0n"]
+        else:
+            return ["Xn"]
+    def getProngPi0Cat(self,prong_cat,pi0_cat):
+        if "1p" in prong_cat:
+            if "0n" in pi0_cat:
+                return ["1p_0n"]
+            else:
+                return ["1p_Xn"]
+        elif "2p" in prong_cat:
+            if "0n" in pi0_cat:
+                return ["2p_0n","mp_0n"]
+            else:
+                return ["2p_Xn","2p_Xn"]
+        elif "3p" in prong_cat:
+            if "0n" in pi0_cat:
+                return ["3p_0n","mp_0n"]
+            else:
+                return ["3p_Xn","mp_Xn"]
+        else:
+            if "0n" in pi0_cat:
+                return ["mp_0n"]
+            else:
+                return ["mp_Xn"]
+
+    def getEtaCat(self):
+        if abs(self.eta)<1.37:
+            return ["central"]
+        else:
+            return ["endcap"]
+    def getIDCat(self):
+        if self.numTrack==1:
+            if self.pi0BDTPrimary>0.47:
+                return ["all","1p","1p_0n"]
+            else:
+                return ["all","1p","1p_Xn"]
+        else:
+            if self._pi0BDTPrimary>0.47:
+                return ["all","mp","mp_0n"]
+            else:
+                return ["all","mp","mp_Xn"]
+
+
+class Tau(FourMomentum,ClusterBasedFourMomentum):
     def __init__(self):
         super(FourMomentum, self).__init__()
+        super(ClusterBasedFourMomentum, self).__init__()
         self.index_matched_truth = -1
         self.index_matched_EF    = -1
         self.dR_matched_EF       = -1111

@@ -55,17 +55,17 @@ echo "-------- Background sample jobs ---------"
 submit_onejob user.qbuat.mc12_14TeV.129160.Pythia8_AU2CTEQ6L1_perf_JF17.recon.ESD.e1313_s1682_s1691_r4710_D3PD_v1 'background_14TeV' ${VERSION}
 submit_onejob user.qbuat.mc12_14TeV.129160.Pythia8_AU2CTEQ6L1_perf_JF17.recon.ESD.e1313_s1682_s1691_r4711_D3PD_v2 'background_14TeV' ${VERSION}
 
-echo "-------- Data sample jobs ---------"
-submit_onejob user.qbuat.data12_8TeV.periodA.physics_JetTauEtmiss.PhysCont.DESD_CALJET.repro14_v01_D3PD_v1 'data' ${VERSION}
-submit_onejob user.qbuat.data12_8TeV.periodB.physics_JetTauEtmiss.PhysCont.DESD_CALJET.repro14_v01_D3PD_v1 'data' ${VERSION}
-submit_onejob user.qbuat.data12_8TeV.periodC.physics_JetTauEtmiss.PhysCont.DESD_CALJET.repro14_v01_D3PD_v1 'data' ${VERSION}
-submit_onejob user.qbuat.data12_8TeV.periodD.physics_JetTauEtmiss.PhysCont.DESD_CALJET.repro14_v01_D3PD_v1 'data' ${VERSION}
-submit_onejob user.qbuat.data12_8TeV.periodE.physics_JetTauEtmiss.PhysCont.DESD_CALJET.repro14_v01_D3PD_v1 'data' ${VERSION}
-submit_onejob user.qbuat.data12_8TeV.periodG.physics_JetTauEtmiss.PhysCont.DESD_CALJET.repro14_v01_D3PD_v1 'data' ${VERSION}
-submit_onejob user.qbuat.data12_8TeV.periodH.physics_JetTauEtmiss.PhysCont.DESD_CALJET.repro14_v01_D3PD_v1 'data' ${VERSION}
-submit_onejob user.qbuat.data12_8TeV.periodI.physics_JetTauEtmiss.PhysCont.DESD_CALJET.t0pro14_v01_D3PD_v1 'data' ${VERSION}
-submit_onejob user.qbuat.data12_8TeV.periodJ.physics_JetTauEtmiss.PhysCont.DESD_CALJET.repro14_v01_D3PD_v1 'data' ${VERSION}
-submit_onejob user.qbuat.data12_8TeV.periodL.physics_JetTauEtmiss.PhysCont.DESD_CALJET.repro14_v01_D3PD_v1 'data' ${VERSION}
-submit_onejob user.qbuat.data12_8TeV.periodM.physics_JetTauEtmiss.PhysCont.DESD_CALJET.t0pro14_v01_D3PD_v1 'data' ${VERSION}
+# echo "-------- Data sample jobs ---------"
+# submit_onejob user.qbuat.data12_8TeV.periodA.physics_JetTauEtmiss.PhysCont.DESD_CALJET.repro14_v01_D3PD_v1 'data' ${VERSION}
+# submit_onejob user.qbuat.data12_8TeV.periodB.physics_JetTauEtmiss.PhysCont.DESD_CALJET.repro14_v01_D3PD_v1 'data' ${VERSION}
+# submit_onejob user.qbuat.data12_8TeV.periodC.physics_JetTauEtmiss.PhysCont.DESD_CALJET.repro14_v01_D3PD_v1 'data' ${VERSION}
+# submit_onejob user.qbuat.data12_8TeV.periodD.physics_JetTauEtmiss.PhysCont.DESD_CALJET.repro14_v01_D3PD_v1 'data' ${VERSION}
+# submit_onejob user.qbuat.data12_8TeV.periodE.physics_JetTauEtmiss.PhysCont.DESD_CALJET.repro14_v01_D3PD_v1 'data' ${VERSION}
+# submit_onejob user.qbuat.data12_8TeV.periodG.physics_JetTauEtmiss.PhysCont.DESD_CALJET.repro14_v01_D3PD_v1 'data' ${VERSION}
+# submit_onejob user.qbuat.data12_8TeV.periodH.physics_JetTauEtmiss.PhysCont.DESD_CALJET.repro14_v01_D3PD_v1 'data' ${VERSION}
+# submit_onejob user.qbuat.data12_8TeV.periodI.physics_JetTauEtmiss.PhysCont.DESD_CALJET.t0pro14_v01_D3PD_v1 'data' ${VERSION}
+# submit_onejob user.qbuat.data12_8TeV.periodJ.physics_JetTauEtmiss.PhysCont.DESD_CALJET.repro14_v01_D3PD_v1 'data' ${VERSION}
+# submit_onejob user.qbuat.data12_8TeV.periodL.physics_JetTauEtmiss.PhysCont.DESD_CALJET.repro14_v01_D3PD_v1 'data' ${VERSION}
+# submit_onejob user.qbuat.data12_8TeV.periodM.physics_JetTauEtmiss.PhysCont.DESD_CALJET.t0pro14_v01_D3PD_v1 'data' ${VERSION}
 
 

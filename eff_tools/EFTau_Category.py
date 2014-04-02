@@ -21,7 +21,7 @@ class Category:
         if self._tree.EF_nTracks==3: return ["3p","mp"]
         else: return ["mp"]
     def getPi0Cat(self):
-        if self._tree.pi0BDTPrimary>0.47: return ["0n"]
+        if self._tree.off_pi0BDTPrimary>0.47: return ["0n"]
         else: return ["Xn"]
     def getProngPi0Cat(self):
         if "1p" in self.prong_cat:
@@ -49,9 +49,9 @@ class Category:
         else : return ["crazy_mu"]
     def getIDCat(self):
         if self._tree.EF_nTracks==1:
-            if self._tree.pi0BDTPrimary>0.47: return ["all","1p","1p_0n"]
+            if self._tree.off_pi0BDTPrimary>0.47: return ["all","1p","1p_0n"]
             else:                             return ["all","1p","1p_Xn"]        
         else:
-            if self._tree.pi0BDTPrimary>0.47: return ["all","mp","mp_0n"]
+            if self._tree.off_pi0BDTPrimary>0.47: return ["all","mp","mp_0n"]
             else:                             return ["all","mp","mp_Xn"]        
             

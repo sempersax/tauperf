@@ -5,7 +5,8 @@ HELPER_DIR=../helpers
 SKIM_DIR=../skim_tools
 SUBSTRUCTURE_DIR=../substructure_tools
 
-PY_SCRIPT_1=../D3PD_slimmer
+# PY_SCRIPT_1=../D3PD_slimmer
+PY_SCRIPT_1=../new_skimmer
 PY_SCRIPT_2=../TrainingTesting_Sample
 
 echo "-- Tarball the analysis --"

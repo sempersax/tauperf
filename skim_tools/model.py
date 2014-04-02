@@ -180,6 +180,8 @@ class ClusterBasedTau(TreeModel):
     pi0_vistau_m     = FloatCol(-1111.)
     pi0_n            = IntCol(-1111)
 
+    clbased_pt = FloatCol(-1111.)
+
     @classmethod
     def set(cls,this,other):
         this.pi0BDTPrimary    = other.calcVars_pi0BDTPrimaryScore
@@ -187,7 +189,7 @@ class ClusterBasedTau(TreeModel):
         this.pi0_ptratio      = other.pi0_vistau_pt/other.pt
         this.pi0_vistau_m     = other.pi0_vistau_m
         this.pi0_n            = other.pi0_n
-
+        this.clbased_pt = other.fourvect_clbased.Pt()
 
 class Track(FourMomentum):
     d0       = FloatCol( -1111. )

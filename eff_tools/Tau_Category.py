@@ -16,12 +16,12 @@ class Category:
     def getCategories(self):
         return self.prong_cat+self.prongpi0_cat+self.eta_cat+self.mu_cat
     def getProngCat(self):
-        if self._tree.nTracks==1: return ["1p"]
-        if self._tree.nTracks==2: return ["2p","mp"]
-        if self._tree.nTracks==3: return ["3p","mp"]
+        if self._tree.off_numTrack==1: return ["1p"]
+        if self._tree.off_numTrack==2: return ["2p","mp"]
+        if self._tree.off_numTrack==3: return ["3p","mp"]
         else: return ["mp"]
     def getPi0Cat(self):
-        if self._tree.pi0BDTPrimary>0.47: return ["0n"]
+        if self._tree.off_pi0BDTPrimary>0.47: return ["0n"]
         else: return ["Xn"]
     def getProngPi0Cat(self):
         if "1p" in self.prong_cat:
@@ -40,7 +40,7 @@ class Category:
             
 
     def getEtaCat(self):
-        if abs(self._tree.eta)<1.37: return ["central"]
+        if abs(self._tree.off_eta)<1.37: return ["central"]
         else: return ["endcap"]
     def getMuCat(self):
         if self._tree.mu<20: return ["low_mu"]
@@ -48,10 +48,10 @@ class Category:
         elif self._tree.mu<60: return ["high_mu"]
         else : return ["crazy_mu"]
     def getIDCat(self):
-        if self._tree.nTracks==1:
-            if self._tree.pi0BDTPrimary>0.47: return ["all","1p","1p_0n"]
+        if self._tree.off_numTrack==1:
+            if self._tree.off_pi0BDTPrimary>0.47: return ["all","1p","1p_0n"]
             else:                             return ["all","1p","1p_Xn"]        
         else:
-            if self._tree.pi0BDTPrimary>0.47: return ["all","mp","mp_0n"]
+            if self._tree.off_pi0BDTPrimary>0.47: return ["all","mp","mp_0n"]
             else:                             return ["all","mp","mp_Xn"]        
             

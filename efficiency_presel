@@ -75,6 +75,7 @@ for entry in xrange(entries):
     if not tauCell.hasL1matched: continue
     if tauCell.L1matched_pt<8000.: continue
     if tauCell.pt<25000.: continue
+#     if tauCell.pt<10000.: continue
     tau_cat = Category(tauCell)
     for cat in (set(tau_cat.categories+["all"])&set(plot_cat)):
         for tool in ID_Tools:
@@ -82,7 +83,7 @@ for entry in xrange(entries):
             for var in  aux.bins:
                 if "bdt" in var: continue
                 if "EF" in var: continue
-                if 'bdt_full' in ID_Tools:
+                if 'bdt_full' in tool:
                     is_passed = ID_Tools[tool].Decision() and ID_Tools['bdt_presel_fullvarlist_michel3'].Decision()
                     Efficiencies[tool][var+'_'+cat].Fill( is_passed, getattr(tauCell,var) )
                 else:

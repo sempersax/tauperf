@@ -5,8 +5,12 @@ class aux:
     # ---> binning
     bins = {}
     bins["mu"]          = [array('d', [0 ,5 ,10,15,20,25,30,35,40 ,45 ,50,55,60,65,70,75,80,85,90 ]), "Average Interaction Per Bunch Crossing"  ]
-    bins["pt"]          = [array('d', [20e3,22.5e3,25e3,27.5e3,30e3,32.5e3,35e3,37.5e3,40e3,42.5e3,45e3,50e3,60e3,70e3,80e3,100e3]), "Offline p_{T} [MeV]"]
-    bins["eta"]         = [array('d', [-2.5,-2.25,-2.0,-1.6,-1.2,-0.8,-0.4,0.0,0.4,0.8,1.2,1.6,2.0,2.25,2.5]), "#eta" ]
+    bins["off_pt"]          = [array('d', [20e3,22.5e3,25e3,27.5e3,30e3,32.5e3,35e3,37.5e3,40e3,42.5e3,45e3,50e3,60e3,70e3,80e3,100e3]), "Offline p_{T} [MeV]"]
+#     bins["pt"]          = [ array('d', [10e3,15e3,16e3,17e3,18e3,19e3,20e3,21e3,22e3,23e3,24e3,25e3,26e3,27e3,28e3,30e3,32.5e3,35e3,37.5e3,40e3,50e3,60e3,80e3,100e3,150e3]),
+#                             "Offline p_{T} [MeV]"]
+#     bins["clbased_pt"]  = [ array('d', [10e3,15e3,16e3,17e3,18e3,19e3,20e3,21e3,22e3,23e3,24e3,25e3,26e3,27e3,28e3,30e3,32.5e3,35e3,37.5e3,40e3,50e3,60e3,80e3,100e3,150e3]),
+#                             "Offline Cluster-Based p_{T} [MeV]" ]
+    bins["off_eta"]         = [array('d', [-2.5,-2.25,-2.0,-1.6,-1.2,-0.8,-0.4,0.0,0.4,0.8,1.2,1.6,2.0,2.25,2.5]), "#eta" ]
     bins["EF_pt"]       = [array('d', [20e3,22.5e3,25e3,27.5e3,30e3,32.5e3,35e3,37.5e3,40e3,42.5e3,45e3,50e3,60e3,70e3,80e3,100e3,120e3,140e3]), "Event Filter p_{T} [MeV]"]
     bins["npv"]         = [array('d', [0 ,5 ,10,15,20,25,30,35,40,45,50])   , "Number of Primary Vertices" ]
     bins["EF_eta"]      = [array('d', [-2.4,-2.0,-1.6,-1.2,-0.8,-0.4,0.0,0.4,0.8,1.2,1.6,2.0,2.4]), "Event Filter #eta" ]
