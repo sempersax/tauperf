@@ -80,13 +80,11 @@ for event in tauCell:
     if 'signal' in args.sample_type and event.tau.index_matched_true<=-1:
         continue
 
-#     if event.L1_OfflineMatched_index<=-1:
-#         continue
-#     print 3
+    if event.L1_OfflineMatched_index<=-1:
+        continue
 
-#     if event.L1_OfflineMatched_pt<8000.:
-#         continue
-#     print 4
+    if event.L1_OfflineMatched_pt<8000.:
+        continue
 
     if event.tau.pt<25000.:
         continue

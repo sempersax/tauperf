@@ -41,13 +41,14 @@ run_one_presel_eff()
     sample_type=${2}
     output_label=`echo ${input_file}| awk -F".txt" '{print $1}' | awk -F"input" '{print $2}'`
     output_file=efficiencies_presel${output_label}.root
-    ./efficiency_presel ${INPUT_LIST}/v${VERSION}/${input_file} ${OUTPUT_DIR}/${output_file} ${sample_type} -N ${3}
+#     ./efficiency_presel ${INPUT_LIST}/v${VERSION}/${input_file} ${OUTPUT_DIR}/${output_file} ${sample_type} -N ${3}
+    ./efficiency_presel_new ${INPUT_LIST}/v${VERSION}/${input_file} ${OUTPUT_DIR}/${output_file} ${sample_type} -N ${3}
 
 }
 
 
-run_one_presel_eff input_Ztautau_14TeV_all_v${VERSION}.txt 'signal_14TeV' ${EVENTS}
-run_one_presel_eff input_Ztautau_14TeV_mu20_v${VERSION}.txt 'signal_14TeV' ${EVENTS}
+# run_one_presel_eff input_Ztautau_14TeV_all_v${VERSION}.txt 'signal_14TeV' ${EVENTS}
+# run_one_presel_eff input_Ztautau_14TeV_mu20_v${VERSION}.txt 'signal_14TeV' ${EVENTS}
 run_one_presel_eff input_Ztautau_14TeV_mu40_v${VERSION}.txt 'signal_14TeV' ${EVENTS}
 run_one_presel_eff input_Ztautau_14TeV_mu60_v${VERSION}.txt 'signal_14TeV' ${EVENTS}
 run_one_presel_eff input_Ztautau_14TeV_mu80_v${VERSION}.txt 'signal_14TeV' ${EVENTS}

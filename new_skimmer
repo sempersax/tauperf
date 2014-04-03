@@ -45,18 +45,18 @@ d3pd_tree = in_file.tau
 #--> Create output file 
 print 'create file '+args.output_rootfile
 out_file = root_open( args.output_rootfile, "recreate" )
-slim_tree = Tree( 'tauCell', model = EventInfoBlock+RecoTauBlock+TrueTauBlock+EFTauBlock+L2TauBlock+L1TauBlock+L1_OfflineMatched_TauBlock )
+slim_tree = Tree( 'tauCell', model=EventInfoBlock+RecoTauBlock+TrueTauBlock+EFTauBlock+L2TauBlock+L1TauBlock+L1_OfflineMatched_TauBlock )
 define_objects( d3pd_tree )
 
-slim_tree.define_object( name = 'tau'     , prefix= 'off_')
-slim_tree.define_object( name = 'tau_true', prefix= 'true_')
-slim_tree.define_object( name = 'tau_EF'  , prefix= 'EF_')
-slim_tree.define_object( name = 'tau_L2'  , prefix= 'L2_')
-slim_tree.define_object( name = 'tau_L1'  , prefix= 'L1_')
-slim_tree.define_object( name = 'tau_L1_OfflineMatched'  , prefix= 'L1_OfflineMatched_')
+slim_tree.define_object(name='tau', prefix='off_')
+slim_tree.define_object(name='tau_true', prefix='true_')
+slim_tree.define_object(name='tau_EF', prefix='EF_')
+slim_tree.define_object(name='tau_L2', prefix='L2_')
+slim_tree.define_object(name='tau_L1', prefix='L1_')
+slim_tree.define_object(name='tau_L1_OfflineMatched', prefix= 'L1_OfflineMatched_')
 
 #--> Get number of entries in input tree
-nEvents = d3pd_tree.GetEntries()
+nEvents=d3pd_tree.GetEntries()
 if args.Nentries !=-1:
     nEvents = args.Nentries
 print 'Number of events: ' + str(nEvents)

@@ -93,7 +93,7 @@ class EfficiencyPlot(ROOT.TCanvas):
     def __init__(self,name,title,eff_list,label_title):
         ROOT.TCanvas.__init__(self,name,title)
         self._eff_list = eff_list
-
+        print str(eff_list)
         self.legend = ROOT.TLegend(0.70,0.77,0.90,0.94)
         self.legend.SetFillColor(0)
         self.label = ROOT.TLatex()
