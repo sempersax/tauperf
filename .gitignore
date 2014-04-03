@@ -1,0 +1,12 @@
+*.pyc
+*.root
+*~
+*.png
+*.eps
+*.pdf
+*.txt
+*.tar.gz
+*.xml
+*.C
+*.d
+*.so
