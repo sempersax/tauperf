@@ -121,7 +121,7 @@ class TauCategories(object):
         self.pi0cat = self.getPi0Cat()
         self.prongpi0cat = self.getProngPi0Cat(self.prongcat,self.pi0cat)
         self.category = self.etacat+self.prongcat+self.prongpi0cat#getCategories()
-
+        self.idcat = self.getIDCat()
     @cached_property
     def getCategories(self):
         return self.prong_cat+self.etacat#+self.prongpi0_cat
