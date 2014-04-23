@@ -10,3 +10,5 @@
 *.C
 *.d
 *.so
+./package
+./rootpy
