@@ -1,10 +1,13 @@
 #!/usr/bin/env python
 import rootpy
 rootpy.log.basic_config_colorized()
+from rootpy.io import root_open
 from rootpy.extern import argparse
 import ROOT
 
-from tauid import trainer
+from tauid.trainer import BDTScan
+from tauid.trainer import trainer
+from tauid.jobs import run_pool
 from tauid import VARIABLES
 
 import fileinput
@@ -12,14 +15,17 @@ import fileinput
 
 #--> Receive and parse argument
 parser = argparse.ArgumentParser()
-parser.add_argument("input_file_sig"  , help="the input sig list (txt file)")
-parser.add_argument("input_file_bkg"  , help="the input bkg list (txt file)")
-parser.add_argument("--factory_suffix", help="the basename of the training result", default='test')
-parser.add_argument("--ID"            , help="the ID menu trained (full/presel)",   default='full' )
-parser.add_argument("--cat"           , help="the category used for training",   default='all' )
-parser.add_argument("--ecm"           , help="the center of mass energy (8TeV/14TeV)", default='14TeV')
-parser.add_argument("--object_type"     , help="the sample type (8TeV or 14 TeV)", default="EF")
-parser.add_argument("-N","--Nentries" , help="Specify the number of events use to run", type=int, default=-1)
+parser.add_argument("input_file_sig", help="the input sig list (txt file)")
+parser.add_argument("input_file_bkg", help="the input bkg list (txt file)")
+parser.add_argument("--factory-suffix", help="the basename of the training result", default='test')
+parser.add_argument("--ID", help="the ID menu trained (full/presel)",
+                    default='full', choices=['presel', 'full'] )
+parser.add_argument("--cat", help="the category used for training", default='all',
+                    choices=['all', '1p', '3p', 'mp', '1p_0n', '1p_Xn', '3p_0n', '3p_Xn'] )
+parser.add_argument("--ecm", help="the center of mass energy (8TeV/14TeV)",
+                    default='14TeV', choices=['14TeV', '8TeV'])
+parser.add_argument("--object-type", help="the sample type (8TeV or 14 TeV)", default="EF", choices=['EF', 'offline'])
+parser.add_argument("--N","--Nentries", help="Specify the number of events use to run", type=int, default=-1)
 args = parser.parse_args()
 parser.print_usage()
 
@@ -51,18 +57,18 @@ matching = ROOT.TCut("EF_ismatched==1 && L2_ismatched==1 && L1_ismatched==1")
 eta_cut  = ROOT.TCut("EF_eta<2.2 && EF_eta>-2.2")
 
 if 'offline' in args.object_type:
-    matching = ROOT.TCut("hasL1matched==1 && L1matched_pt>8000.")
-    eta_cut  = ROOT.TCut("eta<2.2 && eta>-2.2")
-    tau_cat_cut["all"]     = ROOT.TCut("numTrack>0")
-    tau_cat_cut["1p"]      = ROOT.TCut("numTrack==1")
-    tau_cat_cut["3p"]      = ROOT.TCut("numTrack==3")
-    tau_cat_cut["mp"]      = ROOT.TCut("numTrack>1")
-    tau_cat_cut["1p_0n"]   = ROOT.TCut("numTrack==1 && pi0BDTPrimary>0.47")
-    tau_cat_cut["3p_0n"]   = ROOT.TCut("numTrack==3 && pi0BDTPrimary>0.47")
-    tau_cat_cut["1p_Xn"]   = ROOT.TCut("numTrack==1 && pi0BDTPrimary<0.47")
-    tau_cat_cut["3p_Xn"]   = ROOT.TCut("numTrack==3 && pi0BDTPrimary<0.47")
+    matching = ROOT.TCut("L1_OfflineMatched_index>-1 && L1_OfflineMatched_pt>8000.")
+    eta_cut  = ROOT.TCut("off_eta<2.2 && off_eta>-2.2")
+    tau_cat_cut["all"]     = ROOT.TCut("off_numTrack>0")
+    tau_cat_cut["1p"]      = ROOT.TCut("off_numTrack==1")
+    tau_cat_cut["3p"]      = ROOT.TCut("off_numTrack==3")
+    tau_cat_cut["mp"]      = ROOT.TCut("off_numTrack>1")
+    tau_cat_cut["1p_0n"]   = ROOT.TCut("off_numTrack==1 && off_pi0BDTPrimary>0.47")
+    tau_cat_cut["3p_0n"]   = ROOT.TCut("off_numTrack==3 && off_pi0BDTPrimary>0.47")
+    tau_cat_cut["1p_Xn"]   = ROOT.TCut("off_numTrack==1 && off_pi0BDTPrimary<0.47")
+    tau_cat_cut["3p_Xn"]   = ROOT.TCut("off_numTrack==3 && off_pi0BDTPrimary<0.47")
 
-truth    = ROOT.TCut("truth_ismatched==1")
+truth    = ROOT.TCut("off_index_matched_true>-1")
 bkgcut  =  matching
 bkgcut += eta_cut
 if 'EF' in args.object_type:
@@ -79,31 +85,30 @@ print sigcut
 # -------------> BDT TRAINING       <---------------------
 # --------------------------------------------------------
 output_name  = 'tmp/'+args.factory_suffix+'_'+args.cat+'_'+args.ecm+'_'+args.object_type+'_'+args.ID+'.root'
-factory_name = args.factory_suffix+'_'+args.cat+'_'+args.ecm+'_'+args.object_type
+factory_name = '{0}_{1}_{2}_{3}'.format(args.factory_suffix, args.cat,
+                                        args.ecm, args.object_type)
 
-outputFile = ROOT.TFile(output_name,'RECREATE')
-factory = trainer(factory_name, outputFile)
-factory.SetVariablesFromList(VARIABLES['presel_1'])
 
-factory.SetInputTrees(sig_tree, bkg_tree)
-factory.PrepareTrainingAndTestTree(sigcut, bkgcut, "NormMode=EqualNumEvents:SplitMode=Block:!V")
-factory.BookBDT()
-# Ntrees = [10,50,100,150,200,250,300,350,400]
-# NminEvents = [10,100,1000,10000]
-# for Nt in Ntrees:
-#     for Ne in NminEvents:
-#         factory.BookBDT(Ne,Nt)
-
-# --> Train MVAs using the set of training events
-factory.TrainAllMethods()
-
-# --> Evaluate all MVAs using the set of test events
-factory.TestAllMethods()
-
-# --> Evaluate and compare performance of all configured MVAs
-factory.EvaluateAllMethods()
-
-outputFile.Close()
+with root_open(output_name, 'recreate') as output_file:
+    factory = trainer(factory_name, output_file)
+    factory.SetVariablesFromList(VARIABLES['presel_2'])
+    factory.SetInputTrees(sig_tree, bkg_tree)
+    factory.PrepareTrainingAndTestTree(sigcut, bkgcut, "NormMode=EqualNumEvents:SplitMode=Block:!V")
+    workers = []
+    nevts = [10, 100, 1000]
+    ntrees = [200]
+    for nevt in nevts:
+        for ntree in ntrees:
+            workers.append(BDTScan(output_name,factory, ntree, nevt))
+    run_pool(workers, n_jobs=-1)
+    
+#     factory.BookBDT()
+#     # --> Train MVAs using the set of training events
+#     factory.TrainAllMethods()
+#     # --> Evaluate all MVAs using the set of test events
+#     factory.TestAllMethods()
+#     # --> Evaluate and compare performance of all configured MVAs
+#     factory.EvaluateAllMethods()
 
     
 

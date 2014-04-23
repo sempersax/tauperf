@@ -1,5 +1,13 @@
-from trainer import trainer
+import os
+import logging
 from variables import *
+
+log = logging.getLogger('tauid')
+if not os.environ.get('DEBUG', False):
+    log.setLevel(logging.INFO)
+
+
+
 VARIABLES = {
     'presel_1': [centfrac,
                  pssfraction,
@@ -7,7 +15,7 @@ VARIABLES = {
                  emradius,
                  hadradius,
                  emfraction,
-                 hadfraction,
+                 hadenergy,
                  stripwidth,
                  lead2clustereoverallclusterE,
                  lead3clustereoverallclusterE,
@@ -21,7 +29,7 @@ VARIABLES = {
                  emradius,
                  hadradius,
                  emfraction,
-                 hadfraction,
+                 hadenergy,
                  stripwidth,
                  lead2clustereoverallclusterE,
                  lead3clustereoverallclusterE,

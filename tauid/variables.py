@@ -1,6 +1,6 @@
 def get_label(variable):
     label = variable['root']
-    if 'units' in variable.keys:
+    if 'units' in variable.keys():
         label += ' [{0}]'.format(variable['units'])
     return label
 
@@ -47,18 +47,19 @@ hadradius = {
 emfraction = {
     'name': 'EMFraction',
     'root': 'f_{EM} (EMSCALE)',
-    'training': 'off_EMFractionAtEMSCale',
+    'training': 'off_EMFractionAtEMScale',
     'type': 'F',
     'bins': 20,
     'range': (0, 1)
     }
-hadfraction = {
-    'name': 'HadFraction',
-    'root': 'f_{HAD}',
-    'training': 'off_HadFraction',
+hadenergy = {
+    'name': 'HadEnergy',
+    'root': 'E_{HAD}',
+    'training': 'off_HadEnergy',
     'type': 'F',
     'bins': 20,
-    'range': (0, 1)
+    'range': (0, 40000),
+    'units': 'MeV'
     }
 stripwidth = {
     'name': 'stripWidth2',
@@ -86,16 +87,16 @@ lead3clustereoverallclusterE = {
     }
 numtopoclusters = {
     'name': 'numTopoClusters',
-    'root': 'Number of topo clusters'
-    'taining': 'off_numTopoClusters',
+    'root': 'Number of topo clusters',
+    'training': 'off_numTopoClusters',
     'type': 'I',
     'bins': 20,
     'range': (0, 10)
     }
 topoinvmass = {
     'name': 'TopoInvMass',
-    'root': 'Invariant Mass of The Topoclusters'
-    'training': 'off_TopoInvMass',
+    'root': 'Invariant Mass of The Topoclusters',
+    'training': 'off_topoInvMass',
     'type': 'F',
     'bins': 20,
     'range': (0, 40000),
@@ -103,23 +104,23 @@ topoinvmass = {
     }
 topomeandeltar = {
     'name': 'TopoMeanDeltaR',
-    'root': 'Mean Radius of The Topoclusters'
-    'training': 'off_TopoMeanDeltaR',
+    'root': 'Mean Radius of The Topoclusters',
+    'training': 'off_topoMeanDeltaR',
     'type': 'F',
     'bins': 20,
     'range': (0, 0.4),
     }
 numefftopoclusters = {
     'name': 'numEffTopoClusters',
-    'root': 'Effective Number of Topoclusters'
-    'taining': 'off_numEffTopoClusters',
+    'root': 'Effective Number of Topoclusters',
+    'training': 'off_numEffTopoClusters',
     'type': 'F',
     'bins': 20,
     'range': (0, 10)
     }
 efftopoinvmass = {
     'name': 'effTopoInvMass',
-    'root': 'Invariant Mass of The Effective Topoclusters'
+    'root': 'Invariant Mass of The Effective Topoclusters',
     'training': 'off_effTopoInvMass',
     'type': 'F',
     'bins': 20,
@@ -128,7 +129,7 @@ efftopoinvmass = {
     }
 efftopomeandeltar = {
     'name': 'effTopoMeanDeltaR',
-    'root': 'Mean Radius of The Effective Topoclusters'
+    'root': 'Mean Radius of The Effective Topoclusters',
     'training': 'off_effTopoMeanDeltaR',
     'type': 'F',
     'bins': 20,
