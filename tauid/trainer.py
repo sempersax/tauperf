@@ -7,33 +7,53 @@ from . import log; log=log[__name__]
 from ROOT import TMVA
 # ---> rootpy imports
 from rootpy.utils.lock import lock
+from rootpy.io import root_open
 
 class BDTScan(Process):
     """
     """
     def __init__(self,
                  output_name,
-                 factory, ntrees, neventsmin):
+                 factory_name,
+                 variables_list,
+                 sig_tree,
+                 bkg_tree,
+                 sig_cut,
+                 bkg_cut,
+                 ntrees,
+                 neventsmin):
         super(BDTScan, self).__init__()
         self.output_name = output_name
-        self.factory = factory
+        self.factory_name = factory_name
+        self.variables_list = variables_list
+        self.sig_tree = sig_tree
+        self.bkg_tree = bkg_tree
+        self.sig_cut = sig_cut
+        self.bkg_cut = bkg_cut
         self.ntrees = ntrees
         self.neventsmin = neventsmin
 
     def run(self):
-        with lock(self.output_name):
-            self.factory.BookBDT(NTrees=self.ntrees, nEventsMin=self.neventsmin)
-            self.factory.TrainAllMethods()
-            self.factory.TestAllMethods()
-            self.factory.EvaluateAllMethods()
+        with root_open(self.output_name, 'recreate') as output_file: 
+            factory = trainer(self.factory_name, output_file)
+            factory.SetVariablesFromList(self.variables_list)
+            factory.SetInputTrees(self.sig_tree, self.bkg_tree)
+            factory.PrepareTrainingAndTestTree(self.sig_cut, self.bkg_cut,
+                                               "NormMode=EqualNumEvents:SplitMode=Block:!V")
+            factory.BookBDT(NTrees=self.ntrees, nEventsMin=self.neventsmin)
+            factory.TrainAllMethods()
+            factory.TestAllMethods()
+            factory.EvaluateAllMethods()
         
+
 class trainer(TMVA.Factory):
 
-    def __init__(self, factory_name,outputFile):
+    def __init__(self, factory_name,outputFile, verbose=''):
         TMVA.Factory.__init__(self,
                               factory_name,
                               outputFile,
-                              "V:!Silent:Color:DrawProgressBar")
+                              verbose)
+                              #"V:!Silent:Color:DrawProgressBar")
         
     def SetVariablesFromList(self, variables_list):
         for var in variables_list:
@@ -60,7 +80,7 @@ class trainer(TMVA.Factory):
         params += ["NTrees={0}".format(NTrees)]
         log.info(params)
 
-        method_name = "BDT_Train_Ntrees{0}_Nevents{1}".format(NTrees, nEventsMin)
+        method_name = "BDT"
         params_string = "!H:V"
         for param in params:
             params_string+= ":"+param

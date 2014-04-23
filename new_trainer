@@ -15,16 +15,17 @@ import fileinput
 
 #--> Receive and parse argument
 parser = argparse.ArgumentParser()
-parser.add_argument("input_file_sig", help="the input sig list (txt file)")
-parser.add_argument("input_file_bkg", help="the input bkg list (txt file)")
-parser.add_argument("--factory-suffix", help="the basename of the training result", default='test')
+parser.add_argument("actions", choices=['train', 'presel_test', 'full_test'])
+parser.add_argument("--sig-file", help="the input sig list (txt file)")
+parser.add_argument("--bkg-file", help="the input bkg list (txt file)")
+parser.add_argument("--factory-prefix", help="the basename of the training result", default='test')
 parser.add_argument("--ID", help="the ID menu trained (full/presel)",
-                    default='full', choices=['presel', 'full'] )
+                    default='presel', choices=['presel', 'full'] )
 parser.add_argument("--cat", help="the category used for training", default='all',
                     choices=['all', '1p', '3p', 'mp', '1p_0n', '1p_Xn', '3p_0n', '3p_Xn'] )
 parser.add_argument("--ecm", help="the center of mass energy (8TeV/14TeV)",
                     default='14TeV', choices=['14TeV', '8TeV'])
-parser.add_argument("--object-type", help="the sample type (8TeV or 14 TeV)", default="EF", choices=['EF', 'offline'])
+parser.add_argument("--object-type", help="the sample type", default="offline", choices=['EF', 'offline'])
 parser.add_argument("--N","--Nentries", help="Specify the number of events use to run", type=int, default=-1)
 args = parser.parse_args()
 parser.print_usage()
@@ -34,8 +35,10 @@ parser.print_usage()
 sig_tree = ROOT.TChain('tauCell_train')
 bkg_tree = ROOT.TChain('tauCell_train')
 
-for ifile in open(args.input_file_sig): sig_tree.Add(ifile.strip())
-for ifile in open(args.input_file_bkg): bkg_tree.Add(ifile.strip())
+for ifile in open(args.sig_file):
+    sig_tree.Add(ifile.strip())
+for ifile in open(args.bkg_file):
+    bkg_tree.Add(ifile.strip())
 
 tau_cat_cut   = {}
 if 'EF' in args.object_type:
@@ -84,37 +87,45 @@ print sigcut
 # --------------------------------------------------------
 # -------------> BDT TRAINING       <---------------------
 # --------------------------------------------------------
-output_name  = 'tmp/'+args.factory_suffix+'_'+args.cat+'_'+args.ecm+'_'+args.object_type+'_'+args.ID+'.root'
-factory_name = '{0}_{1}_{2}_{3}'.format(args.factory_suffix, args.cat,
-                                        args.ecm, args.object_type)
+# output_name  = 'tmp/'+args.factory_suffix+'_'+args.cat+'_'+args.ecm+'_'+args.object_type+'_'+args.ID+'.root'
+# factory_name = '{0}_{1}_{2}_{3}'.format(args.factory_suffix, args.cat,
+#                                         args.ecm, args.object_type)
 
 
-with root_open(output_name, 'recreate') as output_file:
-    factory = trainer(factory_name, output_file)
-    factory.SetVariablesFromList(VARIABLES['presel_2'])
-    factory.SetInputTrees(sig_tree, bkg_tree)
-    factory.PrepareTrainingAndTestTree(sigcut, bkgcut, "NormMode=EqualNumEvents:SplitMode=Block:!V")
-    workers = []
-    nevts = [10, 100, 1000]
-    ntrees = [200]
-    for nevt in nevts:
-        for ntree in ntrees:
-            workers.append(BDTScan(output_name,factory, ntree, nevt))
+# output_file = root_open(output_name, 'recreate')
+# factory = trainer(factory_name, output_file)
+# factory.SetVariablesFromList(VARIABLES['presel_2'])
+# factory.SetInputTrees(sig_tree, bkg_tree)
+# factory.PrepareTrainingAndTestTree(sigcut, bkgcut, "NormMode=EqualNumEvents:SplitMode=Block:!V")
+# factory.BookBDT()
+# # --> Train MVAs using the set of training events
+# factory.TrainAllMethods()
+# # --> Evaluate all MVAs using the set of test events
+# factory.TestAllMethods()
+# # --> Evaluate and compare performance of all configured MVAs
+# factory.EvaluateAllMethods()
+
+
+
+
+workers = []
+outputs = []
+nevts = [10, 100, 1000, 10000]
+ntrees = [50*i for i in range(1,7)]
+for nevt in nevts:
+    for ntree in ntrees:
+        output_name  = 'tmp/{0}_{1}_{2}_{3}_{4}_nevts{5}_ntrees{6}.root'.format(args.factory_prefix, args.cat,
+                                                                                args.ecm, args.object_type,
+                                                                                args.ID, nevt, ntree)
+        factory_name = '{0}_{1}_{2}_{3}_{4}'.format(args.factory_prefix, args.cat,
+                                                    args.ecm, args.object_type, args.ID)
+        outputs.append(output_name)
+        workers.append(BDTScan(output_name,factory_name, VARIABLES['presel_2'],
+                               sig_tree, bkg_tree, sigcut, bkgcut, ntree, nevt))
+
+if 'train' in args.actions:
     run_pool(workers, n_jobs=-1)
-    
-#     factory.BookBDT()
-#     # --> Train MVAs using the set of training events
-#     factory.TrainAllMethods()
-#     # --> Evaluate all MVAs using the set of test events
-#     factory.TestAllMethods()
-#     # --> Evaluate and compare performance of all configured MVAs
-#     factory.EvaluateAllMethods()
+
 
     
 
-
-
-
-
-
-        
