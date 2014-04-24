@@ -62,7 +62,7 @@ class trainer(TMVA.Factory):
     def BookBDT(self,
                 nEventsMin=10,
                 NTrees=100,
-                MaxDepth=8,
+                #MaxDepth=8,
                 nCuts=200,
                 NNodesMax=100000):
 
@@ -73,7 +73,7 @@ class trainer(TMVA.Factory):
         params += ["UseYesNoLeaf=False"]
         params += ["AdaBoostBeta=0.2"]
         params += ["DoBoostMonitor"]
-        params += ["MaxDepth={0}".format(MaxDepth)]
+        #         params += ["MaxDepth={0}".format(MaxDepth)]
         params += ["nCuts={0}".format(nCuts)]
         params += ["NNodesMax={0}".format(NNodesMax)]
         params += ["nEventsMin={0}".format(nEventsMin)]
