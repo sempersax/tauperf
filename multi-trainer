@@ -48,9 +48,6 @@ args = parser.parse_args()
 parser.print_usage()
 
 
-
-
-
 # --> Import signal and bkg trees
 sig_tree = ROOT.TChain('tauCell_train')
 bkg_tree = ROOT.TChain('tauCell_train')

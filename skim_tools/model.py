@@ -114,6 +114,7 @@ class CaloTau(TreeModel):
     lead2ClusterEOverAllClusterE  = FloatCol(-1111.) 
     lead3ClusterEOverAllClusterE =  FloatCol(-1111.)
     EMFractionAtEMScale          =  FloatCol(-1111.)
+    HADFractionAtEMScale         =  FloatCol(-1111.)
 
     @classmethod
     def set(cls,this,other):
@@ -137,6 +138,8 @@ class CaloTau(TreeModel):
         this.lead2ClusterEOverAllClusterE = other.seedCalo_lead2ClusterEOverAllClusterE
         this.lead3ClusterEOverAllClusterE = other.seedCalo_lead3ClusterEOverAllClusterE
         this.EMFractionAtEMScale          = other.calcVars_EMFractionAtEMScale
+        seedCalo_et = other.seedCalo_etEMAtEMScale+other.seedCalo_etHadAtEMScale
+        this.HADFractionAtEMScale = 0 if seedCalo_et==0 else other.seedCalo_etHadAtEMScale/(seedCalo_et)
 
 class TrackTau(TreeModel):
     numTrack         = IntCol(default = -1111)

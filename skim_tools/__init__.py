@@ -1,1 +1,1 @@
-from mixin import TauCategories
+from mixins import TauCategories

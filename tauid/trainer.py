@@ -63,7 +63,7 @@ class trainer(TMVA.Factory):
                 nEventsMin=10,
                 NTrees=100,
                 #MaxDepth=8,
-                nCuts=200,
+                #nCuts=200,
                 NNodesMax=100000):
 
         params  = ["PruneBeforeBoost=False"]
@@ -74,7 +74,7 @@ class trainer(TMVA.Factory):
         params += ["AdaBoostBeta=0.2"]
         params += ["DoBoostMonitor"]
         #         params += ["MaxDepth={0}".format(MaxDepth)]
-        params += ["nCuts={0}".format(nCuts)]
+        #         params += ["nCuts={0}".format(nCuts)]
         params += ["NNodesMax={0}".format(NNodesMax)]
         params += ["nEventsMin={0}".format(nEventsMin)]
         params += ["NTrees={0}".format(NTrees)]
