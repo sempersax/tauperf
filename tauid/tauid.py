@@ -1,9 +1,11 @@
-# from EFTau_Category import Category
-from skim.mixins import TauCategories
-from DecisionTool import DecisionTool
-
+# root/rootpy imports
 from rootpy.tree import Tree
 from rootpy import asrootpy
+# local imports
+from skim.mixins import TauCategories
+from .decision import DecisionTool
+
+
 
 class TauIDTool:
     """
