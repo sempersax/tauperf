@@ -17,9 +17,9 @@ stl.vector( 'vector<float>' )
 
 import ROOT
 
-from skim_tools.edm   import *
-from skim_tools.filters import *
-from skim_tools.objects import define_objects
+from skim.edm import *
+from skim.filters import *
+from skim.objects import define_objects
 
 ROOT.gROOT.ProcessLine(".x $ROOTCOREBIN/scripts/load_packages.C")
 print 'rootcore libraries loaded'

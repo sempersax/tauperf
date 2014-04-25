@@ -11,8 +11,8 @@ from eff_tools.auxiliary      import aux
 from eff_tools.TauIDTool      import TauIDTool
 from eff_tools.Tau_Category import Category
 
-from skim_tools.edm   import *
-from skim_tools.mixins import *
+from skim.edm   import *
+from skim.mixins import *
 
 #-----------------------------------------------------------
 

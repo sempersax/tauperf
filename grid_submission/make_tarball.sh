@@ -1,7 +1,7 @@
 #!/bin/bash
 
 TAR_BALL=analysis.tar.gz
-SKIM_DIR=../skim_tools
+SKIM_DIR=../skim
 SUBSTRUCTURE_DIR=../substructure_tools
 
 # PY_SCRIPT_1=../D3PD_slimmer

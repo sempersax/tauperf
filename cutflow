@@ -13,10 +13,10 @@ import rootpy
 from rootpy.extern import ordereddict
 rootpy.log.basic_config_colorized()
 
-from skim_tools.TruthTauLoader import TruthTauLoader
-from skim_tools.RecoTauLoader  import RecoTauLoader
-from skim_tools.TrigTauLoader  import EFTauLoader,L2TauLoader,L1TauLoader
-from skim_tools.SlimTree       import SlimTree
+from skim.TruthTauLoader import TruthTauLoader
+from skim.RecoTauLoader  import RecoTauLoader
+from skim.TrigTauLoader  import EFTauLoader,L2TauLoader,L1TauLoader
+from skim.SlimTree       import SlimTree
 
 ROOT.gROOT.ProcessLine(".x $ROOTCOREBIN/scripts/load_packages.C")
 print 'rootcore libraries loaded'

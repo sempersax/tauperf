@@ -1,5 +1,5 @@
 # from EFTau_Category import Category
-from skim_tools.mixins import TauCategories
+from skim.mixins import TauCategories
 from DecisionTool import DecisionTool
 
 from rootpy.tree import Tree
