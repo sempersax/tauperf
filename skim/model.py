@@ -1,20 +1,31 @@
-from rootpy.tree import TreeModel, FloatCol, IntCol, DoubleCol, BoolCol
-from rootpy import stl
-from rootpy.vector import (LorentzRotation, LorentzVector, Vector3, Vector2)
-from rootpy import log
-ignore_warning = log['/ROOT.TVector3.PseudoRapidity'].ignore( '.*transvers momentum.*' )
-
+# ---> python imports
 import math
-import ROOT
-from ROOT import TLorentzVector
+# ---> rootpy imports
+from rootpy import asrootpy
+from rootpy.tree import TreeModel, FloatCol, IntCol
+from rootpy.vector import LorentzVector
+# ---> local imports
+from rootpy import log
+ignore_warning = log['/ROOT.TVector3.PseudoRapidity'].ignore('.*transvers momentum.*')
+
+# __all__ = ['EventInfo',
+#            'FourMomentum',
+#            'TrueTau',
+#            'CaloTau',
+#            'TrackTau',
+#            'CaloTrackTau',
+#            'ClusterBasedTau',
+#            'RecoTau',
+#            'EFTau',
+#            'L2Tau',
+#            'L1Tau',]
 
 class EventInfo(TreeModel):
-    runnumber = IntCol()
-    evtnumber = IntCol()
-    lumiblock = IntCol()
-    npv       = IntCol()
-    mu        = FloatCol()
-
+    runnumber              = IntCol()
+    evtnumber              = IntCol()
+    lumiblock              = IntCol()
+    npv                    = IntCol()
+    mu                     = FloatCol()
     chain_EF_tau20_medium1 = IntCol()
     chain_EF_tauNoCut      = IntCol()
     chain_L2_tauNoCut      = IntCol()
@@ -24,34 +35,30 @@ class EventInfo(TreeModel):
 
     @classmethod
     def set(cls, this, other):
-        this.runnumber = other.RunNumber
-        this.evtnumber = other.EventNumber
-        this.lumiblock = other.lbn
-        this.npv       = other.evt_calcVars_numGoodVertices
-        this.mu        = other.averageIntPerXing
-
+        this.runnumber              = other.RunNumber
+        this.evtnumber              = other.EventNumber
+        this.lumiblock              = other.lbn
+        this.npv                    = other.evt_calcVars_numGoodVertices
+        this.mu                     = other.averageIntPerXing
         this.chain_EF_tau20_medium1 = other.EF_tau20_medium1 
         this.chain_EF_tauNoCut      = other.EF_tauNoCut      
         this.chain_L2_tauNoCut      = other.L2_tauNoCut      
         this.chain_L1_TAU8          = other.L1_TAU8          
         this.chain_L1_TAU11I        = other.L1_TAU11I        
-#         this.chain_L2_tau18Ti_loose2_e18vh_medium1 = other.L2_tau18Ti_loose2_e18vh_medium1
-
-        
-
+        # this.chain_L2_tau18Ti_loose2_e18vh_medium1 = other.L2_tau18Ti_loose2_e18vh_medium1
 
 class FourMomentum(TreeModel):
-    pt  = FloatCol( default=-1111. )
-    p   = FloatCol( default=-1111. )
-    et  = FloatCol( default=-1111. )
-    e   = FloatCol( default=-1111. )
-    eta = FloatCol( default=-1111. )
-    phi = FloatCol( default=-1111. )
-    m   = FloatCol( default=-1111. )
+    pt  = FloatCol(default=-1111.)
+    p   = FloatCol(default=-1111.)
+    et  = FloatCol(default=-1111.)
+    e   = FloatCol(default=-1111.)
+    eta = FloatCol(default=-1111.)
+    phi = FloatCol(default=-1111.)
+    m   = FloatCol(default=-1111.)
 
     @classmethod
     def set(cls, this, other):
-        if isinstance(other, TLorentzVector):
+        if isinstance(other, LorentzVector):
             vect = other
         else:
             vect = other.fourvect
@@ -68,14 +75,13 @@ class TrueTau(FourMomentum):
     nProng       = IntCol(default=-1111)
     nPi0         = IntCol(default=-1111)
     charge       = IntCol(default=-1111)
-
-    vis_pt       = FloatCol( default=-1111. )
-    vis_p        = FloatCol( default=-1111. )
-    vis_et       = FloatCol( default=-1111. )
-    vis_e        = FloatCol( default=-1111. )
-    vis_eta      = FloatCol( default=-1111. )
-    vis_phi      = FloatCol( default=-1111. )
-    vis_m        = FloatCol( default=-1111. )
+    vis_pt       = FloatCol(default=-1111.)
+    vis_p        = FloatCol(default=-1111.)
+    vis_et       = FloatCol(default=-1111.)
+    vis_e        = FloatCol(default=-1111.)
+    vis_eta      = FloatCol(default=-1111.)
+    vis_phi      = FloatCol(default=-1111.)
+    vis_m        = FloatCol(default=-1111.)
 
     @classmethod
     def set(cls,this,other):
@@ -87,9 +93,10 @@ class TrueTau(FourMomentum):
         this.vis_p        = other.fourvect_vis.P()
         this.vis_et       = other.fourvect_vis.Et()
         this.vis_e        = other.fourvect_vis.E()
-        this.vis_eta      = other.fourvect_vis.Eta()
-        this.vis_phi      = other.fourvect_vis.Phi()
         this.vis_m        = other.fourvect_vis.M()
+        with ignore_warning:
+            this.vis_eta      = other.fourvect_vis.Eta()        
+            this.vis_phi      = other.fourvect_vis.Phi()
 
 
 class CaloTau(TreeModel):
@@ -175,14 +182,12 @@ class CaloTrackTau(TreeModel):
         this.EtOverLeadTrackPt  = 1./this.corrFTrk
         this.trkAvgDist         = other.seedCalo_trkAvgDist
 
-
 class ClusterBasedTau(TreeModel):
     pi0BDTPrimary    = FloatCol(-1111.)
     pi0BDTSecondary  = FloatCol(-1111.)
     pi0_ptratio      = FloatCol(-1111.)
     pi0_vistau_m     = FloatCol(-1111.)
     pi0_n            = IntCol(-1111)
-
     clbased_pt = FloatCol(-1111.)
 
     @classmethod
@@ -194,35 +199,31 @@ class ClusterBasedTau(TreeModel):
         this.pi0_n            = other.pi0_n
         this.clbased_pt = other.fourvect_clbased.Pt()
 
-class Track(FourMomentum):
-    d0       = FloatCol( -1111. )
-    z0       = FloatCol( -1111. )
-    nBLHits  = IntCol( -1111 )
-    nPixHits = IntCol( -1111 )
-    nSCTHits = IntCol( -1111 )
-    nTRTHits = IntCol( -1111 )
-    nHits    = IntCol( -1111 )
+class RecoTau(FourMomentum+CaloTau+TrackTau+CaloTrackTau+ClusterBasedTau):
+    index              = IntCol(default=-1)
+    BDTloose           = FloatCol(default=-1111.)
+    BDTmedium          = FloatCol(default=-1111.)
+    BDTtight           = FloatCol(default=-1111.)
+    index_matched_true = IntCol(default=-1)
+    index_matched_EF   = IntCol(default=-1)
+    index_matched_L1   = IntCol(default=-1)
 
-
-class RecoTau( FourMomentum+CaloTau+TrackTau+CaloTrackTau+ClusterBasedTau ):
-    index              = IntCol( -1 )
-    BDTloose           = FloatCol( -1111. )
-    BDTmedium          = FloatCol( -1111. )
-    BDTtight           = FloatCol( -1111. )
-    index_matched_true = IntCol(-1)
-    index_matched_EF   = IntCol(-1)
-    index_matched_L1   = IntCol(-1)
-
-
-
-class EFTau( FourMomentum+CaloTau+TrackTau+CaloTrackTau ):
-    index = IntCol(default=-1)
-    index_matched_L2 = IntCol(-1)
+class EFTau(FourMomentum+CaloTau+TrackTau+CaloTrackTau):
+    index            = IntCol(default=-1)
+    index_matched_L2 = IntCol(default=-1)
     
-class L2Tau( FourMomentum ):
+class L2Tau(FourMomentum):
     index = IntCol(default=-1)
-    index_matched_L1 = IntCol(-1)
+    index_matched_L1 = IntCol(default=-1)
 
-
-class L1Tau( FourMomentum ):
+class L1Tau(FourMomentum):
     index = IntCol(default=-1)
+
+class Track(FourMomentum):
+    d0       = FloatCol(default=-1111.)
+    z0       = FloatCol(default=-1111.)
+    nBLHits  = IntCol(default=-1111)
+    nPixHits = IntCol(default=-1111)
+    nSCTHits = IntCol(default=-1111)
+    nTRTHits = IntCol(default=-1111)
+    nHits    = IntCol(default=-1111)

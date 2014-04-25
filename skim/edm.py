@@ -1,87 +1,72 @@
-from rootpy.tree import TreeModel, FloatCol, IntCol, DoubleCol, BoolCol
-from rootpy import stl
-from rootpy.vector import (LorentzRotation, LorentzVector, Vector3, Vector2)
-from rootpy import log
-ignore_warning = log['/ROOT.TVector3.PseudoRapidity'].ignore( '.*transvers momentum.*' )
-
-
-import math
-import ROOT
-from ROOT import TLorentzVector
-
+# ---> local imports
 from .model import *
+from rootpy import log
+ignore_warning = log['/ROOT.TVector3.PseudoRapidity'].ignore('.*transvers momentum.*')
 
-IncludeList = ['Truth','Calo','Track','CaloTrack','ClusterBased']
+IncludeList = ['Truth', 'Calo', 'Track', 'CaloTrack', 'ClusterBased']
 
 
-class EventInfoBlock( EventInfo ):
+class EventInfoBlock(EventInfo):
     @classmethod
-    def set(cls,event,tree):
-        EventInfo.set(tree,event)
+    def set(cls, event, tree):
+        EventInfo.set(tree, event)
 
-class TrueTauBlock( TrueTau.prefix('true_') ):
-
+class TrueTauBlock(TrueTau.prefix('true_')):
     @classmethod
-    def set(cls,event,tree,tau):
-        outtau,intau = tree.tau_true, tau
+    def set(cls, event, tree, tau):
+        outtau, intau = tree.tau_true, tau
         outtau.index = intau.index
-        TrueTau.set(outtau,intau)
+        TrueTau.set(outtau, intau)
 
-class RecoTauBlock( RecoTau.prefix('off_') ):
-
+class RecoTauBlock(RecoTau.prefix('off_')):
     @classmethod
-    def set(cls,event,tree,tau):
-        outtau,intau = tree.tau,tau
+    def set(cls, event, tree, tau):
+        outtau, intau = tree.tau, tau
         outtau.index = intau.index
-        FourMomentum.set(outtau,intau)
-
-
+        FourMomentum.set(outtau, intau)
         if 'Truth' in IncludeList:
             outtau.index_matched_true = intau.trueTauAssoc_index
         if 'Calo' in IncludeList:
-            CaloTau.set(outtau,intau)
+            CaloTau.set(outtau, intau)
+            # HACK HACK HACK (VARIABLE NOT DEFINED FOR EF TAUS)
             outtau.nEffStripCells = intau.cell_nEffStripCells
         if 'Track' in IncludeList:
-            TrackTau.set(outtau,intau)
+            TrackTau.set(outtau, intau)
         if 'CaloTrack' in IncludeList:
-            CaloTrackTau.set(outtau,intau)
+            CaloTrackTau.set(outtau, intau)
         if 'ClusterBased' in IncludeList:
-            ClusterBasedTau.set(outtau,intau)
+            ClusterBasedTau.set(outtau, intau)
 
-
-
-class EFTauBlock( EFTau.prefix('EF_') ):
+class EFTauBlock(EFTau.prefix('EF_')):
     @classmethod
-    def set(cls,event,tree,EFtau):
-        outtau,intau = tree.tau_EF,EFtau
+    def set(cls, event, tree, EFtau):
+        outtau, intau = tree.tau_EF, EFtau
         outtau.index = intau.index
-        FourMomentum.set(outtau,intau)
-
+        FourMomentum.set(outtau, intau)
         if 'Calo' in IncludeList:
-            CaloTau.set(outtau,intau)
+            CaloTau.set(outtau, intau)
         if 'Track' in IncludeList:
-            TrackTau.set(outtau,intau)
+            TrackTau.set(outtau, intau)
         if 'CaloTrack' in IncludeList:
-            CaloTrackTau.set(outtau,intau)
+            CaloTrackTau.set(outtau, intau)
 
-
-class L2TauBlock( L2Tau.prefix('L2_') ):
+class L2TauBlock(L2Tau.prefix('L2_')):
     @classmethod
-    def set(cls,event,tree,L2tau):
-        outtau,intau = tree.tau_L2,L2tau
+    def set(cls, event, tree, L2tau):
+        outtau, intau = tree.tau_L2, L2tau
         outtau.index = intau.index
-        FourMomentum.set(outtau,intau)
+        FourMomentum.set(outtau, intau)
 
-class L1TauBlock( L1Tau.prefix('L1_') ):
+class L1TauBlock(L1Tau.prefix('L1_')):
     @classmethod
-    def set(cls,event,tree,L1tau):
-        outtau,intau = tree.tau_L1,L1tau
+    def set(cls, event, tree, L1tau):
+        outtau, intau = tree.tau_L1, L1tau
         outtau.index = intau.index
-        FourMomentum.set(outtau,intau)
+        FourMomentum.set(outtau, intau)
 
-class L1_OfflineMatched_TauBlock( L1Tau.prefix('L1_OfflineMatched_') ):
+class L1_OfflineMatched_TauBlock(L1Tau.prefix('L1_OfflineMatched_')):
     @classmethod
-    def set(cls,event,tree,L1tau):
-        outtau,intau = tree.tau_L1_OfflineMatched,L1tau
+    def set(cls, event, tree, L1tau):
+        outtau, intau = tree.tau_L1_OfflineMatched, L1tau
         outtau.index = intau.index
-        FourMomentum.set(outtau,intau)
+        FourMomentum.set(outtau, intau)

@@ -1,12 +1,10 @@
+# ---> python imports
 import math
-from decorators import cached_property
-
-from rootpy.vector import LorentzVector, Vector3
+# ---> rootpy imports
+from rootpy.vector import LorentzVector
 from rootpy.extern.hep import pdg
-
-# from .utils import dR
-# from .units import GeV
-# from .tauid import IDNONE
+# --> local imports
+from decorators import cached_property
 
 dphi = lambda phi1, phi2 : abs(math.fmod((math.fmod(phi1, 2*math.pi) - math.fmod(phi2, 2*math.pi)) + 3*math.pi, 2*math.pi) - math.pi)
 dR = lambda eta1, phi1, eta2, phi2: math.sqrt((eta1 - eta2)**2 + dphi(phi1, phi2)**2)
@@ -31,7 +29,6 @@ __all__ = [
 class MatchedObject(object):
 
     def __init__(self):
-
         self.matched = False
         self.matched_dR = 9999.
         self.matched_collision = False
@@ -217,10 +214,10 @@ class TrueTau(FourMomentum):
     def __init__(self):
         super(FourMomentum, self).__init__()
         self.fourvect_vis = self.getTruthVis4Vector()
-#         self.ChargedPions, self.NeutralPions = self.getTruthDecays()
+        #  self.ChargedPions, self.NeutralPions = self.getTruthDecays()
     #-----------------------------------------------------------
     def getTruthVis4Vector(self):
-        """Get the TLorentzVector for the visible truth tau """
+        """Get the LorentzVector for the visible truth tau """
         vector = LorentzVector()
         vector.SetPtEtaPhiM(self.vis_Et,self.vis_eta,self.vis_phi,self.vis_m)
         return vector

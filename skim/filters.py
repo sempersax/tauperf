@@ -1,11 +1,7 @@
 """
 Event filters 
 """
-import ROOT
-
-from rootpy.tree.filtering import *
-from math import *
-
+from rootpy.tree.filtering import EventFilter
 
 class Offline_Truth_matching(EventFilter):
     def passes(self, event):
@@ -18,7 +14,7 @@ class Offline_EF_matching(EventFilter):
         for tau in event.taus:
             dR_off_EF = 1e10
             for eftau in event.taus_EF:
-                if eftau.matches(tau,0.4):
+                if eftau.matches(tau, 0.4):
                     dr_tmp = eftau.dr(tau)
                     if dr_tmp < dR_off_EF:
                         dR_off_EF = dr_tmp
@@ -31,7 +27,7 @@ class Offline_L1_matching(EventFilter):
         for tau in event.taus:
             dR_off_L1 = 1e10
             for l1tau in event.taus_L1:
-                if l1tau.matches(tau,0.4):
+                if l1tau.matches(tau, 0.4):
                     dr_tmp = l1tau.dr(tau)
                     if dr_tmp < dR_off_L1:
                         dR_off_L1 = dr_tmp
