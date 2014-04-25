@@ -26,7 +26,7 @@ export PYTHONPATH=$PYTHONPATH:./
 
 echo "Create list of input files"
 listoffiles="input_files.txt"
-python ./skim/CreateFileList.py $inputfilelist $listoffiles
+./create-inputlist $inputfilelist $listoffiles
 
 while read filename; do
     echo $filename

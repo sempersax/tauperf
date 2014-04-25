@@ -1,0 +1,14 @@
+#!/usr/bin/env python
+from rootpy.extern import argparse
+
+#--> Receive and parse argument
+parser = argparse.ArgumentParser()
+parser.add_argument("input", help="the list (txt file) of the input files")
+parser.add_argument("output", help="the name of the output txt file (1 file per line)")
+args = parser.parse_args()
+
+in_list = args.input.split(',')
+with open(args.output, "w") as out_file:
+    for rootfile in in_list:
+        print 'add %s' % rootfile
+        out_file.write(rootfile+"\n")

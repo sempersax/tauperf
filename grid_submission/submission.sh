@@ -16,7 +16,7 @@ prun_command()
 	--outputs="*skimmed.root"'
     prun --exec "./launcher.sh %IN ${STREAM}" --inDS=${IN}/ --outDS=${OUT}/ \
 	--rootVer=5.34/10 --cmtConfig=x86_64-slc5-gcc43-opt --nGBPerJob=MAX \
-	--extFile=analysis.tar.gz,rootpy.tar.gz,setuptools-2.2.tar.gz,ez_setup.py \
+	--extFile=analysis.tar.gz,rootpy.tar.gz,setuptools-2.2.tar.gz,ez_setup.py,create-inputlist \
 	--useRootCore --noCompile \
 	--site=SFU-LCG2_LOCALGROUPDISK \
 	--outputs="*skimmed.root"
