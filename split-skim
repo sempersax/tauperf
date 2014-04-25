@@ -1,0 +1,38 @@
+#!/usr/bin/env python
+
+from rootpy.extern import argparse
+from rootpy.io import root_open
+
+from skim import log; log.basic_config_colorized()
+
+#--> Receive and parse argument
+parser = argparse.ArgumentParser()
+parser.add_argument("input", help="the input rootfile name")
+args = parser.parse_args()
+parser.print_usage()
+
+#--> Open input file
+log.info('open file {0}'.format(args.input))
+
+with root_open(args.input, 'update') as in_file:
+    in_tree = in_file.Get('tauCell')
+    log.info(in_tree)
+    out_tree_train = in_tree.CloneTree(0)
+    out_tree_train.SetName("tauCell_train")
+    out_tree_test  = in_tree.CloneTree(0)
+    out_tree_test.SetName("tauCell_test")
+
+    # --------------------------------------------------------------
+    # -------------> LOOP OVER THE EVENTS OF THE INPUT TREE --------
+    # --------------------------------------------------------------
+    for event in in_tree:
+        if event.evtnumber%2==0:
+            out_tree_train.Fill()
+        else:
+            out_tree_test.Fill()
+    out_tree_train.Write()
+    out_tree_test.Write()
+    in_file.Write()
+    in_file.Close()
+#--> Open input file
+log.info('done !')
