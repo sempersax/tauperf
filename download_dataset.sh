@@ -1,7 +1,7 @@
 #!/bin/bash
 
 VERSION=${1}
-ROOTFILES_DIR=rootfiles
+ROOTFILES_DIR=ntuples
 ##-----------------------------------------------
 untar_dataset(){
     final_dir=${1}

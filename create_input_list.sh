@@ -3,7 +3,7 @@
 VERSION=${1}
 
 TXTFILES_DIR=input_lists
-ROOTFILES_DIR=rootfiles
+ROOTFILES_DIR=ntuples
 DATASET_EXTE=TauPerfSkim 
 
 create_one_filelist()

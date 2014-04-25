@@ -10,5 +10,6 @@
 *.C
 *.d
 *.so
-packages/
-rootpy/
+ntuples
+packages
+rootpy
