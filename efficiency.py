@@ -4,8 +4,8 @@ from array import array
 
 import ROOT
 
-from helpers import argparse
-from helpers import AnalysisTools
+from rootpy.extern import argparse
+
 from eff_tools import IDTools_handler
 from eff_tools.auxiliary      import aux
 from eff_tools.TauIDTool      import TauIDTool
@@ -81,7 +81,6 @@ for cutval in cutvals:
 #-------------> LOOP OVER THE EVENTS OF THE INPUT TREE --------
 #--------------------------------------------------------------
 for entry in xrange(entries):
-    AnalysisTools.Processing(entry,entries,float(entries)/100.)
     tauCell.GetEntry( entry )
 
     if tauCell.EF_ismatched != 1: continue

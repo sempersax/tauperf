@@ -3,7 +3,6 @@ from ROOT import *
 import math
 from EventVariables import *
 
-gROOT.SetMacroPath("helpers/")
 gROOT.LoadMacro("load_stl_float.h+")
 gROOT.LoadMacro("load_stl_int.h+")
 

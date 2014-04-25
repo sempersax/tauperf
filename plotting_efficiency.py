@@ -1,17 +1,16 @@
 import ROOT
 import sys
-from helpers import ordereddict
+
 from eff_tools.auxiliary import aux
-from helpers import AnalysisTools 
 from eff_tools.eff_plotting_tools import RejectionCurve
 from eff_tools.eff_plotting_tools import RoCcurve
 from eff_tools.eff_plotting_tools import SvsB_Perf_Canvas
 from eff_tools.eff_plotting_tools import DiscriVar_Canvas
 from eff_tools.eff_plotting_tools import EfficiencyPlot
 
-
+from rootpy.extern import ordereddict
 from rootpy.plotting.style import set_style
-set_style('ATLAS')
+set_style('ATLAS', shape='rect')
 # from array import array
 
 def GetGlobalEfficiency(t_eff):

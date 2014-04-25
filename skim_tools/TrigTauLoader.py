@@ -1,7 +1,7 @@
 #TauLoader class
 import ROOT
 import math
-from helpers.andrew_variables import andrew_variables
+from andrew_variables import andrew_variables
 
 class EFTauLoader:
     """A class to dump tau-related info at Event Filter level"""

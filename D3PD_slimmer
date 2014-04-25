@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from helpers import AnalysisTools
 import sys
 
 from rootpy.extern import argparse
@@ -68,7 +67,6 @@ print 'Number of events: ' + str(nEvents)
 for i in range(0, nEvents):
     slim_tree.ResetBranches()
     d3pd_tree.GetEntry(i)
-    AnalysisTools.Processing(i,nEvents,int(nEvents/100))
 
     # --> Fill event level informations
     slim_tree.variables['runnumber'][0][0] = d3pd_tree.RunNumber

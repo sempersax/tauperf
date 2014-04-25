@@ -6,8 +6,6 @@ from rootpy.extern import argparse
 from rootpy.io import root_open
 from rootpy.tree import Tree, TreeChain, TreeModel, TreeBuffer
 
-
-from helpers import AnalysisTools
 from eff_tools.IDTools_retriever import get_IDTools
 from eff_tools.auxiliary      import aux
 from eff_tools.TauIDTool      import TauIDTool

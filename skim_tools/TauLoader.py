@@ -2,7 +2,6 @@
 from ROOT import *
 import math
 
-gROOT.SetMacroPath("helpers/")
 gROOT.LoadMacro("load_stl_float.h+")
 gROOT.LoadMacro("load_stl_int.h+")
 print 'libraries loaded'

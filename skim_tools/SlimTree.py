@@ -1,6 +1,6 @@
 from array import array
 import ROOT
-from helpers import ordereddict
+from rootpy.extern import ordereddict
 
 
 class FlatTree(ROOT.TTree):

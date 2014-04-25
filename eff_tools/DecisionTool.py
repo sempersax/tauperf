@@ -1,6 +1,6 @@
 from ROOT import TMVA
 from array import array
-from helpers import ordereddict
+from rootpy.extern import ordereddict
 
 
 class DecisionTool:
