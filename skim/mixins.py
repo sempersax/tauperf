@@ -52,8 +52,6 @@ class MatchedObject(object):
     def RoIWord_matches(self, other ):
         return self.RoIWord == other.RoIWord
 
-
-
 class FourMomentum(MatchedObject):
 
     def __init__(self):
@@ -72,8 +70,8 @@ class FourMomentum(MatchedObject):
         return "%s (m: %.3f MeV, pt: %.1f MeV, eta: %.2f, phi: %.2f)" % \
             (self.__class__.__name__,self.m,self.pt,self.eta,self.phi)
 
-
 class ClusterBasedFourMomentum(MatchedObject):
+
     def __init__(self):
         super(ClusterBasedFourMomentum,self).__init__()
 
@@ -81,34 +79,30 @@ class ClusterBasedFourMomentum(MatchedObject):
     def fourvect_clbased(self):
         vect = LorentzVector()
         tau_numTrack = self.numTrack
-        tau_nPi0s    = self.pi0_n
-        if tau_nPi0s == 0:
+        tau_nPi0s = self.pi0_n
+        if tau_nPi0s==0:
             if self.track_n>0:
                 sumTrk = LorentzVector()
                 for trk_ind in xrange(0,self.track_n):
                     curTrk = LorentzVector()
-                    curTrk.SetPtEtaPhiM( self.track_atTJVA_pt [trk_ind],
-                                         self.track_atTJVA_eta[trk_ind],
-                                         self.track_atTJVA_phi[trk_ind],
-                                         139.8 )
+                    curTrk.SetPtEtaPhiM(self.track_atTJVA_pt [trk_ind],
+                                        self.track_atTJVA_eta[trk_ind],
+                                        self.track_atTJVA_phi[trk_ind],
+                                         139.8)
                     sumTrk += curTrk
-                vect.SetPtEtaPhiM( sumTrk.Pt(),sumTrk.Eta(),sumTrk.Phi(),sumTrk.M() )
+                vect.SetPtEtaPhiM(sumTrk.Pt(), sumTrk.Eta(), sumTrk.Phi(), sumTrk.M())
             else:
-                vect.SetPtEtaPhiM ( self.pt, self.eta, self.phi, self.m )
-        elif tau_nPi0s == 1 or tau_nPi0s==2:
+                vect.SetPtEtaPhiM(self.pt, self.eta, self.phi, self.m)
+        elif tau_nPi0s==1 or tau_nPi0s==2:
             if self.pi0_vistau_pt==0:
-                vect.SetPtEtaPhiM ( self.pt, self.eta, self.phi, self.m )
+                vect.SetPtEtaPhiM(self.pt, self.eta, self.phi, self.m)
             else:
-                vect.SetPtEtaPhiM ( self.pi0_vistau_pt, self.pi0_vistau_eta ,
-                                    self.pi0_vistau_phi, self.pi0_vistau_m    )
-
+                vect.SetPtEtaPhiM(self.pi0_vistau_pt, self.pi0_vistau_eta,
+                                  self.pi0_vistau_phi, self.pi0_vistau_m )
         else:
-            vect.SetPtEtaPhiM ( self.pi0_vistau_pt ,
-                                self.pi0_vistau_eta,
-                                self.pi0_vistau_phi,
-                                self.pi0_vistau_m   )
+            vect.SetPtEtaPhiM (self.pi0_vistau_pt, self.pi0_vistau_eta,
+                                self.pi0_vistau_phi, self.pi0_vistau_m)
         return vect
-
     
 class TauCategories(object):
 
@@ -119,9 +113,11 @@ class TauCategories(object):
         self.prongpi0cat = self.getProngPi0Cat(self.prongcat,self.pi0cat)
         self.category = self.etacat+self.prongcat+self.prongpi0cat#getCategories()
         self.idcat = self.getIDCat()
+
     @cached_property
     def getCategories(self):
         return self.prong_cat+self.etacat#+self.prongpi0_cat
+
     def getProngCat(self):
         if self.numTrack==1:
             return ["1p"]
@@ -131,11 +127,13 @@ class TauCategories(object):
             return ["3p","mp"]
         else:
             return ["mp"]
+
     def getPi0Cat(self):
         if self.pi0BDTPrimary>0.47:
             return ["0n"]
         else:
             return ["Xn"]
+
     def getProngPi0Cat(self,prong_cat,pi0_cat):
         if "1p" in prong_cat:
             if "0n" in pi0_cat:
@@ -163,6 +161,7 @@ class TauCategories(object):
             return ["central"]
         else:
             return ["endcap"]
+
     def getIDCat(self):
         if self.numTrack==1:
             if self.pi0BDTPrimary>0.47:
@@ -177,6 +176,7 @@ class TauCategories(object):
 
 
 class Tau(FourMomentum,ClusterBasedFourMomentum):
+
     def __init__(self):
         super(FourMomentum, self).__init__()
         super(ClusterBasedFourMomentum, self).__init__()
@@ -201,7 +201,6 @@ class L2_Tau(FourMomentum):
         super(FourMomentum, self).__init__()
         self.index_matched_L1 = -1
 
-
 class L1_Tau(FourMomentum):
 
     def __init__(self):
@@ -211,6 +210,7 @@ class L1_Tau(FourMomentum):
 
 
 class TrueTau(FourMomentum):
+
     def __init__(self):
         super(FourMomentum, self).__init__()
         self.fourvect_vis = self.getTruthVis4Vector()
