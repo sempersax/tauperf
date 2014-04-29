@@ -179,8 +179,11 @@ if 'trim' in args.actions:
         pickle.dump(chunk_dict, file)
     
     for index, chunk in enumerate(chunks):
+        if index==0:
+            continue
         setup = get_setup('batch/setup.sfu.txt')
-        cmd_args = ['./trainer', str(chunk), '--pickle-file variables_list.pickle',
+        chunk_name = 'chunk_{0}'.format(index)
+        cmd_args = ['./trainer', chunk_name, '--pickle-file variables_list.pickle',
                     '--sig-file %s'%args.sig_file, '--bkg-file %s'%args.bkg_file,
                     '--factory-prefix %s'%args.factory_prefix,
                     '--ID %s'%args.ID, '--cat %s'%args.cat, '--ecm %s'%args.ecm,
@@ -188,9 +191,9 @@ if 'trim' in args.actions:
                     '--sig-cut "%s"'%sigcut, '--bkg-cut "%s"'%bkgcut,
                     '--ntrees %d'%ntrees_best, '--nevts %d'%nevts_best, '--n-jobs %d'%chunk_size]
         cmd = ' '.join(cmd_args)
-        name = 'chunk_{0}'.format(index)
+        name = 'trimming_chunk_{0}'.format(index)
         cmd = "cd %s && %s && %s" % (os.getcwd(), setup, cmd)
-        log.info(cmd)
+        log.info(name)
         if args.submit:
             qsub(cmd, name=name)
  

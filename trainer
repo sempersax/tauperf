@@ -17,7 +17,6 @@ from rootpy.plotting import Hist, Hist2D, Canvas
 import ROOT
 # --> local imports
 from tauid.trainer import BDTScan
-from tauid.trainer import trainer
 from tauid.jobs import run_pool
 from tauid import VARIABLES
 from tauid import log; log=log[__name__]
@@ -59,8 +58,10 @@ for ifile in open(args.bkg_file):
     bkg_tree.Add(ifile.strip())
 
 log.info('-------- bkg cut --------')
+bkgcut = ROOT.TCut(args.bkg_cut)
 log.info(args.bkg_cut)
 log.info('-------- sig cut --------')
+sigcut = ROOT.TCut(args.sig_cut)
 log.info(args.sig_cut)
 chunks_dict = {}
 with open(args.pickle_file) as file:
@@ -81,6 +82,6 @@ for name, sublist in listes.items():
     workers.append(BDTScan(output_name,factory_name,
                            sublist,
                            sig_tree, bkg_tree,
-                           args.sig_cut, args.bkg_cut,
+                           sigcut, bkgcut,
                            args.ntrees, args.nevts))
-# run_pool(workers, n_jobs=args.n_jobs)
+run_pool(workers, n_jobs=args.n_jobs)
