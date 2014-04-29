@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-
+import os
+import pickle
 # --> python imports
 from  itertools import combinations
 import fileinput
@@ -20,7 +21,7 @@ from tauid.trainer import trainer
 from tauid.jobs import run_pool
 from tauid import VARIABLES
 from tauid import log; log=log[__name__]
-from batch import qsub
+from batch import qsub, get_setup
 
 # -----------------------------
 def combos_list(lst, length):
@@ -43,7 +44,7 @@ parser.add_argument("--cat", help="the category used for training", default='all
 parser.add_argument("--ecm", help="the center of mass energy (8TeV/14TeV)",
                     default='14TeV', choices=['14TeV', '8TeV'])
 parser.add_argument("--object-type", help="the sample type", default="offline", choices=['EF', 'offline'])
-parser.add_argument("--N","--Nentries", help="Specify the number of events use to run", type=int, default=-1)
+parser.add_argument('--submit', action='store_true', default=False)
 args = parser.parse_args()
 parser.print_usage()
 
@@ -104,8 +105,8 @@ log.info(sigcut)
 
 
 outputs = []
-nevts_list = [10, 50, 100, 500, 1000, 5000, 10000, 50000]
-ntrees_list = [50*i for i in range(1,21)]
+nevts_list = [1000] #[10, 50, 100, 500, 1000, 5000, 10000, 50000]
+ntrees_list = [700]#[50*i for i in range(1,21)]
 for nevts in nevts_list:
     for ntrees in ntrees_list:
         output_name  = 'tmp/{0}_{1}_{2}_{3}_{4}_nevts{5}_ntrees{6}.root'.format(args.factory_prefix, args.cat,
@@ -119,7 +120,7 @@ if 'train' in args.actions:
     workers = []
     for output in outputs:
         (output_name, factory_name, nevts, ntrees) = output
-        workers.append(BDTScan(output_name,factory_name, VARIABLES['presel_2'],
+        workers.append(BDTScan(output_name,factory_name, VARIABLES['presel_3'],
                                sig_tree, bkg_tree, sigcut, bkgcut, ntrees, nevts))
     run_pool(workers, n_jobs=-1)
 
@@ -153,26 +154,43 @@ if 'presel_test' in args.actions:
 
 
 if 'trim' in args.actions:
-
-    for length in range(3,len(VARIABLES['presel_2'])):
-        sublists = [sublist for sublist in combos_list(VARIABLES['presel_2'], length)]
+    ntrees_best = 700
+    nevts_best = 5000
+    listes = []
+    for length in range(3,len(VARIABLES['presel_3'])):
+        sublists = [sublist for sublist in combos_list(VARIABLES['presel_3'], length)]
         log.info("nvar = {0}: nlists = {1}".format(length,len(sublists)))
+        listes += sublists
 
-        workers = []
-        for sublist in sublists:
+
+    chunk_size = 10
+    chunks = [listes[x:x+chunk_size] for x in xrange(0, len(listes), chunk_size)]
+
+    chunk_dict = {}
+    for index, chunk in enumerate(chunks):
+        list_dict = {}
+        for sublist in chunk:
             vars_string = '_'.join([var['name'] for var in sublist])
-            log.info(vars_string)
-            output_name  = 'tmp/{0}_{1}_{2}_{3}_{4}_nevts{5}_ntrees{6}_{7}.root'.format(args.factory_prefix, args.cat,
-                                                                                        args.ecm, args.object_type,
-                                                                                        args.ID, nevts, ntrees, vars_string)
-            factory_name = '{0}_{1}_{2}_{3}_{4}'.format(args.factory_prefix, args.cat,
-                                                        args.ecm, args.object_type, args.ID)
+            list_dict[vars_string] = sublist
 
-            workers.append(BDTScan(output_name,factory_name, sublist,
-                                   sig_tree, bkg_tree, sigcut, bkgcut, ntrees, nevts))
-
-
-
-
-
-    log.info( 'Total number of training: {0}'.format(total_length))
+        chunk_dict['chunk_{0}'.format(index)] = list_dict
+        
+    with open('variables_list.pickle', 'w') as file:
+        pickle.dump(chunk_dict, file)
+    
+    for index, chunk in enumerate(chunks):
+        setup = get_setup('batch/setup.sfu.txt')
+        cmd_args = ['./trainer', str(chunk), '--pickle-file variables_list.pickle',
+                    '--sig-file %s'%args.sig_file, '--bkg-file %s'%args.bkg_file,
+                    '--factory-prefix %s'%args.factory_prefix,
+                    '--ID %s'%args.ID, '--cat %s'%args.cat, '--ecm %s'%args.ecm,
+                    '--object-type %s'%args.object_type,
+                    '--sig-cut "%s"'%sigcut, '--bkg-cut "%s"'%bkgcut,
+                    '--ntrees %d'%ntrees_best, '--nevts %d'%nevts_best, '--n-jobs %d'%chunk_size]
+        cmd = ' '.join(cmd_args)
+        name = 'chunk_{0}'.format(index)
+        cmd = "cd %s && %s && %s" % (os.getcwd(), setup, cmd)
+        log.info(cmd)
+        if args.submit:
+            qsub(cmd, name=name)
+ 

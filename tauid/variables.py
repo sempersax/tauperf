@@ -52,6 +52,15 @@ emfraction = {
     'bins': 20,
     'range': (0, 1)
     }
+hadfraction = {
+    'name': 'HadFraction',
+    'root': 'f_{HAD} (EMSCALE)',
+    'training': 'off_HADFractionAtEMScale',
+    'type': 'F',
+    'bins': 20,
+    'range': (0, 40000),
+    'units': 'MeV'
+    }
 hadenergy = {
     'name': 'HadEnergy',
     'root': 'E_{HAD}',

@@ -17,6 +17,8 @@ def print_table(table, sep='  '):
     for row in table:
         print format % tuple(row)
 
+    
+
 
 class Job(object):
 

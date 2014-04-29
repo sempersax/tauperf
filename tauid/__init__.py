@@ -36,16 +36,30 @@ VARIABLES = {
                  numefftopoclusters,
                  efftopoinvmass,
                  efftopomeandeltar,
-                 ]
+                 ],
+    'presel_3': [centfrac,
+                 pssfraction,
+                 nstrip,
+                 emradius,
+                 hadradius,
+                 emfraction,
+                 hadfraction,
+                 stripwidth,
+                 lead2clustereoverallclusterE,
+                 lead3clustereoverallclusterE,
+                 numefftopoclusters,
+                 efftopoinvmass,
+                 efftopomeandeltar,
+                 ],
     'presel_3var': [centfrac,
                     pssfraction,
                     nstrip,
-                    ]
+                    ],
     'presel_5var': [centfrac,
                     pssfraction,
                     nstrip,
                     emradius,
                     hadradius,
-                    ]
+                    ],
     
 }
