@@ -1,0 +1,57 @@
+#!/usr/bin/env python
+# python imports
+import os
+# root/rootpy imports
+from rootpy import ROOT
+from rootpy.plotting import Canvas, Hist, Efficiency, F1
+from rootpy.plotting.hist import _HistBase
+from rootpy.plotting.utils import draw
+from rootpy.plotting.style import set_style
+from rootpy.io import root_open
+# local imports
+from tools.datasets import (VERSION, DATASETS,
+                            SIGNAL_BACKGROUND_PAIRS,
+                            SIGNALS_14TEV)
+from tauid import VARIABLES
+from tauid.plotting import get_mean_rms
+
+ROOT.gROOT.SetBatch(True)
+set_style('ATLAS', shape='rect')
+
+
+for pair in SIGNAL_BACKGROUND_PAIRS:
+    fsig = root_open('efficiencies/eff_presel_{0}_v{1}.root'.format(pair[0], VERSION))
+    fbkg = root_open('efficiencies/eff_presel_{0}_v{1}.root'.format(pair[1], VERSION))
+    for dir_s, dir_b in zip(fsig, fbkg):
+        print dir_s, dir_b
+        for h_s, h_b in zip(dir_s, dir_b):
+            if isinstance(h_s, _HistBase):
+                h_s.Scale(1./h_s.Integral())
+                h_b.Scale(1./h_b.Integral())
+                h_s.color = 'red'
+                h_s.markerstyle = 'square'
+                h_s.fillstyle = '/'
+                h_b.fillstyle = '\\'
+                h_s.drawstyle = 'HIST'
+                h_b.drawstyle = 'HIST'
+                c = Canvas()
+                draw([h_s, h_b], pad=c, ytitle='Normalized')
+                c.SaveAs('./plots/SvsB_{0}_cat{1}_mu{2}.png'.format(h_s.name, dir_s.name, DATASETS[pair[0]]['mu']))
+
+plot_cat = ['1p', 'mp']
+for cat in plot_cat:
+    for var in VARIABLES['plotting_id']:
+        gr_mean, _ = get_mean_rms(cat, var)
+        fit_func = F1('[0]*x+[1]')
+        gr_mean.Fit(fit_func, 'SVF')
+        c = Canvas()
+        gr_mean.Draw('AP')
+        fit_func.Draw('same')
+        print fit_func.GetParameter(1), fit_func.GetParameter(2)
+        fit_label = ROOT.TLatex(0.2, 0.2, '{0}#times<#mu>+{1}'.format(fit_func.GetParameter(0), fit_func.GetParameter(1)))       
+        fit_label.SetNDC()
+        fit_label.Draw('same')
+        fit_cat = ROOT.TLatex(0.2, 0.9, 'Category: {0}'.format(cat))
+        fit_cat.SetNDC()
+        fit_cat.Draw('same')
+        c.SaveAs('./plots/Mean_{0}_cat{1}.png'.format(var['name'], cat))

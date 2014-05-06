@@ -6,8 +6,10 @@ from rootpy.extern import argparse
 from rootpy.io import root_open
 from rootpy.tree import Tree, TreeChain, TreeModel, TreeBuffer
 from rootpy.plotting import Efficiency, Hist
+
 # local imports
 from skim.mixins import TauCategories
+from tauid.plotting import get_hist_array, get_efficiency_array
 from tauid import VARIABLES
 from tauid.tauid import get_IDtools
 from tauid import log; log = log[__name__]
@@ -40,22 +42,18 @@ tauCell.define_object(name='L1_tau', prefix='L1_OfflineMatched_')
 ID_Tools = get_IDtools(tauCell)
 
 # --> Plotting category
-plot_cat = ["all","1p","mp"]
+plot_cat = ["all", "1p", "mp"]
 
 variables = VARIABLES['plotting_id']
 
 # --> Declaration of the list (python dictionary) of TEfficiency objects
 Efficiencies = {}
 hist_array = {}
-for tool in ID_Tools:
-    Efficiencies[tool] = {}
 for cat in plot_cat:
-    for var in VARIABLES['plotting_id']:
-        hist_array[var['name']+'_'+cat] = Hist(var['bins'], var['range'][0], var['range'][1], name="H_"+var['name']+"_"+cat)
+    hist_array[cat] = get_hist_array()
+    Efficiencies[cat] = {}
     for tool in ID_Tools:
-        for var in variables:
-            Efficiencies[tool][var['name']+'_'+cat] = ROOT.TEfficiency("Efficiency_"+tool+"_"+var['name']+"_"+cat, "",
-                                                                       var['bins'], var['range'][0], var['range'][1])
+        Efficiencies[cat][tool] = get_efficiency_array()
 
 #--------------------------------------------------------------
 #-------------> loop OVER THE EVENTS OF THE INPUT TREE --------
@@ -76,19 +74,21 @@ for event in tauCell:
 
     if tau.pt<25000.:
         continue
-    
     for cat in tau.category+["all"]:
         if not cat in plot_cat:
             continue
-        for var in VARIABLES['plotting_id']:
-            hist_array[var['name']+'_'+cat].Fill(getattr(tau, var['name']))
+        for var, hist in hist_array[cat].items():
+            if hasattr(tau, var):
+                hist.Fill(getattr(tau, var))
+            else:
+                hist.Fill(getattr(event, var))
         for tool in ID_Tools:
-            for var in  variables:
-                is_passed = ID_Tools[tool].Decision()
-                if hasattr(tau, var['name']):
-                    Efficiencies[tool][var['name']+'_'+cat].Fill(is_passed, getattr(tau, var['name']))
+            is_passed = ID_Tools[tool].Decision()
+            for var, hist in  Efficiencies[cat][tool].items():
+                if hasattr(tau, var):
+                    Efficiencies[cat][tool][var].Fill(is_passed, getattr(tau, var))
                 else:
-                    Efficiencies[tool][var['name']+'_'+cat].Fill(is_passed, getattr(event, var['name']))
+                    Efficiencies[cat][tool][var].Fill(is_passed, getattr(event, var))
 
 #--------------------------------------------------------------
 #-------------> END OF THE LOOP OVER THE EVENTS        --------
@@ -102,14 +102,16 @@ for event in tauCell:
 
 with root_open(args.output_file, "recreate") as output:
     root_directory = output.CurrentDirectory()
-    for tool in Efficiencies:
-        directory = output.mkdir(tool)
+    for cat in plot_cat:
+        directory = output.mkdir(cat)
         directory.cd()
-        for var in Efficiencies[tool]:
-            Efficiencies[tool][var].Write()
+        for var, hist in hist_array[cat].items():
+            hist.name = 'h_{0}_{1}'.format(cat, var)
+            hist.Write()
+        for tool in Efficiencies[cat].keys():
+            for var, eff in Efficiencies[cat][tool].items():
+                eff.name = 'eff_{0}_{1}_{2}'.format(cat, tool, var)
+                eff.Write()
         root_directory.cd()
-    for _, hist in hist_array.items():
-        hist.Write()
-    output.Close()
 
         

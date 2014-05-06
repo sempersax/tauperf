@@ -4,7 +4,6 @@ def get_label(variable):
         label += ' [{0}]'.format(variable['units'])
     return label
 
-
 pt = {
     'name': 'pt',
     'root': 'p_{T} [MeV]',
@@ -117,7 +116,7 @@ stripwidth = {
     'training': 'off_stripWidth2',
     'type': 'f',
     'bins': 20,
-    'range': (0, 1)
+    'range': (-0.2, 0.2)
     }
 lead2clustereoverallclusterE = {
     'name': 'lead2ClusterEOverAllClusterE',
@@ -248,7 +247,7 @@ drmax = {
     'root': '#DeltaR_{max}',
     'training': 'off_dRmax',
     'bins': 20,
-    'range': (0, 0.4),
+    'range': (0, 0.2),
     }
 
 trflightpathsig = {
@@ -265,5 +264,5 @@ masstrksys = {
     'training': 'off_massTrkSys',
     'bins': 20,
     'units': 'MeV',
-    'range': (0, 1e5),
+    'range': (0, 20e3),
     }

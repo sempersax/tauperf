@@ -16,6 +16,7 @@ from rootpy.plotting import Hist, Hist2D, Graph, Canvas
 # --> root imports
 import ROOT
 # --> local imports
+from tools.datasets import DATASETS, VERSION
 from tauid.trainer import BDTScan
 from tauid.trainer import trainer
 from tauid.jobs import run_pool
@@ -34,32 +35,50 @@ ROOT.gROOT.SetBatch(True)
 #--> Receive and parse argument
 parser = argparse.ArgumentParser()
 parser.add_argument("actions", choices=['train', 'trim', 'presel_test', 'full_test'])
-parser.add_argument("--sig-file", help="the input sig list (txt file)")
-parser.add_argument("--bkg-file", help="the input bkg list (txt file)")
+parser.add_argument('--sig-dataset', help='the signal dataset')
+parser.add_argument('--bkg-dataset', help='the background dataset')
 parser.add_argument("--factory-prefix", help="the basename of the training result", default='test')
 parser.add_argument("--ID", help="the ID menu trained (full/presel)",
                     default='presel', choices=['presel', 'full'] )
 parser.add_argument("--cat", help="the category used for training", default='all',
                     choices=['all', '1p', '3p', 'mp', '1p_0n', '1p_Xn', '3p_0n', '3p_Xn'] )
-parser.add_argument("--ecm", help="the center of mass energy (8TeV/14TeV)",
-                    default='14TeV', choices=['14TeV', '8TeV'])
 parser.add_argument("--object-type", help="the sample type", default="offline", choices=['EF', 'offline'])
 parser.add_argument('--submit', action='store_true', default=False)
 args = parser.parse_args()
 parser.print_usage()
 
 
+signal = DATASETS[args.sig_dataset]
+background = DATASETS[args.bkg_dataset]
+ecm = signal['ecm']
+
+# --> Variables set
+if 'presel' in args.ID:
+    variables = VARIABLES['presel_3']
+else:
+    if '1p' in args.cat:
+        variables = VARIABLES['full_1p']
+    else:
+        variables = VARIABLES['full_mp']
+
+
 # --> Import signal and bkg trees
 sig_tree = ROOT.TChain('tauCell_train')
 bkg_tree = ROOT.TChain('tauCell_train')
 
-for ifile in open(args.sig_file):
+for ifile in open(signal['path']):
     sig_tree.Add(ifile.strip())
-for ifile in open(args.bkg_file):
+for ifile in open(background['path']):
     bkg_tree.Add(ifile.strip())
 
+#---> Signal and Bkg selection
 tau_cat_cut   = {}
 if 'EF' in args.object_type:
+    matching = ROOT.TCut("EF_ismatched==1 && L2_ismatched==1 && L1_ismatched==1")
+    trigger_cut = {}
+    trigger_cut["14TeV"] = ROOT.TCut("L2_L2_tau20_medium==1")
+    trigger_cut["8TeV"]  = ROOT.TCut("EF_tauNoCut==1")
+    eta_cut  = ROOT.TCut("EF_eta<2.2 && EF_eta>-2.2")
     tau_cat_cut["all"]     = ROOT.TCut("EF_numTrack>0")
     tau_cat_cut["1p"]      = ROOT.TCut("EF_numTrack==1")
     tau_cat_cut["3p"]      = ROOT.TCut("EF_numTrack==3")
@@ -69,13 +88,7 @@ if 'EF' in args.object_type:
     tau_cat_cut["1p_Xn"]   = ROOT.TCut("EF_numTrack==1 && pi0BDTPrimary<0.47")
     tau_cat_cut["3p_Xn"]   = ROOT.TCut("EF_numTrack==3 && pi0BDTPrimary<0.47")
 
-trigger_cut = {}
-trigger_cut["14TeV"] = ROOT.TCut("L2_L2_tau20_medium==1")
-trigger_cut["8TeV"]  = ROOT.TCut("EF_tauNoCut==1")
 
-#---> Signal and Bkg selection
-matching = ROOT.TCut("EF_ismatched==1 && L2_ismatched==1 && L1_ismatched==1")
-eta_cut  = ROOT.TCut("EF_eta<2.2 && EF_eta>-2.2")
 
 if 'offline' in args.object_type:
     matching = ROOT.TCut("L1_OfflineMatched_index>-1 && L1_OfflineMatched_pt>8000.")
@@ -90,13 +103,11 @@ if 'offline' in args.object_type:
     tau_cat_cut["1p_Xn"]   = ROOT.TCut("off_numTrack==1 && off_pi0BDTPrimary<0.47")
     tau_cat_cut["3p_Xn"]   = ROOT.TCut("off_numTrack==3 && off_pi0BDTPrimary<0.47")
 
-truth    = ROOT.TCut("off_index_matched_true>-1")
-bkgcut  =  matching
-bkgcut += eta_cut
-bkgcut += pt_cut
-if 'EF' in args.object_type:
-    bkgcut  += trigger_cut[args.ecm]
+truth = ROOT.TCut("off_index_matched_true>-1")
+bkgcut  =  matching+eta_cut+pt_cut
 bkgcut  += tau_cat_cut[args.cat]
+if 'EF' in args.object_type:
+    bkgcut  += trigger_cut[ecm]
 sigcut  = bkgcut+truth
 log.info('-------- bkg cut --------')
 log.info(bkgcut)
@@ -110,10 +121,10 @@ ntrees_list = [700]#[50*i for i in range(1,21)]
 for nevts in nevts_list:
     for ntrees in ntrees_list:
         output_name  = 'tmp/{0}_{1}_{2}_{3}_{4}_nevts{5}_ntrees{6}.root'.format(args.factory_prefix, args.cat,
-                                                                                args.ecm, args.object_type,
+                                                                                ecm, args.object_type,
                                                                                 args.ID, nevts, ntrees)
         factory_name = '{0}_{1}_{2}_{3}_{4}'.format(args.factory_prefix, args.cat,
-                                                    args.ecm, args.object_type, args.ID)
+                                                    ecm, args.object_type, args.ID)
         outputs.append((output_name, factory_name, nevts, ntrees))
 
 if 'train' in args.actions:
@@ -183,7 +194,7 @@ if 'trim' in args.actions:
         cmd_args = ['./trainer', chunk_name, '--pickle-file variables_list.pickle',
                     '--sig-file %s'%args.sig_file, '--bkg-file %s'%args.bkg_file,
                     '--factory-prefix %s'%args.factory_prefix,
-                    '--ID %s'%args.ID, '--cat %s'%args.cat, '--ecm %s'%args.ecm,
+                    '--ID %s'%args.ID, '--cat %s'%args.cat, '--ecm %s'%ecm,
                     '--object-type %s'%args.object_type,
                     '--sig-cut "%s"'%sigcut, '--bkg-cut "%s"'%bkgcut,
                     '--ntrees %d'%ntrees_best, '--nevts %d'%nevts_best, '--n-jobs %d'%1]
@@ -197,7 +208,7 @@ if 'trim' in args.actions:
     graph_points = []
     for liste in listes:
         output_name = './tmp/'
-        output_name += '_' .join([args.factory_prefix, args.cat, args.ecm, args.object_type, args.ID, 'nevts%d'%nevts_best, 'ntrees%d'%ntrees_best]+[var['name'] for var in liste])  
+        output_name += '_' .join([args.factory_prefix, args.cat, ecm, args.object_type, args.ID, 'nevts%d'%nevts_best, 'ntrees%d'%ntrees_best]+[var['name'] for var in liste])  
         output_name += '.root'
 
         if not os.path.exists(output_name):
@@ -231,5 +242,4 @@ if 'trim' in args.actions:
         c.SaveAs('toto.png')
 
 
-# test_all_14TeV_offline_presel_nevts5000_ntrees700_pssfraction_nStrip_stripWidth2_lead2ClusterEOverAllClusterE_lead3ClusterEOverAllClusterE_numEffTopoClusters.root        
-
+ 

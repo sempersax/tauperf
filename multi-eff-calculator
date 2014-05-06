@@ -12,7 +12,7 @@ args = parser.parse_args()
 setup = get_setup('batch/setup.sfu.txt')
 for key, dataset in DATASETS.items():
     cmd_args = ['./eff-calculator_new', dataset['path'],
-                'efficiencies/eff_presel_%s_v%d.root'%(key, VERSION)]
+                'efficiencies/efficiencies_%s_v%d.root'%(key, VERSION)]
     if dataset['signal']:
         cmd_args.append('--signal')
     cmd = ' '.join(cmd_args)
