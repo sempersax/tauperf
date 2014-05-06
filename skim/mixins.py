@@ -169,7 +169,7 @@ class TauCategories(object):
             else:
                 return ["all","1p","1p_Xn"]
         else:
-            if self._pi0BDTPrimary>0.47:
+            if self.pi0BDTPrimary>0.47:
                 return ["all","mp","mp_0n"]
             else:
                 return ["all","mp","mp_Xn"]

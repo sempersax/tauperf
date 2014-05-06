@@ -4,8 +4,15 @@ from rootpy import asrootpy
 # local imports
 from skim.mixins import TauCategories
 from .decision import DecisionTool
+from . import VARIABLES
 
-
+def get_IDtools(tree):
+    ID_Tools = {}
+    ID_Tools['presel_3'] = TauIDTool(tree, {"all":{'name':'BDT',
+                                                   'weight_file':'weights_prod/presel_fullvarlist_quentin_all_14TeV_offline.weights.xml',
+                                                   'variables_list': VARIABLES['presel_3'],
+                                                   'cutval': 0.5}})
+    return ID_Tools
 
 class TauIDTool:
     """
@@ -18,17 +25,16 @@ class TauIDTool:
         self._DT = {}
         for key, DT_inputs in DT_inputs_list.items():
             self._DT[key] = DecisionTool(self._tree,
-                                         DT_inputs_list.name,
-                                         DT_inputs_list.weight_file,
-                                         DT_inputs_list.variables_list,
-                                         DT_inputs_list.cutval)
+                                         DT_inputs['name'],
+                                         DT_inputs['weight_file'],
+                                         DT_inputs['variables_list'],
+                                         DT_inputs['cutval'])
     
     # ----------------------------------------------------------------
-    @property
     def ToolKey(self):
         categories = []
-        tree.define_object(name='tau', prefix='off', mix=TauCategories)
-        tau_idcat = tree.tau.idcat
+        #         self._tree.define_object(name='tau', prefix='off_', mix=TauCategories)
+        tau_idcat = self._tree.tau.idcat
         bdt_cat = set(tau_idcat) & set(self._DT.keys())
         if len(bdt_cat)!=1:
             raise RuntimeError('Need exactly one category in common')
@@ -46,7 +52,7 @@ class TauIDTool:
         return BDT_Score
 
     # ----------------------------------------------------------------
-    def SetCutValues(self,cutvalues):
+    def SetCutValues(self, cutvalues):
         for input_key in self._DT:
             if input_key in cutvalues:
                 self._DT[input_key].SetCutValue(cutvalues[input_key])

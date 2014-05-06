@@ -1,11 +1,10 @@
 # --> python imports
 from array import array
-
-# --> ROOT imports
+# --> ROOT/rootpy imports
 from ROOT import TMVA
-
-# --> rootpy imports
 from rootpy.extern import ordereddict
+# local imports
+from . import log; log = log[__name__]
 
 class DecisionTool:
     """
@@ -25,24 +24,23 @@ class DecisionTool:
         self._cutvalue = -1
         self._bdtscore = -9999
         self._name = name
-        self._var_file = variables_list
+        log.info('SetReader({0}, {1}, {2})'.format(name, weight_file, variables_list))
         self.SetReader(name, weight_file, variables_list)
         self.SetCutValue(cutval)
         
     # --------------------------------------------
-    @property
     def SetReader(self, name, weight_file, variables_list):
+        log.info('Set the {0} with {1}'.format(name, weight_file))
         self._variables = self.InitVariables(variables_list)
-        for varName, var in self._variables.iteritems():
-            self._reader.AddVariable(varName,var[1])
+        for varName, var in self._variables.items():
+            self._reader.AddVariable(var[0], var[1])
         self._reader.BookMVA(name, weight_file)
         
     # ----------------------
-    @property
     def InitVariables(self, variables_list):
         variables = ordereddict.OrderedDict()
         for var in variables_list:
-            variables[var['name']] = [var['training'], array(var['type'],[0])]
+            variables[var['name']] = [var['training'], array('f', [0.])]
         return variables
 
     # --------------------------

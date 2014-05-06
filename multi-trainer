@@ -12,7 +12,7 @@ from rootpy import asrootpy
 from rootpy.io import root_open
 from rootpy.extern import argparse
 from rootpy.plotting.style import get_style
-from rootpy.plotting import Hist, Hist2D, Canvas
+from rootpy.plotting import Hist, Hist2D, Graph, Canvas
 # --> root imports
 import ROOT
 # --> local imports
@@ -105,7 +105,7 @@ log.info(sigcut)
 
 
 outputs = []
-nevts_list = [1000] #[10, 50, 100, 500, 1000, 5000, 10000, 50000]
+nevts_list = [5000] #[10, 50, 100, 500, 1000, 5000, 10000, 50000]
 ntrees_list = [700]#[50*i for i in range(1,21)]
 for nevts in nevts_list:
     for ntrees in ntrees_list:
@@ -162,7 +162,6 @@ if 'trim' in args.actions:
         log.info("nvar = {0}: nlists = {1}".format(length,len(sublists)))
         listes += sublists
 
-
     chunk_size = 10
     chunks = [listes[x:x+chunk_size] for x in xrange(0, len(listes), chunk_size)]
 
@@ -187,11 +186,50 @@ if 'trim' in args.actions:
                     '--ID %s'%args.ID, '--cat %s'%args.cat, '--ecm %s'%args.ecm,
                     '--object-type %s'%args.object_type,
                     '--sig-cut "%s"'%sigcut, '--bkg-cut "%s"'%bkgcut,
-                    '--ntrees %d'%ntrees_best, '--nevts %d'%nevts_best, '--n-jobs %d'%chunk_size]
+                    '--ntrees %d'%ntrees_best, '--nevts %d'%nevts_best, '--n-jobs %d'%1]
         cmd = ' '.join(cmd_args)
         name = 'trimming_chunk_{0}'.format(index)
         cmd = "cd %s && %s && %s" % (os.getcwd(), setup, cmd)
         log.info(name)
         if args.submit:
-            qsub(cmd, name=name, ncpus=chunk_size)
+            qsub(cmd, name=name, ncpus=1)
  
+    graph_points = []
+    for liste in listes:
+        output_name = './tmp/'
+        output_name += '_' .join([args.factory_prefix, args.cat, args.ecm, args.object_type, args.ID, 'nevts%d'%nevts_best, 'ntrees%d'%ntrees_best]+[var['name'] for var in liste])  
+        output_name += '.root'
+
+        if not os.path.exists(output_name):
+            continue
+        
+        with root_open(output_name) as output_file:
+            log.info(output_name)
+            if not 'Method_BDT' in output_file:
+                continue
+            key_names = [key.GetName() for key in output_file.Method_BDT.BDT.keys()]
+            if 'MVA_BDT_effBvsS' in key_names:
+                h = asrootpy(output_file.Method_BDT.BDT.MVA_BDT_effBvsS)
+                target = min(enumerate(list(h.x())), key=lambda x: abs(x[1]-0.95))
+                target = (target[0], list(h.y())[target[0]])
+            else:
+                target = (0.95, 0.999)
+            graph_point = (len(liste), target[1])
+            graph_points.append(graph_point)
+
+    Scan = Graph(len(graph_points))
+    for ip, point in enumerate(graph_points):
+        log.info(point)
+        Scan.SetPoint(ip, point[0], 1-point[1])
+    Scan.name = 'Scan'
+    Scan.xaxis.title = 'Number of variables'
+    Scan.yaxis.title = 'Background rejection (1-#epsilon_{B})'
+    with get_style('ATLAS', shape='rect') as style:
+        style.SetTextFont(42)
+        c = Canvas()
+        Scan.Draw('APE')
+        c.SaveAs('toto.png')
+
+
+# test_all_14TeV_offline_presel_nevts5000_ntrees700_pssfraction_nStrip_stripWidth2_lead2ClusterEOverAllClusterE_lead3ClusterEOverAllClusterE_numEffTopoClusters.root        
+
