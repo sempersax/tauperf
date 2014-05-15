@@ -1,12 +1,10 @@
 #!/usr/bin/env python
-
 # ROOT/rootpy imports
 from rootpy import ROOT
 from rootpy.extern import argparse
 from rootpy.io import root_open
-from rootpy.tree import Tree, TreeChain, TreeModel, TreeBuffer
+from rootpy.tree import TreeChain
 from rootpy.plotting import Efficiency, Hist
-
 # local imports
 from skim.mixins import TauCategories
 from tauid.plotting import get_hist_array, get_efficiency_array
@@ -65,15 +63,13 @@ for event in tauCell:
 
     if args.signal and tau.index_matched_true<=-1:
         continue
-
     if L1_tau.index<=-1:
         continue
-
     if L1_tau.pt<8000.:
         continue
-
     if tau.pt<25000.:
         continue
+
     for cat in tau.category+["all"]:
         if not cat in plot_cat:
             continue
@@ -84,7 +80,7 @@ for event in tauCell:
                 hist.Fill(getattr(event, var))
         for tool in ID_Tools:
             is_passed = ID_Tools[tool].Decision()
-            for var, hist in  Efficiencies[cat][tool].items():
+            for var, hist in Efficiencies[cat][tool].items():
                 if hasattr(tau, var):
                     Efficiencies[cat][tool][var].Fill(is_passed, getattr(tau, var))
                 else:

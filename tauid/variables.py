@@ -222,6 +222,7 @@ etoverptleadtrk = {
     'name': 'EtOverLeadTrackPt',
     'root': '1./f_{track}',
     'training': 'off_EtOverLeadTrackPt',
+    'type': 'f',
     'bins': 20,
     'range': (0, 3),
     }
@@ -230,6 +231,7 @@ empovertrksysp = {
     'name' : 'EMPOverTrkSysP',
     'root': 'p_{EM}/p_{tracks}',
     'training': 'off_EMPOverTrkSysP',
+    'type': 'f',
     'bins': 20,
     'range': (0, 3),
     }
@@ -238,6 +240,7 @@ ipsigleadtrk = {
     'name' : 'ipSigLeadTrk',
     'root': 'S_{lead track}',
     'training': 'off_ipSigLeadTrk',
+    'type': 'f',
     'bins': 20,
     'range': (0, 5),
     }
@@ -246,6 +249,7 @@ drmax = {
     'name' : 'dRmax',
     'root': '#DeltaR_{max}',
     'training': 'off_dRmax',
+    'type': 'f',
     'bins': 20,
     'range': (0, 0.2),
     }
@@ -254,6 +258,7 @@ trflightpathsig = {
     'name' : 'trFlightPathSig',
     'root': 'S_{T}^{flight}',
     'training': 'off_trFlightPathSig',
+    'type': 'f',
     'bins': 20,
     'range': (-10, 30),
     }
@@ -262,6 +267,7 @@ masstrksys = {
     'name' : 'massTrkSys',
     'root': 'm_{track} [MeV]',
     'training': 'off_massTrkSys',
+    'type': 'f',
     'bins': 20,
     'units': 'MeV',
     'range': (0, 20e3),

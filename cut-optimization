@@ -1,0 +1,68 @@
+#!/usr/bin/env python
+# python imports
+import os
+# root/rootpy imports
+from rootpy import ROOT
+from rootpy.extern import argparse
+from rootpy.tree import TreeChain
+# local imports 
+from tools.datasets import DATASETS
+from skim.mixins import TauCategories
+from tauid.tauid import get_IDtools
+from tauid import log; log = log[__name__]
+
+#--> Receive and parse argument
+parser = argparse.ArgumentParser()
+parser.add_argument("--dataset",
+                    help="the input dataset")
+parser.add_argument("-N","--Nentries", type=int, default=-1,
+                    help="Specify the number of events use to run")
+parser.add_argument("--target_eff" , type=float, help="target efficiency")
+parser.add_argument("--cat", help="The tau category",default="all")
+args = parser.parse_args()
+parser.print_usage()
+
+# --> Import data files
+dataset = DATASETS[args.dataset]
+file_list = []
+inputfile = open(dataset['path'])
+for ifile in inputfile:
+    file_list.append(ifile.strip())
+
+tauCell = TreeChain('tauCell_test', file_list, events=args.Nentries)
+tauCell.define_object(name='tau', prefix='off_', mix=TauCategories)
+tauCell.define_object(name='L1_tau', prefix='L1_OfflineMatched_')
+
+# ---> ID Tools
+ID_Tools = get_IDtools(tauCell)
+
+bdtscores = {}
+for tool in ID_Tools:
+    bdtscores[tool] = []
+
+#--------------------------------------------------------------
+#-------------> loop OVER THE EVENTS OF THE INPUT TREE --------
+#--------------------------------------------------------------
+for event in tauCell:
+    tau = event.tau
+    L1_tau = event.L1_tau
+
+    if dataset['signal'] and tau.index_matched_true<=-1:
+        continue
+    if L1_tau.index<=-1:
+        continue
+    if L1_tau.pt<8000.:
+        continue
+    if tau.pt<25000.:
+        continue
+    if not args.cat in tau.category+['all']:
+        continue
+
+    for tool in ID_Tools:
+        bdtscores[tool] += [ID_Tools[tool].BDTScore()]
+            
+for tool in ID_Tools:
+    sorted_scores = sorted(bdtscores[tool])
+    index = int((1-args.target_eff)*len(bdtscores[tool]))
+    log.info('{0}\t --> cutvalue =  {1} and item {2}/{3}'.format(tool, sorted_scores[index],
+                                                                 index, len(bdtscores[tool])))

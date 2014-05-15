@@ -5,13 +5,18 @@ from rootpy import asrootpy
 from skim.mixins import TauCategories
 from .decision import DecisionTool
 from . import VARIABLES
+from . import log; log=log[__name__]
 
 def get_IDtools(tree):
     ID_Tools = {}
     ID_Tools['presel_3'] = TauIDTool(tree, {"all":{'name':'BDT',
                                                    'weight_file':'weights_prod/presel_fullvarlist_quentin_all_14TeV_offline.weights.xml',
                                                    'variables_list': VARIABLES['presel_3'],
-                                                   'cutval': 0.5}})
+                                                   'cutval': 0.463663626155}})
+    ID_Tools['full'] = TauIDTool(tree, {'1p': {'name': 'BDT', 'variables_list': VARIABLES['full_1p'], 'cutval': 0.499492869572,
+                                               'weight_file': 'weights_prod/test_1p_14TeV_offline_full_BDT.weights.xml'},
+                                        'mp': {'name': 'BDT', 'variables_list': VARIABLES['full_mp'], 'cutval': 0.5,
+                                               'weight_file': 'weights_prod/test_mp_14TeV_offline_full_BDT.weights.xml'}})
     return ID_Tools
 
 class TauIDTool:
@@ -19,7 +24,7 @@ class TauIDTool:
     TODO: add description
     """
     # ----------------------------------------------------------------
-    def __init__(self,tree,DT_inputs_list):
+    def __init__(self, tree, DT_inputs_list):
         """ A class to handle the Tau ID decision based on several BDT"""
         self._tree = asrootpy(tree)
         self._DT = {}

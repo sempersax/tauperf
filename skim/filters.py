@@ -57,9 +57,7 @@ class L2_L1_matching(EventFilter):
                     break
         return True
 
-
 class GRLFilter(EventFilter):
-
     def __init__(self, grl, **kwargs):
         super(GRLFilter, self).__init__(**kwargs)
         if isinstance(grl, GRL):

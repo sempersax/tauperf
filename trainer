@@ -54,9 +54,9 @@ ecm = signal['ecm']
 sig_tree = ROOT.TChain('tauCell_train')
 bkg_tree = ROOT.TChain('tauCell_train')
 
-for ifile in open(args.sig_file):
+for ifile in open(signal['path']):
     sig_tree.Add(ifile.strip())
-for ifile in open(args.bkg_file):
+for ifile in open(background['path']):
     bkg_tree.Add(ifile.strip())
 
 log.info('-------- bkg cut --------')
