@@ -247,7 +247,7 @@ ipsigleadtrk = {
     'name' : 'ipSigLeadTrk',
     'root': 'S_{lead track}',
     'training': 'off_ipSigLeadTrk',
-    'training_off': 'ipSigLeadTrk',
+    'training_and': 'ipSigLeadTrk',
     'type': 'f',
     'bins': 20,
     'range': (0, 5),
@@ -257,7 +257,7 @@ drmax = {
     'name' : 'dRmax',
     'root': '#DeltaR_{max}',
     'training': 'off_dRmax',
-    'training_and': 'dRmax'
+    'training_and': 'dRmax',
     'type': 'f',
     'bins': 20,
     'range': (0, 0.2),
