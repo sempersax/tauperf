@@ -15,6 +15,7 @@ class DecisionTool:
                  name,
                  weight_file,
                  variables_list,
+                 training_name = 'training'
                  cutval):
         """ A class to handle the decision of the BDT"""
         TMVA.Tools.Instance()
@@ -24,6 +25,7 @@ class DecisionTool:
         self._cutvalue = -1
         self._bdtscore = -9999
         self._name = name
+        self._training_name = training_name
         log.info('SetReader({0}, {1}, {2})'.format(name, weight_file, variables_list))
         self.SetReader(name, weight_file, variables_list)
         self.SetCutValue(cutval)
@@ -40,7 +42,7 @@ class DecisionTool:
     def InitVariables(self, variables_list):
         variables = ordereddict.OrderedDict()
         for var in variables_list:
-            variables[var['name']] = [var['training'], array('f', [0.])]
+            variables[var['name']] = [var[self._training_name], array('f', [0.])]
         return variables
 
     # --------------------------
