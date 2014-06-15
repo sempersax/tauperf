@@ -9,9 +9,11 @@ function sfu()
     #export ROOT_VERSION=5.34.14
     export ROOT_VERSION=5.34.18 # new TMVA
     source /atlas/software/bleedingedge/setup.sh
+    export PATH=${HOME}/.local/bin${PATH:+:$PATH}
 
     # setup Python user base area
-    export PYTHONUSERBASE=${homenodepath}/local/${OS_VERSION}
+    export PYTHONUSERBASE=/cluster/data10/endw/local/sl5
+    #export PYTHONUSERBASE=${homenodepath}/local/${OS_VERSION}
     export PATH=${PYTHONUSERBASE}/bin${PATH:+:$PATH}
 }
 
