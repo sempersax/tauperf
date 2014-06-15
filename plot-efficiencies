@@ -13,7 +13,7 @@ from tools.datasets import (VERSION, DATASETS,
                             SIGNAL_BACKGROUND_PAIRS,
                             SIGNALS_14TEV)
 from tauid import VARIABLES
-from tauid.plotting import get_mean_rms, SvsB_Canvas, rejection
+from tauid.plotting import get_mean_rms, rejection
 
 ROOT.gROOT.SetBatch(True)
 style = get_style('ATLAS', shape='rect')
@@ -26,7 +26,7 @@ for pair in SIGNAL_BACKGROUND_PAIRS:
     for dir_s, dir_b in zip(fsig, fbkg):
         print dir_s, dir_b
         for h_s, h_b in zip(dir_s, dir_b):
-            print h_s, type(h_s)
+            print h_s, type(h_s), h_s.name.split('_')
             if isinstance(h_s, _HistBase):
                 h_s.Scale(1./h_s.Integral())
                 h_b.Scale(1./h_b.Integral())
@@ -63,8 +63,20 @@ for pair in SIGNAL_BACKGROUND_PAIRS:
                 ROOT.gStyle.SetPadTickY(0)
                 ROOT.gPad.Update()
                 ROOT.gStyle.SetPadTickY(1)
+                lat = ROOT.TLatex(c.GetLeftMargin()+0.05,
+                                  1-c.GetTopMargin()-0.05,
+                                  'Menu: {0}, category: {1}'.format(h_s.name.split('_')[2],
+                                                                    h_s.name.split('_')[1]))
+                lat.SetTextSize(20)
+                lat.SetNDC()
+                print lat.GetX(), lat.GetY()
+                lat.Draw('same')
                 #SvsB_Canvas(h_s, h_b, pad=c, xtitle=h_s.title)
                 c.SaveAs('./plots/SvsB_eff_{0}_cat{1}_mu{2}.png'.format(h_s.name, dir_s.name, DATASETS[pair[0]]['mu']))
+
+
+
+
 
 # plot_cat = ['1p', 'mp']
 # for cat in plot_cat:
