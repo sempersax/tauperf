@@ -1,5 +1,5 @@
 # root/rootpy imports
-from rootpy import ROOT
+import ROOT
 from rootpy.io import root_open
 from rootpy.plotting import Hist, Efficiency, Graph
 # local imports
@@ -18,7 +18,7 @@ def get_efficiency_array():
     eff_array = {}
     for var in VARIABLES['plotting']:
         h = Hist(10, 0, 1)
-        eff_array[var['name']] = ROOT.TEfficiency(h.name, h.title, var['bins'], var['range'][0], var['range'][1])
+        eff_array[var['name']] = ROOT.TEfficiency(h.name, get_label(var), var['bins'], var['range'][0], var['range'][1])
     return eff_array
 
 def get_mean_rms(category, var):
@@ -69,6 +69,7 @@ class SvsB_Perf_Canvas(ROOT.TCanvas):
         self.eff.GetPaintedGraph().GetXaxis().SetTitle(xtitle)
         self.eff.GetPaintedGraph().GetYaxis().SetTitle("Efficiency")
         self.eff.GetPaintedGraph().GetYaxis().SetRangeUser(0,1.05)
+        self.eff.Draw('sameP')
         ROOT.gPad.Update()
         self.right_axis = ROOT.TGaxis( ROOT.gPad.GetUxmax(),ROOT.gPad.GetUymin(),
                                        ROOT.gPad.GetUxmax(),ROOT.gPad.GetUymax(),0,1.05,510,"+L")

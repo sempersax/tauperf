@@ -15,3 +15,5 @@ ntuples
 packages
 rootpy
 weights
+*.e*
+*.o*

@@ -48,12 +48,14 @@ class DecisionTool:
     # -------------------------------------------------
     def BDTScore(self):
         for _, var in self._variables.items():
-            var[2] = getattr(self._tree,var[0])
+            var[2][0] = getattr(self._tree,var[0])
+            #log.info('{0}: {1}'.format(var[0], var[2]))
         return self._reader.EvaluateMVA(self._name)
 
     # --------------------------------------------
     def Decision(self):
         self._bdtscore = self.BDTScore()
+        #log.info('BDT: {0} - {1} - {2}'.format(self._cutvalue, self._name, self._bdtscore))
         if self._bdtscore>=self._cutvalue:
             return True
         else:
