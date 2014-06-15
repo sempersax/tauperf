@@ -13,8 +13,8 @@ class RejectionCurve(ROOT.TEfficiency):
 # -------------------------------------------------------------------------------------------------
 class RoCcurve(ROOT.TGraph):
     """ A class to compute the RoC curve fron 2 TEfficiency object """
-    def __init__(self,teff_s,teff_b):
-        ROOT.TGraph.__init__(self)
+    def __init__(self, teff_s, teff_b):
+        super(RoCcurve, self).__init__()#ROOT.TGraph.__init__(self)
         self._teff_s = teff_s
         self._teff_b = teff_b
         self.SetName(self._teff_s.GetName()+"_roc_curve")
@@ -25,10 +25,8 @@ class RoCcurve(ROOT.TGraph):
             print 'Signal and Bakground efficiencies are different !!!'
 
         for bin in range(1,nbins_s):
-            self.SetPoint( bin-1,
-                           self._teff_s.GetEfficiency(bin),
-                           1-self._teff_b.GetEfficiency(bin)
-                           )
+            self.SetPoint(bin-1, self._teff_s.GetEfficiency(bin),
+                           1-self._teff_b.GetEfficiency(bin))
         self.GetXaxis().SetTitle("#epsilon_{S}")
         self.GetYaxis().SetTitle("1-#epsilon_{B}")
         self.SetLineWidth(4)
@@ -39,8 +37,8 @@ class SvsB_Perf_Canvas(ROOT.TCanvas):
     """ A class to plot Signal efficiency and backg rejection on the same canvas """
 
     def __init__(self,teff_s,teff_b,xtitle='BDT score'):
-        ROOT.TCanvas.__init__(self)
-
+        super(SvsB_Perf_Canvas, self).__init__()
+        #ROOT.TCanvas.__init__(self)
         self.eff = teff_s
         self.rej = RejectionCurve(teff_b)
 
@@ -48,7 +46,7 @@ class SvsB_Perf_Canvas(ROOT.TCanvas):
         self.eff.SetMarkerColor(ROOT.kBlack)
         self.eff.SetMarkerStyle(ROOT.kFullSquare)
 
-        self.rej.SetLineColor  (ROOT.kRed)
+        self.rej.SetLineColor(ROOT.kRed)
         self.rej.SetMarkerColor(ROOT.kRed)
         self.rej.SetMarkerStyle(ROOT.kFullTriangleUp)
         self.rej.SetLineStyle(ROOT.kDashed)
@@ -73,7 +71,7 @@ class SvsB_Perf_Canvas(ROOT.TCanvas):
         return None
 
 
-    def GetOptimalCutValue(self,requested_bkg_rej_value):
+    def GetOptimalCutValue(self, requested_bkg_rej_value):
         # --> more efficient with fine granularity TEfficiency object
         # --> need a TEfficiency object where high score correspond to signal-like events
         cut_value = 0

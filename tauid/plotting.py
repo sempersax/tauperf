@@ -36,3 +36,48 @@ def get_mean_rms(category, var):
     gr_rms.xaxis.title = 'Average Interactions Per Bunch Crossing'
     gr_rms.yaxis.title = 'RMS of '+get_label(var)
     return gr_mean, gr_rms
+
+class RejectionCurve(ROOT.TEfficiency):
+    """ A class to convert a TEfficiency graph into a rejection graph """
+    def __init__(self,eff):
+        hnotpass = eff.GetTotalHistogram().Clone( eff.GetTotalHistogram().GetName()+"_notpass" )
+        hnotpass.Add( eff.GetTotalHistogram(), eff.GetPassedHistogram(),1.,-1.)
+        ROOT.TEfficiency.__init__(self,hnotpass,eff.GetTotalHistogram())
+        return None
+
+class SvsB_Perf_Canvas(ROOT.TCanvas):
+    """ A class to plot Signal efficiency and backg rejection on the same canvas """
+
+    def __init__(self,teff_s,teff_b,xtitle='BDT score'):
+        super(SvsB_Perf_Canvas, self).__init__()
+        #ROOT.TCanvas.__init__(self)
+        self.eff = teff_s
+        self.rej = RejectionCurve(teff_b)
+
+        self.eff.SetLineColor(ROOT.kBlack)
+        self.eff.SetMarkerColor(ROOT.kBlack)
+        self.eff.SetMarkerStyle(ROOT.kFullSquare)
+
+        self.rej.SetLineColor(ROOT.kRed)
+        self.rej.SetMarkerColor(ROOT.kRed)
+        self.rej.SetMarkerStyle(ROOT.kFullTriangleUp)
+        self.rej.SetLineStyle(ROOT.kDashed)
+        self.cd()
+        self.eff.Draw("AP")
+        self.rej.Draw("sameP")
+        ROOT.gPad.Update()
+        self.eff.GetPaintedGraph().GetXaxis().SetTitle(xtitle)
+        self.eff.GetPaintedGraph().GetYaxis().SetTitle("Efficiency")
+        self.eff.GetPaintedGraph().GetYaxis().SetRangeUser(0,1.05)
+        ROOT.gPad.Update()
+        self.right_axis = ROOT.TGaxis( ROOT.gPad.GetUxmax(),ROOT.gPad.GetUymin(),
+                                       ROOT.gPad.GetUxmax(),ROOT.gPad.GetUymax(),0,1.05,510,"+L")
+        self.right_axis.SetLineColor(ROOT.kRed)
+        self.right_axis.SetLabelColor(ROOT.kRed)
+        self.right_axis.SetTextColor(ROOT.kRed)
+        self.right_axis.SetTitle("Rejection = 1 - #epsilon_{B}")
+        self.right_axis.Draw("same")
+        ROOT.gStyle.SetPadTickY(0)
+        ROOT.gPad.Update()
+        ROOT.gStyle.SetPadTickY(1)
+        return None

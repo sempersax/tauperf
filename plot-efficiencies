@@ -13,15 +13,15 @@ from tools.datasets import (VERSION, DATASETS,
                             SIGNAL_BACKGROUND_PAIRS,
                             SIGNALS_14TEV)
 from tauid import VARIABLES
-from tauid.plotting import get_mean_rms
+from tauid.plotting import get_mean_rms, SvsB_Perf_Canvas
 
 ROOT.gROOT.SetBatch(True)
 set_style('ATLAS', shape='rect')
 
 
 for pair in SIGNAL_BACKGROUND_PAIRS:
-    fsig = root_open('efficiencies/eff_presel_{0}_v{1}.root'.format(pair[0], VERSION))
-    fbkg = root_open('efficiencies/eff_presel_{0}_v{1}.root'.format(pair[1], VERSION))
+    fsig = root_open('efficiencies/efficiencies_{0}_v{1}.root'.format(pair[0], VERSION))
+    fbkg = root_open('efficiencies/efficiencies_{0}_v{1}.root'.format(pair[1], VERSION))
     for dir_s, dir_b in zip(fsig, fbkg):
         print dir_s, dir_b
         for h_s, h_b in zip(dir_s, dir_b):
@@ -37,7 +37,8 @@ for pair in SIGNAL_BACKGROUND_PAIRS:
                 c = Canvas()
                 draw([h_s, h_b], pad=c, ytitle='Normalized')
                 c.SaveAs('./plots/SvsB_{0}_cat{1}_mu{2}.png'.format(h_s.name, dir_s.name, DATASETS[pair[0]]['mu']))
-
+            elif isinstance(h_s, Efficiency):
+                
 plot_cat = ['1p', 'mp']
 for cat in plot_cat:
     for var in VARIABLES['plotting_id']:
