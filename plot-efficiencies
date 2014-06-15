@@ -5,6 +5,7 @@ import os
 import ROOT
 from rootpy.plotting import Canvas, Hist, Efficiency, F1
 from rootpy.plotting.hist import _HistBase
+from rootpy.plotting import Legend
 from rootpy.plotting.utils import draw
 from rootpy.plotting.style import set_style, get_style
 from rootpy.io import root_open
@@ -13,6 +14,7 @@ from tools.datasets import (VERSION, DATASETS,
                             SIGNAL_BACKGROUND_PAIRS,
                             SIGNALS_14TEV)
 from tauid import VARIABLES
+from tauid import log; log=log[__name__]
 from tauid.plotting import get_mean_rms, rejection
 
 ROOT.gROOT.SetBatch(True)
@@ -24,9 +26,8 @@ for pair in SIGNAL_BACKGROUND_PAIRS:
     fsig = root_open('efficiencies/efficiencies_{0}_v{1}.root'.format(pair[0], VERSION))
     fbkg = root_open('efficiencies/efficiencies_{0}_v{1}.root'.format(pair[1], VERSION))
     for dir_s, dir_b in zip(fsig, fbkg):
-        print dir_s, dir_b
+        log.info('Directories: {0} {1}'.format(dir_s, dir_b))
         for h_s, h_b in zip(dir_s, dir_b):
-            print h_s, type(h_s), h_s.name.split('_')
             if isinstance(h_s, _HistBase):
                 h_s.Scale(1./h_s.Integral())
                 h_b.Scale(1./h_b.Integral())
@@ -40,7 +41,6 @@ for pair in SIGNAL_BACKGROUND_PAIRS:
                 draw([h_s, h_b], pad=c, ytitle='Normalized')
                 c.SaveAs('./plots/SvsB_{0}_cat{1}_mu{2}.png'.format(h_s.name, dir_s.name, DATASETS[pair[0]]['mu']))
             elif isinstance(h_s, Efficiency):
-                print h_s.name, h_s.title
                 c = Canvas()
                 rej_b = rejection(h_b)
                 h_s.color = 'black'
@@ -69,15 +69,42 @@ for pair in SIGNAL_BACKGROUND_PAIRS:
                                                                     h_s.name.split('_')[1]))
                 lat.SetTextSize(20)
                 lat.SetNDC()
-                print lat.GetX(), lat.GetY()
                 lat.Draw('same')
                 #SvsB_Canvas(h_s, h_b, pad=c, xtitle=h_s.title)
                 c.SaveAs('./plots/SvsB_eff_{0}_cat{1}_mu{2}.png'.format(h_s.name, dir_s.name, DATASETS[pair[0]]['mu']))
 
 
+fsigs = [root_open('efficiencies/efficiencies_{0}_v{1}.root'.format(sig, VERSION)) for sig in SIGNALS_14TEV]
+# Ugly !!! TO BE FIXED
+for dir20, dir40, dir60, dir80 in zip(fsigs[0], fsigs[1], fsigs[2], fsigs[3]):
+    for h20, h40, h60, h80 in zip(dir20, dir40, dir60, dir80):
+        if isinstance(h20, Efficiency):
+            c = Canvas()
+            h20.color = 'red'
+            h40.color = 'green'
+            h60.color = 'blue'
+            h80.color = 'purple'
+            h20.markerstyle = 'triangledown'
+            h40.markerstyle = 'opencircle'
+            h60.markerstyle = 'opensquare'
+            h80.markerstyle = 'opentriangle'
+            print h20.title
+            h20.painted_graph.xaxis.title = h20.title
+            h20.painted_graph.yaxis.title = 'Efficiency'
+            h20.painted_graph.yaxis.SetRangeUser(0, 1)
+            h20.painted_graph.Draw('AP')
+            h40.painted_graph.Draw('sameP')
+            h60.painted_graph.Draw('sameP')
+            h80.painted_graph.Draw('sameP')
+            leg = Legend([h20, h40, h60, h80], pad=c, textsize=20)
+            log.info(leg.Height())
+            # , leftmargin=0.1, topmargin=0.7, rightmargin=0.5)
+            leg.Draw('same')
+            c.SaveAs('./plots/Signal_eff_{0}_cat_{1}.png'.format(h20.name, dir20.name))
+            
 
 
-
+        
 # plot_cat = ['1p', 'mp']
 # for cat in plot_cat:
 #     for var in VARIABLES['plotting_id']:
