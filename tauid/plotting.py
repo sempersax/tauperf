@@ -6,7 +6,7 @@ from rootpy.memory import keepalive
 from rootpy.plotting.utils import draw
 from rootpy.plotting import Hist, Efficiency, Graph, Canvas
 # local imports
-from . import VARIABLES
+from . import VARIABLES, log
 from .variables import get_label
 from tools.datasets import SIGNALS_14TEV, VERSION, DATASETS
 
@@ -44,6 +44,9 @@ def rejection(eff):
     htot = asrootpy(eff.GetTotalHistogram()).Clone()
     hpass = asrootpy(eff.GetPassedHistogram())
     hnotpass =  htot - hpass
-    rej = Efficiency(hpass, htot, name='Rej_{0}'.format(eff.name), title=eff.title)
+    log.info(list(hnotpass.y()))
+    log.info(list(hpass.y()))
+    log.info(list(htot.y()))
+    rej = Efficiency(hnotpass, htot, name='Rej_{0}'.format(eff.name), title=eff.title)
     return rej
 

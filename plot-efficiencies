@@ -70,7 +70,6 @@ for pair in SIGNAL_BACKGROUND_PAIRS:
                 lat.SetTextSize(20)
                 lat.SetNDC()
                 lat.Draw('same')
-                #SvsB_Canvas(h_s, h_b, pad=c, xtitle=h_s.title)
                 c.SaveAs('./plots/SvsB_eff_{0}_cat{1}_mu{2}.png'.format(h_s.name, dir_s.name, DATASETS[pair[0]]['mu']))
 
 
