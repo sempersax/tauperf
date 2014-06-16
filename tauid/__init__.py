@@ -77,6 +77,8 @@ VARIABLES = {
                  efftopoinvmass,
                  efftopomeandeltar,
                  emfraction,
+                 lead2clustereoverallclusterE,
+                 lead3clustereoverallclusterE,
                  ],
     'presel_q': [centfrac,
                  pssfraction,
