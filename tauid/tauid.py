@@ -63,7 +63,7 @@ class TauIDTool:
     def Decision(self, tau):
         tool_to_use = self.ToolKey(tau)
         log.info('Tool to use: {0}'.format(tool_to_use))
-        Decision = self._DT[tool_to_use].Decision()
+        Decision = self._DT[tool_to_use].Decision(tau)
         self._score = self._DT[tool_to_use].score
         return Decision
     

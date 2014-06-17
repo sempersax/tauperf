@@ -25,15 +25,11 @@ class DecisionTool:
         self._score = -9999
         self._name = name
         self._training_name = training_name
-        log.info('SetReader({0}, {1}, {2})'.format(name, weight_file, variables))
-        self.SetReader(name, weight_file)
-        
-    # --------------------------------------------
-    def SetReader(self, name, weight_file):
-        log.info('Set the {0} with {1}'.format(name, weight_file))
+        log.info('SetReader: {0}, {1}, {2}'.format(name, weight_file, variables))
         for var, val in zip(self._vars, self._vals):
             self._reader.AddVariable(var[self._training_name], val)
         self._reader.BookMVA(name, weight_file)
+
 
     @property
     def cutval(self):
