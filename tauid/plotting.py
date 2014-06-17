@@ -44,9 +44,6 @@ def rejection(eff):
     htot = asrootpy(eff.GetTotalHistogram()).Clone()
     hpass = asrootpy(eff.GetPassedHistogram())
     hnotpass =  htot - hpass
-    log.info(list(hnotpass.y()))
-    log.info(list(hpass.y()))
-    log.info(list(htot.y()))
     rej = Efficiency(hnotpass, htot, name='Rej_{0}'.format(eff.name), title=eff.title)
     return rej
 
