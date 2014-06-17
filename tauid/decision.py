@@ -31,7 +31,6 @@ class DecisionTool:
         self._training_name = training_name
         log.info('SetReader({0}, {1}, {2})'.format(name, weight_file, variables_list))
         self.SetReader(name, weight_file)
-        self.SetCutValue(cutval)
         
     # --------------------------------------------
     def SetReader(self, name, weight_file):
