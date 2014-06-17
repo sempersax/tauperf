@@ -94,7 +94,7 @@ for event in tauCell:
 #-------------> END OF THE LOOP OVER THE EVENTS        --------
 #--------------------------------------------------------------
 
-
+log.info('Are we good here ?')
 
 #--------------------------------------------------------------
 #-------------> EFFICIENCY STORING       - --------------------
@@ -103,6 +103,7 @@ for event in tauCell:
 with root_open(args.output_file, "recreate") as output:
     root_directory = output.CurrentDirectory()
     for cat in plot_cat:
+        log.info('Did you get screwed here ?: {0}'.format(cat))
         directory = output.mkdir(cat)
         directory.cd()
         for var, hist in hist_array[cat].items():
