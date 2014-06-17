@@ -82,7 +82,7 @@ for event in tauCell:
             else:
                 hist.Fill(getattr(event, var))
         for tool in ID_Tools:
-            is_passed = ID_Tools[tool].Decision()
+            is_passed = ID_Tools[tool].Decision(tau)
             log.info('{0}, {1}: Score={2}'.format(cat, tool, ID_Tools[tool].score))
             for var, hist in Efficiencies[cat][tool].items():
                 if hasattr(tau, var):
