@@ -14,6 +14,9 @@ from eff_tools.Tau_Category import Category
 from skim.edm   import *
 from skim.mixins import *
 
+import logging
+log = logging.getLogger(os.path.basename(__file__))
+
 #-----------------------------------------------------------
 
 #--> Receive and parse argument
@@ -44,7 +47,7 @@ print 'The loop will use ',entries,' entries'
 
 
 # ---> ID_Tools and cut values list
-ID_Tools,cutvals = get_IDTools(tauCell)
+ID_Tools, cutvals = get_IDTools(tauCell)
 
 
 # --> Plotting category
@@ -87,6 +90,9 @@ for event in tauCell:
     if event.tau.pt<25000.:
         continue
     
+    log.info('Event: {0}:'.format(event.evtnumber))
+
+
     for cat in (set(event.tau.category+["all"])&set(plot_cat)):
         for tool in ID_Tools:
             ID_Tools[tool].SetCutValues(cutvals[tool])
