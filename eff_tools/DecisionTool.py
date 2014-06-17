@@ -47,7 +47,7 @@ class DecisionTool:
     def BDTScore(self):
         for varName, var in self._variables.iteritems():
             var[1][0] = getattr(self._tree,var[0])
-            log.info('{0}: {1}'.format(varName, var[1][0])
+            log.info('{0}: {1}'.format(varName, var[1][0]))
         return self._reader.EvaluateMVA(self._name)
 
 
