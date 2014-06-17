@@ -76,7 +76,7 @@ for event in tauCell:
 
     log.info('Event: {0}:'.format(event.evtnumber))
     for cat in tau.category+["all"]:
-        log.info('{0}: {1}'.format(tool, ID_Tools[tool].Decision()))
+        log.info('{0}: {1}'.format(tool, ID_Tools[tool].Decision(tau)))
         if not cat in plot_cat:
             continue
         for var, hist in hist_array[cat].items():
