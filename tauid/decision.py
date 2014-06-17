@@ -6,7 +6,7 @@ from rootpy.extern import ordereddict
 # local imports
 from . import log; log = log[__name__]
 
-class DecisionTool:
+class DecisionTool(object):
     """
     TODO: add description
     """
@@ -15,7 +15,7 @@ class DecisionTool:
                  weight_file,
                  variables,
                  cutval,
-                 training_name = 'training'):
+                 training = 'training'):
         """ A class to handle the decision of the BDT"""
         TMVA.Tools.Instance()
         self._reader = TMVA.Reader()
@@ -24,10 +24,10 @@ class DecisionTool:
         self._cutval = cutval
         self._score = -9999
         self._name = name
-        self._training_name = training_name
+        self._training = training
         log.info('SetReader: {0}, {1}, {2}'.format(name, weight_file, variables))
         for var, val in zip(self._vars, self._vals):
-            self._reader.AddVariable(var[self._training_name], val)
+            self._reader.AddVariable(var[self._training], val)
         self._reader.BookMVA(name, weight_file)
 
 
@@ -46,7 +46,7 @@ class DecisionTool:
     def Evaluate(self, tau):
         for var, val in zip(self._vars, self._vals):
             val[0] = getattr(tau, var['name'])
-            log.info('{0}: {1}'.format(var['name'], val[0]))
+            log.debug('{0}: {1}'.format(var['name'], val[0]))
         self.score = self._reader.EvaluateMVA(self._name)
 
     # --------------------------------------------
