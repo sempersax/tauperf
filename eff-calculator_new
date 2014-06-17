@@ -11,7 +11,7 @@ from skim.mixins import TauCategories
 from tauid.plotting import get_hist_array, get_efficiency_array
 from tauid import VARIABLES
 from tauid.tauid import get_IDtools
-from tauid import log; log = log[__name__]
+from tauid import log
 #-----------------------------------------------------------
 
 #--> Receive and parse argument
@@ -57,7 +57,6 @@ for cat in plot_cat:
 #--------------------------------------------------------------
 #-------------> loop OVER THE EVENTS OF THE INPUT TREE --------
 #--------------------------------------------------------------
-log.info( '-------- START THE EVENT LOOP -----------')
 
 for event in tauCell:
     tau = event.tau
@@ -74,8 +73,7 @@ for event in tauCell:
     if tau.numTrack<1:
         continue
 
-    #log.info(tau.pt)
-    for cat in ['all']:#tau.category+["all"]:
+    for cat in tau.category+["all"]:
         if not cat in plot_cat:
             continue
         for var, hist in hist_array[cat].items():
