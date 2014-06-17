@@ -46,13 +46,13 @@ class DecisionTool:
     def Evaluate(self, tau):
         for var, val in zip(self._vars, self._vals):
             val[0] = getattr(tau, var['name'])
-            log.info('{0}: {1}'.format(var['name'], val[0]))
+            log.debug('{0}: {1}'.format(var['name'], val[0]))
         self.score = self._reader.EvaluateMVA(self._name)
 
     # --------------------------------------------
     def Decision(self, tau):
         self.Evaluate(tau)
-        log.info('BDT: {0} - {1} - {2}'.format(self.cutval, self._name, self.score))
+        log.debug('BDT: {0} - {1} - {2}'.format(self.cutval, self._name, self.score))
         if self.score>=self.cutval:
             return True
         else:
