@@ -14,11 +14,11 @@ def get_IDtools(tree):
                                                    'variables_list': VARIABLES['presel_3'],
                                                    'training_name': 'training_old',
                                                    'cutval': 0.389722714377}})
-    ID_Tools['presel_q'] = TauIDTool(tree, {"all":{'name':'BDT',
-                                                   'weight_file':'weights_prod/presel_fullvarlist_quentin_all_14TeV_offline.weights.xml',
-                                                   'variables_list': VARIABLES['presel_q'],
-                                                   'training_name': 'training',
-                                                   'cutval': 0.463663626155}})
+#     ID_Tools['presel_q'] = TauIDTool(tree, {"all":{'name':'BDT',
+#                                                    'weight_file':'weights_prod/presel_fullvarlist_quentin_all_14TeV_offline.weights.xml',
+#                                                    'variables_list': VARIABLES['presel_q'],
+#                                                    'training_name': 'training',
+#                                                    'cutval': 0.463663626155}})
     ID_Tools['full'] = TauIDTool(tree, {'1p': {'name': 'BDT',
                                                'variables_list': VARIABLES['full_1p'],
                                                'training_name': 'training',

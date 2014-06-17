@@ -6,8 +6,9 @@ def get_label(variable):
 
 pt = {
     'name': 'pt',
-    'root': 'p_{T} [MeV]',
+    'root': 'p_{T}',
     'type': 'f',
+    'units': 'MeV'
     'bins': 20,
     'range': (10, 1e5)
     }
@@ -288,7 +289,7 @@ trflightpathsig = {
 
 masstrksys = {
     'name' : 'massTrkSys',
-    'root': 'm_{track} [MeV]',
+    'root': 'm_{track}',
     'training': 'off_massTrkSys',
     'training_and': 'massTrkSys',
     'type': 'f',
