@@ -73,7 +73,7 @@ for event in tauCell:
         continue
 
     #log.info(tau.pt)
-    for cat in tau.category+["all"]:
+    for cat in ['all']:#tau.category+["all"]:
         if not cat in plot_cat:
             continue
         for var, hist in hist_array[cat].items():
