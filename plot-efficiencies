@@ -49,7 +49,7 @@ for pair in SIGNAL_BACKGROUND_PAIRS:
                 lat.SetNDC()
                 lat.Draw('same')
                 lat_chi2 = ROOT.TLatex(c.GetLeftMargin()+0.05, 1-c.GetTopMargin()-0.05,
-                                       '#Chi^{2}/ndf: {0}'.format(h_s.Chi2Test(h_b, 'UUCHI2/NDF')))
+                                       '#Chi^{2}/ndf: {0}'.format(h_s.Chi2Test(h_b, 'NORMCHI2/NDF')))
                 lat_chi2.SetTextSize(20)
                 lat_chi2.SetNDC()
                 lat_chi2.Draw('same')
