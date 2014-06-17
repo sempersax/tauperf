@@ -69,7 +69,7 @@ for event in tauCell:
         continue
     if tau.pt<25000.:
         continue
-    if tau.mumTrack<1:
+    if tau.numTrack<1:
         continue
 
     #log.info(tau.pt)
