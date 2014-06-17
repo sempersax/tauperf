@@ -8,7 +8,7 @@ pt = {
     'name': 'pt',
     'root': 'p_{T}',
     'type': 'f',
-    'units': 'MeV'
+    'units': 'MeV',
     'bins': 20,
     'range': (10, 1e5)
     }
