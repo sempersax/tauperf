@@ -24,7 +24,6 @@ class DecisionTool:
         self._variables_list = variables_list
         self._variables = ordereddict.OrderedDict()
         for var in self._variables_list:
-            log.info('Add variable {0}'.format(var))
             self._variables[var['name']]=[var['training'], var[training_name], array('f', [0.])]
         self._cutvalue = -1
         self._bdtscore = -9999
