@@ -1,4 +1,4 @@
- def get_label(variable):
+def get_label(variable):
     label = variable['root']
     if 'units' in variable.keys():
         label += ' [{0}]'.format(variable['units'])
