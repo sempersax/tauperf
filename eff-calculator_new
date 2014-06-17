@@ -71,8 +71,6 @@ for event in tauCell:
         continue
     if tau.pt<25000.:
         continue
-    if tau.numTrack<1:
-        continue
 
     log.info('Event: {0}:'.format(event.evtnumber))
     for cat in tau.category+["all"]:
