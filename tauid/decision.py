@@ -25,7 +25,7 @@ class DecisionTool:
         self._score = -9999
         self._name = name
         self._training_name = training_name
-        log.info('SetReader({0}, {1}, {2})'.format(name, weight_file, variables_list))
+        log.info('SetReader({0}, {1}, {2})'.format(name, weight_file, variables))
         self.SetReader(name, weight_file)
         
     # --------------------------------------------
