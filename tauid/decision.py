@@ -14,17 +14,14 @@ class DecisionTool:
                  tree,
                  name,
                  weight_file,
-                 variables_list,
+                 variables,
                  cutval,
                  training_name = 'training'):
         """ A class to handle the decision of the BDT"""
         TMVA.Tools.Instance()
         self._reader = TMVA.Reader()
-        self._tree   = tree
-        self._variables_list = variables_list
-        self._variables = ordereddict.OrderedDict()
-        for var in self._variables_list:
-            self._variables[var['name']]=[var['training'], var[training_name], array('f', [0.])]
+        self._vars = variables
+        self._vals = [array('f', [0.]) for i in range(0, len(variables))] 
         self._cutval = cutval
         self._score = -9999
         self._name = name
@@ -35,9 +32,8 @@ class DecisionTool:
     # --------------------------------------------
     def SetReader(self, name, weight_file):
         log.info('Set the {0} with {1}'.format(name, weight_file))
-        for _, var in self._variables.items():
-            log.info(var)
-            self._reader.AddVariable(var[1], var[2])
+        for var, val in zip(self._vars, self._vals):
+            self._reader.AddVariable(var[self._training_name], val)
         self._reader.BookMVA(name, weight_file)
 
     @property
@@ -52,23 +48,18 @@ class DecisionTool:
     def score(self):
         return self._score
 
-    # -------------------------------------------------
-    def BDTScore(self):
-        for _, var in self._variables.items():
-            var[2][0] = getattr(self._tree,var[0])
-            #log.info('{0}: {1}'.format(var[0], var[2]))
-        return self._reader.EvaluateMVA(self._name)
+    def Evaluate(self, tau):
+        for var, val in zip(self._vars, self._vals):
+            val[0] = getattr(tau, var['name'])
+            log.info('{0}: {1}'.format(var['name'], val[0]))
+        self.score = self._reader.EvaluateMVA(self._name)
 
     # --------------------------------------------
-    def Decision(self):
-        self._score = self.BDTScore()
+    def Decision(self, tau):
+        self.Evaluate(tau)
         log.info('BDT: {0} - {1} - {2}'.format(self.cutval, self._name, self.score))
         if self.score>=self.cutval:
             return True
         else:
             return False
     
-    # ----------------------
-    def GetBDTScore(self):
-        self._bdtscore = self.BDTScore()
-        return self._bdtscore

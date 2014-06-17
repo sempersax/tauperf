@@ -45,45 +45,36 @@ class TauIDTool:
     """
     TODO: add description
     """
-    # ----------------------------------------------------------------
-    def __init__(self, tree, DT_inputs_list):
+    def __init__(self, DT_inputs_list):
         """ A class to handle the Tau ID decision based on several BDT"""
-        self._tree = asrootpy(tree)
         self._DT = {}
+        self._score = -9999
         for key, DT_inputs in DT_inputs_list.items():
-            self._DT[key] = DecisionTool(self._tree,
-                                         DT_inputs['name'],
-                                         DT_inputs['weight_file'],
-                                         DT_inputs['variables_list'],
-                                         DT_inputs['cutval'],
+            self._DT[key] = DecisionTool(DT_inputs['name'], DT_inputs['weight_file'],
+                                         DT_inputs['variables_list'], DT_inputs['cutval'],
                                          training_name = DT_inputs['training_name'])
-    
-    # ----------------------------------------------------------------
-    def ToolKey(self):
-        categories = []
-        #         self._tree.define_object(name='tau', prefix='off_', mix=TauCategories)
-        tau_idcat = self._tree.tau.idcat
-        bdt_cat = set(tau_idcat) & set(self._DT.keys())
+
+    def ToolKey(self, tau):
+        bdt_cat = set(tau.idcat) & set(self._DT.keys())
         if len(bdt_cat)!=1:
             raise RuntimeError('Need exactly one category in common')
         return list(bdt_cat)[0]
-    # ----------------------------------------------------------------
-    def Decision(self):
-        tool_to_use = self.ToolKey()
+
+    def Decision(self, tau):
+        tool_to_use = self.ToolKey(tau)
         log.info('Tool to use: {0}'.format(tool_to_use))
         Decision = self._DT[tool_to_use].Decision()
+        self._score = self._DT[tool_to_use].score
         return Decision
     
-    # ----------------------------------------------------------------
     @property
     def score(self):
-        tool_to_use = self.ToolKey()
-        return self._DT[tool_to_use].score
+        return self._score
 
     # ----------------------------------------------------------------
     def SetCutValues(self, cutvalues):
         for input_key in self._DT:
             if input_key in cutvalues:
-                self._DT[input_key].SetCutValue(cutvalues[input_key])
+                self._DT[input_key].cutval = cutvalues[input_key]
             else:
                 raise RuntimeError('The input key does not contain a cut value !')
