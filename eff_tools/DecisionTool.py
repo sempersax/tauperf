@@ -1,7 +1,8 @@
 from ROOT import TMVA
 from array import array
 from rootpy.extern import ordereddict
-
+import logging
+log = logging.getLogger('DecisionTool')
 
 class DecisionTool:
 
