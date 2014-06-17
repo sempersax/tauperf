@@ -57,7 +57,7 @@ for cat in plot_cat:
 #--------------------------------------------------------------
 #-------------> loop OVER THE EVENTS OF THE INPUT TREE --------
 #--------------------------------------------------------------
-log( '-------- START THE EVENT LOOP -----------')
+log.info( '-------- START THE EVENT LOOP -----------')
 
 for event in tauCell:
     tau = event.tau
