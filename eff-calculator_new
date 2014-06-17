@@ -11,7 +11,6 @@ from skim.mixins import TauCategories
 from tauid.plotting import get_hist_array, get_efficiency_array
 from tauid import VARIABLES
 from tauid.tauid import get_IDtools
-from tauid import log
 #-----------------------------------------------------------
 
 #--> Receive and parse argument
