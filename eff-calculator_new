@@ -83,7 +83,6 @@ for event in tauCell:
                 hist.Fill(getattr(event, var))
         for tool in ID_Tools:
             is_passed = ID_Tools[tool].Decision(tau)
-            log.info('{0}, {1}: Score={2}'.format(cat, tool, ID_Tools[tool].score))
             for var, hist in Efficiencies[cat][tool].items():
                 if hasattr(tau, var):
                     Efficiencies[cat][tool][var].Fill(is_passed, getattr(tau, var))
@@ -94,7 +93,7 @@ for event in tauCell:
 #-------------> END OF THE LOOP OVER THE EVENTS        --------
 #--------------------------------------------------------------
 
-log.info('Are we good here ?')
+#log.info('Are we good here ?')
 
 #--------------------------------------------------------------
 #-------------> EFFICIENCY STORING       - --------------------
@@ -103,7 +102,7 @@ log.info('Are we good here ?')
 with root_open(args.output_file, "recreate") as output:
     root_directory = output.CurrentDirectory()
     for cat in plot_cat:
-        log.info('Did you get screwed here ?: {0}'.format(cat))
+        #log.info('Did you get screwed here ?: {0}'.format(cat))
         directory = output.mkdir(cat)
         directory.cd()
         for var, hist in hist_array[cat].items():
