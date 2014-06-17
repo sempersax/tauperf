@@ -11,7 +11,6 @@ class DecisionTool:
     TODO: add description
     """
     def __init__(self,
-                 tree,
                  name,
                  weight_file,
                  variables,
