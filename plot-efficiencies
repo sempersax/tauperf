@@ -38,7 +38,16 @@ for pair in SIGNAL_BACKGROUND_PAIRS:
                 h_s.drawstyle = 'HIST'
                 h_b.drawstyle = 'HIST'
                 c = Canvas()
-                draw([h_s, h_b], pad=c, ytitle='Normalized')
+                draw([h_s, h_b], pad=c, ytitle='Normalized', xtitle=h_s.xaxis.title)
+                h_s.title = 'Z#rightarrow#tau#tau'
+                h_b.title = 'multijets (JF17)'
+                leg = Legend([h_s, h_b], pad=c, textsize=15, leftmargin=0.6)
+                leg.Draw('same')
+                lat = ROOT.TLatex(c.GetLeftMargin()+0.05, 1-c.GetTopMargin()-0.05,
+                                  'category: {0}'.format(h_s.name.split('_')[1]))
+                lat.SetTextSize(20)
+                lat.SetNDC()
+                lat.Draw('same')
                 c.SaveAs('./plots/SvsB_{0}_cat{1}_mu{2}.png'.format(h_s.name, dir_s.name, DATASETS[pair[0]]['mu']))
             elif isinstance(h_s, Efficiency):
                 c = Canvas()
