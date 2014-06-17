@@ -33,9 +33,9 @@ while read filename; do
     inputfile=`echo ${filename}| awk -F"/" '{print $NF}'`
     outputfile=`echo $inputfile| awk -F".root" '{print $1"_skimmed.root"}'`
     echo "############# SKIMMING/SLIMMING #######################"
-    ./skimmer ${filename} ${outputfile} $stream
+    ./skim-maker ${filename} ${outputfile} $stream
     echo "############# CREATE TRAINING/TESTING TREES ###########"
-    ./split-skim ${outputfile}
+    ./skim-split ${outputfile}
 done < $listoffiles
 
 cp $listoffiles $initdir/
