@@ -209,7 +209,7 @@ efftopomeandeltar = {
 
 trkavgdist = {
     'name': 'trkAvgDist',
-    'root': '#R_{track}',
+    'root': 'R_{track}',
     'training': 'off_trkAvgDist',
     'training_and': 'trkAvgDist',
     'type': 'f',
