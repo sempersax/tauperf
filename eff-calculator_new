@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import os
 # ROOT/rootpy imports
 from rootpy import ROOT
 from rootpy.extern import argparse
@@ -10,7 +11,7 @@ from skim.mixins import TauCategories
 from tauid.plotting import get_hist_array, get_efficiency_array
 from tauid import VARIABLES
 from tauid.tauid import get_IDtools
-from tauid import log; log = log[__name__]
+from tauid import log; log = log[os.path.basename(__file__)]
 #-----------------------------------------------------------
 
 #--> Receive and parse argument
@@ -93,7 +94,6 @@ for event in tauCell:
 #-------------> END OF THE LOOP OVER THE EVENTS        --------
 #--------------------------------------------------------------
 
-#log.info('Are we good here ?')
 
 #--------------------------------------------------------------
 #-------------> EFFICIENCY STORING       - --------------------
@@ -102,7 +102,6 @@ for event in tauCell:
 with root_open(args.output_file, "recreate") as output:
     root_directory = output.CurrentDirectory()
     for cat in plot_cat:
-        #log.info('Did you get screwed here ?: {0}'.format(cat))
         directory = output.mkdir(cat)
         directory.cd()
         for var, hist in hist_array[cat].items():
