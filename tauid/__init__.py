@@ -18,7 +18,7 @@ VARIABLES = {
                     emradius,
                     hadradius,
                     emfraction,
-                    hadfraction,
+                    #hadfraction,
                     stripwidth,
                     lead2clustereoverallclusterE,
                     lead3clustereoverallclusterE,
