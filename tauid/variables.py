@@ -1,4 +1,4 @@
-def get_label(variable):
+ def get_label(variable):
     label = variable['root']
     if 'units' in variable.keys():
         label += ' [{0}]'.format(variable['units'])
@@ -132,6 +132,7 @@ lead2clustereoverallclusterE = {
     'name': 'lead2ClusterEOverAllClusterE',
     'root': 'E_(2nd cluster)/E_{tot}',
     'training': 'off_lead2ClusterEOverAllClusterE',
+    'training_old': 'lead2ClusterEOverAllClusterE',
     'type': 'f',
     'bins': 20,
     'range': (0, 1)
@@ -141,6 +142,7 @@ lead3clustereoverallclusterE = {
     'name': 'lead3ClusterEOverAllClusterE',
     'root': 'E_(3nd cluster)/E_{tot}',
     'training': 'off_lead3ClusterEOverAllClusterE',
+    'training_old': 'lead3ClusterEOverAllClusterE',
     'type': 'f',
     'bins': 20,
     'range': (0, 1)
