@@ -41,6 +41,7 @@ centfrac = {
     'root': 'f_{core}',
     'training': 'off_centFrac',
     'training_and': 'centFrac',
+    'training_old': 'centFrac',
     'type': 'f',
     'bins': 20,
     'range': (0, 1)
@@ -51,6 +52,7 @@ pssfraction = {
     'root': 'E_{PSS}/E_{cluster}',
     'training': 'off_PSSFraction',
     'training_and': 'PSSFraction',
+    'training_old': 'PSSFraction',
     'type': 'f',
     'bins': 20,
     'range': (0, 1)
@@ -60,6 +62,7 @@ nstrip = {
     'name': 'nStrip',
     'root': 'Number of cells in the strips layer',
     'training': 'off_nStrip',
+    'training_old': 'nStrip',
     'type': 'i',
     'bins': 20,
     'range': (0, 20)
@@ -69,6 +72,7 @@ emradius = {
     'name': 'EMRadius',
     'root': 'Radius in the ECAL',
     'training': 'off_EMRadius',
+    'training_old': 'EMRadius',
     'type': 'f',
     'bins': 20,
     'range': (0, 0.4)
@@ -78,6 +82,7 @@ hadradius = {
     'name': 'HadRadius',
     'root': 'Radius in the HCAL',
     'training': 'off_HadRadius',
+    'training_old': 'HadRadius',
     'type': 'f',
     'bins': 20,
     'range': (0, 0.4)
@@ -87,6 +92,7 @@ emfraction = {
     'name': 'EMFractionAtEMScale',
     'root': 'f_{EM} (EMSCALE)',
     'training': 'off_EMFractionAtEMScale',
+    'training_old': 'EMFractionAtEMScale',
     'type': 'f',
     'bins': 20,
     'range': (0, 1)
@@ -106,6 +112,7 @@ hadenergy = {
     'name': 'HadEnergy',
     'root': 'E_{HAD}',
     'training': 'off_HadEnergy',
+    'training_old': 'HadEnergy',
     'type': 'f',
     'bins': 20,
     'range': (0, 40000),
@@ -116,6 +123,7 @@ stripwidth = {
     'name': 'stripWidth2',
     'root': 'Energy weighed width in the S1 of theECAL',
     'training': 'off_stripWidth2',
+    'training_old': 'stripWidth2',
     'type': 'f',
     'bins': 20,
     'range': (-0.2, 0.2)
@@ -170,6 +178,7 @@ numefftopoclusters = {
     'name': 'numEffTopoClusters',
     'root': 'Effective Number of Topoclusters',
     'training': 'off_numEffTopoClusters',
+    'training_old': 'numEffTopoClusters',
     'type': 'f',
     'bins': 20,
     'range': (0, 10)
@@ -179,6 +188,7 @@ efftopoinvmass = {
     'name': 'effTopoInvMass',
     'root': 'Invariant Mass of The Effective Topoclusters',
     'training': 'off_effTopoInvMass',
+    'training_old': 'effTopoInvMass',
     'type': 'f',
     'bins': 20,
     'range': (0, 40000),
@@ -189,6 +199,7 @@ efftopomeandeltar = {
     'name': 'effTopoMeanDeltaR',
     'root': 'Mean Radius of The Effective Topoclusters',
     'training': 'off_effTopoMeanDeltaR',
+    'training_old': 'effTopoMeanDeltaR',
     'type': 'f',
     'bins': 20,
     'range': (0, 0.4),
