@@ -74,10 +74,10 @@ class TauIDTool:
         return Decision
     
     # ----------------------------------------------------------------
-    def BDTScore(self):
+    @property
+    def score(self):
         tool_to_use = self.ToolKey()
-        BDT_Score = self._DT[tool_to_use].GetBDTScore()
-        return BDT_Score
+        return self._DT[tool_to_use].score
 
     # ----------------------------------------------------------------
     def SetCutValues(self, cutvalues):
