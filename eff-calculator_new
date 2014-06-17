@@ -76,6 +76,7 @@ for event in tauCell:
 
     log.info('Event: {0}:'.format(event.evtnumber))
     for cat in tau.category+["all"]:
+        log.info('{0}: {1}'.format(tool, ID_Tools[tool].Decision()))
         if not cat in plot_cat:
             continue
         for var, hist in hist_array[cat].items():
@@ -87,8 +88,10 @@ for event in tauCell:
             is_passed = ID_Tools[tool].Decision(tau)
             for var, hist in Efficiencies[cat][tool].items():
                 if hasattr(tau, var):
+                    log.info('{0}: {1}'.format(var, getattr(tau, var)))
                     Efficiencies[cat][tool][var].Fill(is_passed, getattr(tau, var))
                 else:
+                    log.info('{0}: {1}'.format(var, getattr(event, var)))
                     Efficiencies[cat][tool][var].Fill(is_passed, getattr(event, var))
 
 #--------------------------------------------------------------

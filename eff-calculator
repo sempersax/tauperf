@@ -96,9 +96,11 @@ for event in tauCell:
     for cat in (set(event.tau.category+["all"])&set(plot_cat)):
         for tool in ID_Tools:
             ID_Tools[tool].SetCutValues(cutvals[tool])
+            log.info('{0}: {1}'.format(tool, ID_Tools[tool].Decision()))
             for var in  aux.bins:
                 if "bdt" in var: continue
                 if "EF" in var: continue
+                log.info('{0}: {1}'.format(var, getattr(event, var)))
                 if 'bdt_full' in tool:
                     is_passed = ID_Tools[tool].Decision() and ID_Tools['bdt_presel_fullvarlist_michel3'].Decision()
                     Efficiencies[tool][var+'_'+cat].Fill( is_passed, getattr(event,var) )
