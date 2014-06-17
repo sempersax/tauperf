@@ -25,8 +25,8 @@ class DecisionTool:
         self._variables = ordereddict.OrderedDict()
         for var in self._variables_list:
             self._variables[var['name']]=[var['training'], var[training_name], array('f', [0.])]
-        self._cutvalue = -1
-        self._bdtscore = -9999
+        self._cutval = cutval
+        self._score = -9999
         self._name = name
         self._training_name = training_name
         log.info('SetReader({0}, {1}, {2})'.format(name, weight_file, variables_list))
@@ -41,9 +41,17 @@ class DecisionTool:
             self._reader.AddVariable(var[1], var[2])
         self._reader.BookMVA(name, weight_file)
 
-    # --------------------------
-    def SetCutValue(self, val):
-        self._cutvalue = val
+    @property
+    def cutval(self):
+        return self._cutval
+    
+    @cutval.setter
+    def cutval(self, cutval):
+        self._cutval = cutval
+
+    @property
+    def score(self):
+        return self._score
 
     # -------------------------------------------------
     def BDTScore(self):
@@ -54,9 +62,9 @@ class DecisionTool:
 
     # --------------------------------------------
     def Decision(self):
-        self._bdtscore = self.BDTScore()
-        #log.info('BDT: {0} - {1} - {2}'.format(self._cutvalue, self._name, self._bdtscore))
-        if self._bdtscore>=self._cutvalue:
+        self._score = self.BDTScore()
+        log.info('BDT: {0} - {1} - {2}'.format(self.cutval, self._name, self.score))
+        if self.score>=self.cutval:
             return True
         else:
             return False
