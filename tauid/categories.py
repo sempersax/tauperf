@@ -12,7 +12,9 @@ class TauCategories(object):
 
     @property
     def prongcat(self):
-        if self.tau.numTrack==1:
+        if self.tau.numTrack==0:
+            return ['0p']
+        elif self.tau.numTrack==1:
             return ["1p"]
         elif self.tau.numTrack==2:
             return ["2p","mp"]
