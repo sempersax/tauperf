@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 import os
-import logging
-log = logging.getLogger('eff-calculator')
 # ROOT/rootpy imports
 from rootpy import ROOT
 from rootpy.extern import argparse
 from rootpy.io import root_open
 from rootpy.tree import TreeChain
 from rootpy.plotting import Efficiency, Hist
+from rootpy import log
+rootpy.log.basic_config_colorized()
 # local imports
 from tauid.plotting import get_hist_array, get_efficiency_array
 from tauid import VARIABLES
