@@ -8,7 +8,7 @@ class TauCategories(object):
 
     @property
     def category(self):
-        return self.prong_cat+self.etacat
+        return self.prongcat+self.etacat
 
     @property
     def prongcat(self):
