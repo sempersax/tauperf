@@ -2,7 +2,7 @@
 from rootpy.tree import Tree
 from rootpy import asrootpy
 # local imports
-from skim.mixins import TauCategories
+from .categories import TauCategories
 from .decision import DecisionTool
 from . import VARIABLES
 from . import log; log=log[__name__]
@@ -55,7 +55,8 @@ class TauIDTool(object):
                                          training = DT_inputs['training'])
 
     def ToolKey(self, tau):
-        bdt_cat = set(tau.idcat) & set(self._DT.keys())
+        cats = TauCategories(tau)
+        bdt_cat = set(cats.idcat) & set(self._DT.keys())
         if len(bdt_cat)!=1:
             raise RuntimeError('Need exactly one category in common')
         return list(bdt_cat)[0]
