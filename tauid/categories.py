@@ -8,7 +8,7 @@ class TauCategories(object):
 
     @property
     def category(self):
-        return self.tau.prong_cat+self.tau.etacat
+        return self.prong_cat+self.etacat
 
     @property
     def prongcat(self):
@@ -30,23 +30,23 @@ class TauCategories(object):
 
     @property
     def prongpi0cat(self):
-        if "1p" in self.tau.prong_cat:
-            if "0n" in self.tau.pi0_cat:
+        if "1p" in self.prong_cat:
+            if "0n" in self.pi0_cat:
                 return ["1p_0n"]
             else:
                 return ["1p_Xn"]
-        elif "2p" in self.tau.prong_cat:
-            if "0n" in self.tau.pi0_cat:
+        elif "2p" in self.prong_cat:
+            if "0n" in self.pi0_cat:
                 return ["2p_0n","mp_0n"]
             else:
                 return ["2p_Xn","2p_Xn"]
-        elif "3p" in self.tau.prong_cat:
-            if "0n" in self.tau.pi0_cat:
+        elif "3p" in self..prong_cat:
+            if "0n" in self.pi0_cat:
                 return ["3p_0n","mp_0n"]
             else:
                 return ["3p_Xn","mp_Xn"]
         else:
-            if "0n" in self.tau.pi0_cat:
+            if "0n" in self.pi0_cat:
                 return ["mp_0n"]
             else:
                 return ["mp_Xn"]
