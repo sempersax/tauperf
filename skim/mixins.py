@@ -106,19 +106,17 @@ class ClusterBasedFourMomentum(MatchedObject):
     
 class TauCategories(object):
 
-    def __init__(self):
-        self.etacat = self.getEtaCat()
-        self.prongcat = self.getProngCat()
-        self.pi0cat = self.getPi0Cat()
-        self.prongpi0cat = self.getProngPi0Cat(self.prongcat,self.pi0cat)
-        self.category = self.etacat+self.prongcat+self.prongpi0cat#getCategories()
-        self.idcat = self.getIDCat()
+#     def __init__(self):
+#         self.prongpi0cat = self.getProngPi0Cat(self.prongcat,self.pi0cat)
+#         self.category = self.etacat+self.prongcat+self.prongpi0cat#getCategories()
+#         self.idcat = self.getIDCat()
 
     @cached_property
-    def getCategories(self):
-        return self.prong_cat+self.etacat#+self.prongpi0_cat
+    def category(self):
+        return self.prong_cat+self.etacat
 
-    def getProngCat(self):
+    @cached_property
+    def prongcat(self):
         if self.numTrack==1:
             return ["1p"]
         elif self.numTrack==2:
@@ -128,41 +126,45 @@ class TauCategories(object):
         else:
             return ["mp"]
 
-    def getPi0Cat(self):
+    @cached_property
+    def pi0cat(self):
         if self.pi0BDTPrimary>0.47:
             return ["0n"]
         else:
             return ["Xn"]
 
-    def getProngPi0Cat(self,prong_cat,pi0_cat):
-        if "1p" in prong_cat:
-            if "0n" in pi0_cat:
+    @cached_property
+    def prongpi0cat(self):
+        if "1p" in self.prong_cat:
+            if "0n" in self.pi0_cat:
                 return ["1p_0n"]
             else:
                 return ["1p_Xn"]
-        elif "2p" in prong_cat:
-            if "0n" in pi0_cat:
+        elif "2p" in self.prong_cat:
+            if "0n" in self.pi0_cat:
                 return ["2p_0n","mp_0n"]
             else:
                 return ["2p_Xn","2p_Xn"]
-        elif "3p" in prong_cat:
-            if "0n" in pi0_cat:
+        elif "3p" in self.prong_cat:
+            if "0n" in self.pi0_cat:
                 return ["3p_0n","mp_0n"]
             else:
                 return ["3p_Xn","mp_Xn"]
         else:
-            if "0n" in pi0_cat:
+            if "0n" in self.pi0_cat:
                 return ["mp_0n"]
             else:
                 return ["mp_Xn"]
 
-    def getEtaCat(self):
+    @cached_property
+    def etacat(self):
         if abs(self.eta)<1.37:
             return ["central"]
         else:
             return ["endcap"]
 
-    def getIDCat(self):
+    @cached_property
+    def idcat(self):
         if self.numTrack==1:
             if self.pi0BDTPrimary>0.47:
                 return ["all","1p","1p_0n"]
