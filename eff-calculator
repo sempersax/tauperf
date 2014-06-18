@@ -7,9 +7,9 @@ from rootpy.io import root_open
 from rootpy.tree import TreeChain
 from rootpy.plotting import Efficiency, Hist
 # local imports
-from skim.mixins import TauCategories
 from tauid.plotting import get_hist_array, get_efficiency_array
 from tauid import VARIABLES
+from tauid.categories import TauCategories
 from tauid.tauid import get_IDtools
 from tauid import log
 #--> Receive and parse argument
@@ -32,7 +32,7 @@ for ifile in inputfile:
     file_list.append(ifile.strip())
 
 tauCell = TreeChain('tauCell_test', file_list, events=args.Nentries)
-tauCell.define_object(name='tau', prefix='off_', mix=TauCategories)
+tauCell.define_object(name='tau', prefix='off_')
 tauCell.define_object(name='L1_tau', prefix='L1_OfflineMatched_')
 
 # ---> ID_Tools 
@@ -69,9 +69,10 @@ for event in tauCell:
     if tau.pt<25000.:
         continue
 
-    log.info('{0} - {1}'.format(tau.category, tau.numTrack))
+    categories = TauCategories(tau)
+    log.info('{0} - {1}'.format(categories.category, tau.numTrack))
 
-    for cat in tau.category+["all"]:
+    for cat in categories.category+["all"]:
         if not cat in plot_cat:
             continue
         for var, hist in hist_array[cat].items():
