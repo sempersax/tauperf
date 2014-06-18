@@ -6,8 +6,6 @@ from rootpy.extern import argparse
 from rootpy.io import root_open
 from rootpy.tree import TreeChain
 from rootpy.plotting import Efficiency, Hist
-from rootpy import log
-log.basic_config_colorized()
 # local imports
 from tauid.plotting import get_hist_array, get_efficiency_array
 from tauid import VARIABLES
@@ -72,7 +70,6 @@ for event in tauCell:
         continue
 
     categories = TauCategories(tau).category+['all']
-    log.info(categories)
     for cat in categories:
         if not cat in plot_cat:
             continue
