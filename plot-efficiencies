@@ -29,8 +29,10 @@ for pair in SIGNAL_BACKGROUND_PAIRS:
         log.info('Directories: {0} {1}'.format(dir_s, dir_b))
         for h_s, h_b in zip(dir_s, dir_b):
             if isinstance(h_s, _HistBase):
-                h_s.Scale(1./h_s.Integral())
-                h_b.Scale(1./h_b.Integral())
+                if h_s.Integral() !=0:
+                    h_s.Scale(1./h_s.Integral())
+                if h_b.Integral() !=0:
+                    h_b.Scale(1./h_b.Integral())
                 h_s.color = 'red'
                 h_s.markerstyle = 'square'
                 h_s.fillstyle = '/'
