@@ -11,7 +11,7 @@ if not os.environ.get('DEBUG', False):
 
 
 VARIABLES = {
-    'plotting': [pt, eta, npv, mu],
+    'plotting': [pt, eta, npv, mu, ntracks],
     'plotting_id': [centfrac,
                     pssfraction,
                     nstrip,

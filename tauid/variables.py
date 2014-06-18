@@ -37,6 +37,13 @@ mu = {
     'range': (0, 100)
     }
 
+ntracks = {
+    'name': 'numTrack',
+    'root': 'Number of Tracks',
+    'type': 'i',
+    'bins': 6,
+    'range': (0, 6)
+    }
 centfrac = {
     'name': 'centFrac',
     'root': 'f_{core}',
