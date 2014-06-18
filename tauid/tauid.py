@@ -7,7 +7,7 @@ from .decision import DecisionTool
 from . import VARIABLES
 from . import log; log=log[__name__]
 
-def get_IDtools(tree):
+def get_IDtools():
     ID_Tools = {}
     ID_Tools['presel_3'] = TauIDTool({"all":{'name':'BDT',
                                              'weight_file':'weights_prod/presel_fullvarlist_michel3_all_14TeV_offline_BDT_AlekseyParams.weights.xml',

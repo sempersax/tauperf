@@ -38,7 +38,7 @@ tauCell.define_object(name='tau', prefix='off_', mix=TauCategories)
 tauCell.define_object(name='L1_tau', prefix='L1_OfflineMatched_')
 
 # ---> ID_Tools 
-ID_Tools = get_IDtools(tauCell)
+ID_Tools = get_IDtools()
 
 # --> Plotting category
 plot_cat = ["all", "1p", "mp"]
