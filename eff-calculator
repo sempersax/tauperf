@@ -11,7 +11,7 @@ from skim.mixins import TauCategories
 from tauid.plotting import get_hist_array, get_efficiency_array
 from tauid import VARIABLES
 from tauid.tauid import get_IDtools
-
+from tauid import log
 #--> Receive and parse argument
 parser = argparse.ArgumentParser()
 parser.add_argument("input_file_list",
@@ -70,6 +70,7 @@ for event in tauCell:
         continue
 
     for cat in tau.category+["all"]:
+        log.info('{0} - {1}'.format(cat, tau.numTrack))
         if not cat in plot_cat:
             continue
         for var, hist in hist_array[cat].items():
