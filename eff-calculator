@@ -69,10 +69,9 @@ for event in tauCell:
     if tau.pt<25000.:
         continue
 
-    categories = TauCategories(tau)
-    log.info('{0} - {1}'.format(categories.category, tau.numTrack))
+    categories = TauCategories(tau).category+['all']
 
-    for cat in categories.category+["all"]:
+    for cat in categories:
         if not cat in plot_cat:
             continue
         for var, hist in hist_array[cat].items():

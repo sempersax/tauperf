@@ -55,8 +55,8 @@ class TauIDTool(object):
                                          training = DT_inputs['training'])
 
     def ToolKey(self, tau):
-        cats = TauCategories(tau)
-        bdt_cat = set(cats.idcat) & set(self._DT.keys())
+        idcats = TauCategories(tau).idcat
+        bdt_cat = set(idcats) & set(self._DT.keys())
         if len(bdt_cat)!=1:
             raise RuntimeError('Need exactly one category in common')
         return list(bdt_cat)[0]
