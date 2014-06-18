@@ -50,7 +50,10 @@ for pair in SIGNAL_BACKGROUND_PAIRS:
                 lat.SetTextSize(20)
                 lat.SetNDC()
                 lat.Draw('same')
-                chi2 = h_s.Chi2Test(h_b, 'UUNORMCHI2/NDF')
+                if h_s.Integral() !=0 and h_b.Integral() !=0:
+                    chi2 = h_s.Chi2Test(h_b, 'UUNORMCHI2/NDF')
+                else: 
+                    chi2 = -9999
                 lat_chi2 = ROOT.TLatex(c.GetLeftMargin()+0.05, 1-c.GetTopMargin()-0.05,
                                        '#Chi^{{2}}/ndf: {0}'.format(chi2))
                 lat_chi2.SetTextSize(20)
