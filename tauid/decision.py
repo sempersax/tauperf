@@ -46,7 +46,7 @@ class DecisionTool(object):
     def Evaluate(self, tau):
         for var, val in zip(self._vars, self._vals):
             val[0] = getattr(tau, var['name'])
-            log.info('{0}: {1}'.format(var['name'], val[0]))
+            log.debug('{0}: {1}'.format(var['name'], val[0]))
         self._score = self._reader.EvaluateMVA(self._name)
 
     # --------------------------------------------

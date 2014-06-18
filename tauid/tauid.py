@@ -29,16 +29,16 @@ def get_IDtools():
                                          'cutval': 0.5,
                                          'training': 'training',
                                          'weight_file': 'weights_prod/test_mp_14TeV_offline_full_BDT.weights.xml'}})
-#     ID_Tools['and'] = TauIDTool({'1p': {'name': 'BDT',
-#                                         'variables_list': VARIABLES['and_1p'],
-#                                         'cutval': 0.548691,
-#                                         'training': 'training_and',
-#                                         'weight_file': 'weights_prod/andrew_bdt_11/sp.xml'},
-#                                  'mp': {'name': 'BDT',
-#                                         'variables_list': VARIABLES['and_mp'],
-#                                         'cutval': 0.637151,
-#                                         'training': 'training_and',
-#                                         'weight_file': 'weights_prod/andrew_bdt_11/mp.xml'}})
+    ID_Tools['and'] = TauIDTool({'1p': {'name': 'BDT',
+                                        'variables_list': VARIABLES['and_1p'],
+                                        'cutval': 0.548691,
+                                        'training': 'training_and',
+                                        'weight_file': 'weights_prod/andrew_bdt_11/sp.xml'},
+                                 'mp': {'name': 'BDT',
+                                        'variables_list': VARIABLES['and_mp'],
+                                        'cutval': 0.637151,
+                                        'training': 'training_and',
+                                        'weight_file': 'weights_prod/andrew_bdt_11/mp.xml'}})
     return ID_Tools
 
 class TauIDTool(object):
