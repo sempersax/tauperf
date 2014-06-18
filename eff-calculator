@@ -69,6 +69,8 @@ for event in tauCell:
     if tau.pt<25000.:
         continue
 
+    log.info('{0} - {1}'.format(tau.category, tau.numTrack)
+
     for cat in tau.category+["all"]:
         log.info('{0} - {1}'.format(cat, tau.numTrack))
         if not cat in plot_cat:
