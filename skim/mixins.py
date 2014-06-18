@@ -118,6 +118,7 @@ class TauCategories(object):
     def getCategories(self):
         return self.prong_cat+self.etacat#+self.prongpi0_cat
 
+    @cached_property
     def getProngCat(self):
         if self.numTrack==1:
             return ["1p"]
@@ -128,12 +129,14 @@ class TauCategories(object):
         else:
             return ["mp"]
 
+    @cached_property
     def getPi0Cat(self):
         if self.pi0BDTPrimary>0.47:
             return ["0n"]
         else:
             return ["Xn"]
 
+    @cached_property
     def getProngPi0Cat(self,prong_cat,pi0_cat):
         if "1p" in prong_cat:
             if "0n" in pi0_cat:
@@ -156,12 +159,14 @@ class TauCategories(object):
             else:
                 return ["mp_Xn"]
 
+    @cached_property
     def getEtaCat(self):
         if abs(self.eta)<1.37:
             return ["central"]
         else:
             return ["endcap"]
 
+    @cached_property
     def getIDCat(self):
         if self.numTrack==1:
             if self.pi0BDTPrimary>0.47:
