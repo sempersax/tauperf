@@ -40,7 +40,7 @@ class TauCategories(object):
                 return ["2p_0n","mp_0n"]
             else:
                 return ["2p_Xn","2p_Xn"]
-        elif "3p" in self..prong_cat:
+        elif "3p" in self.prong_cat:
             if "0n" in self.pi0_cat:
                 return ["3p_0n","mp_0n"]
             else:
