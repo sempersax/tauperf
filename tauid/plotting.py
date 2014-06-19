@@ -40,10 +40,20 @@ def get_mean_rms(category, var):
     gr_rms.yaxis.title = 'RMS of '+get_label(var)
     return gr_mean, gr_rms
 
-def rejection(eff):
+def rejection_linear(eff):
     htot = asrootpy(eff.GetTotalHistogram()).Clone()
     hpass = asrootpy(eff.GetPassedHistogram())
     hnotpass =  htot - hpass
     rej = Efficiency(hnotpass, htot, name='Rej_{0}'.format(eff.name), title=eff.title)
     return rej
 
+
+def rejection(eff):
+    htot = asrootpy(eff.GetTotalHistogram()).Clone()
+    hpass = asrootpy(eff.GetPassedHistogram())
+    if hpass.Integral !=0:
+        rej = htot/hpass
+    else:
+        rej = htot
+    rej = Graph(rej)
+    return rej

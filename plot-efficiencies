@@ -12,10 +12,10 @@ from rootpy.io import root_open
 # local imports
 from tools.datasets import (VERSION, DATASETS,
                             SIGNAL_BACKGROUND_PAIRS,
-                            SIGNALS_14TEV)
+                            SIGNALS_14TEV, BACKGROUNDS_14TEV)
 from tauid import VARIABLES
 from tauid import log; log=log['plot-efficiencies']
-from tauid.plotting import get_mean_rms, rejection
+from tauid.plotting import get_mean_rms, rejection_linear, rejection
 
 ROOT.gROOT.SetBatch(True)
 style = get_style('ATLAS', shape='rect')
@@ -62,7 +62,7 @@ for pair in SIGNAL_BACKGROUND_PAIRS:
                 c.SaveAs('./plots/SvsB_{0}_cat{1}_mu{2}.png'.format(h_s.name, dir_s.name, DATASETS[pair[0]]['mu']))
             elif isinstance(h_s, Efficiency):
                 c = Canvas()
-                rej_b = rejection(h_b)
+                rej_b = rejection_linear(h_b)
                 h_s.color = 'black'
                 rej_b.color = 'red'
                 rej_b.linestyle = 'dashed'
@@ -130,7 +130,31 @@ for dir20, dir40, dir60, dir80 in zip(fsigs[0], fsigs[1], fsigs[2], fsigs[3]):
             c.SaveAs('./plots/Signal_eff_{0}_cat_{1}.png'.format(h20.name, dir20.name))
             
 
-
+fbkgs = [root_open('efficiencies/efficiencies_{0}_v{1}.root'.format(bkg, VERSION)) for bkg in BACKGROUNDS_14TEV]
+# Ugly !!! TO BE FIXED
+for dir40, dir60 in zip(fbkgs[0], fbkgs[1]):
+    for h40, h60 in zip(dir40, dir60):
+        if isinstance(h40, Efficiency):
+            rej40 = rejection(h40)
+            rej60 = rejection(h60)
+            rej40.color = 'green'
+            rej60.color = 'blue'
+            rej40.markerstyle = 'opencircle'
+            rej60.markerstyle = 'opensquare'
+            rej40.xaxis.title = rej40.title
+            rej60.xaxis.title = rej60.title
+            rej40.title = '<#mu>=40'
+            rej60.title = '<#mu>=60'
+            c = Canvas()
+            draw([rej40, rej60], pad=c, ytitle='Rejection (1/#epsilon_{B}', xtitle=rej40.xaxis.title)
+            leg = Legend([rej40, rej60], pad=c, textsize=15, leftmargin=0.6)
+            leg.Draw('same')
+            lat = ROOT.TLatex(c.GetLeftMargin()+0.05, 1-c.GetTopMargin()-0.10,
+                              'category: {0}'.format(rej40.name.split('_')[1]))
+            lat.SetTextSize(20)
+            lat.SetNDC()
+            lat.Draw('same')
+            c.SaveAs('./plots/Bkg_rej_{0}_cat_{1}.png'.format(rej40.name, dir40.name))
         
 # plot_cat = ['1p', 'mp']
 # for cat in plot_cat:

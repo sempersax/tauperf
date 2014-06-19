@@ -43,3 +43,4 @@ SIGNAL_BACKGROUND_PAIRS = [('Ztautau_ecm14_muall', 'JF17_ecm14_mu4060'),
                            ('Ztautau_ecm14_mu60', 'JF17_ecm14_mu60'),]
 
 SIGNALS_14TEV = ['Ztautau_ecm14_mu20', 'Ztautau_ecm14_mu40', 'Ztautau_ecm14_mu60', 'Ztautau_ecm14_mu80']
+BACKGROUNDS_14TEV = ['JF17_ecm14_mu40', 'JF17_ecm14_mu60']
