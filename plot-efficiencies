@@ -147,7 +147,7 @@ for dir40, dir60 in zip(fbkgs[0], fbkgs[1]):
             rej60.title = '<#mu>=60'
             c = Canvas()
             draw([rej40, rej60], pad=c, ytitle='Rejection (1/#epsilon_{B}', 
-                 ylimit=(0, 200), xtitle=rej40.xaxis.title)
+                 ylimits=(0, 200), xtitle=rej40.xaxis.title)
             leg = Legend([rej40, rej60], pad=c, textsize=15, leftmargin=0.6)
             leg.Draw('same')
             lat = ROOT.TLatex(c.GetLeftMargin()+0.05, 1-c.GetTopMargin()-0.10,
