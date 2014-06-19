@@ -56,6 +56,7 @@ def rejection(eff):
     else:
         rej = htot
     rej = Graph(rej)
-    rej.name = 'Rej_{0}'.format(eff.name)
+    name = '_'.join(eff.name.split('_')[1:])
+    rej.name = 'rej_{0}'.format(name)
     rej.title = eff.title
     return rej
