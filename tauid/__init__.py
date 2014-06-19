@@ -3,7 +3,6 @@ import logging
 from variables import *
 
 log = logging.getLogger('tauid')
-log.basic_config_colorized()
 if not os.environ.get('DEBUG', False):
     log.setLevel(logging.INFO)
 
