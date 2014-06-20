@@ -82,7 +82,7 @@ for event in tauCell:
         true_categories = TrueCategories(truetau).category
         for cat in true_categories:
             if not cat in plot_cat_true:
-                continue:
+                continue
             for var, hist in hist_array_true[cat].items():
                 if hasattr(tau, var):
                     hist.Fill(getattr(tau, var))
