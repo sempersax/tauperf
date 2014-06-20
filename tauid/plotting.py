@@ -47,7 +47,6 @@ def rejection_linear(eff):
     rej = Efficiency(hnotpass, htot, name='Rejlin_{0}'.format(eff.name), title=eff.title)
     return rej
 
-
 def rejection(eff):
     htot = asrootpy(eff.GetTotalHistogram()).Clone()
     hpass = asrootpy(eff.GetPassedHistogram())
