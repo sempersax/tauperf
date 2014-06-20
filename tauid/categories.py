@@ -4,7 +4,7 @@ class TrueCategories(object):
     
     @property
     def category(self):
-        return self.prongpi0cat
+        return self.prongcat+self.prongpi0cat
 
     @property
     def pi0cat(self):
