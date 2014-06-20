@@ -35,9 +35,9 @@ for pair in SIGNAL_BACKGROUND_PAIRS:
                     row = ['menu', dir_s.name]
                     log.info('{0} - {1}'.format(h_s.name, h_s.title))
                     log.info(h_s.GetDimension())
-                    log.info(h_s.GetEfficiency(1))
-                    log.info(rejection_linear(eff).GetEfficiency(1))
-                    log.info(list(rejection(eff).y()))
+                    log.info(h_s.GetEfficiency(0))
+                    log.info(rejection_linear(h_b).GetEfficiency(1))
+                    log.info(list(rejection(h_b).y()))
 
 
 for pair in SIGNAL_BACKGROUND_PAIRS:
