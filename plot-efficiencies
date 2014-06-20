@@ -146,8 +146,8 @@ for dir40, dir60 in zip(fbkgs[0], fbkgs[1]):
             rej60.xaxis.title = rej60.title
             rej40.yaxis.title = 'Rejection (1/#epsilon_{B})'
             rej60.yaxis.title = 'Rejection (1/#epsilon_{B})'
-            rej40.yaxis.SetRangeUser(min(rej40.GetMinimum(), rej60.GetMinimum()),
-                                     max(rej40.GetMaximum(), rej60.GetMaximum()))
+#             rej40.yaxis.SetRangeUser(min(rej40.GetMinimum(), rej60.GetMinimum()),
+#                                      max(rej40.GetMaximum(), rej60.GetMaximum()))
             rej40.title = '<#mu>=40'
             rej60.title = '<#mu>=60'
             c = Canvas()
