@@ -34,7 +34,7 @@ for pair in SIGNAL_BACKGROUND_PAIRS:
                 if '_mu' in h_s.name:
                     row = ['menu', dir_s.name]
                     log.info('{0} - {1}'.format(h_s.name, h_s.title))
-                    log.info(h_s)
+                    log.info(h_s.GetDimension())
                     log.info([eff for eff in h_s.efficiencies()])
                     log.info([rejection_linear(eff) for eff in h_b.efficiencies()])
                     log.info([rejection(eff) for eff in h_b.efficiencies()])
