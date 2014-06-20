@@ -35,8 +35,8 @@ for pair in SIGNAL_BACKGROUND_PAIRS:
                     row = ['menu', dir_s.name]
                     log.info('{0} - {1}'.format(h_s.name, h_s.title))
                     log.info(h_s.GetDimension())
-                    log.info([eff for eff in h_s])
-                    log.info([eff for eff in rejection_linear(h_b)])
+                    log.info(sum([eff for eff in h_s]))
+                    log.info(sum([eff for eff in rejection_linear(h_b)]))
                     
 for pair in SIGNAL_BACKGROUND_PAIRS:
     fsig = root_open('efficiencies/efficiencies_{0}_v{1}.root'.format(pair[0], VERSION))
