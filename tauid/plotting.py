@@ -20,8 +20,9 @@ def get_hist_array():
 def get_efficiency_array():
     eff_array = {}
     for var in VARIABLES['plotting']:
-        h = Hist(10, 0, 1)
-        eff_array[var['name']] = ROOT.TEfficiency(h.name, get_label(var), var['bins'], var['range'][0], var['range'][1])
+        hpassed = Hist(var['bins'], var['range'][0], var['range'][1])
+        htotal = Hist(var['bins'], var['range'][0], var['range'][1])
+        eff_array[var['name']] = Efficiency(hpassed, htotal, title=get_label(var))
     return eff_array
 
 def get_mean_rms(category, var):
