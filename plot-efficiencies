@@ -23,7 +23,7 @@ style = get_style('ATLAS', shape='rect')
 style.SetPadRightMargin(0.10)
 style.cd()
 
-table = PrettyTable(['menu', 'mu', 'prong', 'eff_s', '1-eff_b', '1/eff_b'])
+table = PrettyTable(['menu', 'mu', 'ntrack', 'eff_s', '1-eff_b'])
 for pair in SIGNAL_BACKGROUND_PAIRS:
     fsig = root_open('efficiencies/efficiencies_{0}_v{1}.root'.format(pair[0], VERSION))
     fbkg = root_open('efficiencies/efficiencies_{0}_v{1}.root'.format(pair[1], VERSION))
@@ -32,12 +32,15 @@ for pair in SIGNAL_BACKGROUND_PAIRS:
         for h_s, h_b in zip(dir_s, dir_b):
             if isinstance(h_s, Efficiency):
                 if '_mu' in h_s.name:
-                    row = ['menu', dir_s.name]
+                    
+                    row = ['menu', DATASETS[pair[0]]['mu'], dir_s.name]
                     log.info('{0} - {1}'.format(h_s.name, h_s.title))
                     log.info(h_s.GetDimension())
                     log.info(sum([eff for eff in h_s]))
                     log.info(sum([eff for eff in rejection_linear(h_b)]))
-                    
+                    row.append(sum([eff for eff in h_s]))
+                    row.append(sum([eff for eff in rejection_linear(h_b)]))
+                    table.add_row(row)
 for pair in SIGNAL_BACKGROUND_PAIRS:
     fsig = root_open('efficiencies/efficiencies_{0}_v{1}.root'.format(pair[0], VERSION))
     fbkg = root_open('efficiencies/efficiencies_{0}_v{1}.root'.format(pair[1], VERSION))
@@ -178,7 +181,7 @@ for dir40, dir60 in zip(fbkgs[0], fbkgs[1]):
             lat.Draw('same')
             c.SaveAs('./plots/Bkg_rej_{0}_cat_{1}.png'.format(rej40.name, dir40.name))
         
-
+print table
 
 # plot_cat = ['1p', 'mp']
 # for cat in plot_cat:
