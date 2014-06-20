@@ -31,8 +31,13 @@ for pair in SIGNAL_BACKGROUND_PAIRS:
         log.info('Directories: {0} {1}'.format(dir_s, dir_b))
         for h_s, h_b in zip(dir_s, dir_b):
             if isinstance(h_s, Efficiency):
-                row = ['menu', dir_s.name]
-                log.info('{0} - {1}'.format(h_s.name, h_s.title))
+                if '_mu' in h_s.name:
+                    row = ['menu', dir_s.name]
+                    log.info('{0} - {1}'.format(h_s.name, h_s.title))
+                    log.info([eff for eff in h_s.efficiencies()])
+                    log.info([rejection_linear(eff) for eff in h_b.efficiencies()])
+                    log.info([rejection(eff) for eff in h_b.efficiencies()])
+
 
 for pair in SIGNAL_BACKGROUND_PAIRS:
     fsig = root_open('efficiencies/efficiencies_{0}_v{1}.root'.format(pair[0], VERSION))
