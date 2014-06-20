@@ -1,5 +1,5 @@
 class TrueCategories(object):
-    def __init_(self, truetau):
+    def __init__(self, truetau):
         self.truetau = truetau
     
     @property
