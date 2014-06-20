@@ -32,8 +32,8 @@ for pair in SIGNAL_BACKGROUND_PAIRS:
         for h_s, h_b in zip(dir_s, dir_b):
             if isinstance(h_s, Efficiency):
                 if '_mu' in h_s.name:
-                    
-                    row = ['menu', DATASETS[pair[0]]['mu'], dir_s.name]
+                    menu = h_s.name.split('_')[2]
+                    row = [menu, DATASETS[pair[0]]['mu'], dir_s.name]
                     log.info('{0} - {1}'.format(h_s.name, h_s.title))
                     log.info(h_s.GetDimension())
                     log.info(sum([eff for eff in h_s]))
