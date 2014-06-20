@@ -9,7 +9,7 @@ from rootpy.plotting import Efficiency, Hist
 # local imports
 from tauid.plotting import get_hist_array, get_efficiency_array
 from tauid import VARIABLES
-from tauid.categories import TauCategories
+from tauid.categories import TauCategories, TrueCategories
 from tauid.tauid import get_IDtools
 
 #--> Receive and parse argument
@@ -34,6 +34,8 @@ for ifile in inputfile:
 tauCell = TreeChain('tauCell_test', file_list, events=args.Nentries)
 tauCell.define_object(name='tau', prefix='off_')
 tauCell.define_object(name='L1_tau', prefix='L1_OfflineMatched_')
+if args.signal:
+    tauCell.define_object(name='truetau', prefix='true_')
 
 # ---> ID_Tools 
 ID_Tools = get_IDtools()
@@ -59,6 +61,8 @@ for cat in plot_cat:
 for event in tauCell:
     tau = event.tau
     L1_tau = event.L1_tau
+    if args.signal:
+        truetau = event.truetau
 
     if args.signal and tau.index_matched_true<=-1:
         continue
@@ -70,6 +74,8 @@ for event in tauCell:
         continue
 
     categories = TauCategories(tau).category+['all']
+    if args.signal:
+        true_categories = TrueCategories(truetau).category
     for cat in categories:
         if not cat in plot_cat:
             continue

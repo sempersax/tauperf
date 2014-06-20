@@ -1,5 +1,32 @@
+class TrueCategories(object):
+    def __init_(self, truetau):
+        self.truetau = truetau
+    
+    @property
+    def category(self):
+        return self.prongpi0cat
 
+    @property
+    def pi0cat(self):
+        if self.truetau.nPi0==0:
+            return ['0n']
+        elif self.truetau.nPi0==1:
+            return ['1n', 'Xn']
+        else:
+            return ['2n', 'Xn']
 
+    @property
+    def prongcat(self):
+        if self.truetau.nProng==1:
+            return ['1p']
+        else:
+            return ['3p']
+    @property
+    def prongpi0cat(self):
+        cats = []
+        for pi0cat in self.pi0cat:
+            cats.append('{0}_{1}'.format(self.prongcat[0], pi0cat))
+        return cats
 
 class TauCategories(object):
 
