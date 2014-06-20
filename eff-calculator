@@ -76,6 +76,7 @@ for event in tauCell:
     categories = TauCategories(tau).category+['all']
     if args.signal:
         true_categories = TrueCategories(truetau).category
+        print true_categories
     for cat in categories:
         if not cat in plot_cat:
             continue
