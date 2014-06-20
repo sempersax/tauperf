@@ -8,6 +8,7 @@ from rootpy.plotting.hist import _HistBase
 from rootpy.plotting import Legend
 from rootpy.plotting.utils import draw
 from rootpy.plotting.style import set_style, get_style
+from rootpy.extern.tabulartext import PrettyTable
 from rootpy.io import root_open
 # local imports
 from tools.datasets import (VERSION, DATASETS,
@@ -162,6 +163,18 @@ for dir40, dir60 in zip(fbkgs[0], fbkgs[1]):
             lat.Draw('same')
             c.SaveAs('./plots/Bkg_rej_{0}_cat_{1}.png'.format(rej40.name, dir40.name))
         
+
+table = PrettyTable(['menu', 'mu', 'prong', 'eff_s', '1-eff_b', '1/eff_b'])
+for pair in SIGNAL_BACKGROUND_PAIRS:
+    fsig = root_open('efficiencies/efficiencies_{0}_v{1}.root'.format(pair[0], VERSION))
+    fbkg = root_open('efficiencies/efficiencies_{0}_v{1}.root'.format(pair[1], VERSION))
+    for dir_s, dir_b in zip(fsig, fbkg):
+        log.info('Directories: {0} {1}'.format(dir_s, dir_b))
+        for h_s, h_b in zip(dir_s, dir_b):
+            if isintance(hs, Efficiency):
+                row = ['menu', dir_s.name]
+                log.info('{0} - {1}'.format(h_s.name, h_s.title))
+
 # plot_cat = ['1p', 'mp']
 # for cat in plot_cat:
 #     for var in VARIABLES['plotting_id']:
