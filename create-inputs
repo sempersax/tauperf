@@ -2,7 +2,7 @@
 
 VERSION=${1}
 
-BASE_DIR=/cluster/data12/qbuat/EventFilterTauID_dev/
+BASE_DIR=/cluster/data12/qbuat/EventFilterTauID_dev
 TXTFILES_DIR=input_lists
 ROOTFILES_DIR=ntuples
 DATASET_EXTE=TauPerfSkim 
