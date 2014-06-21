@@ -10,6 +10,19 @@ from . import VARIABLES, log
 from .variables import get_label
 from tools.datasets import SIGNALS_14TEV, VERSION, DATASETS
 
+
+def get_total_eff(eff, overflow=False):
+    htotal = eff.total
+    if htotal.Integral()==0:
+        return 0
+    else:
+        total_eff = 0
+        tot = htotal.Integral()
+        for eff_val, tot_bin in zip(eff.efficiencies(overflow=overflow),
+                                htotal.y(overflow=overflow)):
+            total_eff += eff_val*tot_bin/tot
+        return total_eff
+
 def get_hist_array():
     hist_array = {}
     for var in VARIABLES['plotting']+VARIABLES['plotting_id']:

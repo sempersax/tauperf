@@ -53,6 +53,9 @@ class TauIDTool(object):
             self._DT[key] = DecisionTool(DT_inputs['name'], DT_inputs['weight_file'],
                                          DT_inputs['variables_list'], DT_inputs['cutval'],
                                          training = DT_inputs['training'])
+    @property
+    def tools(self):
+        return self._DT
 
     def ToolKey(self, tau):
         idcats = TauCategories(tau).idcat

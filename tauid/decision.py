@@ -25,11 +25,14 @@ class DecisionTool(object):
         self._score = -9999
         self._name = name
         self._training = training
-        log.info('SetReader: {0}, {1}, {2}'.format(name, weight_file, variables))
-        for var, val in zip(self._vars, self._vals):
-            self._reader.AddVariable(var[self._training], val)
-        self._reader.BookMVA(name, weight_file)
+#         log.info('SetReader: {0}, {1}, {2}'.format(name, weight_file, variables))
+#         for var, val in zip(self._vars, self._vals):
+#             self._reader.AddVariable(var[self._training], val)
+#         self._reader.BookMVA(name, weight_file)
 
+    @property
+    def vars(self):
+        return self._vars
 
     @property
     def cutval(self):

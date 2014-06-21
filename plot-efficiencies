@@ -16,7 +16,7 @@ from tools.datasets import (VERSION, DATASETS,
                             SIGNALS_14TEV, BACKGROUNDS_14TEV)
 from tauid import VARIABLES
 from tauid import log; log=log['plot-efficiencies']
-from tauid.plotting import get_mean_rms, rejection_linear, rejection
+from tauid.plotting import get_mean_rms, rejection_linear, rejection, get_total_eff
 
 ROOT.gROOT.SetBatch(True)
 style = get_style('ATLAS', shape='rect')
@@ -34,8 +34,8 @@ for pair in SIGNAL_BACKGROUND_PAIRS:
                         if '_mu' in h_s.name:
                             menu = h_s.name.split('_')[2]
                             row = [menu, DATASETS[pair[0]]['mu'], dir_s.name]
-                            row.append(sum([eff for eff in h_s]))
-                            row.append(sum([eff for eff in rejection_linear(h_b)]))
+                            row.append(get_total_eff(h_s))
+                            row.append(get_total_eff(rejection_linear(h_b)))
                             table.add_row(row)
 
 for pair in SIGNAL_BACKGROUND_PAIRS:
