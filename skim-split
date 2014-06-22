@@ -30,6 +30,8 @@ with root_open(args.input, 'update') as in_file:
             out_tree_train.Fill()
         else:
             out_tree_test.Fill()
+    out_tree_train.FlushBaskets()
+    out_tree_test.FlushBaskets()
     out_tree_train.Write()
     out_tree_test.Write()
     in_file.Write()
