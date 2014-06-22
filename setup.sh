@@ -4,5 +4,5 @@ current_dir=${PWD}
 cd ../packages ;source RootCore/scripts/setup.sh; cd ${current_dir}
 
 export PYTHONPATH=$PYTHONPATH:./
-
+export PYTHONPATH=$PYTHONPATH:/cluster/data12/qbuat/EventFilterTauID_dev
 
