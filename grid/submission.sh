@@ -36,10 +36,8 @@ function prun_command()
     prun --exec "./grid-setup.sh clean && ./grid-setup.sh local && ./grid-setup.sh build && ./grid-setup.sh worker &&. ./launcher.sh %IN ${STREAM}" \
 	--inDS=${IN}/ \
 	--outDS=${OUT}/ \
-	#--rootVer=5.34/14 \
-	#--cmtConfig=x86_64-slc5-gcc43-opt \
 	--nGBPerJob=MAX \
-	--extFile=analysis.tar.gz,create-inputlist \
+	--extFile=analysis.tar.gz,create-inputlist,grid.setup \
 	--useRootCore --noCompile \
 	--site=SFU-LCG2_LOCALGROUPDISK \
 	--outputs="*skimmed.root"
