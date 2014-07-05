@@ -27,7 +27,7 @@ get_dataset(){
     done
 }
 
-cd ${PWD}/${ROOTFILES_DIR}/
+cd ${ROOTFILES_DIR}
 mkdir -p v${VERSION}; cd v${VERSION};
 
 
