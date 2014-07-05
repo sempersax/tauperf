@@ -1,12 +1,5 @@
 #!/bin/bash
 
-function setup_rootcore()
-{
-    current_dir=${PWD}
-    cd ../packages ;source RootCore/scripts/setup.sh; cd ${current_dir}
-}
-setup_rootcore
-
 SOURCE_EVENTFILTERTAUID_SETUP="${BASH_SOURCE[0]:-$0}"
 DIR_EVENTFILTERTAUID_SETUP="$( dirname "$SOURCE_EVENTFILTERTAUID_SETUP" )"
 
