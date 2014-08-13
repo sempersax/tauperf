@@ -1,5 +1,10 @@
 #!/bin/bash
 
+BASE=${PWD}
+export PYTHONUSERBASE=${BASE}/user-python
+export PATH=${PYTHONUSERBASE}/bin${PATH:+:$PATH}
+
+
 SOURCE_TAUPERF_SETUP="${BASH_SOURCE[0]:-$0}"
 DIR_TAUPERF_SETUP="$( dirname "$SOURCE_TAUPERF_SETUP" )"
 

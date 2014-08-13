@@ -38,6 +38,8 @@ function prun_command()
 	--outDS=${OUT}/ \
 	--nGBPerJob=MAX \
 	--extFile=analysis.tar.gz,create-inputlist,grid.setup \
+	--rootVer=5.34/14 \
+	--cmtConfig=x86_64-slc5-gcc43-opt \
 	--useRootCore --noCompile \
 	--site=SFU-LCG2_LOCALGROUPDISK \
 	--outputs="*skimmed.root"

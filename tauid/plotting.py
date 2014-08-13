@@ -30,6 +30,15 @@ def get_hist_array():
         hist_array[var['name']].xaxis.title = get_label(var)
     return hist_array
 
+def get_map_array():
+    map_array = {}
+    for var in VARIABLES['plotting']+VARIABLES['plotting_id']:
+        map_array[var['name']] = Hist2D(var['bins'], var['range'][0], var['range'][1],
+                                        var['bins'], var['range'][0], var['range'][1])
+        map_array[var['name']].xaxis.title = 'Offline - '+get_label(var)
+        map_array[var['name']].yaxis.title = 'Online - '+get_label(var)
+    return map_array
+
 def get_efficiency_array():
     eff_array = {}
     for var in VARIABLES['plotting']:

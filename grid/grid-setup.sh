@@ -113,6 +113,7 @@ function setup_CVMFS() {
 function setup_ROOT_CVMFS() {
     source ${ATLAS_LOCAL_ROOT_BASE}/packageSetups/atlasLocalROOTSetup.sh \
         --skipConfirm --rootVersion=${ROOT_VERSION_CVMFS}
+    echo 'ROOT '${ROOT_VERSION_CVMFS}' has been setup'
 }
 
 function setup_python_CVMFS() {
@@ -211,14 +212,14 @@ worker)
         setup_ROOT_CVMFS
     fi
 
-    if [[ -e python ]]
-    then
-        setup_python
-    fi
-    if [[ -e root ]]
-    then
-        setup_root
-    fi
+    #if [[ -e python ]]
+    #then
+    #    setup_python
+    #fi
+    #if [[ -e root ]]
+    #then
+    #    setup_root
+    #fi
     
     determine_python 
     export ROOTPY_GRIDMODE=true
@@ -226,7 +227,7 @@ worker)
     # source user setup script
     if [[ -f grid.setup ]]
     then
-        source grid.setup
+       source grid.setup
     fi
     ;;
 
