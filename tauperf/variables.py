@@ -4,15 +4,17 @@ def get_label(variable):
         label += ' [{0}]'.format(variable['units'])
     return label
 
+
 VARIABLES = {
     'pt': {
         'name': 'pt',
         'root': 'p_{T}',
         'type': 'f',
-        'units': 'MeV',
+        'units': 'GeV',
+        'scale': 0.001,
         'prefix': ('off', 'hlt', 'true'),
         'bins': 20,
-        'range': (10, 1e5)
+        'range': (10, 100)
         },
     
     'eta': {
@@ -193,9 +195,10 @@ VARIABLES = {
         'training': 'off_topoInvMass',
         'type': 'f',
         'prefix': ('off', 'hlt'),
+        'scale': 0.001,
         'bins': 20,
-        'range': (0, 40000),
-        'units': 'MeV'
+        'range': (0, 40),
+        'units': 'GeV'
         },
     
     'topomeandeltar': {
@@ -227,7 +230,8 @@ VARIABLES = {
         'type': 'f',
         'prefix': ('hlt', 'off'),
         'bins': 20,
-        'range': (0, 40000),
+        'scale': 0.001,
+        'range': (0, 40),
         'units': 'MeV'
     },
 
@@ -337,7 +341,8 @@ VARIABLES = {
         'type': 'f',
         'prefix': ('off', 'hlt'),
         'bins': 20,
-        'units': 'MeV',
-        'range': (0, 20e3),
+        'scale': 0.001,
+        'units': 'GeV',
+        'range': (0, 20),
         },
 }

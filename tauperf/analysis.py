@@ -1,7 +1,10 @@
-from . import log; log = log[__name__]
+import re
 
+from . import log; log = log[__name__]
 from . import samples
 from .categories import CATEGORIES
+
+VAR_PATTERN = re.compile('((?P<prefix>hlt|off|true)_)?(?P<var>[A-Za-z0-9_]+)(\*(?P<scale>\d+\.\d*))?$')
 
 
 class Analysis(object):
@@ -43,15 +46,15 @@ class Analysis(object):
         log.debug('Retrieve Jet histograms')
         field_hist_jet = self.jet.get_hist_array(field_hist_jet, category=category, cuts=cuts)
         hist_samples_array = {}
-        for key, var_info in vars.items():
-            if 'prefix' in var_info:
-                var_name = prefix + '_' + var_info['name']
-            else:
-                var_name = var_info['name']
-            hist_samples_array[key] = {
-                'tau': field_hist_tau[var_name],
-                'jet': field_hist_jet[var_name]
+        for key in field_hist_tau:
+            match = re.match(VAR_PATTERN, key)
+            if match:
+                hist_samples_array[match.group('var')] = {
+                    'tau': field_hist_tau[key],
+                    'jet': field_hist_jet[key]
                 }
+            else:
+                log.warning('No pattern matching for {0}'.format(key))
         return hist_samples_array
 
     def get_hist_signal_array(self, vars, prefix1, prefix2, category=None, cuts=None):
@@ -62,18 +65,18 @@ class Analysis(object):
         log.debug('Retrieve Tau histograms')
         field_hist_tau_1 = self.tau.get_hist_array(field_hist_tau_1, category=category, cuts=cuts)
         field_hist_tau_2 = self.tau.get_hist_array(field_hist_tau_2, category=category, cuts=cuts)
-
+        log.info(field_hist_tau_1)
+        log.info(field_hist_tau_2)
+        
         hist_samples_array = {}
-        for key, var_info in vars.items():
-            var_name = var_info['name']
-            if 'prefix' in var_info:
-                hist_samples_array[key] = {
-                    prefix1: field_hist_tau_1[prefix1+'_'+var_name],
-                    prefix2: field_hist_tau_2[prefix2+'_'+var_name]
-                    }
-            else:
-                hist_samples_array[key] = {
-                    prefix1: field_hist_tau_1[var_name],
-                    prefix2: field_hist_tau_2[var_name]
-                    }
+        for key in field_hist_tau_1:
+            match = re.match(VAR_PATTERN, key)
+            if match:
+                field_hist_tau_1[key].title += ' ({0})'.format(prefix1)
+                hist_samples_array[match.group('var')] = {prefix1: field_hist_tau_1[key]}
+        for key in field_hist_tau_2:
+            match = re.match(VAR_PATTERN, key)
+            if match:
+                field_hist_tau_2[key].title += ' ({0})'.format(prefix2)
+                hist_samples_array[match.group('var')][prefix2] = field_hist_tau_2[key]
         return hist_samples_array

@@ -56,6 +56,7 @@ class Sample(object):
         field_hist = {}
         for field, var_info in vars.items():
             nbins, xmin, xmax = var_info['bins'], var_info['range'][0], var_info['range'][1]
+            exprs = []
             if 'prefix' in var_info:
                 if not isinstance(var_info['prefix'], (list)):
                     var_info['prefix'] = [var_info['prefix']]
@@ -65,19 +66,23 @@ class Sample(object):
                 if prefix is None:
                     for p in var_info['prefix']:
                         var_name = p + '_' + var_info['name']
-                        field_hist[var_name] = Hist(
-                            nbins, xmin, xmax, type='D')
+                        exprs.append(var_name)
                 else:
                     var_name = prefix + '_' + var_info['name']
-                    field_hist[var_name] = Hist(
-                        nbins, xmin, xmax, type='D')
+                    exprs.append(var_name)
             else:
-                field_hist[var_info['name']] = Hist(
+                exprs.append(var_info['name'])
+            if 'scale' in var_info:
+                for i, expr in enumerate(exprs):
+                    exprs[i] = '{0}*{1}'.format(expr, var_info['scale'])
+            log.debug(exprs)
+            for expr in exprs:
+                field_hist[expr] = Hist(
                     nbins, xmin, xmax, type='D')
-
+                
         return field_hist
 
-    def draw_helper(self, hist_template, key, selection):
+    def draw_helper(self, hist_template, expr, selection):
         """
         """
         rfile = get_file(self.ntuple_path, self.student)
@@ -88,9 +93,10 @@ class Sample(object):
             list(hist_template.xedges())[0], 
             list(hist_template.xedges())[-1])
         root_string = '{0}>>{1}{2}'.format(
-            key, hist_template.name, binning)
+            expr, hist_template.name, binning)
         log.debug("Plotting {0} using selection: {1}".format(
                 root_string, selection))
+        log.debug('Draw {0} with \n selection: {1} ...'.format(root_string, selection))
         tree.Draw(root_string, selection)
 
         try:

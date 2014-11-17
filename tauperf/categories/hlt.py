@@ -1,6 +1,5 @@
 from rootpy.tree import Cut
 
-from .base import Category
 from .offline import Category_Preselection
 from .features import *
 # All basic cut definitions are here
