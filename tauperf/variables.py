@@ -13,7 +13,7 @@ VARIABLES = {
         'units': 'GeV',
         'scale': 0.001,
         'prefix': ('off', 'hlt', 'true'),
-        'bins': 20,
+        'bins': 90,
         'range': (10, 100)
         },
     

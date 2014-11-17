@@ -15,12 +15,17 @@ class Analysis(object):
             name='tau', label='Real #tau_{had}',
             color='#00A3FF')
 
-        self.jet = samples.Jet(
+#         self.jet = samples.Jet(
+#             name='jet', 
+#             student='jetjet_JZ7W',
+#             label='Fake #tau_{had}',
+#             color='#00FF00')
+
+        self.jet = samples.JZ(
             name='jet', 
-            student='jetjet_JZ7W',
             label='Fake #tau_{had}',
             color='#00FF00')
-
+        self.jet.set_scales([1., 1.])
 
     def iter_categories(self, *definitions, **kwargs):
         names = kwargs.pop('names', None)

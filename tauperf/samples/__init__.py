@@ -4,7 +4,7 @@ import logging
 from .. import log; log = log[__name__]
 
 from .tau import Tau
-from .jet import Jet
+from .jet import Jet, JZ
 
 
 # from .qcd import QCD

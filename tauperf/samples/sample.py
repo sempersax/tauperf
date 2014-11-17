@@ -82,7 +82,7 @@ class Sample(object):
                 
         return field_hist
 
-    def draw_helper(self, hist_template, expr, selection):
+    def draw_helper(self, hist_template, expr, selection): 
         """
         """
         rfile = get_file(self.ntuple_path, self.student)
@@ -92,6 +92,7 @@ class Sample(object):
             hist_template.nbins(), 
             list(hist_template.xedges())[0], 
             list(hist_template.xedges())[-1])
+        hist_template.Sumw2()
         root_string = '{0}>>{1}{2}'.format(
             expr, hist_template.name, binning)
         log.debug("Plotting {0} using selection: {1}".format(
@@ -103,8 +104,8 @@ class Sample(object):
             hist = asrootpy(ROOT.gPad.GetPrimitive(hist_template.name))
             return Hist(hist, title=self.label, **self.hist_decor)
         except:
-            log.warning('Unable to retrieve histogram for {0} with selection {1}'.format(
-                    key, selection))
+            log.warning('{0}: unable to retrieve histogram for {1} with selection {2}'.format(
+                    self.name, expr, selection))
             return Hist(binning[0], binning[1], binning[2], title=self.label, **self.hist_decor)
 
     def get_hist_array(self, field_hist_template, category=None, cuts=None):
