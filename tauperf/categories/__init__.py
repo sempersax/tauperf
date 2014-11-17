@@ -17,6 +17,7 @@ CATEGORIES = {
         Category_MP_HLT,
         ],
     'plotting': [
+        Category_Preselection,
         Category_1P,
         Category_MP,
         ],
