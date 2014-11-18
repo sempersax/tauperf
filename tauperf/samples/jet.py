@@ -14,6 +14,9 @@ class JZ(Jet):
                 cuts=self._cuts, student='jetjet_JZ0', 
                 name='JZ0', label='JZ0'),
             Jet(
+                cuts=self._cuts, student='jetjet_JZ1', 
+                name='JZ1', label='JZ1'),
+            Jet(
                 cuts=self._cuts, student='jetjet_JZ7W', 
                 name='JZ7', label='JZ7'),
             

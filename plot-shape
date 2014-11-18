@@ -34,7 +34,7 @@ if __name__ == "__main__":
         hist_samples_array = ana.get_hist_samples_array(vars, 'hlt', cat)
         for field, hists_dict in hist_samples_array.items():
             log.info(field)
-            plot = draw_ratio(hists_dict['tau'], hists_dict['jet'], field, cat, normalize=False)
+            plot = draw_ratio(hists_dict['tau'], hists_dict['jet'], field, cat)
             log.info(plot)
             plot.SaveAs(os.path.join('plots', 'hlt_'+field+'_'+cat.name+'.png'))
     for cat in ana.iter_categories(args.categories):
