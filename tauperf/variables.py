@@ -22,7 +22,7 @@ VARIABLES = {
         'root': '#eta',
         'type': 'f',
         'prefix': ('off', 'hlt', 'l1', 'true'),
-        'bins': 25,
+        'bins': 100,
         'range': (-2.5, 2.5)
         },
 
