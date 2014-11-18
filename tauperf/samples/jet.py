@@ -9,7 +9,7 @@ class Jet(Sample):
 class JZ(Jet):
     def __init__(self, cuts=None, ntuple_path=NTUPLE_PATH, **kwargs):
         super(JZ, self).__init__(cuts=cuts, ntuple_path=ntuple_path, **kwargs)
-        self.sub_samples = [
+        self._sub_samples = [
             Jet(
                 cuts=self._cuts, student='jetjet_JZ0', 
                 name='JZ0', label='JZ0'),
@@ -26,15 +26,23 @@ class JZ(Jet):
             ]
         self._scales = []
 
+    @property
+    def components(self):
+        return self._sub_samples
+
+    @property
+    def scales(self):
+        return self._scales
+
     def set_scales(self, scales):
         """
         """
         if isinstance(scales, (float, int)):
-            for i in xrange(self.sub_samples):
+            for i in xrange(self._sub_samples):
                 self._scales.append(scales)
         else:
-            if len(scales) != len(self.sub_samples):
-                log.error('Passed list should be of size {0}'.format(len(self.sub_samples)))
+            if len(scales) != len(self._sub_samples):
+                log.error('Passed list should be of size {0}'.format(len(self._sub_samples)))
                 raise RuntimeError('Wrong lenght !')
             else:
                 for scale in scales:
@@ -45,7 +53,7 @@ class JZ(Jet):
     def draw_helper(self, *args):
         hist_array = []
         individual_components = False
-        for s in self.sub_samples:
+        for s in self._sub_samples:
             h = s.draw_helper(*args)
             hist_array.append(h)
         if individual_components:
