@@ -3,15 +3,16 @@ import re
 from . import log; log = log[__name__]
 from . import samples
 from .categories import CATEGORIES
-
+from . import NTUPLE_PATH
 VAR_PATTERN = re.compile('((?P<prefix>hlt|off|true)_)?(?P<var>[A-Za-z0-9_]+)(\*(?P<scale>\d+\.\d*))?$')
 
 
 class Analysis(object):
     
-    def __init__(self):
+    def __init__(self, ntuple_path=NTUPLE_PATH):
 
         self.tau = samples.Tau(
+            ntuple_path=ntuple_path,
             name='tau', label='Real #tau_{had}',
             color='#00A3FF')
 
@@ -22,6 +23,7 @@ class Analysis(object):
 #             color='#00FF00')
 
         self.jet = samples.JZ(
+            ntuple_path=ntuple_path,
             name='jet', 
             label='Fake #tau_{had}',
             color='#00FF00')
@@ -37,7 +39,7 @@ class Analysis(object):
                 log.info("=" * 40)
                 log.info("%s category" % category.name)
                 log.info("=" * 40)
-                log.info("Cuts: %s" % self.tau.cuts(category,))
+                log.info("Cuts: %s" % self.tau.cuts(category))
                 yield category
 
     def get_hist_samples_array(self, vars, prefix, category=None, cuts=None):

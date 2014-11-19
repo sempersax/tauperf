@@ -3,7 +3,7 @@ from rootpy.tree import Cut
 from .base import Category
 # All basic cut definitions are here
 
-
+L1_TAUCLUS = Cut('l1_tauclus>=12000')
 OFFLINE_L1_MATCHED = Cut('l1_matched_to_offline != -1')
 OFFLINE_HLT_MATCHED = Cut('hlt_matched_to_offline != -1')
 
@@ -17,6 +17,7 @@ MULTIPRONG = Cut('off_ntracks > 1')
 PRESELECTION = (
     OFFLINE_L1_MATCHED
     & OFFLINE_HLT_MATCHED
+    & L1_TAUCLUS
 )
 
 class Category_Preselection(Category):

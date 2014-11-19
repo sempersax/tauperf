@@ -42,6 +42,13 @@ class Sample(object):
             self.hist_decor.update(hist_decor)
         return self
 
+    def events(self, category=None, cuts=None):
+        selection = Cut(self._cuts)
+        if cuts is not None:
+            selection &= cuts
+        if category is not None:
+            selection &= self.cuts(category)
+        return self.draw_helper(Hist(1, 0.5, 1.5), '1', selection)
 
     def cuts(self, category=None, **kwargs):
         cuts = Cut(self._cuts)
@@ -110,7 +117,6 @@ class Sample(object):
 
     def get_hist_array(self, field_hist_template, category=None, cuts=None):
         """
-        TODO IMPLEMENT SCALING
         """
         selection = self.cuts(category)
         if not cuts is None:
