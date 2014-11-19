@@ -1,0 +1,59 @@
+#!/usr/bin/env python
+from tauperf.categories.hlt import Category_1P_HLT, Category_MP_HLT
+from tauperf.classify import Classifier
+from multiprocessing import Process
+
+cls_1p_odd = Classifier(
+	    Category_1P_HLT, 
+	    'weights/summary_1p_odd.root',
+	    '1p_odd',
+	    training_mode='prod',
+	    split_cut='eventnumber%2==0')
+
+cls_mp_odd = Classifier(
+	    Category_MP_HLT, 
+	    'weights/summary_mp_odd.root',
+	    'mp_odd',
+	    training_mode='prod',
+	    split_cut='eventnumber%2==0')
+
+cls_1p_even = Classifier(
+	    Category_1P_HLT, 
+	    'weights/summary_1p_even.root',
+	    '1p_even',
+	    training_mode='prod',
+	    split_cut='eventnumber%2!=0')
+
+cls_mp_even = Classifier(
+	    Category_MP_HLT, 
+	    'weights/summary_mp_even.root',
+	    'mp_even',
+	    training_mode='prod',
+	    split_cut='eventnumber%2!=0')
+
+classifiers = [
+    cls_1p_odd,
+    cls_1p_even,
+    cls_mp_odd,
+    cls_mp_even,
+]
+
+
+class Job(Process):
+    def __init__(self, cls):
+        super(Job, self).__init__()
+        self.cls = cls
+    def run(self):
+        self.cls.train()
+
+
+if __name__ == '__main__':
+    from rootpy.extern.argparse import ArgumentParser
+    from tauperf.jobs import run_pool
+
+    parser = ArgumentParser()
+    parser.add_argument('--jobs', type=int, default=-1)
+    args = parser.parse_args()
+
+    jobs = [Job(cls) for cls in classifiers]
+    run_pool(jobs, n_jobs=args.jobs)

@@ -25,6 +25,7 @@ class Classifier(TMVA.Factory):
                  factory_name,
                  prefix='hlt',
                  tree_name='tau',
+                 training_mode='dev', # 'prod'
                  split_cut=None,
                  verbose=''):
 
@@ -34,13 +35,16 @@ class Classifier(TMVA.Factory):
                               self.output,
                               verbose)
                               #"V:!Silent:Color:DrawProgressBar")
+        self.factory_name = factory_name
         self.category = category
         self.prefix = prefix
         self.tree_name = tree_name
+        self.training_mode = training_mode
         if split_cut is None:
             self.split_cut = Cut()
         else:
             self.split_cut = Cut(split_cut)
+            
     def set_variables(self, category, prefix):
         for varName in category.features:
             var = VARIABLES[varName]
@@ -68,7 +72,7 @@ class Classifier(TMVA.Factory):
         #         params += ["nEventsMin={0}".format(nEventsMin)]
         log.info(params)
 
-        method_name = "BDT"
+        method_name = "BDT_{0}".format(self.factory_name)
         params_string = "!H:V"
         for param in params:
             params_string+= ":"+param
@@ -84,19 +88,28 @@ class Classifier(TMVA.Factory):
         #         jet = Jet(student='jetjet_JZ7W')
         self.sig_cut = Tau().cuts(self.category) & self.split_cut
         self.bkg_cut = Jet().cuts(self.category) & self.split_cut
-        self.PrepareTrainingAndTestTree(self.sig_cut, self.bkg_cut,
-                                        "NormMode=EqualNumEvents:SplitMode=Block:!V")
+
+        params = ['NormMode=EqualNumEvents']
+        params += ['SplitMode=Random']
+        if self.training_mode == 'prod':
+            params += ['nTest_Background=1']
+            params += ['nTest_Signal=1']
+        params += ['!V']
+        params_string = ':'.join(params)
+        self.PrepareTrainingAndTestTree(self.sig_cut, self.bkg_cut, params_string)
+        # Signal file
         sig_file = get_file(tau.ntuple_path, tau.student) 
-        #         bkg_file = get_file(jet.ntuple_path, jet.student) 
         self.sig_tree = sig_file[tau.tree_name]
-        #         self.bkg_tree = bkg_file[self.tree_name]
         self.AddSignalTree(self.sig_tree)
+        # Bkg files
         for sample, scale in zip(jet.components, jet.scales):
             rfile = get_file(sample.ntuple_path, sample.student)
             tree = rfile[sample.tree_name]
             self.AddBackgroundTree(tree, scale)
-        #         self.SetInputTrees(self.sig_tree, self.bkg_tree)
+
+        # Actual training
         self.bookBDT(**kwargs)
         self.TrainAllMethods()
-        self.TestAllMethods()
-        self.EvaluateAllMethods()
+        if self.training_mode == 'dev':
+            self.TestAllMethods()
+            self.EvaluateAllMethods()
