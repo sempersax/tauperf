@@ -1,0 +1,106 @@
+#!/usr/bin/env python
+import os
+import shutil
+
+from rootpy.io import root_open
+from rootpy.tree import TreeModel, FloatCol
+from rootpy.stl import vector
+
+import logging
+from multiprocessing import Process
+import ROOT
+
+from tauperf.extern import (
+    ReadBDT_1p_odd, ReadBDT_1p_even,
+    ReadBDT_mp_odd, ReadBDT_mp_even)
+    
+from tauperf.categories import Category_1P_HLT, Category_MP_HLT
+from tauperf.variables import VARIABLES
+
+log = logging.getLogger('apply-bdt-weights')
+
+
+features_1p = vector('string')()
+for var in Category_1P_HLT.features:
+    features_1p.push_back('hlt_'+VARIABLES[var]['name'])
+features_mp = vector('string')()
+for var in Category_MP_HLT.features:
+    features_mp.push_back('hlt_'+VARIABLES[var]['name'])
+        
+reader_1p_even = ReadBDT_1p_even(features_1p)
+reader_1p_odd = ReadBDT_1p_odd(features_1p)
+reader_mp_odd = ReadBDT_mp_even(features_mp)
+reader_mp_even = ReadBDT_mp_odd(features_mp)
+
+
+def evaluate_single_bdt(reader, cat, tau):
+    vals = vector('double')()
+    for feat in cat.features:
+        vals.push_back(getattr(tau, VARIABLES[feat]['name']))
+    return reader.GetMvaValue(vals)
+
+def evaluate_bdt(tau, eventnumber):
+    if tau.ntracks==1:
+        if eventnumber%2 == 0:
+            return evaluate_single_bdt(reader_1p_even, Category_1P_HLT, tau)
+        else:
+            return evaluate_single_bdt(reader_1p_odd, Category_1P_HLT, tau)
+    elif tau.ntracks>1:
+        if eventnumber%2 == 0:
+            return evaluate_single_bdt(reader_mp_even, Category_MP_HLT, tau)
+        else:
+            return evaluate_single_bdt(reader_mp_odd, Category_MP_HLT, tau)
+    else:
+        return -9999.
+
+class Model(TreeModel):
+    hlt_bdt_score = FloatCol()
+
+def add_bdt_scores(tree):
+    tree.create_buffer()
+    tree.set_buffer(Model(), create_branches=True)
+    branch = tree.GetBranch('hlt_bdt_score')
+    tree.define_object('hlt', prefix='hlt_')
+
+    for event in tree:
+        hlt_tau = tree.hlt
+        tree.hlt_bdt_score = evaluate_bdt(hlt_tau, tree.eventnumber)
+        branch.Fill()
+    tree.SetEntries(-1)
+
+class Job(Process):
+    def __init__(self, filename):
+        super(Job, self).__init__()
+        self.filename = filename
+
+    def run(self):
+        filename = self.filename
+        path, name = os.path.split(filename)
+        # copy to new file
+        output = os.path.join(path, 'weighted.' + name)
+        if os.path.exists(output):
+            return 
+        log.info("copying {0} to {1} ...".format(filename, output))
+        shutil.copy(filename, output)
+        with root_open(output, 'UPDATE') as file:
+            tree = file.tau
+            if 'hlt_bdt_score' in tree:
+                log.info("scores already exist in {0} ...".format(output))
+                return
+            log.info("adding bdt scores to {0} ...".format(output))
+            add_bdt_scores(tree)
+            tree.Write(tree.name, ROOT.TObject.kOverwrite)
+
+
+if __name__ == '__main__':
+    from rootpy.extern.argparse import ArgumentParser
+
+    parser = ArgumentParser()
+    parser.add_argument('files', nargs='+')
+    args = parser.parse_args()
+
+    from tauperf.jobs import run_pool
+    jobs = [Job(f) for f in args.files]
+    run_pool(jobs, n_jobs=-1)
+
+
