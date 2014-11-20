@@ -20,7 +20,7 @@ rootpy.log.setLevel(logging.INFO)
 set_style('ATLAS', shape='rect')
 
 
-ana = Analysis(ntuple_path='/Users/quentin/Desktop/sandbox/first_pass')
+ana = Analysis(ntuple_path='/Users/quentin/Desktop/sandbox')
 
 TARGET_REJECTION = 0.9
 

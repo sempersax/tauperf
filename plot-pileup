@@ -63,16 +63,6 @@ for category in (Category_1P_HLT, Category_MP_HLT):
         bkg.color = 'red'
         bkg.markerstyle = 'square'
 
-#         min_range = min(
-#             [a - e for a, e in zip(sig.y(), sig.yerrl())] + 
-#             [a - e for a, e in zip(bkg.y(), bkg.yerrl())])
-#         max_range = max(
-#             [a + e for a, e in zip(sig.y(), sig.yerrh())] + 
-#             [a + e for a, e in zip(bkg.y(), bkg.yerrh())])
-#         sig.yaxis.SetRangeUser(
-#             min_range - 0.01 * min_range,
-#             max_range + 0.01 * max_range)
-
         c = Canvas()
         sig.Draw('AP')
         bkg.Draw('sameP')
@@ -87,4 +77,4 @@ for category in (Category_1P_HLT, Category_MP_HLT):
         label.SetTextSize(22)
         label.Draw()
         
-        c.SaveAs('mean_{0}_{1}.png'.format(key, category.name))
+        c.SaveAs('plots/mean_{0}_{1}.png'.format(key, category.name))
