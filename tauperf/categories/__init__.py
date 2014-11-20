@@ -21,4 +21,8 @@ CATEGORIES = {
         Category_1P,
         Category_MP,
         ],
+    'plotting_hlt': [
+        Category_1P_HLT,
+        Category_MP_HLT,
+        ],
 }

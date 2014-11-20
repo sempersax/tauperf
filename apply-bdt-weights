@@ -40,16 +40,20 @@ def evaluate_single_bdt(reader, cat, tau):
     return reader.GetMvaValue(vals)
 
 def evaluate_bdt(tau, eventnumber):
-    if tau.ntracks==1:
-        if eventnumber%2 == 0:
-            return evaluate_single_bdt(reader_1p_even, Category_1P_HLT, tau)
+    if tau.ntracks == 1:
+        if eventnumber % 2 == 0:
+            return evaluate_single_bdt(
+                reader_1p_even, Category_1P_HLT, tau)
         else:
-            return evaluate_single_bdt(reader_1p_odd, Category_1P_HLT, tau)
-    elif tau.ntracks>1:
-        if eventnumber%2 == 0:
-            return evaluate_single_bdt(reader_mp_even, Category_MP_HLT, tau)
+            return evaluate_single_bdt(
+                reader_1p_odd, Category_1P_HLT, tau)
+    elif tau.ntracks > 1:
+        if eventnumber % 2 == 0:
+            return evaluate_single_bdt(
+                reader_mp_even, Category_MP_HLT, tau)
         else:
-            return evaluate_single_bdt(reader_mp_odd, Category_MP_HLT, tau)
+            return evaluate_single_bdt(
+                reader_mp_odd, Category_MP_HLT, tau)
     else:
         return -9999.
 

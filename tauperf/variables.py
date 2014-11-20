@@ -51,7 +51,7 @@ VARIABLES = {
         'range': (0, 6)
         },
     
-    'centfrac': {
+    'centFrac': {
         'name': 'centFrac',
         'root': 'f_{core}',
         'training': 'off_centFrac',
@@ -63,7 +63,7 @@ VARIABLES = {
         'range': (0, 1)
         },
     
-    'isolfrac': {
+    'isolFrac': {
         'name': 'isolFrac',
         'root': 'f_{core}',
         'type': 'f',
@@ -72,7 +72,7 @@ VARIABLES = {
         'range': (0, 1)
         },
     
-    'pssfraction': {
+    'PSSFraction': {
         'name': 'PSSFraction',
         'root': 'E_{PSS}/E_{cluster}',
         'training': 'off_PSSFraction',
@@ -84,7 +84,7 @@ VARIABLES = {
         'range': (0, 1)
         },
 
-    'nstrip': {
+    'nStrip': {
         'name': 'nStrip',
         'root': 'Number of cells in the strips layer',
         'training': 'off_nStrip',
@@ -95,7 +95,7 @@ VARIABLES = {
         'range': (0, 20)
         },
     
-    'emradius': {
+    'EMRadius': {
         'name': 'EMRadius',
         'root': 'Radius in the ECAL',
         'training': 'off_EMRadius',
@@ -106,7 +106,7 @@ VARIABLES = {
         'range': (0, 0.4)
         },
     
-    'hadradius': {
+    'hadRadius': {
         'name': 'hadRadius',
         'root': 'Radius in the HCAL',
         'training': 'off_HadRadius',
@@ -246,7 +246,7 @@ VARIABLES = {
 #         'range': (0, 0.4),
 #         },
     
-    'trkavgdist': {
+    'trkAvgDist': {
         'name': 'trkAvgDist',
         'root': 'R_{track}',
         'training': 'off_trkAvgDist',
@@ -257,7 +257,7 @@ VARIABLES = {
         'range': (0, 0.4),
         },
    
-    'nwidetrk': {
+    'nwidetracks': {
         'name': 'nwidetracks',
         'root': 'N_{track}^{iso}',
         'training': 'off_nWideTrk',
@@ -268,7 +268,7 @@ VARIABLES = {
         'range': (0, 20),
         },
     
-    'chpiemeovercaloeme': {
+    'ChPiEMEOverCaloEME': {
         'name': 'ChPiEMEOverCaloEME',
         'root': 'E_{#pi^{#pm}}/E_{calo}',
         'training': 'off_ChPiEMEOverCaloEME',
@@ -279,7 +279,7 @@ VARIABLES = {
         'range': (0, 1),
         },
     
-    'etoverptleadtrk': {
+    'etOverPtLeadTrk': {
         'name': 'etOverPtLeadTrk',
         'root': '1./f_{track}',
         'training': 'off_EtOverLeadTrackPt',
@@ -300,7 +300,7 @@ VARIABLES = {
 #         'range': (0, 3),
 #         },
 
-    'ipsigleadtrk': {
+    'ipSigLeadTrk': {
         'name' : 'ipSigLeadTrk',
         'root': 'S_{lead track}',
         'training': 'off_ipSigLeadTrk',
@@ -311,7 +311,7 @@ VARIABLES = {
         'range': (0, 5),
         },
     
-    'drmax': {
+    'dRmax': {
         'name' : 'dRmax',
         'root': '#DeltaR_{max}',
         'training': 'off_dRmax',
@@ -322,7 +322,7 @@ VARIABLES = {
         'range': (0, 0.2),
         },
     
-    'trflightpathsig': {
+    'trFlightPathSig': {
         'name' : 'trFlightPathSig',
         'root': 'S_{T}^{flight}',
         'training': 'off_trFlightPathSig',
@@ -333,7 +333,7 @@ VARIABLES = {
         'range': (-10, 30),
         },
     
-    'masstrksys': {
+    'massTrkSys': {
         'name' : 'massTrkSys',
         'root': 'm_{track}',
         'training': 'off_massTrkSys',

@@ -45,7 +45,7 @@ class Category_3P(Category_Preselection):
     cuts = THREEPRONG
 
 class Category_MP(Category_Preselection):
-    name = 'mulitprongs'
+    name = 'multiprongs'
     label = '#tau_{had} (MP)'
     common_cuts = Category_Preselection.common_cuts
     cuts = MULTIPRONG

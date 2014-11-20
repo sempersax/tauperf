@@ -20,7 +20,7 @@ rootpy.log.setLevel(logging.INFO)
 set_style('ATLAS', shape='rect')
 
 
-ana = Analysis(ntuple_path='/Users/quentin/Desktop/sandbox')
+ana = Analysis(ntuple_path='/Users/quentin/Desktop/sandbox/first_pass')
 
 TARGET_REJECTION = 0.9
 
@@ -71,7 +71,7 @@ leg = Legend(
     leftmargin=0.2, topmargin=0.6)
 # leg.SetNDC()
 leg.Draw('same')
-c.SaveAs('roc.png')
+c.SaveAs('plots/roc.png')
 
 table = PrettyTable(['Category', 'cut', 'signal efficiency', 'background rejection (1/eff_b)'])
 table.add_row([Category_1P_HLT.name, wp_sp[0], wp_sp[1], 1. / (1. - wp_sp[2]) if (1. - wp_sp[2]) != 0. else -9999.])
@@ -93,8 +93,8 @@ def score_plot(category):
     return plot
 
 plot_1P = score_plot(Category_1P_HLT)
-plot_1P.SaveAs('scores_1p.png')
+plot_1P.SaveAs('plots/scores_1p.png')
 
 plot_MP = score_plot(Category_MP_HLT)
-plot_MP.SaveAs('scores_mp.png')
+plot_MP.SaveAs('plots/scores_mp.png')
 

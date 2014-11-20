@@ -99,16 +99,17 @@ class Sample(object):
             hist_template.nbins(), 
             list(hist_template.xedges())[0], 
             list(hist_template.xedges())[-1])
-        hist_template.Sumw2()
+        hist = hist_template.Clone()
+        hist.Sumw2()
         root_string = '{0}>>{1}{2}'.format(
-            expr, hist_template.name, binning)
+            expr, hist.name, binning)
         log.debug("Plotting {0} using selection: {1}".format(
                 root_string, selection))
         log.debug('Draw {0} with \n selection: {1} ...'.format(root_string, selection))
         tree.Draw(root_string, selection)
 
         try:
-            hist = asrootpy(ROOT.gPad.GetPrimitive(hist_template.name))
+            hist = asrootpy(ROOT.gPad.GetPrimitive(hist.name))
             return Hist(hist, title=self.label, **self.hist_decor)
         except:
             log.warning('{0}: unable to retrieve histogram for {1} with selection {2}'.format(
