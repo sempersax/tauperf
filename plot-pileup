@@ -1,0 +1,89 @@
+#!/usr/bin/env python
+# python imports
+import os
+import re
+# root/rootpy imports
+import ROOT
+from rootpy.plotting import Canvas, Graph, Legend
+from rootpy.plotting.style import set_style
+from rootpy.tree import Cut
+from ROOT import TLatex
+
+from tauperf.analysis import Analysis, VAR_PATTERN
+from tauperf.variables import VARIABLES
+from tauperf.categories import Category_1P_HLT, Category_MP_HLT
+
+set_style('ATLAS', shape='rect')
+
+ana = Analysis(ntuple_path='/Users/quentin/Desktop/sandbox')
+NPV_BINS = [(0, 5), (5, 10), (10, 15), (15, 20), (20, 25), (25, 30), (30, 35), (35, 40)]
+
+def mean_vs_npv(keys, category):
+    if not isinstance(keys, (list, tuple)):
+        keys = [keys]
+    vars = {}
+    graph_sig = {}
+    graph_bkg = {}
+    for key in keys:
+        if key in VARIABLES:
+            vars[VARIABLES[key]['name']] = VARIABLES[key]
+            graph_sig[VARIABLES[key]['name']] = Graph(len(NPV_BINS))
+            graph_bkg[VARIABLES[key]['name']] = Graph(len(NPV_BINS))
+            graph_sig[VARIABLES[key]['name']].title = VARIABLES[key]['root']
+    for i, bin in enumerate(NPV_BINS):
+        npv_cut = Cut('{0} < npv < {1}'.format(bin[0], bin[1]))
+        hist_samples = ana.get_hist_samples_array(vars, 'hlt', category, npv_cut)
+        for field, hists in hist_samples.items():
+            match = re.match(VAR_PATTERN, field)
+            graph_sig[match.group('var')].SetPoint(
+                i, sum(bin) / 2., hists['tau'].GetMean())
+            graph_sig[match.group('var')].SetPointError(
+            i, (bin[1] - bin[0]) / 2., (bin[1] - bin[0]) / 2., 
+            hists['tau'].GetMeanError() / 2., hists['tau'].GetMeanError() / 2.)
+            graph_bkg[match.group('var')].SetPoint(
+                i, sum(bin) / 2., hists['jet'].GetMean())
+            graph_bkg[match.group('var')].SetPointError(
+            i, (bin[1] - bin[0]) / 2., (bin[1] - bin[0]) / 2., 
+            hists['jet'].GetMeanError() / 2., hists['jet'].GetMeanError() / 2.)
+    return graph_sig, graph_bkg
+
+
+
+for category in (Category_1P_HLT, Category_MP_HLT):
+    graph_sig, graph_bkg = mean_vs_npv(category.features, category)
+    
+    for key in graph_sig:
+        sig = graph_sig[key]
+        bkg = graph_bkg[key]
+        sig.xaxis.title = 'Number of Primary Vertices'
+        sig.yaxis.title = 'Mean of {0}'.format(sig.title)
+        sig.title = ana.tau.label
+        bkg.title = ana.jet.label
+        bkg.color = 'red'
+        bkg.markerstyle = 'square'
+        min_range = min(
+            [a - e for a, e in zip(sig.y(), sig.yerrl())] + 
+            [a - e for a, e in zip(bkg.y(), bkg.yerrl())])
+        max_range = max(
+            [a + e for a, e in zip(sig.y(), sig.yerrh())] + 
+            [a + e for a, e in zip(bkg.y(), bkg.yerrh())])
+
+        sig.yaxis.SetRangeUser(
+            min_range - 0.01 * min_range,
+            max_range + 0.01 * max_range)
+
+        c = Canvas()
+        sig.Draw('AP')
+        bkg.Draw('sameP')
+        leg = Legend(
+            [sig, bkg], textsize=22, leftmargin=0.6)
+        leg.Draw('same')
+        label = TLatex(
+            c.GetLeftMargin() + 0.04, 0.9,
+            category.label)
+        label.SetNDC()
+        label.SetTextFont(43)
+        label.SetTextSize(textsize)
+        label.Draw()
+        
+        c.SaveAs('mean_{0}_{1}.png'.format(key, category.name))

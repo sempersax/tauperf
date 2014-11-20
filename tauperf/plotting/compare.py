@@ -1,4 +1,4 @@
-from rootpy.plotting import Legend, Hist, Graph
+from rootpy.plotting import Legend, Hist, Graph, Canvas
 from rootpy.plotting.style.atlas.labels import ATLAS_label
 
 import ROOT
@@ -214,3 +214,46 @@ def draw_shape(a, b, field, category,
     return plot
 
 
+def draw_efficiency(
+    eff_s, rej_b, field, 
+    category, textsize=22):
+
+    if field in VARIABLES:
+        xtitle = get_label(VARIABLES[field])
+    else:
+        xtitle = field
+
+    c = Canvas()
+    c.SetGridx()
+    c.SetGridy()
+    eff_s.painted_graph.yaxis.SetRangeUser(0,1.10)
+    eff_s.painted_graph.yaxis.title = 'Efficiency'
+    eff_s.painted_graph.xaxis.title = xtitle
+    eff_s.painted_graph.Draw('AP')
+    rej_b.color = 'red'
+    rej_b.markerstyle = 'square'
+    rej_b.painted_graph.Draw('sameP')
+    right_axis = ROOT.TGaxis(
+        ROOT.gPad.GetUxmax(), ROOT.gPad.GetUymin(),
+        ROOT.gPad.GetUxmax(), ROOT.gPad.GetUymax(), 
+        0, 1.10, 510,"+L")
+    right_axis.SetLineColor(ROOT.kRed)
+    right_axis.SetLabelColor(ROOT.kRed)
+    right_axis.SetTextColor(ROOT.kRed)
+    right_axis.SetTitle('Rejection = 1 - #epsilon_{B}')
+    right_axis.Draw('same')
+    ROOT.gStyle.SetPadTickY(0)
+    ROOT.gPad.Update()
+    ROOT.gStyle.SetPadTickY(1)
+    label = ROOT.TLatex(
+        c.GetLeftMargin() + 0.04, 0.9,
+        category.label)
+    label.SetNDC()
+    label.SetTextFont(43)
+    label.SetTextSize(textsize)
+    label.Draw()
+    leg = Legend(
+        [eff_s, rej_b], pad=c, 
+        textsize=20, leftmargin=0.6, topmargin=0.6)
+    leg.Draw('same')
+    return c

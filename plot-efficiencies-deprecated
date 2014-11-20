@@ -1,0 +1,230 @@
+#!/usr/bin/env python
+# python imports
+import os
+# root/rootpy imports
+import ROOT
+from rootpy.plotting import Canvas, Hist, HistStack, Efficiency, F1
+from rootpy.plotting.hist import _HistBase
+from rootpy.plotting import Legend
+from rootpy.plotting.utils import draw
+from rootpy.plotting.style import set_style, get_style
+from rootpy.extern.tabulartext import PrettyTable
+from rootpy.io import root_open
+# local imports
+from tools.datasets import (VERSION, DATASETS,
+                            SIGNAL_BACKGROUND_PAIRS,
+                            SIGNALS_14TEV, BACKGROUNDS_14TEV)
+from tauid import VARIABLES
+from tauid import log; log=log['plot-efficiencies']
+from tauid.plotting import get_mean_rms, rejection_linear, rejection, get_total_eff
+
+ROOT.gROOT.SetBatch(True)
+style = get_style('ATLAS', shape='rect')
+style.SetPadRightMargin(0.10)
+style.cd()
+
+table = PrettyTable(['menu', 'mu', 'ntrack', 'eff_s', '1-eff_b'])
+for pair in SIGNAL_BACKGROUND_PAIRS:
+    log.info(pair)
+    with root_open('efficiencies/efficiencies_{0}_v{1}.root'.format(pair[0], VERSION)) as fsig:
+        with root_open('efficiencies/efficiencies_{0}_v{1}.root'.format(pair[1], VERSION)) as fbkg:
+            for dir_s, dir_b in zip(fsig, fbkg):
+                for h_s, h_b in zip(dir_s, dir_b):
+                    if isinstance(h_s, Efficiency):
+                        if '_mu' in h_s.name:
+                            menu = h_s.name.split('_')[2]
+                            row = [menu, DATASETS[pair[0]]['mu'], dir_s.name]
+                            row.append(get_total_eff(h_s))
+                            row.append(get_total_eff(rejection_linear(h_b)))
+                            table.add_row(row)
+
+for pair in SIGNAL_BACKGROUND_PAIRS:
+    with root_open('efficiencies/efficiencies_{0}_v{1}.root'.format(pair[0], VERSION)) as fsig:
+        with root_open('efficiencies/efficiencies_{0}_v{1}.root'.format(pair[1], VERSION)) as fbkg:
+            log.info(pair)
+            for dir_s, dir_b in zip(fsig, fbkg):
+                log.info('Directories: {0} {1}'.format(dir_s, dir_b))
+                for h_s, h_b in zip(dir_s, dir_b):
+                    if isinstance(h_s, _HistBase):
+                        if h_s.Integral() !=0:
+                            h_s.Scale(1./h_s.Integral())
+                        if h_b.Integral() !=0:
+                            h_b.Scale(1./h_b.Integral())
+                        h_s.color = 'red'
+                        h_s.markerstyle = 'square'
+                        h_s.fillstyle = '/'
+                        h_b.fillstyle = '\\'
+                        h_s.drawstyle = 'HIST'
+                        h_b.drawstyle = 'HIST'
+                        c = Canvas()
+                        draw([h_s, h_b], pad=c, ytitle='Normalized', xtitle=h_s.xaxis.title)
+                        h_s.title = 'Z#rightarrow#tau#tau'
+                        h_b.title = 'multijets (JF17)'
+                        leg = Legend([h_s, h_b], pad=c, textsize=15, leftmargin=0.6)
+                        leg.Draw('same')
+                        lat = ROOT.TLatex(c.GetLeftMargin()+0.05, 1-c.GetTopMargin()-0.10,
+                                          'category: {0}'.format(h_s.name.split('_')[1]))
+                        lat.SetTextSize(20)
+                        lat.SetNDC()
+                        lat.Draw('same')
+                        if h_s.Integral() !=0 and h_b.Integral() !=0:
+                            chi2 = h_s.Chi2Test(h_b, 'UUNORMCHI2/NDF')
+                        else: 
+                            chi2 = -9999
+                        lat_chi2 = ROOT.TLatex(c.GetLeftMargin()+0.05, 1-c.GetTopMargin()-0.05,
+                                               '#chi^{{2}}/ndf: {0}'.format(chi2))
+                        lat_chi2.SetTextSize(20)
+                        lat_chi2.SetNDC()
+                        lat_chi2.Draw('same')
+                        c.SaveAs('./plots/SvsB_{0}_cat{1}_mu{2}.png'.format(h_s.name, dir_s.name, DATASETS[pair[0]]['mu']))
+                    elif isinstance(h_s, Efficiency):
+                        c = Canvas()
+                        rej_b = rejection_linear(h_b)
+                        h_s.color = 'black'
+                        rej_b.color = 'red'
+                        rej_b.linestyle = 'dashed'
+                        h_s.markerstyle = 'square'
+                        rej_b.markerstyle = 'triangleup'
+                        h_s.painted_graph.yaxis.SetRangeUser(0,1.05)
+                        h_s.painted_graph.xaxis.title = h_b.title
+                        h_s.painted_graph.yaxis.title = 'Efficiency'
+                        h_s.painted_graph.Draw('AP')
+                        rej_b.painted_graph.Draw('sameP')
+                        right_axis = ROOT.TGaxis( ROOT.gPad.GetUxmax(), ROOT.gPad.GetUymin(),
+                                                  ROOT.gPad.GetUxmax(), ROOT.gPad.GetUymax(),0,1.05,510,"+L")
+                        right_axis.SetLineColor(ROOT.kRed)
+                        right_axis.SetLabelColor(ROOT.kRed)
+                        right_axis.SetTextColor(ROOT.kRed)
+                        right_axis.SetTitle('Rejection = 1 - #epsilon_{B}')
+                        right_axis.Draw('same')
+                        ROOT.gStyle.SetPadTickY(0)
+                        ROOT.gPad.Update()
+                        ROOT.gStyle.SetPadTickY(1)
+                        lat = ROOT.TLatex(c.GetLeftMargin()+0.05,
+                                          1-c.GetTopMargin()-0.05,
+                                          'Menu: {0}, category: {1}'.format(h_s.name.split('_')[2],
+                                                                            h_s.name.split('_')[1]))
+                        lat.SetTextSize(20)
+                        lat.SetNDC()
+                        lat.Draw('same')
+                        c.SaveAs('./plots/SvsB_{0}_cat_{1}_mu{2}.png'.format(h_s.name, dir_s.name, DATASETS[pair[0]]['mu']))
+
+
+fsigs = [root_open('efficiencies/efficiencies_{0}_v{1}.root'.format(sig, VERSION)) for sig in SIGNALS_14TEV]
+# Ugly !!! TO BE FIXED
+for dir20, dir40, dir60, dir80 in zip(fsigs[0], fsigs[1], fsigs[2], fsigs[3]):
+    for h20, h40, h60, h80 in zip(dir20, dir40, dir60, dir80):
+        if isinstance(h20, Efficiency):
+            c = Canvas()
+            h20.color = 'red'
+            h40.color = 'green'
+            h60.color = 'blue'
+            h80.color = 'purple'
+            h20.markerstyle = 'triangledown'
+            h40.markerstyle = 'opencircle'
+            h60.markerstyle = 'opensquare'
+            h80.markerstyle = 'opentriangle'
+            h20.painted_graph.xaxis.title = h20.title
+            h20.painted_graph.yaxis.title = 'Efficiency'
+            h20.painted_graph.yaxis.SetRangeUser(0, 1.1)
+            h20.painted_graph.Draw('AP')
+            h40.painted_graph.Draw('sameP')
+            h60.painted_graph.Draw('sameP')
+            h80.painted_graph.Draw('sameP')
+            h20.title = '<#mu>=20'
+            h40.title = '<#mu>=40'
+            h60.title = '<#mu>=60'
+            h80.title = '<#mu>=80'
+            leg = Legend([h20, h40, h60, h80], pad=c, textsize=15, leftmargin=0.6)
+            leg.Draw('same')
+            lat = ROOT.TLatex(c.GetLeftMargin()+0.05,
+                              1-c.GetTopMargin()-0.05,
+                              'Menu: {0}, category: {1}'.format(h20.name.split('_')[2],
+                                                                h20.name.split('_')[1]))
+            lat.SetTextSize(20)
+            lat.SetNDC()
+            lat.Draw('same')
+            c.SaveAs('./plots/Signal_{0}_cat_{1}.png'.format(h20.name, dir20.name))
+
+for f in fsigs:
+    f.Close()
+for sig in SIGNALS_14TEV:
+    with root_open('efficiencies/efficiencies_{0}_v{1}.root'.format(sig, VERSION)) as fsig:
+        for h1p, h3p in zip(fsig['true_1p'], fsig['true_3p']):
+            if isinstance(h1p, _HistBase):
+                log.info(h1p.xaxis.title)
+                c = Canvas()
+                h1p.color = 'red'
+                h3p.color = 'blue'
+                h1p.fillstyle = '//'
+                h3p.fillstyle = '\\'
+                h1p.legendstyle = 'F'
+                h3p.legendstyle = 'F'
+                h1p.title = '1 prong'
+                h3p.title = '3 prongs'
+                stack = HistStack([h1p, h3p])
+                if stack.Integral()!=0:
+                    stack.Scale(1./stack.Integral())
+                stack.Draw('HIST')
+                stack.xaxis.title = h1p.xaxis.title
+                stack.yaxis.title = 'Arbitrary Units'
+                leg = Legend([h1p, h3p], pad=c, header='True Categorization', textsize=20)
+                leg.Draw('same')
+                lat = ROOT.TLatex(c.GetLeftMargin()+0.05, 1-c.GetTopMargin()+0.01,
+                                  DATASETS[sig]['root'])
+                lat.SetTextSize(20)
+                lat.SetNDC()
+                lat.Draw('same')
+                c.SaveAs('./plots/Signal_{0}_truecats.png'.format(h1p.name))
+
+fbkgs = [root_open('efficiencies/efficiencies_{0}_v{1}.root'.format(bkg, VERSION)) for bkg in BACKGROUNDS_14TEV]
+# Ugly !!! TO BE FIXED
+for dir40, dir60 in zip(fbkgs[0], fbkgs[1]):
+    for h40, h60 in zip(dir40, dir60):
+        if isinstance(h40, Efficiency):
+            c = Canvas()
+            rej40 = rejection(h40)
+            rej60 = rejection(h60)
+            rej40.color = 'green'
+            rej60.color = 'blue'
+            rej40.markerstyle = 'opencircle'
+            rej60.markerstyle = 'opensquare'
+            rej40.xaxis.title = rej40.title
+            rej60.xaxis.title = rej60.title
+            rej40.yaxis.title = 'Rejection (1/#epsilon_{B})'
+            rej60.yaxis.title = 'Rejection (1/#epsilon_{B})'
+#             rej40.yaxis.SetRangeUser(min(rej40.GetMinimum(), rej60.GetMinimum()),
+#                                      max(rej40.GetMaximum(), rej60.GetMaximum()))
+            rej40.title = '<#mu>=40'
+            rej60.title = '<#mu>=60'
+            c = Canvas()
+            rej40.Draw('AP')
+            rej60.Draw('sameP')
+            leg = Legend([rej40, rej60], pad=c, textsize=15, leftmargin=0.6)
+            leg.Draw('same')
+            lat = ROOT.TLatex(c.GetLeftMargin()+0.05, 1-c.GetTopMargin()-0.10,
+                              'category: {0}'.format(rej40.name.split('_')[1]))
+            lat.SetTextSize(20)
+            lat.SetNDC()
+            lat.Draw('same')
+            c.SaveAs('./plots/Bkg_rej_{0}_cat_{1}.png'.format(rej40.name, dir40.name))
+        
+print table
+
+# plot_cat = ['1p', 'mp']
+# for cat in plot_cat:
+#     for var in VARIABLES['plotting_id']:
+#         gr_mean, _ = get_mean_rms(cat, var)
+#         fit_func = F1('[0]*x+[1]')
+#         gr_mean.Fit(fit_func, 'SVF')
+#         c = Canvas()
+#         gr_mean.Draw('AP')
+#         fit_func.Draw('same')
+#         print fit_func.GetParameter(1), fit_func.GetParameter(2)
+#         fit_label = ROOT.TLatex(0.2, 0.2, '{0}#times<#mu>+{1}'.format(fit_func.GetParameter(0), fit_func.GetParameter(1)))       
+#         fit_label.SetNDC()
+#         fit_label.Draw('same')
+#         fit_cat = ROOT.TLatex(0.2, 0.9, 'Category: {0}'.format(cat))
+#         fit_cat.SetNDC()
+#         fit_cat.Draw('same')
+#         c.SaveAs('./plots/Mean_{0}_cat{1}.png'.format(var['name'], cat))

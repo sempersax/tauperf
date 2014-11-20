@@ -120,7 +120,7 @@ class Sample(object):
         """
         selection = self.cuts(category)
         if not cuts is None:
-            seletion &= cuts
+            selection &= cuts
         field_hists = {}
         for key, hist in field_hist_template.items():
             field_hists[key] = self.draw_helper(hist, key, selection)

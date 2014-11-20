@@ -46,7 +46,6 @@ class Analysis(object):
         """
         """
         field_hist_tau = self.tau.get_field_hist(vars, prefix)
-        log.info(field_hist_tau)
         log.debug('Retrieve Tau histograms')
         field_hist_tau = self.tau.get_hist_array(field_hist_tau, category=category, cuts=cuts)
         field_hist_jet = self.jet.get_field_hist(vars, prefix)
@@ -72,8 +71,6 @@ class Analysis(object):
         log.debug('Retrieve Tau histograms')
         field_hist_tau_1 = self.tau.get_hist_array(field_hist_tau_1, category=category, cuts=cuts)
         field_hist_tau_2 = self.tau.get_hist_array(field_hist_tau_2, category=category, cuts=cuts)
-        log.info(field_hist_tau_1)
-        log.info(field_hist_tau_2)
         
         hist_samples_array = {}
         for key in field_hist_tau_1:

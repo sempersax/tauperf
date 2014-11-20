@@ -1,16 +1,24 @@
 import ROOT
 
 from rootpy.context import preserve_current_style
-from rootpy.plotting import Canvas, Pad, Hist
+from rootpy.plotting import Canvas, Pad, Hist, Efficiency
 from rootpy.plotting.utils import draw, tick_length_pixels
 from rootpy.plotting.shapes import Line
-
+from rootpy import asrootpy
 
 __all__ = [
     'SimplePlot',
     'RatioPlot',
+    'rejection_linear',
 ]
 
+
+def rejection_linear(eff):
+    htot = asrootpy(eff.GetTotalHistogram()).Clone()
+    hpass = asrootpy(eff.GetPassedHistogram())
+    hnotpass =  htot - hpass
+    rej = Efficiency(hnotpass, htot, name='Rejlin_{0}'.format(eff.name), title=eff.title)
+    return rej
 
 class SimplePlot(Canvas):
 
