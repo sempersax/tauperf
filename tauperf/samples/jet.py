@@ -24,8 +24,12 @@ class JZ(Jet):
                 name='JZ2', label='JZ2'),
             Jet(
                 ntuple_path=ntuple_path,
-                cuts=self._cuts, student='jetjet_JZ7W', 
-                name='JZ7', label='JZ7'),
+                cuts=self._cuts, student='jetjet_JZ3', 
+                name='JZ3', label='JZ3'),
+#             Jet(
+#                 ntuple_path=ntuple_path,
+#                 cuts=self._cuts, student='jetjet_JZ7W', 
+#                 name='JZ7', label='JZ7'),
             
             ]
         self._scales = []
@@ -54,9 +58,10 @@ class JZ(Jet):
         
         log.info('Set samples scales: {0}'.format(self._scales))
 
-    def draw_helper(self, *args):
+    def draw_helper(self, *args, **kwargs):
         hist_array = []
-        individual_components = False
+        individual_components = kwargs.pop('individual_components', False)
+        #         individual_components = 
         for s in self._sub_samples:
             h = s.draw_helper(*args)
             hist_array.append(h)

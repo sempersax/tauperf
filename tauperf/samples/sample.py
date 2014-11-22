@@ -17,6 +17,7 @@ class Sample(object):
                  tree_name=DEFAULT_TREE,
                  name='Sample',
                  label='Sample',
+                 weight_field=None,
                  **hist_decor):
 
         if cuts is None:
@@ -28,6 +29,7 @@ class Sample(object):
         self.tree_name = tree_name
         self.name = name
         self.label = label
+        self.weight_field = weight_field
         self.hist_decor = hist_decor
 
         if 'fillstyle' not in hist_decor:
@@ -42,12 +44,14 @@ class Sample(object):
             self.hist_decor.update(hist_decor)
         return self
 
-    def events(self, category=None, cuts=None):
+    def events(self, category=None, cuts=None, weighted=False):
         selection = Cut(self._cuts)
         if cuts is not None:
             selection &= cuts
         if category is not None:
             selection &= self.cuts(category)
+        if weighted and self.weight_field is not None:
+            selection *= self.weight_field
         return self.draw_helper(Hist(1, 0.5, 1.5), '1', selection)
 
     def cuts(self, category=None, **kwargs):
@@ -122,6 +126,8 @@ class Sample(object):
         selection = self.cuts(category)
         if not cuts is None:
             selection &= cuts
+        if self.weight_field is not None:
+            selection *= self.weight_field
         field_hists = {}
         for key, hist in field_hist_template.items():
             field_hists[key] = self.draw_helper(hist, key, selection)
