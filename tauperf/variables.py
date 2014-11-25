@@ -13,7 +13,7 @@ VARIABLES = {
         'units': 'GeV',
         'scale': 0.001,
         'prefix': ('off', 'hlt', 'true'),
-        'bins': 90,
+        'bins': 30,
         'range': (10, 100)
         },
     
@@ -22,7 +22,7 @@ VARIABLES = {
         'root': '#eta',
         'type': 'f',
         'prefix': ('off', 'hlt', 'l1', 'true'),
-        'bins': 100,
+        'bins': 20,
         'range': (-2.5, 2.5)
         },
 

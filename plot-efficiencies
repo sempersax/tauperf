@@ -21,18 +21,22 @@ ana = Analysis(ntuple_path=os.path.join(NTUPLE_PATH, 'training_24_11_2014'))
 vars = {'pt': VARIABLES['pt'], 'eta': VARIABLES['eta'], 'npv': VARIABLES['npv']}
 
 
-for category, cut in zip((Category_1P_HLT, Category_MP_HLT), (CUT_1P, CUT_MP)):
-    cut = 'hlt_bdt_score>{0}'.format(cut)
+for category, cut_val in zip((Category_1P_HLT, Category_MP_HLT), (CUT_1P, CUT_MP)):
+    cut = 'hlt_bdt_score>={0}'.format(cut_val)
+    anticut = 'hlt_bdt_score<{0}'.format(cut_val)
     hist_samples = ana.get_hist_samples_array(vars, 'hlt', category)
     hist_samples_cut = ana.get_hist_samples_array(vars, 'hlt', category, cut)
+    hist_samples_anticut = ana.get_hist_samples_array(vars, 'hlt', category, anticut)
     for var in hist_samples:
         eff_s = Efficiency(
             hist_samples_cut[var]['tau'], hist_samples[var]['tau'])
         eff_s.title = hist_samples_cut[var]['tau'].title
-        eff_b = Efficiency(
-            hist_samples_cut[var]['jet'], hist_samples[var]['jet'])
-        rej_b = rejection_linear(eff_b)
-        rej_b.title = hist_samples_cut[var]['jet'].title
+        # eff_b = Efficiency(
+        #     hist_samples_cut[var]['jet'], hist_samples[var]['jet'])
+        # rej_b = rejection_linear(eff_b)
+        rej_b = Efficiency(
+            hist_samples_anticut[var]['jet'], hist_samples[var]['jet'])
+        rej_b.title = hist_samples_anticut[var]['jet'].title
         
         c = draw_efficiency(eff_s, rej_b, var, category) 
         c.SaveAs('plots/efficiencies_{0}_{1}.png'.format(var, category.name))
