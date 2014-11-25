@@ -9,6 +9,7 @@ from rootpy.plotting.style import set_style
 from rootpy.extern.tabulartext import PrettyTable
 from rootpy import ROOT
 
+from tauperf import NTUPLE_PATH
 from tauperf.analysis import Analysis
 from tauperf.variables import VARIABLES
 from tauperf.plotting import draw_shape
@@ -20,7 +21,7 @@ rootpy.log.setLevel(logging.INFO)
 set_style('ATLAS', shape='rect')
 
 
-ana = Analysis(ntuple_path='/Users/quentin/Desktop/sandbox')
+ana = Analysis(ntuple_path=os.path.join(NTUPLE_PATH, 'training_24_11_2014'))
 
 TARGET_REJECTION = 0.9
 
@@ -66,9 +67,7 @@ c.SetGridx()
 c.SetGridy()
 gr_sp.Draw('AL')
 gr_mp.Draw('SAMEL')
-leg = Legend(
-    [gr_sp, gr_mp], textsize=22, 
-    leftmargin=0.2, topmargin=0.6)
+leg = Legend([gr_sp, gr_mp])
 # leg.SetNDC()
 leg.Draw('same')
 c.SaveAs('plots/roc.png')

@@ -14,26 +14,26 @@ class JZ(Jet):
                 ntuple_path=ntuple_path,
                 cuts=self._cuts, student='jetjet_JZ0', 
                 name='JZ0', label='JZ0'),
-            Jet(
-                ntuple_path=ntuple_path,
-                cuts=self._cuts, student='jetjet_JZ1', 
-                name='JZ1', label='JZ1'),
-            Jet(
-                ntuple_path=ntuple_path,
-                cuts=self._cuts, student='jetjet_JZ2', 
-                name='JZ2', label='JZ2'),
-            Jet(
-                ntuple_path=ntuple_path,
-                cuts=self._cuts, student='jetjet_JZ3', 
-                name='JZ3', label='JZ3'),
-#             Jet(
-#                 ntuple_path=ntuple_path,
-#                 cuts=self._cuts, student='jetjet_JZ7W', 
-#                 name='JZ7', label='JZ7'),
+            # Jet(
+            #     ntuple_path=ntuple_path,
+            #     cuts=self._cuts, student='jetjet_JZ1', 
+            #     name='JZ1', label='JZ1'),
+            # Jet(
+            #     ntuple_path=ntuple_path,
+            #     cuts=self._cuts, student='jetjet_JZ2', 
+            #     name='JZ2', label='JZ2'),
+            # Jet(
+            #     ntuple_path=ntuple_path,
+            #     cuts=self._cuts, student='jetjet_JZ3', 
+            #     name='JZ3', label='JZ3'),
+            # Jet(
+            #     ntuple_path=ntuple_path,
+            #     cuts=self._cuts, student='jetjet_JZ7W', 
+            #     name='JZ7', label='JZ7'),
             
             ]
         self._scales = []
-
+        self.set_scales([1.])
     @property
     def components(self):
         return self._sub_samples

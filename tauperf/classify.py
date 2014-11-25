@@ -84,8 +84,8 @@ class Classifier(TMVA.Factory):
         self.set_variables(self.category, self.prefix)
         tau = Tau()
         jet = JZ()
-        jet.set_scales([1., 1., 1., 1.])
-        #         jet = Jet(student='jetjet_JZ7W')
+        jet.set_scales([1.])
+        # jet = Jet(student='jetjet_JZ0')
         self.sig_cut = Tau().cuts(self.category) & self.split_cut
         self.bkg_cut = Jet().cuts(self.category) & self.split_cut
 

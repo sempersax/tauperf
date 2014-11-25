@@ -1,10 +1,13 @@
-DEFAULT_STUDENT = 'Ztautau'
-DEFAULT_TREE = 'tau'
-NTUPLE_PATH = '/Users/quentin/Desktop/DATA_CLUSTER/'
-
 import logging
 import os
 import rootpy
+
+DEFAULT_STUDENT = 'Ztautau'
+DEFAULT_TREE = 'tau'
+NTUPLE_PATH = os.path.join(
+    os.getenv('DATA_AREA'), 'tauperf_skims_xaods', 'v4')
+
+
 
 import ROOT
 

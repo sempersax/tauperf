@@ -27,7 +27,6 @@ class Analysis(object):
             name='jet', 
             label='Fake #tau_{had}',
             color='#00FF00')
-        self.jet.set_scales([1., 1., 1., 1.])
 
     def iter_categories(self, *definitions, **kwargs):
         names = kwargs.pop('names', None)

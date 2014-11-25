@@ -81,7 +81,12 @@ def draw_ratio(a, b, field, category,
             label.SetTextSize(textsize)
             label.Draw()
         # show p-value and chi^2
-        pvalue = a.Chi2Test(b, 'WW')
+        if a.integral() != 0 and b.integral() != 0:
+            pvalue = a.Chi2Test(b, 'WW')
+            chi2 = a.Chi2Test(b, 'WW CHI2/NDF')
+        else:
+            pvalue = -9999.
+            chi2 = -9999.
         pvalue_label = ROOT.TLatex(
             pad.GetLeftMargin() + 0.04, 0.8,
             "p-value={0:.2f}".format(pvalue))
@@ -89,7 +94,7 @@ def draw_ratio(a, b, field, category,
         pvalue_label.SetTextFont(43)
         pvalue_label.SetTextSize(textsize)
         pvalue_label.Draw()
-        chi2 = a.Chi2Test(b, 'WW CHI2/NDF')
+        
         chi2_label = ROOT.TLatex(
             pad.GetLeftMargin() + 0.04, 0.72,
             "#frac{{#chi^{{2}}}}{{ndf}}={0:.2f}".format(chi2))
@@ -253,7 +258,7 @@ def draw_efficiency(
     label.SetTextSize(textsize)
     label.Draw()
     leg = Legend(
-        [eff_s, rej_b], pad=c, 
-        textsize=20, leftmargin=0.6, topmargin=0.6)
+        [eff_s, rej_b], pad=c)
+        # textsize=20, leftmargin=0.6, topmargin=0.6)
     leg.Draw('same')
     return c

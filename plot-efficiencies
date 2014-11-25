@@ -1,9 +1,11 @@
 #!/usr/bin/env python
+import os
 # root/rootpy imports
 import ROOT
 from rootpy.plotting import Efficiency
 from rootpy.plotting.style import get_style
 
+from tauperf import NTUPLE_PATH
 from tauperf.analysis import Analysis
 from tauperf.variables import VARIABLES, get_label
 from tauperf.categories import Category_1P_HLT, Category_MP_HLT
@@ -15,7 +17,7 @@ style = get_style('ATLAS', shape='rect')
 style.SetPadRightMargin(0.10)
 style.cd()
 
-ana = Analysis(ntuple_path='/Users/quentin/Desktop/sandbox/first_pass')
+ana = Analysis(ntuple_path=os.path.join(NTUPLE_PATH, 'training_24_11_2014'))
 vars = {'pt': VARIABLES['pt'], 'eta': VARIABLES['eta'], 'npv': VARIABLES['npv']}
 
 

@@ -15,8 +15,9 @@ __all__ = [
 
 def rejection_linear(eff):
     htot = asrootpy(eff.GetTotalHistogram()).Clone()
-    hpass = asrootpy(eff.GetPassedHistogram())
+    hpass = asrootpy(eff.GetPassedHistogram()).Clone()
     hnotpass =  htot - hpass
+    hnotpass.Sumw2()
     rej = Efficiency(hnotpass, htot, name='Rejlin_{0}'.format(eff.name), title=eff.title)
     return rej
 
