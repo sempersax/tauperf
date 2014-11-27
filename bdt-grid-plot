@@ -4,24 +4,60 @@ import logging
 import rootpy
 import re
 from rootpy.extern.argparse import ArgumentParser
+from rootpy.io import root_open
+from rootpy.plotting import Graph2D, Canvas
+from rootpy.plotting.style import get_style
 
 PATTERN = re.compile('summary_(?P<cat>\w+)_ntrees(?P<ntrees>\d+)_depth(?P<depth>\d+)_nodesize(?P<node>\d+).root')
-
 log = logging.getLogger(os.path.basename(__file__))
 rootpy.log.setLevel(logging.INFO)
 
-samples = []
+ROOT_DIR = 'weights'
 
-for _, _, filenames in os.walk('weights/'):
+def roc_integral(file_name):
+    dir_name = file_name.replace('summary', 'BDT').strip('.root')
+    hist_name = 'MVA_' + dir_name + '_rejBvsS'
+    with root_open(os.path.join(ROOT_DIR, file_name)) as f:
+        try:
+            h = f['Method_BDT'][dir_name][hist_name]
+            return h.integral()
+        except:
+            log.warning('Cannot retrieve the histogram')
+            return -9999.
+
+samples = {}
+samples['1p'] = []
+samples['mp'] = []
+
+for _, _, filenames in os.walk(ROOT_DIR):
     for root_file in filenames:
         match = re.match(PATTERN, root_file)
         if match:
-            samples.append({
-                    'cat': match.group('cat'), 
-                    'ntrees': int(match.group('ntrees')),
-                    'depth': int(match.group('depth')),
-                    'node': int(match.group('node')),
-                    'root': root_file})
+            roc = roc_integral(root_file)
+            if roc > 0:
+                samples[match.group('cat')].append(
+                    {'ntrees': int(match.group('ntrees')),
+                     'depth': int(match.group('depth')),
+                     'node': int(match.group('node')),
+                     'roc': roc})
 
-for sample in samples:
+
+
+for sample in samples['1p']:
     print sample
+
+Scan = Graph2D(len(samples['1p']))
+for ip, s in enumerate(samples['1p']):
+    Scan.SetPoint(ip, s['node'], s['depth'], s['roc'])
+
+style = get_style('ATLAS', shape='rect')
+style.SetPadRightMargin(0.10)
+with style:
+    c = Canvas()
+    Scan.xaxis.title = 'Minimal Fraction of the sample per Node (%)'
+    Scan.yaxis.title = 'Maximum Tree Depth'
+    Scan.Draw('COLZ')
+    Scan.xaxis.title = 'Minimal Node Size (%)'
+    Scan.yaxis.title = 'Maximum Tree Depth'
+    c.RedrawAxis()
+    c.SaveAs('toto.png')
