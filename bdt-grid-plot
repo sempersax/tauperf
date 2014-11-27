@@ -3,11 +3,13 @@ import os
 import logging
 import rootpy
 import re
+import itertools
 from rootpy.extern.argparse import ArgumentParser
 from rootpy.io import root_open
-from rootpy.plotting import Graph2D, Canvas
+from rootpy.plotting import Graph2D, Graph, Canvas
 from rootpy.plotting.style import get_style
 
+import tauperf
 PATTERN = re.compile('summary_(?P<cat>\w+)_ntrees(?P<ntrees>\d+)_depth(?P<depth>\d+)_nodesize(?P<node>\d+).root')
 log = logging.getLogger(os.path.basename(__file__))
 rootpy.log.setLevel(logging.INFO)
@@ -42,22 +44,28 @@ for _, _, filenames in os.walk(ROOT_DIR):
                      'roc': roc})
 
 
+# filtered_list = samples['mp']
+filtered_list = [s for s in itertools.ifilter(lambda v: v['node']==5 and v['ntrees']==400, samples['mp'])]
 
-for sample in samples['1p']:
-    print sample
+# for sample in filtered_list:
+#     print sample
 
-Scan = Graph2D(len(samples['1p']))
-for ip, s in enumerate(samples['1p']):
-    Scan.SetPoint(ip, s['node'], s['depth'], s['roc'])
+# Scan = Graph2D(len(filtered_list))
+Scans = {}
+for field in ('ntrees', 'depth', 'node'):
+    Scans[field] = Graph(len(filtered_list))
+
+for ip, s in enumerate(filtered_list):
+    for key, gr in Scans.items():
+        gr.SetPoint(ip, s[key], s['roc'])
 
 style = get_style('ATLAS', shape='rect')
 style.SetPadRightMargin(0.10)
 with style:
-    c = Canvas()
-    Scan.xaxis.title = 'Minimal Fraction of the sample per Node (%)'
-    Scan.yaxis.title = 'Maximum Tree Depth'
-    Scan.Draw('COLZ')
-    Scan.xaxis.title = 'Minimal Node Size (%)'
-    Scan.yaxis.title = 'Maximum Tree Depth'
-    c.RedrawAxis()
-    c.SaveAs('toto.png')
+    for key, gr in Scans.items():
+        c = Canvas()
+        gr.xaxis.title = key
+        gr.yaxis.title = 'ROC Integral'
+        gr.Draw('AP')
+        # c.RedrawAxis()
+        c.SaveAs('toto_{0}.png'.format(key))

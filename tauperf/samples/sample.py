@@ -93,6 +93,14 @@ class Sample(object):
                 
         return field_hist
 
+    def total_events(self, weighted=False):
+        rfile = get_file(self.ntuple_path, self.student)
+        if weighted:
+            h = rfile['Nweights']
+        else:
+            h = rfile['Nevents']
+        return h[1].value
+
     def draw_helper(self, hist_template, expr, selection): 
         """
         """
@@ -109,7 +117,7 @@ class Sample(object):
             expr, hist.name, binning)
         log.debug("Plotting {0} using selection: {1}".format(
                 root_string, selection))
-        log.debug('Draw {0} with \n selection: {1} ...'.format(root_string, selection))
+        log.info('Draw {0} with \n selection: {1} ...'.format(root_string, selection))
         tree.Draw(root_string, selection)
 
         try:

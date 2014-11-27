@@ -14,7 +14,7 @@ VARIABLES = {
         'scale': 0.001,
         'prefix': ('off', 'hlt', 'true'),
         'bins': 30,
-        'range': (10, 100)
+        'range': (10, 500)
         },
     
     'eta': {
@@ -232,7 +232,7 @@ VARIABLES = {
         'bins': 20,
         'scale': 0.001,
         'range': (0, 40),
-        'units': 'MeV'
+        'units': 'GeV'
     },
 
 #     'efftopomeandeltar': {
@@ -256,6 +256,17 @@ VARIABLES = {
         'bins': 20,
         'range': (0, 0.4),
         },
+
+    'InnerTrkAvgDist': {
+        'name': 'InnerTrkAvgDist',
+        'root': 'Inner R_{track}',
+        'training': 'off_trkAvgDist',
+        'training_and': 'trkAvgDist',
+        'prefix': ('off', 'hlt'),
+        'type': 'f',
+        'bins': 20,
+        'range': (0, 0.2),
+        },
    
     'nwidetracks': {
         'name': 'nwidetracks',
@@ -268,6 +279,15 @@ VARIABLES = {
         'range': (0, 20),
         },
     
+    'SumPtTrkFrac': {
+        'name': 'SumPtTrkFrac',
+        'root': '1 - p_{T}^{trk in 0.2} / p_{T}^{trk in 0.4}',
+        'type': 'f',
+        'prefix': ('off', 'hlt'),
+        'bins' : 20,
+        'range': (0, 1),
+        },
+
     'ChPiEMEOverCaloEME': {
         'name': 'ChPiEMEOverCaloEME',
         'root': 'E_{#pi^{#pm}}/E_{calo}',
@@ -290,27 +310,39 @@ VARIABLES = {
         'range': (0, 3),
         },
     
-#     'empovertrksysp': {
-#         'name' : 'EMPOverTrkSysP',
-#         'root': 'p_{EM}/p_{tracks}',
-#         'training': 'off_EMPOverTrkSysP',
-#         'training_and': 'EMPOverTrkSysP',
-#         'type': 'f',
-#         'bins': 20,
-#         'range': (0, 3),
-#         },
+    'EMPOverTrkSysP': {
+        'name' : 'EMPOverTrkSysP',
+        'root': 'p_{EM}/p_{tracks}',
+        'training': 'off_EMPOverTrkSysP',
+        'training_and': 'EMPOverTrkSysP',
+        'prefix': ('off', 'hlt'),
+        'type': 'f',
+        'bins': 20,
+        'range': (0, 3),
+        },
 
     'ipSigLeadTrk': {
         'name' : 'ipSigLeadTrk',
-        'root': 'S_{lead track}',
+        'root': 'S_{lead track} (PV)',
         'training': 'off_ipSigLeadTrk',
         'training_and': 'ipSigLeadTrk',
         'type': 'f',
         'prefix': ('off', 'hlt'),
         'bins': 20,
-        'range': (0, 5),
+        'range': (-5, 5),
         },
     
+    'ipSigLeadTrk_BS': {
+        'name' : 'ipSigLeadTrk_BS',
+        'root': 'S_{lead track} (Beamspot)',
+        'training': 'off_ipSigLeadTrk',
+        'training_and': 'ipSigLeadTrk',
+        'type': 'f',
+        'prefix': ('hlt'),
+        'bins': 20,
+        'range': (-5, 5),
+        },
+
     'dRmax': {
         'name' : 'dRmax',
         'root': '#DeltaR_{max}',
@@ -345,4 +377,28 @@ VARIABLES = {
         'units': 'GeV',
         'range': (0, 20),
         },
+
+    'approx_ptRatio': {
+        'name' : 'approx_ptRatio',
+        'root': 'Approximated p_{T} ratio',
+        'type': 'f',
+        'prefix': ('off', 'hlt'),
+        'bins': 20,
+        'range': (0, 2),
+        },
+
+    'approx_vistau_m': {
+        'name' : 'approx_vistau_m',
+        'root': 'Approximated m_{#tau}^{vis}',
+        'type': 'f',
+        'prefix': ('off', 'hlt'),
+        'bins': 20,
+        'scale': 0.001,
+        'units': 'GeV',
+        'range': (0, 2),
+        },
+
+
+
+
 }

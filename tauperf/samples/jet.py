@@ -6,6 +6,17 @@ class Jet(Sample):
     pass
 
 
+XSEC_FILTER = {
+    'JZ0': (78420000, 9.7193E-01),
+    'JZ1': (78420000, 2.7903E-04),
+    'JZ2': (57312, 5.2261E-03),
+    'JZ3': (1447.8, 1.8068E-03),
+    'JZ4': (23.093, 1.3276E-03),
+    'JZ5': (0.23793, 5.0449E-03),
+    'JZ6': (0.0054279, 5.4279E-03),
+    'JZ7': (0.00094172, 6.7141E-02),
+}
+
 class JZ(Jet):
     def __init__(self, cuts=None, ntuple_path=NTUPLE_PATH, **kwargs):
         super(JZ, self).__init__(cuts=cuts, ntuple_path=ntuple_path, **kwargs)
@@ -14,18 +25,18 @@ class JZ(Jet):
                 ntuple_path=ntuple_path,
                 cuts=self._cuts, student='jetjet_JZ0', 
                 name='JZ0', label='JZ0'),
-            # Jet(
-            #     ntuple_path=ntuple_path,
-            #     cuts=self._cuts, student='jetjet_JZ1', 
-            #     name='JZ1', label='JZ1'),
-            # Jet(
-            #     ntuple_path=ntuple_path,
-            #     cuts=self._cuts, student='jetjet_JZ2', 
-            #     name='JZ2', label='JZ2'),
-            # Jet(
-            #     ntuple_path=ntuple_path,
-            #     cuts=self._cuts, student='jetjet_JZ3', 
-            #     name='JZ3', label='JZ3'),
+            Jet(
+                ntuple_path=ntuple_path,
+                cuts=self._cuts, student='jetjet_JZ1', 
+                name='JZ1', label='JZ1'),
+            Jet(
+                ntuple_path=ntuple_path,
+                cuts=self._cuts, student='jetjet_JZ2', 
+                name='JZ2', label='JZ2'),
+            Jet(
+                ntuple_path=ntuple_path,
+                cuts=self._cuts, student='jetjet_JZ3', 
+                name='JZ3', label='JZ3'),
             # Jet(
             #     ntuple_path=ntuple_path,
             #     cuts=self._cuts, student='jetjet_JZ7W', 
@@ -33,7 +44,12 @@ class JZ(Jet):
             
             ]
         self._scales = []
-        self.set_scales([1.])
+        for s in self._sub_samples:
+            log.info('{0}: events = {1}, xsec = {2}, filter = {3}'.format(
+                    s.name, s.total_events(), XSEC_FILTER[s.name][0], XSEC_FILTER[s.name][1]))
+            self._scales.append(XSEC_FILTER[s.name][0] * XSEC_FILTER[s.name][1] / s.total_events())
+        log.info(self.scales)
+
     @property
     def components(self):
         return self._sub_samples
