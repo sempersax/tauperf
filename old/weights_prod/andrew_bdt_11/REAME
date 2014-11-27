@@ -1,0 +1,8 @@
+SP cutoff score: 5.48691e-01
+MP cutoff score: 6.37151e-01
+
+An RoI passes if its score is greater or equal to the cutoff score.
+
+No preselection and no pileup corrections.
+
+This was used for the June 2 presentation.

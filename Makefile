@@ -1,7 +1,7 @@
 clean-pyc:
-	find tauperf -name "*.pyc" -exec rm {} \;
+	find tauperf grid batch -name "*.pyc" -exec rm {} \;
 
 clean-tilda:
-	find tauperf -name "*~" -exec rm {} \;
+	find tauperf grid batch -name "*~" -exec rm {} \;
 
 clean: clean-pyc clean-tilda
