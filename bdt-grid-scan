@@ -1,0 +1,46 @@
+#!/usr/bin/env python
+"""
+Submit a batch of jobs with different parameters
+This script relies heavily on train-one-bdt
+"""
+import os
+import logging
+import itertools
+import rootpy
+from rootpy.extern.argparse import ArgumentParser
+from batch import qsub, get_setup
+
+log = logging.getLogger(os.path.basename(__file__))
+rootpy.log.setLevel(logging.INFO)
+
+parser = ArgumentParser()
+parser.add_argument('--dry', default=False, action='store_true')
+args = parser.parse_args()
+
+categories = ['1p', 'mp']
+ntrees = [10, 100, 1000]
+depths = [5, 50, 500]
+nodes = [5, 20, 40]
+
+setup = get_setup('batch/setup.sfu.txt')
+log_dir = os.path.join(os.getcwd(), 'log')
+
+for cat, ntree, depth, node in itertools.product(categories, ntrees, depths, nodes):
+
+    cmd_args = [
+        './train-one-bdt',
+        '--cat {0}'.format(cat),
+        '--ntrees {0}'.format(ntree),
+        '--depth {0}'.format(depth),
+        '--node-size {0}'.format(node)
+        ]
+    cmd = ' '.join(cmd_args)
+    cmd = "cd %s && %s && %s" % (os.getcwd(), setup, cmd)
+    name = '_'.join(cmd_args).replace(' ','_')
+    log.info(cmd)
+    qsub(
+        cmd, name=name, 
+        stderr_path=log_dir, 
+        stdout_path=log_dir, 
+        dry_run=args.dry)
+        

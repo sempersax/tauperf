@@ -12,15 +12,18 @@ parser.add_argument('--depth', default=8, type=int)
 parser.add_argument('--node-size', default=5, type=int)
 args = parser.parse_args()
 
-output = 'weights/summary_{0}_ntrees{1}_depth{2}_nodesize{3}'.format(
+output = 'weights/summary_{0}_ntrees{1}_depth{2}_nodesize{3}.root'.format(
     args.cat, args.ntrees, args.depth, args.node_size)
+method = '{0}_ntrees{1}_depth{2}_nodesize{3}'.format(
+    args.cat, args.ntrees, args.depth, args.node_size)
+
 
 if args.cat == '1p':
     category = Category_1P_HLT
 else:
     category = Category_MP_HLT
 
-cls = Classifier(category, output, args.cat, training_mode='dev')
+cls = Classifier(category, output, method, training_mode='dev')
 cls.train(
     ntrees=args.ntrees,
     node_size=args.node_size,
