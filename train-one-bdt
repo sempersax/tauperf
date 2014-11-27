@@ -1,0 +1,28 @@
+#!/usr/bin/env python
+from tauperf.categories.hlt import Category_1P_HLT, Category_MP_HLT
+from tauperf.classify import Classifier
+from multiprocessing import Process
+
+from rootpy.extern.argparse import ArgumentParser
+
+parser = ArgumentParser()
+parser.add_argument('--cat', default='1p', choices=['1p', 'mp'])
+parser.add_argument('--ntrees', default=100, type=int)
+parser.add_argument('--depth', default=8, type=int)
+parser.add_argument('--node-size', default=5, type=int)
+args = parser.parse_args()
+
+output = 'weights/summary_{0}_ntrees{1}_depth{2}_nodesize{3}'.format(
+    args.cat, args.ntrees, args.depth, args.node_size)
+
+if args.cat == '1p':
+    category = Category_1P_HLT
+else:
+    category = Category_MP_HLT
+
+cls = Classifier(category, output, args.cat, training_mode='dev')
+cls.train(
+    ntrees=args.ntrees,
+    node_size=args.node_size,
+    depth=args.depth)
+

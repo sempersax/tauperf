@@ -30,11 +30,8 @@ class Classifier(TMVA.Factory):
                  verbose=''):
 
         self.output = root_open(output_name, 'recreate')
-        TMVA.Factory.__init__(self,
-                              factory_name,
-                              self.output,
-                              verbose)
-                              #"V:!Silent:Color:DrawProgressBar")
+        TMVA.Factory.__init__(
+            self, factory_name, self.output, verbose)
         self.factory_name = factory_name
         self.category = category
         self.prefix = prefix
@@ -51,11 +48,9 @@ class Classifier(TMVA.Factory):
             self.AddVariable(prefix+'_'+var['name'] , var['root'], '', var['type'])
 
     def bookBDT(self,
-                nEventsMin=10,
-                NTrees=100,
-                MaxDepth=8,
-                #nCuts=200,
-                NNodesMax=100000):
+                ntrees=100,
+                node_size=5,
+                depth=8):
 
         #         params  = ["PruneBeforeBoost=False"]
         params = ["SeparationType=GiniIndex"]
@@ -64,9 +59,9 @@ class Classifier(TMVA.Factory):
         params += ["UseYesNoLeaf=False"]
         params += ["AdaBoostBeta=0.2"]
         params += ["DoBoostMonitor"]
-        params += ["MaxDepth={0}".format(MaxDepth)]
-        params += ["MinNodeSize=5%"]
-        params += ["NTrees={0}".format(NTrees)]
+        params += ["MaxDepth={0}".format(depth)]
+        params += ["MinNodeSize={0}%".format(node_size)]
+        params += ["NTrees={0}".format(ntrees)]
         #         params += ["nCuts={0}".format(nCuts)]
         #         params += ["NNodesMax={0}".format(NNodesMax)]
         #         params += ["nEventsMin={0}".format(nEventsMin)]
@@ -76,9 +71,10 @@ class Classifier(TMVA.Factory):
         params_string = "!H:V"
         for param in params:
             params_string+= ":"+param
-        self.BookMethod(TMVA.Types.kBDT,
-                        method_name,
-                        params_string)
+        self.BookMethod(
+            TMVA.Types.kBDT,
+            method_name,
+            params_string)
 
     def train(self, **kwargs):
         self.set_variables(self.category, self.prefix)
@@ -94,7 +90,7 @@ class Classifier(TMVA.Factory):
         if self.training_mode == 'prod':
             params += ['nTest_Background=1']
             params += ['nTest_Signal=1']
-        params += ['!V']
+            params += ['!V']
         params_string = ':'.join(params)
         self.PrepareTrainingAndTestTree(self.sig_cut, self.bkg_cut, params_string)
         # Signal file
@@ -111,5 +107,6 @@ class Classifier(TMVA.Factory):
         self.bookBDT(**kwargs)
         self.TrainAllMethods()
         if self.training_mode == 'dev':
+            self.output.cd()
             self.TestAllMethods()
             self.EvaluateAllMethods()
