@@ -1,0 +1,27 @@
+#!/usr/bin/env python
+import os
+import logging
+import rootpy
+import re
+from rootpy.extern.argparse import ArgumentParser
+
+PATTERN = re.compile('summary_(?P<cat>\w+)_ntrees(?P<ntrees>\d+)_depth(?P<depth>\d+)_nodesize(?P<node>\d+).root')
+
+log = logging.getLogger(os.path.basename(__file__))
+rootpy.log.setLevel(logging.INFO)
+
+samples = []
+
+for _, _, filenames in os.walk('weights/'):
+    for root_file in filenames:
+        match = re.match(PATTERN, root_file)
+        if match:
+            samples.append({
+                    'cat': match.group('cat'), 
+                    'ntrees': int(match.group('ntrees')),
+                    'depth': int(match.group('depth')),
+                    'node': int(match.group('node')),
+                    'root': root_file})
+
+for sample in samples:
+    print sample
