@@ -4,7 +4,7 @@ features_1p = [
     'InnerTrkAvgDist',
     'etOverPtLeadTrk',
     'ipSigLeadTrk',
-    'SumPtTrkFrac'
+    'SumPtTrkFrac',
     # 'nwidetracks',
     'ChPiEMEOverCaloEME',
     'EMPOverTrkSysP',
