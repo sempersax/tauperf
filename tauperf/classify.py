@@ -14,6 +14,7 @@ from rootpy.tree import Cut
 
 from . import log; log=log[__name__]
 from samples.db import get_file
+from .analysis import Analysis
 from samples import Tau, Jet, JZ
 from .variables import VARIABLES
 
@@ -78,12 +79,11 @@ class Classifier(TMVA.Factory):
 
     def train(self, **kwargs):
         self.set_variables(self.category, self.prefix)
-        tau = Tau()
-        jet = JZ()
-        jet.set_scales([1.])
-        # jet = Jet(student='jetjet_JZ0')
-        self.sig_cut = Tau().cuts(self.category) & self.split_cut
-        self.bkg_cut = Jet().cuts(self.category) & self.split_cut
+        ana = Analysis()
+        tau = ana.tau
+        jet = ana.jet
+        self.sig_cut = tau.cuts(self.category) & self.split_cut
+        self.bkg_cut = jet.cuts(self.category) & self.split_cut
 
         params = ['NormMode=EqualNumEvents']
         params += ['SplitMode=Random']
@@ -92,16 +92,20 @@ class Classifier(TMVA.Factory):
             params += ['nTest_Signal=1']
             params += ['!V']
         params_string = ':'.join(params)
+
         self.PrepareTrainingAndTestTree(self.sig_cut, self.bkg_cut, params_string)
+
         # Signal file
         sig_file = get_file(tau.ntuple_path, tau.student) 
         self.sig_tree = sig_file[tau.tree_name]
         self.AddSignalTree(self.sig_tree)
+
         # Bkg files
         for sample, scale in zip(jet.components, jet.scales):
             rfile = get_file(sample.ntuple_path, sample.student)
             tree = rfile[sample.tree_name]
             self.AddBackgroundTree(tree, scale)
+        self.SetBackgroundWeightExpression(jet.weight_field)
 
         # Actual training
         self.bookBDT(**kwargs)

@@ -1,22 +1,28 @@
 
 features_1p = [
-    'trkAvgDist',
+    # 'trkAvgDist',
+    'InnerTrkAvgDist',
     'etOverPtLeadTrk',
     'ipSigLeadTrk',
-    'nwidetracks',
+    'SumPtTrkFrac'
+    # 'nwidetracks',
     'ChPiEMEOverCaloEME',
-    'PSSFraction',
-    #     'empovertrksysp',
+    'EMPOverTrkSysP',
     'centFrac',
+    'approx_ptRatio',
+    'approx_vistau_m',
 ]
+
 features_mp = [
     'dRmax',
-    'trkAvgDist',
+    'InnerTrkAvgDist',
+    # 'trkAvgDist',
     'etOverPtLeadTrk',
     'trFlightPathSig',
     'massTrkSys',
     'ChPiEMEOverCaloEME',
-    'PSSFraction',
-    #     'empovertrksysp',
+    'EMPOverTrkSysP',
     'centFrac',
+    'approx_ptRatio',
+    'approx_vistau_m',
 ]
