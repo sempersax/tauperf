@@ -4,8 +4,10 @@ import rootpy
 
 DEFAULT_STUDENT = 'Ztautau'
 DEFAULT_TREE = 'tau'
+# NTUPLE_PATH = os.path.join(
+#     os.getenv('DATA_AREA'), 'tauperf_skims_xaods', 'v7')
 NTUPLE_PATH = os.path.join(
-    os.getenv('DATA_AREA'), 'tauperf_skims_xaods', 'v7')
+    os.getenv('DATA_AREA'), 'v7')
 
 
 
