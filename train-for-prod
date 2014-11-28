@@ -40,11 +40,12 @@ classifiers = [
 
 
 class Job(Process):
-    def __init__(self, cls):
+    def __init__(self, cls, **kwargs):
         super(Job, self).__init__()
         self.cls = cls
+        self.kwargs = kwargs
     def run(self):
-        self.cls.train()
+        self.cls.train(**self.kwargs)
 
 
 if __name__ == '__main__':
@@ -55,5 +56,10 @@ if __name__ == '__main__':
     parser.add_argument('--jobs', type=int, default=-1)
     args = parser.parse_args()
 
-    jobs = [Job(cls) for cls in classifiers]
+    jobs = []
+    jobs.append(Job(cls_1p_odd, ntrees=300, node_size=5, depth=8))
+    jobs.append(Job(cls_1p_even, ntrees=300, node_size=5, depth=8))
+    jobs.append(Job(cls_mp_odd, ntrees=450, node_size=5, depth=7))
+    jobs.append(Job(cls_mp_even, ntrees=450, node_size=5, depth=7))
+    # jobs = [Job(cls) for cls in classifiers]
     run_pool(jobs, n_jobs=args.jobs)

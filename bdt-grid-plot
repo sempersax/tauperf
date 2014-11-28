@@ -16,6 +16,8 @@ rootpy.log.setLevel(logging.INFO)
 
 ROOT_DIR = 'weights'
 
+
+
 def roc_integral(file_name):
     dir_name = file_name.replace('summary', 'BDT').strip('.root')
     hist_name = 'MVA_' + dir_name + '_rejBvsS'
@@ -44,8 +46,11 @@ for _, _, filenames in os.walk(ROOT_DIR):
                      'roc': roc})
 
 
-# filtered_list = samples['mp']
-filtered_list = [s for s in itertools.ifilter(lambda v: v['node']==5 and v['ntrees']==400, samples['mp'])]
+# filtered_list = samples['1p']
+filtered_list = [s for s in itertools.ifilter(lambda v: v['node'] == 5 and v['ntrees'] == 450, samples['mp'])]
+#[s for s in itertools.ifilter(lambda v: v['node']==5 and v['ntrees']==400, samples['mp'])]
+
+
 
 # for sample in filtered_list:
 #     print sample
