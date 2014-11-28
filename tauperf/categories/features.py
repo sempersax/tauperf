@@ -3,14 +3,14 @@ features_1p = [
     # 'trkAvgDist',
     'InnerTrkAvgDist',
     'etOverPtLeadTrk',
-    'ipSigLeadTrk',
+    'ipSigLeadTrk_BS',
     'SumPtTrkFrac',
     # 'nwidetracks',
     'ChPiEMEOverCaloEME',
     'EMPOverTrkSysP',
     'centFrac',
     'approx_ptRatio',
-    'approx_vistau_m',
+    # 'approx_vistau_m',
 ]
 
 features_mp = [
