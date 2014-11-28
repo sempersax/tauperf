@@ -25,22 +25,28 @@ nodes = [5, 10, 15, 20]
 setup = get_setup('batch/setup.sfu.txt')
 log_dir = os.path.join(os.getcwd(), 'log')
 
-for cat, ntree, depth, node in itertools.product(categories, ntrees, depths, nodes):
+configurations = [config for config in itertools.product(categories, ntrees, depths, nodes)]
+log.info('Going to submit {0} jobs'.format(len(configurations)))
 
-    cmd_args = [
-        './train-one-bdt',
-        '--cat {0}'.format(cat),
-        '--ntrees {0}'.format(ntree),
-        '--depth {0}'.format(depth),
-        '--node-size {0}'.format(node)
-        ]
-    cmd = ' '.join(cmd_args)
-    cmd = "cd %s && %s && %s" % (os.getcwd(), setup, cmd)
-    name = '_'.join(cmd_args).replace(' ','_')
-    log.info(cmd)
-    qsub(
-        cmd, name=name, 
-        stderr_path=log_dir, 
-        stdout_path=log_dir, 
-        dry_run=args.dry)
+if raw_input('Launch the submission? Y/[n]') == 'Y':
+    for cat, ntree, depth, node in configurations:
         
+        cmd_args = [
+            './train-one-bdt',
+            '--cat {0}'.format(cat),
+            '--ntrees {0}'.format(ntree),
+            '--depth {0}'.format(depth),
+            '--node-size {0}'.format(node)
+            ]
+        cmd = ' '.join(cmd_args)
+        cmd = "cd %s && %s && %s" % (os.getcwd(), setup, cmd)
+        name = '_'.join(cmd_args).replace(' ','_')
+        log.info(cmd)
+        try:
+            qsub(
+                cmd, name=name, 
+                stderr_path=log_dir, 
+                stdout_path=log_dir, 
+                dry_run=args.dry)
+        except KeyboardInterrupt:
+            pass
