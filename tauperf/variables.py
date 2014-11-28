@@ -38,8 +38,8 @@ VARIABLES = {
         'name': 'averageintpercrossing',
         'root': 'Average Interactions Per Bunch Crossing',
         'type': 'i',
-        'bins': 100,
-        'range': (0, 100)
+        'bins': 80,
+        'range': (0, 40)
         },
 
     'ntracks': {

@@ -7,6 +7,7 @@ import ROOT
 from rootpy.plotting import Canvas, Graph, Legend
 from rootpy.plotting.style import set_style
 from rootpy.tree import Cut
+from rootpy.io import root_open
 from ROOT import TLatex
 
 from tauperf.analysis import Analysis, VAR_PATTERN
@@ -16,7 +17,7 @@ from tauperf.categories import Category_1P_HLT, Category_MP_HLT
 set_style('ATLAS', shape='rect')
 
 ana = Analysis()
-NPV_BINS = [(0, 5), (5, 10), (10, 15), (15, 20), (20, 25), (25, 30), (30, 35), (35, 40)]
+MU_BINS = [(0, 5), (5, 10), (10, 15), (15, 20), (20, 25), (25, 30), (30, 35), (35, 40)]
 
 def mean_vs_npv(keys, category):
     if not isinstance(keys, (list, tuple)):
@@ -27,10 +28,10 @@ def mean_vs_npv(keys, category):
     for key in keys:
         if key in VARIABLES:
             vars[key] = VARIABLES[key]
-            graph_sig[key] = Graph(len(NPV_BINS))
-            graph_bkg[key] = Graph(len(NPV_BINS))
-    for i, bin in enumerate(NPV_BINS):
-        npv_cut = Cut('{0} < npv < {1}'.format(bin[0], bin[1]))
+            graph_sig[key] = Graph(len(MU_BINS))
+            graph_bkg[key] = Graph(len(MU_BINS))
+    for i, bin in enumerate(MU_BINS):
+        npv_cut = Cut('{0} < averageintpercrossing < {1}'.format(bin[0], bin[1]))
         hist_samples = ana.get_hist_samples_array(vars, 'hlt', category, npv_cut)
         for field, hists in hist_samples.items():
             match = re.match(VAR_PATTERN, field)
@@ -48,14 +49,13 @@ def mean_vs_npv(keys, category):
 
 
 
-for category in [Category_1P_HLT]:
-#, Category_MP_HLT):
-    graph_sig, graph_bkg = mean_vs_npv(['ipSigLeadTrk_BS'], category)#category.features, category)
+for category in (Category_1P_HLT, Category_MP_HLT):
+    graph_sig, graph_bkg = mean_vs_npv(category.features, category)
     
     for key in graph_sig:
         sig = graph_sig[key]
         bkg = graph_bkg[key]
-        sig.xaxis.title = 'Number of Primary Vertices'
+        sig.xaxis.title = 'Average Interaction Per Bunch Crossing'
         sig.yaxis.title = 'Mean of {0}'.format(VARIABLES[key]['root'])
         sig.yaxis.SetRangeUser(
             VARIABLES[key]['range'][0], VARIABLES[key]['range'][1])
@@ -79,3 +79,7 @@ for category in [Category_1P_HLT]:
         label.Draw()
         
         c.SaveAs('plots/mean_{0}_{1}.png'.format(key, category.name))
+    with root_open('pileup.root', 'recreate'):
+        for key in graph_sig:
+            graph_sig[key].Write('tau_' + key)
+            graph_bkg[key].Write('jet_' + key)
