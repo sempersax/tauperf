@@ -18,9 +18,9 @@ parser.add_argument('--dry', default=False, action='store_true')
 args = parser.parse_args()
 
 categories = ['1p', 'mp']
-ntrees = [10, 50, 100, 150, 200, 250, 300, 350, 400, 450500]
-depths = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]
-nodes = [5, 10, 15, 20, 25, 30, 35, 40]
+ntrees = [10, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500]
+depths = [5, 6, 7, 8, 9, 10]
+nodes = [5, 10, 15, 20]
 
 setup = get_setup('batch/setup.sfu.txt')
 log_dir = os.path.join(os.getcwd(), 'log')
