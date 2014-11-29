@@ -18,9 +18,6 @@ cluster.qsub(
     cmd,
     name=name,
     queue=os.getenv('PBS_QUEUE', 'medium'),
-     ppn=int(os.getenv('PBS_PPN', 1)),
-     mem=os.getenv('PBS_MEM', None),
-     pmem=os.getenv('PBS_PMEM', None),
-     vmem=os.getenv('PBS_VMEM', None),
-     stdout_path=stdout_path,
-     stderr_path=stderr_path)
+    ncpus=int(os.getenv('PBS_PPN', 1)),
+    stdout_path=stdout_path,
+    stderr_path=stderr_path)
