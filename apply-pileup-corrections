@@ -10,15 +10,13 @@ import logging
 from multiprocessing import Process
 import ROOT
 
-from tauperf.extern import (
-    ReadBDT_1p_odd, ReadBDT_1p_even,
-    ReadBDT_mp_odd, ReadBDT_mp_even)
-    
 from tauperf.categories import Category_1P_HLT, Category_MP_HLT
 from tauperf.variables import VARIABLES
 from tauperf.samples.db import get_pileup_file
 
 log = logging.getLogger(os.path.basename(__file__))
+if not os.environ.get("DEBUG", False):
+    log.setLevel(logging.INFO)
 
 
 features_corrected = []
