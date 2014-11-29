@@ -79,7 +79,7 @@ for category in (Category_1P_HLT, Category_MP_HLT):
         label.Draw()
         
         c.SaveAs('plots/mean_{0}_{1}.png'.format(key, category.name))
-    with root_open('pileup.root', 'recreate'):
+    with root_open('pileup_{0}.root'.format(category.name), 'recreate'):
         for key in graph_sig:
             graph_sig[key].Write('tau_' + key)
             graph_bkg[key].Write('jet_' + key)

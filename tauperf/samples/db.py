@@ -16,6 +16,7 @@ from . import log; log = log[__name__]
 FILES = {}
 TEMPFILE = TemporaryFile()
 
+PILEUP_FILES = {}
 
 def get_file(ntuple_path=NTUPLE_PATH, student=DEFAULT_STUDENT, hdf=False, suffix='', force_reopen=False):
     ext = '.h5' if hdf else '.root'
@@ -34,11 +35,22 @@ def get_file(ntuple_path=NTUPLE_PATH, student=DEFAULT_STUDENT, hdf=False, suffix
     FILES[filename] = student_file
     return student_file
 
+def get_pileup_file(filename):
+    ext = '.root'
+    if filename in PILEUP_FILES:
+        return PILEUP_FILES[filename]
+    else:
+        pu_file = root_open(os.path.join('cache', filename + ext))
+        PILEUP_FILES[filename] = pu_file
+        return pu_file
 
 @atexit.register
 def cleanup():
     if TEMPFILE:
         TEMPFILE.close()
     for filehandle in FILES.values():
+        if filehandle:
+            filehandle.close()
+    for filehandle in PILEUP_FILES.values():
         if filehandle:
             filehandle.close()
