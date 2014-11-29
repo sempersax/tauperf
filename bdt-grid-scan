@@ -8,7 +8,7 @@ import logging
 import itertools
 import rootpy
 from rootpy.extern.argparse import ArgumentParser
-from batch import qsub, get_setup
+import cluster
 
 log = logging.getLogger(os.path.basename(__file__))
 rootpy.log.setLevel(logging.INFO)
@@ -22,7 +22,8 @@ ntrees = [10, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500]
 depths = [5, 6, 7, 8, 9, 10]
 nodes = [5, 10, 15, 20]
 
-setup = get_setup('batch/setup.sfu.txt')
+setup = cluster.get_setup(os.path.join(
+        os.path.dirname(cluster.__file__), 'setup.sfu.txt'))
 log_dir = os.path.join(os.getcwd(), 'log')
 
 configurations = [config for config in itertools.product(categories, ntrees, depths, nodes)]
@@ -43,7 +44,7 @@ if raw_input('Launch the submission? Y/[n]') == 'Y':
         name = '_'.join(cmd_args).replace(' ','_')
         log.info(cmd)
         try:
-            qsub(
+            cluster.qsub(
                 cmd, name=name, 
                 stderr_path=log_dir, 
                 stdout_path=log_dir, 

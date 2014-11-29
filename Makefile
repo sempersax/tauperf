@@ -1,8 +1,8 @@
 clean-pyc:
-	find tauperf grid batch -name "*.pyc" -exec rm {} \;
+	find tauperf grid cluster -name "*.pyc" -exec rm {} \;
 
 clean-tilda:
-	find tauperf grid batch -name "*~" -exec rm {} \;
+	find tauperf grid cluster -name "*~" -exec rm {} \;
 
 clean: clean-pyc clean-tilda
 
