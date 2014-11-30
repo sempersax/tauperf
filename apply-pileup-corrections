@@ -21,8 +21,8 @@ if not os.environ.get("DEBUG", False):
 
 features_corrected = []
 for var in Category_1P_HLT.features:
-    feature = {'orig':VARIABLES[var]['name'], 
-               'corr':'hlt_' + VARIABLES[var]['name'] + '_pileup_corrected'}
+    feature = {'orig': VARIABLES[var]['name'], 
+               'corr': 'hlt_' + VARIABLES[var]['name'] + '_pileup_corrected'}
     features_corrected.append(feature)
 
 for var in Category_MP_HLT.features:

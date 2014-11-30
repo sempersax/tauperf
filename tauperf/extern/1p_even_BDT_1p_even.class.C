@@ -215,14 +215,14 @@ class ReadBDT_1p_even : public IClassifierReader {
          fStatusIsClean = false;
       }
 
-      // validate input variables
-      for (size_t ivar = 0; ivar < theInputVars.size(); ivar++) {
-         if (theInputVars[ivar] != inputVars[ivar]) {
-            std::cout << "Problem in class \"" << fClassName << "\": mismatch in input variable names" << std::endl
-                      << " for variable [" << ivar << "]: " << theInputVars[ivar].c_str() << " != " << inputVars[ivar] << std::endl;
-            fStatusIsClean = false;
-         }
-      }
+      // // validate input variables
+      // for (size_t ivar = 0; ivar < theInputVars.size(); ivar++) {
+      //    if (theInputVars[ivar] != inputVars[ivar]) {
+      //       std::cout << "Problem in class \"" << fClassName << "\": mismatch in input variable names" << std::endl
+      //                 << " for variable [" << ivar << "]: " << theInputVars[ivar].c_str() << " != " << inputVars[ivar] << std::endl;
+      //       fStatusIsClean = false;
+      //    }
+      // }
 
       // initialize min and max vectors (for normalisation)
       fVmin[0] = 0;

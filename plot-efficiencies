@@ -17,7 +17,7 @@ style = get_style('ATLAS', shape='rect')
 style.SetPadRightMargin(0.10)
 style.cd()
 
-ana = Analysis(ntuple_path=os.path.join(NTUPLE_PATH, 'training_24_11_2014'))
+ana = Analysis(ntuple_path=os.path.join(NTUPLE_PATH, 'training_28_11_2014'))
 vars = {'pt': VARIABLES['pt'], 'eta': VARIABLES['eta'], 'npv': VARIABLES['npv']}
 
 
