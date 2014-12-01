@@ -55,11 +55,11 @@ def get_correction_function(feat, ntracks):
     if ntracks == 0:
         return None
     if ntracks == 1:
-        file = get_pileup_file('fitted.pileup_1prong_hlt')
+        fcorr = get_pileup_file('fitted.pileup_1prong_hlt')
     else:
-        file = get_pileup_file('fitted.pileup_multiprongs_hlt')
+        fcorr = get_pileup_file('fitted.pileup_multiprongs_hlt')
     try:
-        return file['tau_' + feat['orig'] + '_fit']
+        return fcore['tau_' + feat['orig'] + '_fit']
     except:
         return None
 
@@ -79,9 +79,10 @@ def add_corrected_variables(tree):
     for feat in features_corrected:
         branch = tree.GetBranch(feat['corr'])
         branches.append(branch)
-
     tree.define_object('hlt', prefix='hlt_')
-    for event in tree:
+    for i, event in enumerate(tree):
+        if i % 1000 == 0:
+            log.debug('{0} / {1} events'.format(i, tree.GetEntries()))
         hlt_tau = event.hlt
         
         # calculate corrected features
@@ -110,6 +111,7 @@ class Job(Process):
         # copy to new file
         output = os.path.join(path, 'corrected.' + name)
         if os.path.exists(output):
+            log.info('{0} already exists'.format(output))
             return 
         log.info("copying {0} to {1} ...".format(filename, output))
         shutil.copy(filename, output)
@@ -122,7 +124,7 @@ class Job(Process):
             log.info("adding pileup corrected variables to {0} ...".format(output))
             add_corrected_variables(tree)            
             tree.Write(tree.name, ROOT.TObject.kOverwrite)
-
+            log.info('pile up corrected variables writen to tree {0} in file {1}'.format(tree.name, output))
 
 if __name__ == '__main__':
     from rootpy.extern.argparse import ArgumentParser
