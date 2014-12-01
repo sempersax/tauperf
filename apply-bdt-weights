@@ -27,10 +27,12 @@ features_mp = vector('string')()
 for var in Category_MP_HLT.features:
     features_mp.push_back('hlt_'+VARIABLES[var]['name'])
         
-reader_1p_even = ReadBDT_1p_even(features_1p)
-reader_1p_odd = ReadBDT_1p_odd(features_1p)
-reader_mp_odd = ReadBDT_mp_even(features_mp)
-reader_mp_even = ReadBDT_mp_odd(features_mp)
+readers = {
+    '1p_even': ReadBDT_1p_even(features_1p),
+    '1p_odd': ReadBDT_1p_odd(features_1p),
+    'mp_even': ReadBDT_mp_even(features_mp),
+    'mp_odd': ReadBDT_mp_odd(features_mp),
+}
 
 
 def evaluate_single_bdt(reader, cat, tau):
@@ -39,21 +41,21 @@ def evaluate_single_bdt(reader, cat, tau):
         vals.push_back(getattr(tau, VARIABLES[feat]['name']))
     return reader.GetMvaValue(vals)
 
-def evaluate_bdt(tau, eventnumber):
+def evaluate_bdt(tau, eventnumber, readers):
     if tau.ntracks == 1:
         if eventnumber % 2 == 0:
             return evaluate_single_bdt(
-                reader_1p_even, Category_1P_HLT, tau)
+                readers['1p_even'], Category_1P_HLT, tau)
         else:
             return evaluate_single_bdt(
-                reader_1p_odd, Category_1P_HLT, tau)
+                readers['1p_odd'], Category_1P_HLT, tau)
     elif tau.ntracks > 1:
         if eventnumber % 2 == 0:
             return evaluate_single_bdt(
-                reader_mp_even, Category_MP_HLT, tau)
+                readers['mp_even'], Category_MP_HLT, tau)
         else:
             return evaluate_single_bdt(
-                reader_mp_odd, Category_MP_HLT, tau)
+                readers['mp_odd'], Category_MP_HLT, tau)
     else:
         return -9999.
 
@@ -68,7 +70,7 @@ def add_bdt_scores(tree):
 
     for event in tree:
         hlt_tau = tree.hlt
-        tree.hlt_bdt_score = evaluate_bdt(hlt_tau, tree.eventnumber)
+        tree.hlt_bdt_score = evaluate_bdt(hlt_tau, tree.eventnumber, readers)
         branch.Fill()
     tree.SetEntries(-1)
 

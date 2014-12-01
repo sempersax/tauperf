@@ -23,7 +23,7 @@ class Category_1P_HLT(Category_Preselection):
     common_cuts = Category_Preselection.common_cuts
     cuts = ONEPRONG & HLT_PT_CUT
     features = features_1p
-
+    features_pileup_corrected = features_1p_pileup_corrected
 class Category_2P_HLT(Category_Preselection):
     name = '2prongs_hlt'
     label = '#tau_{had} (2P HLT)'
@@ -42,3 +42,4 @@ class Category_MP_HLT(Category_Preselection):
     common_cuts = Category_Preselection.common_cuts
     cuts = MULTIPRONG & HLT_PT_CUT
     features = features_mp
+    features_pileup_corrected = features_mp_pileup_corrected
