@@ -30,9 +30,9 @@ features_mp = [
 features_1p_pileup_corrected = [
     # 'trkAvgDist',
     'InnerTrkAvgDist_pileup_corrected',
-    'etOverPtLeadTrk',
+    'etOverPtLeadTrk_pileup_corrected',
     'ipSigLeadTrk_BS',
-    'SumPtTrkFrac',
+    'SumPtTrkFrac_pileup_corrected',
     # 'nwidetracks',
     'ChPiEMEOverCaloEME',
     'EMPOverTrkSysP_pileup_corrected',
@@ -43,9 +43,9 @@ features_1p_pileup_corrected = [
 
 features_mp_pileup_corrected = [
     'dRmax',
-    'InnerTrkAvgDist',
+    'InnerTrkAvgDist_pileup_corrected',
     # 'trkAvgDist',
-    'etOverPtLeadTrk',
+    'etOverPtLeadTrk_pileup_corrected',
     'trFlightPathSig',
     'massTrkSys',
     'ChPiEMEOverCaloEME',

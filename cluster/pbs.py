@@ -143,7 +143,7 @@ def qsub(cmd,
     if stdout_path is not None:
         kwargs['-o'] = stdout_path
     args = ' '.join(['%s "%s"' % arg for arg in kwargs.items()])
-    cmd = "echo '%s' | qsub -q %s %s -l select=1:ncpus=%d" % (
+    cmd = "echo '%s' | qsub -q %s %s -l ncpus=%d" % (
            cmd, queue, args, ncpus)
     print cmd
     if not dry_run:

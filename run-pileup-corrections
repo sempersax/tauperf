@@ -36,6 +36,7 @@ if __name__ == '__main__':
         # print f
         cmd = './apply-pileup-corrections %s' % f
         name = cmd.replace(" ", "_").replace(NTUPLE_PATH, '').replace('/', '_')
+        cmd = "cd %s && %s && %s" % (os.getcwd(), setup, cmd)
         print name
         cluster.qsub(
             cmd,

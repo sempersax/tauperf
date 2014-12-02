@@ -21,7 +21,7 @@ rootpy.log.setLevel(logging.INFO)
 set_style('ATLAS', shape='rect')
 
 
-ana = Analysis(ntuple_path=os.path.join(NTUPLE_PATH, 'training_28_11_2014'))
+ana = Analysis(ntuple_path=os.path.join(NTUPLE_PATH, 'training_02_12_2014'))
 
 TARGET_REJECTION = 0.9
 
@@ -33,7 +33,7 @@ def roc(category):
     working_point = (0, 1.0, 0.0) # cut, eff, rej
     gr = Graph(len(cut_vals))
     for i, val in enumerate(cut_vals):
-        cut = 'hlt_bdt_score>{0}'.format(val)
+        cut = 'hlt_bdt_score_pileup_corrected>{0}'.format(val)
         eff_sig = ana.tau.events(category, cut)[1].value
         eff_sig /= sig_tot
         eff_bkg = ana.jet.events(category, cut)[1].value

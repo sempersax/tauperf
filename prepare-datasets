@@ -35,11 +35,9 @@ if __name__ == '__main__':
                         if args.key in rfile:
                             cmd = 'rm {0}'.format(
                                 os.path.join(NTUPLE_PATH, d, rfile))
-                            if args.dry:
-                                print cmd
-                            else:
-                                print cmd
-                                # subprocess.call(cmd, shell=True)
+                            log.info(cmd)
+                            if not args.dry:
+                                subprocess.call(cmd, shell=True)
             else:
                 log.info('No directories for sample %s' % key)
 
@@ -58,13 +56,20 @@ if __name__ == '__main__':
                     NTUPLE_PATH, '{0}.{1}.root'.format(args.key, key))
                 if len(all_files) < 1000:
                     input_list = ' '.join(all_files)
-                    print 'hadd {0} {1}'.format(target_file, input_list)
+                    cmd = 'hadd {0} {1}'.format(target_file, input_list)
+                    log.info(cmd)
+                    if not args.dry:
+                        subprocess.call(cmd, shell=True)
                 else:
                     input_list_1 = ' '.join(all_files[:len(all_files) / 2])
                     input_list_2 = ' '.join(all_files[len(all_files) / 2:])
-                    print 'hadd {0} {1}'.format(target_file, input_list_1)
-                    print 'hadd -f {0} {1}'.format(target_file, input_list_2)
-
+                    cmd1 = 'hadd {0} {1}'.format(target_file, input_list_1)
+                    cmd2 = 'hadd -f {0} {1}'.format(target_file, input_list_2)
+                    log.info(cmd1)
+                    log.info(cmd2)
+                    if not args.dry:
+                        subprocess.call(cmd1, shell=True)
+                        subprocess.call(cmd2, shell=True)
                     
     # bac a sable
     if args.action == 'dev':

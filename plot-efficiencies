@@ -17,13 +17,13 @@ style = get_style('ATLAS', shape='rect')
 style.SetPadRightMargin(0.10)
 style.cd()
 
-ana = Analysis(ntuple_path=os.path.join(NTUPLE_PATH, 'training_28_11_2014'))
+ana = Analysis(ntuple_path=os.path.join(NTUPLE_PATH, 'training_02_12_2014'))
 vars = {'pt': VARIABLES['pt'], 'eta': VARIABLES['eta'], 'npv': VARIABLES['npv']}
 
 
 for category, cut_val in zip((Category_1P_HLT, Category_MP_HLT), (CUT_1P, CUT_MP)):
-    cut = 'hlt_bdt_score>={0}'.format(cut_val)
-    anticut = 'hlt_bdt_score<{0}'.format(cut_val)
+    cut = 'hlt_bdt_score_pileup_corrected>={0}'.format(cut_val)
+    anticut = 'hlt_bdt_score_pileup_corrected<{0}'.format(cut_val)
     hist_samples = ana.get_hist_samples_array(vars, 'hlt', category)
     hist_samples_cut = ana.get_hist_samples_array(vars, 'hlt', category, cut)
     hist_samples_anticut = ana.get_hist_samples_array(vars, 'hlt', category, anticut)

@@ -268,13 +268,22 @@ VARIABLES = {
         'range': (0, 1),
         },
 
+    'SumPtTrkFrac_pileup_corrected': {
+        'name': 'SumPtTrkFrac_pileup_corrected',
+        'root': '1 - p_{T}^{trk in 0.2} / p_{T}^{trk in 0.4}',
+        'type': 'f',
+        'prefix': ('off', 'hlt'),
+        'bins' : 20,
+        'range': (0, 1),
+        },
+
     'ChPiEMEOverCaloEME': {
         'name': 'ChPiEMEOverCaloEME',
         'root': 'E_{#pi^{#pm}}/E_{calo}',
         'type': 'f',
         'prefix': ('off', 'hlt'),
         'bins': 20,
-        'range': (0, 1),
+        'range': (-1, 1),
         },
     
     'ChPiEMEOverCaloEME_pileup_corrected': {
@@ -295,6 +304,15 @@ VARIABLES = {
         'range': (0, 3),
         },
     
+    'etOverPtLeadTrk_pileup_corrected': {
+        'name': 'etOverPtLeadTrk_pileup_corrected',
+        'root': '1./f_{track}',
+        'type': 'f',
+        'prefix': ('off', 'hlt'),
+        'bins': 20,
+        'range': (0, 3),
+        },
+
     'EMPOverTrkSysP': {
         'name' : 'EMPOverTrkSysP',
         'root': 'p_{EM}/p_{tracks}',
