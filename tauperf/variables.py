@@ -64,7 +64,7 @@ VARIABLES = {
         'name': 'centFrac_pileup_corrected',
         'root': 'f_{core} (PU corrected)',
         'type': 'f',
-        'prefix': ('off', 'hlt'),
+        'prefix': ('hlt'),
         'bins': 20,
         'range': (0, 1)
         },
@@ -244,7 +244,7 @@ VARIABLES = {
     'InnerTrkAvgDist_pileup_corrected': {
         'name': 'InnerTrkAvgDist_pileup_corrected',
         'root': 'Inner R_{track} (PU corrected)',
-        'prefix': ('off', 'hlt'),
+        'prefix': ('hlt'),
         'type': 'f',
         'bins': 20,
         'range': (0, 0.2),
@@ -281,7 +281,7 @@ VARIABLES = {
         'name': 'ChPiEMEOverCaloEME_pileup_corrected',
         'root': 'E_{#pi^{#pm}}/E_{calo}',
         'type': 'f',
-        'prefix': ('off', 'hlt'),
+        'prefix': ('hlt'),
         'bins': 20,
         'range': (0, 1),
         },
@@ -307,7 +307,7 @@ VARIABLES = {
     'EMPOverTrkSysP_pileup_corrected': {
         'name' : 'EMPOverTrkSysP_pileup_corrected',
         'root': 'p_{EM}/p_{tracks}',
-        'prefix': ('off', 'hlt'),
+        'prefix': ('hlt'),
         'type': 'f',
         'bins': 20,
         'range': (0, 3),

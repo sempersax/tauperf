@@ -59,7 +59,7 @@ def get_correction_function(feat, ntracks):
     else:
         fcorr = get_pileup_file('fitted.pileup_multiprongs_hlt')
     try:
-        return fcore['tau_' + feat['orig'] + '_fit']
+        return fcorr['tau_' + feat['orig'] + '_fit']
     except:
         return None
 
@@ -88,6 +88,7 @@ def add_corrected_variables(tree):
         # calculate corrected features
         for feat in features_corrected:
             func = get_correction_function(feat, hlt_tau.ntracks)
+            log.debug(func)
             corr_val = correct_one_variable(
                 getattr(hlt_tau, feat['orig']), 
                 event.averageintpercrossing, func)
