@@ -1,0 +1,47 @@
+#!/usr/bin/env python
+import sys
+import os
+import logging
+import glob
+#
+import cluster
+from tauperf import NTUPLE_PATH
+from tauperf.datasets import create_database, read_database
+#
+log = logging.getLogger(os.path.basename(__file__))
+
+SAMPLES = read_database()
+
+all_files = []
+for key, sample in SAMPLES.items():
+    log.info('Submitting ...')
+    if sample.has_key('dirs'):
+        for d in sample['dirs']:
+            files = glob.glob(
+                os.path.join(NTUPLE_PATH, d, sample['prefix'] + '*.root*'))
+            all_files.extend(files)
+
+
+setup = cluster.get_setup(os.path.join(
+    os.path.dirname(cluster.__file__), 'setup.sfu.txt'))
+log_path = os.path.join(os.getcwd(), 'log')
+
+if __name__ == '__main__':
+    from rootpy.extern.argparse import ArgumentParser
+    parser = ArgumentParser()
+    parser.add_argument('--dry', action='store_true', default=False)
+    args = parser.parse_args()
+
+    for f in all_files:
+        # print f
+        cmd = './apply-pileup-corrections %s' % f
+        name = cmd.replace(" ", "_").replace(NTUPLE_PATH, '').replace('/', '_')
+        print name
+        cluster.qsub(
+            cmd,
+            name=name,
+            queue=os.getenv('PBS_QUEUE', 'medium'),
+            ncpus=int(os.getenv('PBS_PPN', 1)),
+            stdout_path=log_path,
+            stderr_path=log_path,
+            dry_run=args.dry)
