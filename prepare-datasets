@@ -2,90 +2,31 @@
 import os
 import subprocess
 import glob
-import re
 import logging
-import copy
 
 from tauperf import NTUPLE_PATH
+from tauperf.datasets import create_database, read_database
 
 log = logging.getLogger(os.path.basename(__file__))
 
-PATTERN = re.compile(
-    '^(?P<prefix>group.phys-higgs|user.qbuat)'
-    '\.(?P<type>mc\d+_\d+TeV)'
-    '\.(?P<id>\d+)'
-    '\.(?P<gen>Pythia8|PowhegPythia8)_'
-    '(?P<pdf>\w+)_'
-    '(?P<sample>jetjet_JZ[0-9]W|Ztautau)'
-    '\.merge.AOD.(?P<tag>e\d+_s\d+_s\d+_r\d+_r\d+)'
-    '\.(?P<skim>tau_trigger|higgs)'
-    '\.v(?P<version>\d+)_'
-    '(?P<suffix>\S+)$')
-
-
-log.info('Building samples using regular expressions ...')
-SAMPLES_RAW = {}
-SAMPLES_RAW['Ztautau'] = []
-for i in range(0, 8):
-    SAMPLES_RAW['jetjet_JZ%dW' % i] = []
-
-for d in os.listdir(NTUPLE_PATH):
-    abs_dir = os.path.join(NTUPLE_PATH, d)
-    if os.path.isdir(abs_dir):
-        match = re.match(PATTERN, d)
-        if match:
-            info_sample = {}
-            for key in match.groupdict():
-                info_sample[key] = match.group(key)
-            info_sample['dirs'] = d
-            SAMPLES_RAW[match.group('sample')].append(info_sample)
-
-print "= + =" * 10
-SAMPLES = {}
-for key, samples in SAMPLES_RAW.items():
-    if len(samples) == 0:
-        SAMPLES[key] = {}
-    else:
-        SAMPLES[key] = copy.deepcopy(samples[0])
-        for tag in SAMPLES[key]:
-            SAMPLES[key][tag] = [SAMPLES[key][tag]]
-        for s in samples:
-            for tag, info in s.items():
-                if not info in SAMPLES[key][tag]:
-                    SAMPLES[key][tag].append(info)
-
-for key, sample in SAMPLES.items():
-    for tag in sample:
-        if len(sample[tag]) == 1:
-            sample[tag] = sample[tag][0]
-
-for key, sample in SAMPLES.items():
-    if sample.keys():
-        print '=' * 50
-        print '\t prefix  = %s' % sample['prefix']
-        print '\t type    = %s' % sample['type']
-        print '\t id      = %s' % sample['id']
-        print '\t gen     = %s' % sample['gen']
-        print '\t pdf     = %s' % sample['pdf']
-        print '\t sample  = %s' % sample['sample']
-        print '\t tag     = %s' % sample['tag']
-        print '\t skim    = %s' % sample['skim']
-        print '\t version = %s' % sample['version']
-        print '\t suffix  = %s' % sample['suffix']
-        print '\t dirs    = %s' % sample['dirs']
-
         
-
 if __name__ == '__main__':
     from rootpy.extern.argparse import ArgumentParser
     parser = ArgumentParser()
-    parser.add_argument('action', type=str, choices=['clean', 'merge'])
+    parser.add_argument('action', type=str, choices=['db', 'clean', 'merge', 'dev'])
     parser.add_argument('--key', type=str, choices=['corrected', 'weighted'], default='weighted')
     parser.add_argument('--dry', action='store_true', default=False)
     args = parser.parse_args()
     print args
+
+    # Create the database
+    if args.action == 'db':
+        create_database()
+
     # Cleaning block
     if args.action == 'clean':
+        SAMPLES = read_database()
+        print SAMPLES
         for key, sample in SAMPLES.items():
             log.info('clean up %s ...' % key)
             if sample.has_key('dirs'):
@@ -104,6 +45,7 @@ if __name__ == '__main__':
 
     # merging block
     if args.action == 'merge':
+        SAMPLES = read_database()
         for key, sample in SAMPLES.items():
             log.info('Merging %s ...' % key)
             if sample.has_key('dirs'):
@@ -124,3 +66,14 @@ if __name__ == '__main__':
                     print 'hadd -f {0} {1}'.format(target_file, input_list_2)
 
                     
+    # bac a sable
+    if args.action == 'dev':
+        SAMPLES = read_database()
+        for key, sample in SAMPLES.items():
+            log.info('Submitting ...')
+            if sample.has_key('dirs'):
+                for d in sample['dirs']:
+                    files = glob.glob(
+                        os.path.join(NTUPLE_PATH, d, sample['prefix'] + '*.root*'))
+                    print files
+                       
