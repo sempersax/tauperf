@@ -44,7 +44,7 @@ class Classifier(TMVA.Factory):
             self.split_cut = Cut(split_cut)
             
     def set_variables(self, category, prefix):
-        for varName in category.features:
+        for varName in category.features_pileup_corrected:
             var = VARIABLES[varName]
             self.AddVariable(prefix+'_'+var['name'] , var['root'], '', var['type'])
 
