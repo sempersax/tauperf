@@ -54,23 +54,14 @@ if __name__ == '__main__':
                     all_files.extend(files)
                 target_file = os.path.join(
                     NTUPLE_PATH, '{0}.{1}.root'.format(args.key, key))
-                if len(all_files) < 1000:
-                    input_list = ' '.join(all_files)
-                    cmd = 'hadd {0} {1}'.format(target_file, input_list)
-                    log.info(cmd)
-                    if not args.dry:
+                input_list = ' '.join(all_files)
+                cmd = 'hadd {0} {1}'.format(target_file, input_list)
+                    # log.info(cmd)
+                if not args.dry:
+                    try:
                         subprocess.call(cmd, shell=True)
-                else:
-                    input_list_1 = ' '.join(all_files[:len(all_files) / 2])
-                    input_list_2 = ' '.join(all_files[len(all_files) / 2:])
-                    cmd1 = 'hadd {0} {1}'.format(target_file, input_list_1)
-                    cmd2 = 'hadd -f {0} {1}'.format(target_file, input_list_2)
-                    log.info(cmd1)
-                    log.info(cmd2)
-                    if not args.dry:
-                        subprocess.call(cmd1, shell=True)
-                        subprocess.call(cmd2, shell=True)
-                    
+                    except OSError:
+                        print 'OSError !'
     # bac a sable
     if args.action == 'dev':
         SAMPLES = read_database()

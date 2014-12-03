@@ -85,7 +85,7 @@ for category in (Category_1P_HLT, Category_MP_HLT):
         sig.Draw('AP')
         bkg.Draw('sameP')
         leg = Legend(
-            [sig, bkg], textsize=22, leftmargin=0.6)
+            [sig, bkg], textsize=22)#, leftmargin=0.6)
         leg.Draw('same')
         label = TLatex(
             c.GetLeftMargin() + 0.04, 0.9,
@@ -112,7 +112,7 @@ for category in (Category_1P_HLT, Category_MP_HLT):
         sig_rms.Draw('AP')
         bkg_rms.Draw('sameP')
         leg = Legend(
-            [sig_rms, bkg_rms], textsize=22, leftmargin=0.6)
+            [sig_rms, bkg_rms], textsize=22)#, leftmargin=0.6)
         leg.Draw('same')
         label = TLatex(
             c.GetLeftMargin() + 0.04, 0.9,
@@ -127,3 +127,5 @@ for category in (Category_1P_HLT, Category_MP_HLT):
         for key in graph_sig:
             graph_sig[key].Write('tau_' + key)
             graph_bkg[key].Write('jet_' + key)
+            graph_sig_rms[key].Write('tau_rms_' + key)
+            graph_bkg_rms[key].Write('jet_rms_' + key)
