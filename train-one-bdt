@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+import shutil
+from rootpy.io import root_open, Directory
+from rootpy.tree import Tree
+
 from tauperf.categories.hlt import Category_1P_HLT, Category_MP_HLT
 from tauperf.classify import Classifier
 from multiprocessing import Process
@@ -10,6 +14,7 @@ parser.add_argument('--cat', default='1p', choices=['1p', 'mp'])
 parser.add_argument('--ntrees', default=100, type=int)
 parser.add_argument('--depth', default=8, type=int)
 parser.add_argument('--node-size', default=5, type=int)
+parser.add_argument('--keep-trees', default=False, action='store_true')
 args = parser.parse_args()
 
 output = 'weights/summary_{0}_ntrees{1}_depth{2}_nodesize{3}.root'.format(
@@ -28,4 +33,24 @@ cls.train(
     ntrees=args.ntrees,
     node_size=args.node_size,
     depth=args.depth)
+
+if not args.keep_trees:
+    trimmed_output = output.strip('.root') + '.trimmed.root'
+    # Copy original file
+    shutil.copy(output, trimmed_output)
+    fout = root_open(trimmed_output, 'recreate')
+    # Walk into the original file and copy everything but the Trees
+    with root_open(output, 'read') as fin:
+        fout.cd()
+        for key in fin.keys():
+            obj = fin[key.name]
+            if isinstance(obj, Tree):
+            elif isinstance(obj, Directory):
+                fout.mkdir(obj.name)
+                obj.copytree(fout[obj.name])
+            else:
+                obj.Write()
+        fout.Close()
+    # Replace original file by trimmed one
+    shutil.move(trimmed_output, output)
 
