@@ -23,7 +23,7 @@ def roc_integral(file_name):
     hist_name = 'MVA_' + dir_name + '_rejBvsS'
     with root_open(os.path.join(ROOT_DIR, file_name)) as f:
         try:
-            h = f['Method_BDT'][dir_name][hist_name]
+            h = f['Method_BDT']['Method_BDT'][dir_name][hist_name]
             return h.integral()
         except:
             log.warning('Cannot retrieve the histogram')
@@ -73,4 +73,4 @@ with style:
         gr.yaxis.title = 'ROC Integral'
         gr.Draw('AP')
         # c.RedrawAxis()
-        c.SaveAs('toto_{0}.png'.format(key))
+        c.SaveAs('scan_{0}.png'.format(key))
