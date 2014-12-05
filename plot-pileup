@@ -67,7 +67,7 @@ def mean_vs_npv(keys, category):
 
 
 for category in (Category_1P_HLT, Category_MP_HLT):
-    graph_sig, graph_bkg, graph_sig_rms, graph_bkg_rms = mean_vs_npv(category.features, category)
+    graph_sig, graph_bkg, graph_sig_rms, graph_bkg_rms = mean_vs_npv(category.features_pileup_corrected, category)
     
     for key in graph_sig:
         sig = graph_sig[key]

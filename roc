@@ -21,7 +21,7 @@ rootpy.log.setLevel(logging.INFO)
 set_style('ATLAS', shape='rect')
 
 
-ana = Analysis(ntuple_path=os.path.join(NTUPLE_PATH, 'training_02_12_2014_2'))
+ana = Analysis(ntuple_path=os.path.join(NTUPLE_PATH, 'training_03_12_2014'))
 
 TARGET_REJECTION = 0.9
 

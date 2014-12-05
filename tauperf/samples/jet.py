@@ -45,8 +45,9 @@ class JZ(Jet):
             ]
         self._scales = []
         for s in self._sub_samples:
-            log.info('{0}: events = {1}, xsec = {2}, filter = {3}'.format(
-                    s.name, s.total_events(), XSEC_FILTER[s.name][0], XSEC_FILTER[s.name][1]))
+            log.info('{0}: events = {1}, weighted = {2}, xsec = {3}, filter = {4}'.format(
+                    s.name, s.total_events(), s.total_events(weighted=True), 
+                    XSEC_FILTER[s.name][0], XSEC_FILTER[s.name][1]))
             self._scales.append(XSEC_FILTER[s.name][0] * XSEC_FILTER[s.name][1] / s.total_events())
         log.info(self.scales)
 
