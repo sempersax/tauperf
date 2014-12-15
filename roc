@@ -21,10 +21,7 @@ rootpy.log.setLevel(logging.INFO)
 set_style('ATLAS', shape='rect')
 
 
-ana = Analysis(ntuple_path=os.path.join(NTUPLE_PATH, 'training_11_12_2014'))
-
-# TARGET_REJECTION = 0.9 # rej of 10
-TARGET_REJECTION = 0.8571428571428572 # rej of 7
+ana = Analysis()
 
 class working_point(object):
     def __init__(self, cut, eff_s, eff_b):
@@ -32,7 +29,6 @@ class working_point(object):
         self.eff_s = eff_s
         self.eff_b = eff_b
     
-
 def roc(category):
     sig_tot = ana.tau.events(category)[1].value
     bkg_tot = ana.jet.events(category, weighted=True)[1].value
@@ -53,6 +49,33 @@ def roc(category):
                 val, eff_sig, eff_bkg))
         roc_gr.SetPoint(i, eff_sig, rej_bkg)
     return roc_gr, roc_list
+
+def efficiencies_plot(category, working_points):
+    vars = {'npv': VARIABLES['npv']}
+    efficiencies = []
+    for wp in working_points:
+        cut = 'hlt_bdt_score_pileup_corrected>={0}'.format(wp.cut)
+        hist_samples = ana.get_hist_samples_array(vars, 'hlt', category)
+        hist_samples_cut = ana.get_hist_samples_array(vars, 'hlt', category, cut)
+        eff = Efficiency(
+            hist_samples_cut['npv']['tau'], hist_samples['npv']['tau'])
+        eff.title = 'Rejection of {0:1.2f}'.format(1. / wp.eff_b)
+        efficiencies.append(eff)
+    c = draw_efficiencies(efficiencies, 'npv', category)
+    return c
+
+def score_plot(category):
+    sig = ana.tau.get_hist_array(
+        {'hlt_bdt_score_pileup_corrected': Hist(20, 0, 1)},
+        category=category)
+    bkg = ana.jet.get_hist_array(
+        {'hlt_bdt_score_pileup_corrected': Hist(20, 0, 1)},
+        category=category)
+    hsig = sig['hlt_bdt_score_pileup_corrected']
+    hbkg = bkg['hlt_bdt_score_pileup_corrected']
+    plot = draw_shape(hsig, hbkg, 'BDT Score', category)
+    return plot
+
 
 gr_sp, wp_sp = roc(Category_1P_HLT)    
 gr_sp.color = 'red'
@@ -81,7 +104,7 @@ leg = Legend([gr_sp, gr_mp])
 leg.Draw('same')
 c.SaveAs('plots/roc.png')
 
-TARGET_REJECTION = [6, 8, 10, 12, 14]
+TARGET_REJECTION = [2, 6, 10, 14, 18]
 TARGET_1P = []
 TARGET_MP = []
 for target in TARGET_REJECTION:
@@ -98,31 +121,6 @@ for target in TARGET_REJECTION:
     
 
 
-def efficiencies_plot(category, working_points):
-    vars = {'npv': VARIABLES['npv']}
-    efficiencies = []
-    for wp in working_points:
-        cut = 'hlt_bdt_score_pileup_corrected>={0}'.format(wp.cut)
-        hist_samples = ana.get_hist_samples_array(vars, 'hlt', category)
-        hist_samples_cut = ana.get_hist_samples_array(vars, 'hlt', category, cut)
-        eff = Efficiency(
-            hist_samples_cut['npv']['tau'], hist_samples['npv']['tau'])
-        eff.title = 'Rejection of {0:1.2f}'.format(1. / wp.eff_b)
-        efficiencies.append(eff)
-    c = draw_efficiencies(efficiencies, 'npv', category)
-    return c
-
-def score_plot(category):
-    sig = ana.tau.get_hist_array(
-        {'hlt_bdt_score': Hist(20, 0, 1)},
-        category=category)
-    bkg = ana.jet.get_hist_array(
-        {'hlt_bdt_score': Hist(20, 0, 1)},
-        category=category)
-    hsig = sig['hlt_bdt_score']
-    hbkg = bkg['hlt_bdt_score']
-    plot = draw_shape(hsig, hbkg, 'BDT Score', category)
-    return plot
 
 plot_1P = score_plot(Category_1P_HLT)
 plot_1P.SaveAs('plots/scores_1p.png')

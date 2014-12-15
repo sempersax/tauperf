@@ -60,7 +60,7 @@ if __name__ == "__main__":
     for key in field_hists_comp.keys():
         hist_comps = field_hists_comp[key]
 
-        for h, s, scale, col in zip(hist_comps, jet.components, jet.scales, ['blue', 'green', 'red', 'purple']):
+        for h, s, scale, col in zip(hist_comps, jet.components, jet.scales, ['black', 'blue', 'green', 'red', 'purple', 'orange', 'yellow']):
             # rescale the components
             h *= scale
             # fancy the hists

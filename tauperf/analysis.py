@@ -16,6 +16,7 @@ class Analysis(object):
             log.info('Use Drell-Yan simulation')
             self.tau = samples.DY(
             ntuple_path=ntuple_path,
+            # weight_field='mc_event_weight',
             name='tau', label='Real #tau_{had}',
             color='#00A3FF')
         else:
