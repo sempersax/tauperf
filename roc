@@ -131,10 +131,10 @@ plot_MP = score_plot(Category_MP_HLT)
 plot_MP.SaveAs('plots/scores_mp.png')
 
 plot_eff_1P = efficiencies_plot(Category_1P_HLT, TARGET_1P)
-plot_eff_1P.SavesAs('plots/efficiencies_npv_optim_1p.png')
+plot_eff_1P.SaveAs('plots/efficiencies_npv_optim_1p.png')
 
 plot_eff_MP = efficiencies_plot(Category_MP_HLT, TARGET_MP)
-plot_eff_MP.SavesAs('plots/efficiencies_npv_optim_1p.png')
+plot_eff_MP.SaveAs('plots/efficiencies_npv_optim_mp.png')
 
 table = PrettyTable(['Category', 'cut', 'signal efficiency', 'background rejection (1/eff_b)'])
 for t in TARGET_1P:

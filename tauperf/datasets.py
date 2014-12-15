@@ -64,7 +64,7 @@ def create_samples():
 
     for key, sample in SAMPLES.items():
         for tag in sample:
-            if len(sample[tag]) == 1:
+            if len(sample[tag]) == 1 and tag is not 'dirs':
                 sample[tag] = sample[tag][0]
 
     for key, sample in SAMPLES.items():

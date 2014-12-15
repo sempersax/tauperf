@@ -14,7 +14,7 @@ VARIABLES = {
         'scale': 0.001,
         'prefix': ('off', 'hlt', 'true'),
         'bins': 30,
-        'range': (10, 500)
+        'range': (10, 2500)
         },
     
     'eta': {

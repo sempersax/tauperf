@@ -288,10 +288,11 @@ def draw_efficiencies(
     if len(effs) > len(colors):
         colors = len(effs) * colors
     for eff, col in zip(effs, colors):
+        eff.color = col
         eff.painted_graph.yaxis.SetRangeUser(0, 1.10)
         eff.painted_graph.yaxis.title = 'Efficiency'
         eff.painted_graph.xaxis.title = xtitle
-        eff.painted_graph.color = col
+        eff.color = col
         eff.painted_graph.legendstyle = 'l'
         eff.painted_graph.Draw('SAMEP')
     label = ROOT.TLatex(
@@ -301,7 +302,7 @@ def draw_efficiencies(
     label.SetTextFont(43)
     label.SetTextSize(textsize)
     label.Draw()
-    leg = Legend(effs, pad=c)
+    leg = Legend(effs, pad=c, textsize=20)
         # textsize=20, leftmargin=0.6, topmargin=0.6)
     leg.Draw('same')
     return c

@@ -19,6 +19,7 @@ set_style('ATLAS', shape='rect')
 if __name__ == "__main__":
     from argparse import ArgumentParser
     parser = ArgumentParser()
+    parser.add_argument('--use-dy', default=False, action='store_true', help='Use DY simulation for signal')
     parser.add_argument('--categories', default='plotting')
     parser.add_argument('--var', default=None, help='Specify a particular variable')
     parser.add_argument('--logy', default=False, action='store_true')
@@ -36,7 +37,7 @@ if __name__ == "__main__":
         else:
             raise RuntimeError('Wrong key (see variables.py)')
 
-    ana = Analysis()
+    ana = Analysis(use_drellyan=args.use_dy)
     for cat in ana.iter_categories(args.categories):
         hist_samples_array = ana.get_hist_samples_array(vars, 'hlt', cat, cuts=cuts)
         for field, hists_dict in hist_samples_array.items():

@@ -9,12 +9,21 @@ VAR_PATTERN = re.compile('((?P<prefix>hlt|off|true)_)?(?P<var>[A-Za-z0-9_]+)(\*(
 
 class Analysis(object):
     
-    def __init__(self, ntuple_path=NTUPLE_PATH):
-
-        self.tau = samples.Tau(
+    def __init__(self, 
+                 ntuple_path=NTUPLE_PATH,
+                 use_drellyan=False):
+        if use_drellyan:
+            log.info('Use Drell-Yan simulation')
+            self.tau = samples.DY(
             ntuple_path=ntuple_path,
             name='tau', label='Real #tau_{had}',
             color='#00A3FF')
+        else:
+            self.tau = samples.Tau(
+                ntuple_path=ntuple_path,
+                name='tau', label='Real #tau_{had}',
+                color='#00A3FF')
+
 
         self.jet = samples.JZ(
             ntuple_path=ntuple_path,

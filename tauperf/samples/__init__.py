@@ -3,7 +3,7 @@ import logging
 
 from .. import log; log = log[__name__]
 
-from .tau import Tau
+from .tau import Tau, DY
 from .jet import Jet, JZ
 
 

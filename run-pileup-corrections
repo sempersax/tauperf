@@ -15,8 +15,6 @@ SAMPLES = read_database()
 all_files = []
 for key, sample in SAMPLES.items():
     log.info('Submitting ...')
-    if not ('Ztautau_' in key or 'JZ4W' in key):
-        continue
     print key
     if sample.has_key('dirs'):
         for d in sample['dirs']:

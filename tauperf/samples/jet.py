@@ -39,9 +39,20 @@ class JZ(Jet):
                 name='JZ3', label='JZ3'),
             # Jet(
             #     ntuple_path=ntuple_path,
-            #     cuts=self._cuts, student='jetjet_JZ7W', 
+            #     cuts=self._cuts, student='jetjet_JZ4', 
+            #     name='JZ4', label='JZ4'),
+            # Jet(
+            #     ntuple_path=ntuple_path,
+            #     cuts=self._cuts, student='jetjet_JZ5', 
+            #     name='JZ5', label='JZ5'),
+            # Jet(
+            #     ntuple_path=ntuple_path,
+            #     cuts=self._cuts, student='jetjet_JZ6', 
+            #     name='JZ6', label='JZ6'),
+            # Jet(
+            #     ntuple_path=ntuple_path,
+            #     cuts=self._cuts, student='jetjet_JZ7', 
             #     name='JZ7', label='JZ7'),
-            
             ]
         self._scales = []
         for s in self._sub_samples:
