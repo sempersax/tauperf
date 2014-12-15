@@ -262,3 +262,46 @@ def draw_efficiency(
         # textsize=20, leftmargin=0.6, topmargin=0.6)
     leg.Draw('same')
     return c
+
+def draw_efficiencies(
+    effs, field, 
+    category, textsize=22):
+
+    if field in VARIABLES:
+        xtitle = get_label(VARIABLES[field])
+    else:
+        xtitle = field
+
+    c = Canvas()
+    c.SetGridx()
+    c.SetGridy()
+    if not isinstance(effs, (list, tuple)):
+        effs = [effs]
+
+    h = Hist(
+        10, 
+        effs[0].painted_graph.xaxis.min,
+        effs[0].painted_graph.xaxis.max)
+    h.Draw('HIST')
+
+    colors = ['black', 'red', 'blue', 'green', 'purple']
+    if len(effs) > len(colors):
+        colors = len(effs) * colors
+    for eff, col in zip(effs, colors):
+        eff.painted_graph.yaxis.SetRangeUser(0, 1.10)
+        eff.painted_graph.yaxis.title = 'Efficiency'
+        eff.painted_graph.xaxis.title = xtitle
+        eff.painted_graph.color = col
+        eff.painted_graph.legendstyle = 'l'
+        eff.painted_graph.Draw('SAMEP')
+    label = ROOT.TLatex(
+        c.GetLeftMargin() + 0.04, 0.9,
+        category.label)
+    label.SetNDC()
+    label.SetTextFont(43)
+    label.SetTextSize(textsize)
+    label.Draw()
+    leg = Legend(effs, pad=c)
+        # textsize=20, leftmargin=0.6, topmargin=0.6)
+    leg.Draw('same')
+    return c

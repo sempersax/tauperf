@@ -11,6 +11,7 @@ Ztautau:
     group.phys-higgs.mc14_13TeV.147408.PowhegPythia8_AZNLO_Ztautau.merge.AOD.e3059_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11005889,
     group.phys-higgs.mc14_13TeV.147408.PowhegPythia8_AZNLO_Ztautau.merge.AOD.e3059_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11004674,
     group.phys-higgs.mc14_13TeV.147408.PowhegPythia8_AZNLO_Ztautau.merge.AOD.e3059_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11004660]
+  dyrange: null
   gen: PowhegPythia8
   id: '147408'
   pdf: AZNLO
@@ -22,6 +23,84 @@ Ztautau:
   tag: e3059_s1982_s2008_r5787_r5853
   type: mc14_13TeV
   version: '7'
+Ztautau_1000M1250: {dirs: group.phys-higgs.mc14_13TeV.187456.PowPy8_AU2CT10_Ztautau_1000M1250.merge.AOD.e3101_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.12655435,
+  dyrange: 1000M1250, gen: PowPy8, id: '187456', pdf: AU2CT10, prefix: group.phys-higgs,
+  sample: Ztautau, skim: tau_trigger, suffix: OUT.12655435, tag: e3101_s1982_s2008_r5787_r5853,
+  type: mc14_13TeV, version: '7'}
+Ztautau_1250M1500: {dirs: group.phys-higgs.mc14_13TeV.187457.PowPy8_AU2CT10_Ztautau_1250M1500.merge.AOD.e3119_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.12655454,
+  dyrange: 1250M1500, gen: PowPy8, id: '187457', pdf: AU2CT10, prefix: group.phys-higgs,
+  sample: Ztautau, skim: tau_trigger, suffix: OUT.12655454, tag: e3119_s1982_s2008_r5787_r5853,
+  type: mc14_13TeV, version: '7'}
+Ztautau_1500M1750:
+  dirs: [group.phys-higgs.mc14_13TeV.187458.PowPy8_AU2CT10_Ztautau_1500M1750.merge.AOD.e3119_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.12655488,
+    group.phys-higgs.mc14_13TeV.187458.PowPy8_AU2CT10_Ztautau_1500M1750.merge.AOD.e3119_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.12712619]
+  dyrange: 1500M1750
+  gen: PowPy8
+  id: '187458'
+  pdf: AU2CT10
+  prefix: group.phys-higgs
+  sample: Ztautau
+  skim: tau_trigger
+  suffix: [OUT.12655488, OUT.12712619]
+  tag: e3119_s1982_s2008_r5787_r5853
+  type: mc14_13TeV
+  version: '7'
+Ztautau_180M250:
+  dirs: [group.phys-higgs.mc14_13TeV.187451.PowPy8_AU2CT10_Ztautau_180M250.merge.AOD.e3101_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.12757821,
+    group.phys-higgs.mc14_13TeV.187451.PowPy8_AU2CT10_Ztautau_180M250.merge.AOD.e3101_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.12655329]
+  dyrange: 180M250
+  gen: PowPy8
+  id: '187451'
+  pdf: AU2CT10
+  prefix: group.phys-higgs
+  sample: Ztautau
+  skim: tau_trigger
+  suffix: [OUT.12757821, OUT.12655329]
+  tag: e3101_s1982_s2008_r5787_r5853
+  type: mc14_13TeV
+  version: '7'
+Ztautau_2000M2250: {dirs: group.phys-higgs.mc14_13TeV.187460.PowPy8_AU2CT10_Ztautau_2000M2250.merge.AOD.e3119_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.12655575,
+  dyrange: 2000M2250, gen: PowPy8, id: '187460', pdf: AU2CT10, prefix: group.phys-higgs,
+  sample: Ztautau, skim: tau_trigger, suffix: OUT.12655575, tag: e3119_s1982_s2008_r5787_r5853,
+  type: mc14_13TeV, version: '7'}
+Ztautau_2250M2500: {dirs: group.phys-higgs.mc14_13TeV.187461.PowPy8_AU2CT10_Ztautau_2250M2500.merge.AOD.e3119_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.12655619,
+  dyrange: 2250M2500, gen: PowPy8, id: '187461', pdf: AU2CT10, prefix: group.phys-higgs,
+  sample: Ztautau, skim: tau_trigger, suffix: OUT.12655619, tag: e3119_s1982_s2008_r5787_r5853,
+  type: mc14_13TeV, version: '7'}
+Ztautau_2500M2750: {dirs: group.phys-higgs.mc14_13TeV.187462.PowPy8_AU2CT10_Ztautau_2500M2750.merge.AOD.e3119_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.12655668,
+  dyrange: 2500M2750, gen: PowPy8, id: '187462', pdf: AU2CT10, prefix: group.phys-higgs,
+  sample: Ztautau, skim: tau_trigger, suffix: OUT.12655668, tag: e3119_s1982_s2008_r5787_r5853,
+  type: mc14_13TeV, version: '7'}
+Ztautau_250M400: {dirs: group.phys-higgs.mc14_13TeV.187452.PowPy8_AU2CT10_Ztautau_250M400.merge.AOD.e3101_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.12655359,
+  dyrange: 250M400, gen: PowPy8, id: '187452', pdf: AU2CT10, prefix: group.phys-higgs,
+  sample: Ztautau, skim: tau_trigger, suffix: OUT.12655359, tag: e3101_s1982_s2008_r5787_r5853,
+  type: mc14_13TeV, version: '7'}
+Ztautau_2750M3000: {dirs: group.phys-higgs.mc14_13TeV.187463.PowPy8_AU2CT10_Ztautau_2750M3000.merge.AOD.e3119_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.12655699,
+  dyrange: 2750M3000, gen: PowPy8, id: '187463', pdf: AU2CT10, prefix: group.phys-higgs,
+  sample: Ztautau, skim: tau_trigger, suffix: OUT.12655699, tag: e3119_s1982_s2008_r5787_r5853,
+  type: mc14_13TeV, version: '7'}
+Ztautau_3000M:
+  dirs: [group.phys-higgs.mc14_13TeV.187464.PowPy8_AU2CT10_Ztautau_3000M.merge.AOD.e3119_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.12655731,
+    group.phys-higgs.mc14_13TeV.187464.PowPy8_AU2CT10_Ztautau_3000M.merge.AOD.e3119_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.12678121]
+  dyrange: 3000M
+  gen: PowPy8
+  id: '187464'
+  pdf: AU2CT10
+  prefix: group.phys-higgs
+  sample: Ztautau
+  skim: tau_trigger
+  suffix: [OUT.12655731, OUT.12678121]
+  tag: e3119_s1982_s2008_r5787_r5853
+  type: mc14_13TeV
+  version: '7'
+Ztautau_400M600: {dirs: group.phys-higgs.mc14_13TeV.187453.PowPy8_AU2CT10_Ztautau_400M600.merge.AOD.e3101_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.12655375,
+  dyrange: 400M600, gen: PowPy8, id: '187453', pdf: AU2CT10, prefix: group.phys-higgs,
+  sample: Ztautau, skim: tau_trigger, suffix: OUT.12655375, tag: e3101_s1982_s2008_r5787_r5853,
+  type: mc14_13TeV, version: '7'}
+Ztautau_800M1000: {dirs: group.phys-higgs.mc14_13TeV.187455.PowPy8_AU2CT10_Ztautau_800M1000.merge.AOD.e3101_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.12655403,
+  dyrange: 800M1000, gen: PowPy8, id: '187455', pdf: AU2CT10, prefix: group.phys-higgs,
+  sample: Ztautau, skim: tau_trigger, suffix: OUT.12655403, tag: e3101_s1982_s2008_r5787_r5853,
+  type: mc14_13TeV, version: '7'}
 jetjet_JZ0W:
   dirs: [group.phys-higgs.mc14_13TeV.147910.Pythia8_AU2CT10_jetjet_JZ0W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11029762,
     group.phys-higgs.mc14_13TeV.147910.Pythia8_AU2CT10_jetjet_JZ0W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.10959584,
@@ -32,6 +111,7 @@ jetjet_JZ0W:
     group.phys-higgs.mc14_13TeV.147910.Pythia8_AU2CT10_jetjet_JZ0W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11074850,
     group.phys-higgs.mc14_13TeV.147910.Pythia8_AU2CT10_jetjet_JZ0W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11028976,
     group.phys-higgs.mc14_13TeV.147910.Pythia8_AU2CT10_jetjet_JZ0W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11007237]
+  dyrange: null
   gen: Pythia8
   id: '147910'
   pdf: AU2CT10
@@ -46,6 +126,7 @@ jetjet_JZ0W:
 jetjet_JZ1W:
   dirs: [group.phys-higgs.mc14_13TeV.147911.Pythia8_AU2CT10_jetjet_JZ1W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11020508,
     group.phys-higgs.mc14_13TeV.147911.Pythia8_AU2CT10_jetjet_JZ1W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.10980268]
+  dyrange: null
   gen: Pythia8
   id: '147911'
   pdf: AU2CT10
@@ -59,6 +140,7 @@ jetjet_JZ1W:
 jetjet_JZ2W:
   dirs: [group.phys-higgs.mc14_13TeV.147912.Pythia8_AU2CT10_jetjet_JZ2W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v8_OUT.10997527,
     group.phys-higgs.mc14_13TeV.147912.Pythia8_AU2CT10_jetjet_JZ2W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v8_OUT.11032881]
+  dyrange: null
   gen: Pythia8
   id: '147912'
   pdf: AU2CT10
@@ -73,6 +155,7 @@ jetjet_JZ3W:
   dirs: [group.phys-higgs.mc14_13TeV.147913.Pythia8_AU2CT10_jetjet_JZ3W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11024185,
     group.phys-higgs.mc14_13TeV.147913.Pythia8_AU2CT10_jetjet_JZ3W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11024196,
     group.phys-higgs.mc14_13TeV.147913.Pythia8_AU2CT10_jetjet_JZ3W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.10960301]
+  dyrange: null
   gen: Pythia8
   id: '147913'
   pdf: AU2CT10
@@ -83,10 +166,14 @@ jetjet_JZ3W:
   tag: e2743_s1982_s2008_r5787_r5853
   type: mc14_13TeV
   version: '7'
-jetjet_JZ4W: {}
+jetjet_JZ4W: {dirs: group.phys-higgs.mc14_13TeV.147914.Pythia8_AU2CT10_jetjet_JZ4W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11916006,
+  dyrange: null, gen: Pythia8, id: '147914', pdf: AU2CT10, prefix: group.phys-higgs,
+  sample: jetjet_JZ4W, skim: tau_trigger, suffix: OUT.11916006, tag: e2743_s1982_s2008_r5787_r5853,
+  type: mc14_13TeV, version: '7'}
 jetjet_JZ5W:
   dirs: [group.phys-higgs.mc14_13TeV.147915.Pythia8_AU2CT10_jetjet_JZ5W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11012952,
     group.phys-higgs.mc14_13TeV.147915.Pythia8_AU2CT10_jetjet_JZ5W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.10960509]
+  dyrange: null
   gen: Pythia8
   id: '147915'
   pdf: AU2CT10
@@ -100,6 +187,7 @@ jetjet_JZ5W:
 jetjet_JZ6W:
   dirs: [group.phys-higgs.mc14_13TeV.147916.Pythia8_AU2CT10_jetjet_JZ6W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11191319,
     group.phys-higgs.mc14_13TeV.147916.Pythia8_AU2CT10_jetjet_JZ6W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.10960694]
+  dyrange: null
   gen: Pythia8
   id: '147916'
   pdf: AU2CT10
@@ -113,6 +201,7 @@ jetjet_JZ6W:
 jetjet_JZ7W:
   dirs: [group.phys-higgs.mc14_13TeV.147917.Pythia8_AU2CT10_jetjet_JZ7W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11009212,
     group.phys-higgs.mc14_13TeV.147917.Pythia8_AU2CT10_jetjet_JZ7W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.10961104]
+  dyrange: null
   gen: Pythia8
   id: '147917'
   pdf: AU2CT10
@@ -121,5 +210,35 @@ jetjet_JZ7W:
   skim: tau_trigger
   suffix: [OUT.11009212, OUT.10961104]
   tag: e2743_s1982_s2008_r5787_r5853
+  type: mc14_13TeV
+  version: '7'
+perf_JF17:
+  dirs: [group.phys-higgs.mc14_13TeV.129160.Pythia8_AU2CTEQ6L1_perf_JF17.merge.AOD.e3084_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11003969,
+    group.phys-higgs.mc14_13TeV.129160.Pythia8_AU2CTEQ6L1_perf_JF17.merge.AOD.e3084_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11026478,
+    group.phys-higgs.mc14_13TeV.129160.Pythia8_AU2CTEQ6L1_perf_JF17.merge.AOD.e3084_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11348988,
+    group.phys-higgs.mc14_13TeV.129160.Pythia8_AU2CTEQ6L1_perf_JF17.merge.AOD.e3084_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11004065,
+    group.phys-higgs.mc14_13TeV.129160.Pythia8_AU2CTEQ6L1_perf_JF17.merge.AOD.e3084_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11003878,
+    group.phys-higgs.mc14_13TeV.129160.Pythia8_AU2CTEQ6L1_perf_JF17.merge.AOD.e3084_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11005193,
+    group.phys-higgs.mc14_13TeV.129160.Pythia8_AU2CTEQ6L1_perf_JF17.merge.AOD.e3084_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11029594,
+    group.phys-higgs.mc14_13TeV.129160.Pythia8_AU2CTEQ6L1_perf_JF17.merge.AOD.e3084_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11005242,
+    group.phys-higgs.mc14_13TeV.129160.Pythia8_AU2CTEQ6L1_perf_JF17.merge.AOD.e3084_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.12612968,
+    group.phys-higgs.mc14_13TeV.129160.Pythia8_AU2CTEQ6L1_perf_JF17.merge.AOD.e3084_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11004062,
+    group.phys-higgs.mc14_13TeV.129160.Pythia8_AU2CTEQ6L1_perf_JF17.merge.AOD.e3084_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11003867,
+    group.phys-higgs.mc14_13TeV.129160.Pythia8_AU2CTEQ6L1_perf_JF17.merge.AOD.e3084_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11004068,
+    group.phys-higgs.mc14_13TeV.129160.Pythia8_AU2CTEQ6L1_perf_JF17.merge.AOD.e3084_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11003937,
+    group.phys-higgs.mc14_13TeV.129160.Pythia8_AU2CTEQ6L1_perf_JF17.merge.AOD.e3084_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.10961155,
+    group.phys-higgs.mc14_13TeV.129160.Pythia8_AU2CTEQ6L1_perf_JF17.merge.AOD.e3084_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11004009,
+    group.phys-higgs.mc14_13TeV.129160.Pythia8_AU2CTEQ6L1_perf_JF17.merge.AOD.e3084_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11005377]
+  dyrange: null
+  gen: Pythia8
+  id: '129160'
+  pdf: AU2CTEQ6L1
+  prefix: group.phys-higgs
+  sample: perf_JF17
+  skim: tau_trigger
+  suffix: [OUT.11003969, OUT.11026478, OUT.11348988, OUT.11004065, OUT.11003878, OUT.11005193,
+    OUT.11029594, OUT.11005242, OUT.12612968, OUT.11004062, OUT.11003867, OUT.11004068,
+    OUT.11003937, OUT.10961155, OUT.11004009, OUT.11005377]
+  tag: e3084_s1982_s2008_r5787_r5853
   type: mc14_13TeV
   version: '7'

@@ -13,9 +13,10 @@ PATTERN = re.compile(
     '^(?P<prefix>group.phys-higgs|user.qbuat)'
     '\.(?P<type>mc\d+_\d+TeV)'
     '\.(?P<id>\d+)'
-    '\.(?P<gen>Pythia8|PowhegPythia8)_'
+    '\.(?P<gen>Pythia8|PowhegPythia8|PowPy8)_'
     '(?P<pdf>\w+)_'
-    '(?P<sample>jetjet_JZ[0-9]W|Ztautau)'
+    '(?P<sample>jetjet_JZ[0-9]W|Ztautau|perf_JF17)'
+    '(_(?P<dyrange>\d+M\d+|\d+M))?'
     '\.merge.AOD.(?P<tag>e\d+_s\d+_s\d+_r\d+_r\d+)'
     '\.(?P<skim>tau_trigger|higgs)'
     '\.v(?P<version>\d+)_'
@@ -26,9 +27,8 @@ PATTERN = re.compile(
 def create_samples():
     log.info('Building samples using regular expressions ...')
     SAMPLES_RAW = {}
-    SAMPLES_RAW['Ztautau'] = []
-    for i in range(0, 8):
-        SAMPLES_RAW['jetjet_JZ%dW' % i] = []
+    KEYS = []
+    
 
     for d in os.listdir(NTUPLE_PATH):
         abs_dir = os.path.join(NTUPLE_PATH, d)
@@ -39,7 +39,14 @@ def create_samples():
                 for key in match.groupdict():
                     info_sample[key] = match.group(key)
                     info_sample['dirs'] = d
-                SAMPLES_RAW[match.group('sample')].append(info_sample)
+                sample_key = match.group('sample')
+                if match.group('dyrange'):
+                    sample_key = match.group('sample') + '_' + match.group('dyrange')
+
+                if sample_key in SAMPLES_RAW.keys():
+                    SAMPLES_RAW[sample_key].append(info_sample)
+                else:
+                    SAMPLES_RAW[sample_key] = [info_sample]
 
     log.info("= + =" * 10)
     SAMPLES = {}
@@ -63,17 +70,8 @@ def create_samples():
     for key, sample in SAMPLES.items():
         if sample.keys():
             print '=' * 50
-            print '\t prefix  = %s' % sample['prefix']
-            print '\t type    = %s' % sample['type']
-            print '\t id      = %s' % sample['id']
-            print '\t gen     = %s' % sample['gen']
-            print '\t pdf     = %s' % sample['pdf']
-            print '\t sample  = %s' % sample['sample']
-            print '\t tag     = %s' % sample['tag']
-            print '\t skim    = %s' % sample['skim']
-            print '\t version = %s' % sample['version']
-            print '\t suffix  = %s' % sample['suffix']
-            print '\t dirs    = %s' % sample['dirs']
+            for k in sample.keys():
+                print '\t %s  = %s' % (k, sample[k])
 
     return SAMPLES
 

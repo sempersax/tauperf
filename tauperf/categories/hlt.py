@@ -12,7 +12,7 @@ from .features import *
 ONEPRONG = Cut('hlt_ntracks == 1')
 TWOPRONG = Cut('hlt_ntracks == 2')
 THREEPRONG = Cut('hlt_ntracks == 3')
-MULTIPRONG = Cut('hlt_ntracks > 1')
+MULTIPRONG = Cut('hlt_ntracks > 1') & Cut('hlt_ntracks < 4')
 
 HLT_PT_CUT = Cut('hlt_pt > 25000')
 

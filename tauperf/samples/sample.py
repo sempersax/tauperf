@@ -131,13 +131,13 @@ class Sample(object):
     def get_hist_array(self, field_hist_template, category=None, cuts=None):
         """
         """
-        selection = self.cuts(category)
+        sel = self.cuts(category)
         if not cuts is None:
-            selection &= cuts
+            sel &= cuts
         if self.weight_field is not None:
-            selection *= self.weight_field
+            sel *= self.weight_field
         field_hists = {}
         for key, hist in field_hist_template.items():
-            field_hists[key] = self.draw_helper(hist, key, selection)
+            field_hists[key] = self.draw_helper(hist, key, sel)
         return field_hists
 

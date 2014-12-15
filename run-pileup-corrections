@@ -15,13 +15,16 @@ SAMPLES = read_database()
 all_files = []
 for key, sample in SAMPLES.items():
     log.info('Submitting ...')
+    if not ('Ztautau_' in key or 'JZ4W' in key):
+        continue
+    print key
     if sample.has_key('dirs'):
         for d in sample['dirs']:
             files = glob.glob(
                 os.path.join(NTUPLE_PATH, d, sample['prefix'] + '*.root*'))
             all_files.extend(files)
 
-
+print all_files
 setup = cluster.get_setup(os.path.join(
     os.path.dirname(cluster.__file__), 'setup.sfu.txt'))
 log_path = os.path.join(os.getcwd(), 'log')
@@ -33,7 +36,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     for f in all_files:
-        # print f
+        print f
         cmd = './apply-pileup-corrections %s' % f
         name = cmd.replace(" ", "_").replace(NTUPLE_PATH, '').replace('/', '_')
         cmd = "cd %s && %s && %s" % (os.getcwd(), setup, cmd)

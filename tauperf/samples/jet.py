@@ -21,10 +21,10 @@ class JZ(Jet):
     def __init__(self, cuts=None, ntuple_path=NTUPLE_PATH, **kwargs):
         super(JZ, self).__init__(cuts=cuts, ntuple_path=ntuple_path, **kwargs)
         self._sub_samples = [
-            Jet(
-                ntuple_path=ntuple_path,
-                cuts=self._cuts, student='jetjet_JZ0', 
-                name='JZ0', label='JZ0'),
+            # Jet(
+            #     ntuple_path=ntuple_path,
+            #     cuts=self._cuts, student='jetjet_JZ0', 
+            #     name='JZ0', label='JZ0'),
             Jet(
                 ntuple_path=ntuple_path,
                 cuts=self._cuts, student='jetjet_JZ1', 
@@ -48,7 +48,7 @@ class JZ(Jet):
             log.info('{0}: events = {1}, weighted = {2}, xsec = {3}, filter = {4}'.format(
                     s.name, s.total_events(), s.total_events(weighted=True), 
                     XSEC_FILTER[s.name][0], XSEC_FILTER[s.name][1]))
-            self._scales.append(XSEC_FILTER[s.name][0] * XSEC_FILTER[s.name][1] / s.total_events())
+            self._scales.append(XSEC_FILTER[s.name][0] * XSEC_FILTER[s.name][1] / s.total_events(weighted=True))
         log.info(self.scales)
 
     @property
