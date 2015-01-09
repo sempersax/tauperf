@@ -3,7 +3,7 @@ features_1p = [
     # 'trkAvgDist',
     'InnerTrkAvgDist',
     'etOverPtLeadTrk',
-    'ipSigLeadTrk_BS',
+    'AbsipSigLeadTrk_BS',
     'SumPtTrkFrac',
     # 'nwidetracks',
     'ChPiEMEOverCaloEME',
@@ -54,3 +54,4 @@ features_mp_pileup_corrected = [
     'approx_ptRatio',
     'approx_vistau_m',
 ]
+

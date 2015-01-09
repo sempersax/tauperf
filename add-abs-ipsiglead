@@ -1,0 +1,83 @@
+#!/usr/bin/env python
+import os
+import shutil
+
+from rootpy.io import root_open
+from rootpy.tree import TreeModel, FloatCol
+from rootpy.stl import vector
+
+import logging
+from multiprocessing import Process
+import ROOT
+
+from tauperf.variables import VARIABLES
+
+log = logging.getLogger(os.path.basename(__file__))
+
+
+
+class Model(TreeModel):
+    off_AbsipSigLeadTrk = FloatCol()
+    off_AbsipZ0SinThetaSigLeadTrk = FloatCol()
+    hlt_AbsipSigLeadTrk = FloatCol()
+    hlt_AbsipZ0SinThetaSigLeadTrk = FloatCol()
+    hlt_AbsipSigLeadTrk_BS = FloatCol()
+
+def add_bdt_scores(tree):
+    tree.create_buffer()
+    tree.set_buffer(Model(), create_branches=True)
+    branches = [
+        tree.GetBranch("off_AbsipSigLeadTrk"),
+        tree.GetBranch("off_AbsipZ0SinThetaSigLeadTrk"),
+        tree.GetBranch("hlt_AbsipSigLeadTrk"),
+        tree.GetBranch("hlt_AbsipSigLeadTrk_BS"),
+        tree.GetBranch("hlt_AbsipZ0SinThetaSigLeadTrk"),
+        ]
+    tree.define_object('hlt', prefix='hlt_')
+    tree.define_object('off', prefix='off_')
+    for event in tree:
+        tree.off_AbsipSigLeadTrk = abs(event.off.ipSigLeadTrk)
+        tree.hlt_AbsipSigLeadTrk = abs(event.hlt.ipSigLeadTrk)
+        tree.hlt_AbsipSigLeadTrk_BS = abs(event.hlt.ipSigLeadTrk_BS)
+        tree.off_AbsipZ0SinThetaSigLeadTrk = abs(event.off.ipZ0SinThetaSigLeadTrk)
+        tree.hlt_AbsipZ0SinThetaSigLeadTrk = abs(event.hlt.ipZ0SinThetaSigLeadTrk)
+        for branch in branches:
+            branch.Fill()
+    tree.SetEntries(-1)
+
+class Job(Process):
+    def __init__(self, filename):
+        super(Job, self).__init__()
+        self.filename = filename
+
+    def run(self):
+        filename = self.filename
+        path, name = os.path.split(filename)
+        # copy to new file
+        output = os.path.join(path, 'extended.' + name)
+        if os.path.exists(output):
+            return 
+        log.info("copying {0} to {1} ...".format(filename, output))
+        shutil.copy(filename, output)
+        with root_open(output, 'UPDATE') as file:
+            tree = file.tau
+            if 'off_AbsipSigLeadTrk' in tree:
+                log.info("abs variables already exist in {0} ...".format(output))
+                return
+            log.info("adding abs variables to {0} ...".format(output))
+            add_bdt_scores(tree)
+            tree.Write(tree.name, ROOT.TObject.kOverwrite)
+
+
+if __name__ == '__main__':
+    from rootpy.extern.argparse import ArgumentParser
+
+    parser = ArgumentParser()
+    parser.add_argument('files', nargs='+')
+    args = parser.parse_args()
+
+    from tauperf.jobs import run_pool
+    jobs = [Job(f) for f in args.files]
+    run_pool(jobs, n_jobs=-1)
+
+

@@ -349,6 +349,24 @@ VARIABLES = {
         'range': (-5, 5),
         },
 
+    'AbsipSigLeadTrk': {
+        'name' : 'AbsipSigLeadTrk',
+        'root': '|S_{lead track} (PV)|',
+        'type': 'f',
+        'prefix': ('off', 'hlt'),
+        'bins': 20,
+        'range': (0, 5),
+        },
+    
+    'AbsipSigLeadTrk_BS': {
+        'name' : 'AbsipSigLeadTrk_BS',
+        'root': '|S_{lead track} (Beamspot)|',
+        'type': 'f',
+        'prefix': ('hlt'),
+        'bins': 20,
+        'range': (0, 5),
+        },
+
     'dRmax': {
         'name' : 'dRmax',
         'root': '#DeltaR_{max}',

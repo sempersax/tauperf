@@ -8,7 +8,7 @@ from rootpy.tree import Cut
 from tauperf.analysis import Analysis
 from tauperf.variables import VARIABLES
 from tauperf.plotting import draw_ratio
-
+from tauperf import UNMERGED_NTUPLE_PATH
 log = logging.getLogger(os.path.basename(__file__))
 if not os.environ.get("DEBUG", False):
     log.setLevel(logging.INFO)
@@ -37,7 +37,7 @@ if __name__ == "__main__":
         else:
             raise RuntimeError('Wrong key (see variables.py)')
 
-    ana = Analysis(use_drellyan=args.use_dy)
+    ana = Analysis(use_drellyan=args.use_dy, ntuple_path=os.path.join(UNMERGED_NTUPLE_PATH, 'merge'))
     for cat in ana.iter_categories(args.categories):
         hist_samples_array = ana.get_hist_samples_array(vars, 'hlt', cat, cuts=cuts)
         for field, hists_dict in hist_samples_array.items():

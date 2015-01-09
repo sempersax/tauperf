@@ -41,7 +41,7 @@ class Model(TreeModel):
     hlt_centFrac_pileup_corrected = FloatCol()
     hlt_approx_ptRatio_pileup_corrected = FloatCol()
     # 1p only
-    hlt_ipSigLeadTrk_BS_pileup_corrected = FloatCol()
+    hlt_AbsipSigLeadTrk_BS_pileup_corrected = FloatCol()
     hlt_SumPtTrkFrac_pileup_corrected = FloatCol()
     # mp only
     hlt_dRmax_pileup_corrected = FloatCol()

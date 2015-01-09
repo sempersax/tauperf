@@ -5,7 +5,7 @@ import logging
 import glob
 #
 import cluster
-from tauperf import NTUPLE_PATH
+from tauperf import UNMERGED_NTUPLE_PATH
 from tauperf.datasets import create_database, read_database
 #
 log = logging.getLogger(os.path.basename(__file__))
@@ -16,10 +16,12 @@ all_files = []
 for key, sample in SAMPLES.items():
     log.info('Submitting ...')
     print key
+    
     if sample.has_key('dirs'):
         for d in sample['dirs']:
+            print d
             files = glob.glob(
-                os.path.join(NTUPLE_PATH, d, sample['prefix'] + '*.root*'))
+                os.path.join(UNMERGED_NTUPLE_PATH, d, sample['prefix'] + '*.root*'))
             all_files.extend(files)
 
 print all_files
@@ -30,13 +32,19 @@ log_path = os.path.join(os.getcwd(), 'log')
 if __name__ == '__main__':
     from rootpy.extern.argparse import ArgumentParser
     parser = ArgumentParser()
+    parser.add_argument(
+        '--driver', default='apply-pileup-corrections', 
+        choices = ['apply-pileup-corrections', 'add-abs-ipsiglead'])
+    parser.add_argument('--prefix', default='', choices=['', 'extended'])
     parser.add_argument('--dry', action='store_true', default=False)
     args = parser.parse_args()
 
     for f in all_files:
+        if args.prefix != '':
+            f = f.replace(f.split('/')[-1], args.prefix + '.' + f.split('/')[-1])
         print f
-        cmd = './apply-pileup-corrections %s' % f
-        name = cmd.replace(" ", "_").replace(NTUPLE_PATH, '').replace('/', '_')
+        cmd = './{0} {1}'.format(args.driver, f)
+        name = cmd.replace(" ", "_").replace(UNMERGED_NTUPLE_PATH, '').replace('/', '_')
         cmd = "cd %s && %s && %s" % (os.getcwd(), setup, cmd)
         print name
         cluster.qsub(

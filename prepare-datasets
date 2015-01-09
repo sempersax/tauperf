@@ -4,17 +4,24 @@ import subprocess
 import glob
 import logging
 
-from tauperf import NTUPLE_PATH
+from tauperf import UNMERGED_NTUPLE_PATH
 from tauperf.datasets import create_database, read_database
 
 log = logging.getLogger(os.path.basename(__file__))
 
-        
+from itertools import izip_longest
+def grouper(iterable, n, fillvalue=None):
+    "Collect data into fixed-length chunks or blocks"
+    # grouper('ABCDEFG', 3, 'x') --> ABC DEF Gxx
+    args = [iter(iterable)] * n
+    return izip_longest(fillvalue=fillvalue, *args)
+
+
 if __name__ == '__main__':
     from rootpy.extern.argparse import ArgumentParser
     parser = ArgumentParser()
     parser.add_argument('action', type=str, choices=['db', 'clean', 'merge', 'dev'])
-    parser.add_argument('--key', type=str, choices=['corrected', 'weighted'], default='weighted')
+    parser.add_argument('--key', type=str, choices=['corrected', 'weighted', 'extended'], default='weighted')
     parser.add_argument('--dry', action='store_true', default=False)
     args = parser.parse_args()
     print args
@@ -31,10 +38,10 @@ if __name__ == '__main__':
             log.info('clean up %s ...' % key)
             if sample.has_key('dirs'):
                 for d in sample['dirs']:
-                    for rfile in os.listdir(os.path.join(NTUPLE_PATH, d)):
+                    for rfile in os.listdir(os.path.join(UNMERGED_NTUPLE_PATH, d)):
                         if args.key in rfile:
                             cmd = 'rm {0}'.format(
-                                os.path.join(NTUPLE_PATH, d, rfile))
+                                os.path.join(UNMERGED_NTUPLE_PATH, d, rfile))
                             log.info(cmd)
                             if not args.dry:
                                 subprocess.call(cmd, shell=True)
@@ -50,18 +57,34 @@ if __name__ == '__main__':
                 all_files = []
                 for d in sample['dirs']:
                     files = glob.glob(
-                        os.path.join(NTUPLE_PATH, d, args.key + '*'))
+                        os.path.join(UNMERGED_NTUPLE_PATH, d, args.key + '*'))
                     all_files.extend(files)
                 target_file = os.path.join(
-                    NTUPLE_PATH, '{0}.{1}.root'.format(args.key, key))
+                    UNMERGED_NTUPLE_PATH, '{0}.{1}.root'.format(args.key, key))
                 input_list = ' '.join(all_files)
-                cmd = 'hadd {0} {1}'.format(target_file, input_list)
-                    # log.info(cmd)
+                
+                input_chunks = [
+                    filter(lambda a: a is not None, chunk) for chunk in grouper(all_files, 999)
+                    ] 
+                cmds = [
+                    'hadd chunk_{0}.root {1}'.format(
+                        i, ' '.join(chunk)) for i, chunk in enumerate(input_chunks)
+                    ]
+                cmd_final = 'hadd {0} chunk_*.root && rm chunk_*.root'.format(target_file)
+
+                # cmd = 'hadd {0} {1}'.format(target_file, input_list)
                 if not args.dry:
                     try:
-                        subprocess.call(cmd, shell=True)
+                        for cmd in cmds:
+                            subprocess.call(cmd, shell=True)
+                        subprocess.call(cmd_final, shell=True)
                     except OSError:
                         print 'OSError !'
+                else:
+                    log.info(cmds)
+                    log.info(cmd_final)
+                    # log.info(cmd)
+
     # bac a sable
     if args.action == 'dev':
         SAMPLES = read_database()
@@ -70,6 +93,6 @@ if __name__ == '__main__':
             if sample.has_key('dirs'):
                 for d in sample['dirs']:
                     files = glob.glob(
-                        os.path.join(NTUPLE_PATH, d, sample['prefix'] + '*.root*'))
+                        os.path.join(UNMERGED_NTUPLE_PATH, d, sample['prefix'] + '*.root*'))
                     print files
                        

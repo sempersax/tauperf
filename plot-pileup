@@ -13,10 +13,10 @@ from ROOT import TLatex
 from tauperf.analysis import Analysis, VAR_PATTERN
 from tauperf.variables import VARIABLES
 from tauperf.categories import Category_1P_HLT, Category_MP_HLT
-
+from tauperf import UNMERGED_NTUPLE_PATH
 set_style('ATLAS', shape='rect')
 
-ana = Analysis()
+ana = Analysis(ntuple_path=os.path.join(UNMERGED_NTUPLE_PATH, 'merge'))
 MU_BINS = [(0, 5), (5, 10), (10, 15), (15, 20), (20, 25), (25, 30), (30, 35), (35, 40)]
 
 def mean_vs_npv(keys, category):
@@ -67,7 +67,7 @@ def mean_vs_npv(keys, category):
 
 
 for category in (Category_1P_HLT, Category_MP_HLT):
-    graph_sig, graph_bkg, graph_sig_rms, graph_bkg_rms = mean_vs_npv(category.features_pileup_corrected, category)
+    graph_sig, graph_bkg, graph_sig_rms, graph_bkg_rms = mean_vs_npv(category.features, category)
     
     for key in graph_sig:
         sig = graph_sig[key]
