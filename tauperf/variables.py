@@ -367,6 +367,15 @@ VARIABLES = {
         'range': (0, 5),
         },
 
+    'AbsipSigLeadTrk_BS_pileup_corrected': {
+        'name' : 'AbsipSigLeadTrk_BS_pileup_corrected',
+        'root': '|S_{lead track} (Beamspot)|',
+        'type': 'f',
+        'prefix': ('hlt'),
+        'bins': 20,
+        'range': (0, 5),
+        },
+
     'dRmax': {
         'name' : 'dRmax',
         'root': '#DeltaR_{max}',
@@ -405,8 +414,28 @@ VARIABLES = {
         'range': (0, 2),
         },
 
+    'approx_ptRatio_pileup_corrected': {
+        'name' : 'approx_ptRatio_pileup_corrected',
+        'root': 'Approximated p_{T} ratio',
+        'type': 'f',
+        'prefix': ('off', 'hlt'),
+        'bins': 20,
+        'range': (0, 2),
+        },
+
     'approx_vistau_m': {
         'name' : 'approx_vistau_m',
+        'root': 'Approximated m_{#tau}^{vis}',
+        'type': 'f',
+        'prefix': ('off', 'hlt'),
+        'bins': 20,
+        'scale': 0.001,
+        'units': 'GeV',
+        'range': (0, 2),
+        },
+
+    'approx_vistau_m_pileup_corrected': {
+        'name' : 'approx_vistau_m_pileup_corrected',
         'root': 'Approximated m_{#tau}^{vis}',
         'type': 'f',
         'prefix': ('off', 'hlt'),

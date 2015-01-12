@@ -28,6 +28,7 @@ class Classifier(TMVA.Factory):
                  prefix='hlt',
                  tree_name='tau',
                  training_mode='dev', # 'prod'
+                 features=None,
                  split_cut=None,
                  verbose=''):
 
@@ -39,15 +40,18 @@ class Classifier(TMVA.Factory):
         self.prefix = prefix
         self.tree_name = tree_name
         self.training_mode = training_mode
+        self.features = features
         if split_cut is None:
             self.split_cut = Cut()
         else:
             self.split_cut = Cut(split_cut)
             
     def set_variables(self, category, prefix):
-        for varName in category.features:
+        if self.features is None:
+            self.features = category.features
+        for varName in self.features:
             var = VARIABLES[varName]
-            self.AddVariable(prefix+'_'+var['name'] , var['root'], '', var['type'])
+            self.AddVariable(prefix + '_' + var['name'], var['root'], '', var['type'])
 
     def bookBDT(self,
                 ntrees=100,
@@ -80,7 +84,7 @@ class Classifier(TMVA.Factory):
 
     def train(self, **kwargs):
         self.set_variables(self.category, self.prefix)
-        ana = Analysis(ntuple_path=os.path.join(UNMERGED_NTUPLE_PATH, 'merge'))
+        ana = Analysis(ntuple_path=os.path.join(UNMERGED_NTUPLE_PATH, 'merge_corr'))
         tau = ana.tau
         jet = ana.jet
         self.sig_cut = tau.cuts(self.category) & self.split_cut
