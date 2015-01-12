@@ -15,6 +15,7 @@ from rootpy.tree import Cut
 from . import log; log=log[__name__]
 from samples.db import get_file
 from .analysis import Analysis
+from . import UNMERGED_NTUPLE_PATH
 from samples import Tau, Jet, JZ
 from .variables import VARIABLES
 
@@ -44,7 +45,7 @@ class Classifier(TMVA.Factory):
             self.split_cut = Cut(split_cut)
             
     def set_variables(self, category, prefix):
-        for varName in category.features_pileup_corrected:
+        for varName in category.features:
             var = VARIABLES[varName]
             self.AddVariable(prefix+'_'+var['name'] , var['root'], '', var['type'])
 
@@ -79,7 +80,7 @@ class Classifier(TMVA.Factory):
 
     def train(self, **kwargs):
         self.set_variables(self.category, self.prefix)
-        ana = Analysis()
+        ana = Analysis(ntuple_path=os.path.join(UNMERGED_NTUPLE_PATH, 'merge'))
         tau = ana.tau
         jet = ana.jet
         self.sig_cut = tau.cuts(self.category) & self.split_cut

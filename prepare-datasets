@@ -66,11 +66,15 @@ if __name__ == '__main__':
                 input_chunks = [
                     filter(lambda a: a is not None, chunk) for chunk in grouper(all_files, 999)
                     ] 
-                cmds = [
-                    'hadd chunk_{0}.root {1}'.format(
-                        i, ' '.join(chunk)) for i, chunk in enumerate(input_chunks)
+                chunk_names = [
+                    'chunk_{0}_{1}'.format(key, i) for i, _ in enumerate(input_chunks)
                     ]
-                cmd_final = 'hadd {0} chunk_*.root && rm chunk_*.root'.format(target_file)
+                log.info(chunk_names)
+                cmds = [
+                    'hadd {0} {1}'.format(
+                       c_n, ' '.join(c)) for c_n, c in zip(chunk_names, input_chunks)
+                    ]
+                cmd_final = 'hadd {0} {1} && rm {1}'.format(target_file, ' '.join(chunk_names))
 
                 # cmd = 'hadd {0} {1}'.format(target_file, input_list)
                 if not args.dry:
@@ -81,7 +85,7 @@ if __name__ == '__main__':
                     except OSError:
                         print 'OSError !'
                 else:
-                    log.info(cmds)
+                    # log.info(cmds)
                     log.info(cmd_final)
                     # log.info(cmd)
 

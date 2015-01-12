@@ -45,6 +45,7 @@ if not args.keep_trees:
         for key in fin.keys():
             obj = fin[key.name]
             if isinstance(obj, Tree):
+                continue
             elif isinstance(obj, Directory):
                 fout.mkdir(obj.name)
                 obj.copytree(fout[obj.name])
