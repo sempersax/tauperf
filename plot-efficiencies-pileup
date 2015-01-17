@@ -1,0 +1,44 @@
+#!/usr/bin/env python
+import os
+# root/rootpy imports
+import ROOT
+from rootpy.plotting import Efficiency
+from rootpy.plotting.style import get_style
+
+from tauperf import UNMERGED_NTUPLE_PATH
+from tauperf.samples import Tau
+from tauperf.variables import VARIABLES, get_label
+from tauperf.categories import Category_1P_HLT, Category_MP_HLT
+from tauperf.default import CUT_1P, CUT_MP
+from tauperf.plotting import draw_efficiencies
+
+style = get_style('ATLAS', shape='rect')
+style.SetPadRightMargin(0.10)
+style.cd()
+
+tau = Tau(ntuple_path=os.path.join(UNMERGED_NTUPLE_PATH, 'merge_pileup'))
+vars = {'mu': VARIABLES['mu'], 'npv': VARIABLES['npv']}
+
+ncorrs = [0, 1, 2, 3, 5, 6, 7, 8]
+effs_dict = {}
+for var in vars:
+    effs_dict[var] = []
+
+category = Category_1P_HLT
+cut_val = CUT_1P
+
+for ncorr in ncorrs:
+    cut = 'hlt_bdt_score_ncorr{0}>={1}'.format(ncorr, cut_val)
+    field_hist = tau.get_field_hist(vars, 'hlt')
+    field_hist = tau.get_hist_array(field_hist, category)
+    field_hist_cut = tau.get_hist_array(field_hist, category, cut)
+    for var in field_hist:
+        eff_s = Efficiency(field_hist_cut[var], field_hist[var])
+        eff_s.title = '{0} corrected variables'.format(ncorr)
+        effs_dict[var].append(eff_s)
+
+for var in vars:        
+    c = draw_efficiencies(effs_dict[var], var, category) 
+    c.SaveAs('plots/efficiencies_pileup_{0}_{1}.png'.format(var, category.name))
+        
+        

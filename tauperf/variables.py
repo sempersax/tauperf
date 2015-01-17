@@ -385,6 +385,15 @@ VARIABLES = {
         'range': (0, 0.2),
         },
     
+    'dRmax_pileup_corrected': {
+        'name' : 'dRmax_pileup_corrected',
+        'root': '#DeltaR_{max}',
+        'type': 'f',
+        'prefix': ('off', 'hlt'),
+        'bins': 20,
+        'range': (0, 0.2),
+        },
+    
     'trFlightPathSig': {
         'name' : 'trFlightPathSig',
         'root': 'S_{T}^{flight}',
@@ -394,7 +403,27 @@ VARIABLES = {
         'range': (-10, 30),
         },
     
+    'trFlightPathSig_pileup_corrected': {
+        'name' : 'trFlightPathSig_pileup_corrected',
+        'root': 'S_{T}^{flight}',
+        'type': 'f',
+        'prefix': ('off', 'hlt'),
+        'bins': 20,
+        'range': (-10, 30),
+        },
+    
     'massTrkSys': {
+        'name' : 'massTrkSys',
+        'root': 'm_{track}',
+        'type': 'f',
+        'prefix': ('off', 'hlt'),
+        'bins': 20,
+        'scale': 0.001,
+        'units': 'GeV',
+        'range': (0, 20),
+        },
+
+    'massTrkSys_pileup_corrected': {
         'name' : 'massTrkSys',
         'root': 'm_{track}',
         'type': 'f',

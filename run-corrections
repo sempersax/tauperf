@@ -34,8 +34,8 @@ if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument(
         '--driver', default='apply-pileup-corrections', 
-        choices = ['apply-pileup-corrections', 'add-abs-ipsiglead'])
-    parser.add_argument('--prefix', default='', choices=['', 'extended'])
+        choices = ['apply-pileup-corrections', 'add-abs-ipsiglead', 'apply-bdt-weights-from-xml'])
+    parser.add_argument('--prefix', default='', choices=['', 'extended', 'corrected.extended'])
     parser.add_argument('--dry', action='store_true', default=False)
     args = parser.parse_args()
 

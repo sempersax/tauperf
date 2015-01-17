@@ -1,0 +1,253 @@
+#!/usr/bin/env python
+import os
+import shutil
+
+from rootpy.io import root_open
+from rootpy.tree import TreeModel, FloatCol
+from rootpy.stl import vector
+
+import logging
+from multiprocessing import Process
+import ROOT
+
+from tauperf.extern_corr import *
+    
+from tauperf.categories import Category_1P_HLT, Category_MP_HLT
+from tauperf.variables import VARIABLES
+
+log = logging.getLogger('apply-bdt-weights-from-xml')
+
+# Ranked by TMVA classification
+features_1p = [
+    'centFrac',
+    'InnerTrkAvgDist',
+    'SumPtTrkFrac',
+    'EMPOverTrkSysP',
+    'etOverPtLeadTrk',
+    'AbsipSigLeadTrk_BS',
+    'approx_ptRatio',
+    'ChPiEMEOverCaloEME',
+]
+
+# Not Ranked by TMVA classification
+features_mp = [
+    'dRmax',
+    'InnerTrkAvgDist',
+    'etOverPtLeadTrk',
+    'trFlightPathSig',
+    'massTrkSys',
+    'ChPiEMEOverCaloEME',
+    'EMPOverTrkSysP',
+    'centFrac',
+    'approx_ptRatio',
+    'approx_vistau_m',
+]
+
+
+def features_pileup(features, ncorr=0):
+    features_corrected = vector('string')()
+    for i, f in enumerate(features):
+        if i < ncorr:
+            features_corrected.push_back('hlt_' + VARIABLES[f + '_pileup_corrected']['name'])
+        else:
+            features_corrected.push_back('hlt_' + VARIABLES[f]['name'])
+    return features_corrected
+
+
+
+
+readers = {
+    'ncorr0': {
+        '1p_even': ReadBDT_1p_even_ncorr0(features_pileup(features_1p, ncorr=0)),
+        '1p_odd': ReadBDT_1p_odd_ncorr0(features_pileup(features_1p, ncorr=0)),
+        'mp_even': ReadBDT_mp_even(features_pileup(features_mp, ncorr=0)),
+        'mp_odd': ReadBDT_mp_odd(features_pileup(features_mp, ncorr=0)),
+        },
+    'ncorr1': {
+        '1p_even': ReadBDT_1p_even_ncorr1(features_pileup(features_1p, ncorr=1)),
+        '1p_odd': ReadBDT_1p_odd_ncorr1(features_pileup(features_1p, ncorr=1)),
+        'mp_even': ReadBDT_mp_even(features_pileup(features_mp, ncorr=1)),
+        'mp_odd': ReadBDT_mp_odd(features_pileup(features_mp, ncorr=1)),
+        },
+    'ncorr2': {
+        '1p_even': ReadBDT_1p_even_ncorr2(features_pileup(features_1p, ncorr=2)),
+        '1p_odd': ReadBDT_1p_odd_ncorr2(features_pileup(features_1p, ncorr=2)),
+        'mp_even': ReadBDT_mp_even(features_pileup(features_mp, ncorr=2)),
+        'mp_odd': ReadBDT_mp_odd(features_pileup(features_mp, ncorr=2)),
+        },
+    'ncorr3': {
+        '1p_even': ReadBDT_1p_even_ncorr3(features_pileup(features_1p, ncorr=3)),
+        '1p_odd': ReadBDT_1p_odd_ncorr3(features_pileup(features_1p, ncorr=3)),
+        'mp_even': ReadBDT_mp_even(features_pileup(features_mp, ncorr=3)),
+        'mp_odd': ReadBDT_mp_odd(features_pileup(features_mp, ncorr=3)),
+        },
+    'ncorr4': {
+        '1p_even': ReadBDT_1p_even_ncorr4(features_pileup(features_1p, ncorr=4)),
+        '1p_odd': ReadBDT_1p_odd_ncorr4(features_pileup(features_1p, ncorr=4)),
+        'mp_even': ReadBDT_mp_even(features_pileup(features_mp, ncorr=4)),
+        'mp_odd': ReadBDT_mp_odd(features_pileup(features_mp, ncorr=4)),
+        },
+    'ncorr5': {
+        '1p_even': ReadBDT_1p_even_ncorr5(features_pileup(features_1p, ncorr=5)),
+        '1p_odd': ReadBDT_1p_odd_ncorr5(features_pileup(features_1p, ncorr=5)),
+        'mp_even': ReadBDT_mp_even(features_pileup(features_mp, ncorr=5)),
+        'mp_odd': ReadBDT_mp_odd(features_pileup(features_mp, ncorr=5)),
+        },
+    'ncorr6': {
+        '1p_even': ReadBDT_1p_even_ncorr6(features_pileup(features_1p, ncorr=6)),
+        '1p_odd': ReadBDT_1p_odd_ncorr6(features_pileup(features_1p, ncorr=6)),
+        'mp_even': ReadBDT_mp_even(features_pileup(features_mp, ncorr=6)),
+        'mp_odd': ReadBDT_mp_odd(features_pileup(features_mp, ncorr=6)),
+        },
+    'ncorr7': {
+        '1p_even': ReadBDT_1p_even_ncorr7(features_pileup(features_1p, ncorr=7)),
+        '1p_odd': ReadBDT_1p_odd_ncorr7(features_pileup(features_1p, ncorr=7)),
+        'mp_even': ReadBDT_mp_even(features_pileup(features_mp, ncorr=7)),
+        'mp_odd': ReadBDT_mp_odd(features_pileup(features_mp, ncorr=7)),
+        },
+    'ncorr8': {
+        '1p_even': ReadBDT_1p_even_ncorr8(features_pileup(features_1p, ncorr=8)),
+        '1p_odd': ReadBDT_1p_odd_ncorr8(features_pileup(features_1p, ncorr=8)),
+        'mp_even': ReadBDT_mp_even(features_pileup(features_mp, ncorr=8)),
+        'mp_odd': ReadBDT_mp_odd(features_pileup(features_mp, ncorr=8)),
+        },
+}
+
+
+def evaluate_single_bdt(reader, feats, tree):
+    vals = vector('double')()
+    for feat in feats:
+        vals.push_back(getattr(tree, feat))
+    return reader.GetMvaValue(vals)
+
+def evaluate_bdt(tree, readers, feats):
+    if tree.hlt_tau.ntracks == 1:
+        if tree.eventnumber % 2 == 0:
+            return evaluate_single_bdt(
+                readers['1p_even'], feats['1p'], tree)
+        else:
+            return evaluate_single_bdt(
+                readers['1p_odd'], feats['1p'], tree)
+    elif tree.hlt_tau.ntracks > 1:
+        if tree.eventnumber % 2 == 0:
+            return evaluate_single_bdt(
+                readers['mp_even'], feats['mp'], tree)
+        else:
+            return evaluate_single_bdt(
+                readers['mp_odd'], feats['mp'], tree)
+    else:
+        return -9999.
+
+class Model(TreeModel):
+    hlt_bdt_score_ncorr0 = FloatCol()
+    hlt_bdt_score_ncorr1 = FloatCol()
+    hlt_bdt_score_ncorr2 = FloatCol()
+    hlt_bdt_score_ncorr3 = FloatCol()
+    hlt_bdt_score_ncorr4 = FloatCol()
+    hlt_bdt_score_ncorr5 = FloatCol()
+    hlt_bdt_score_ncorr6 = FloatCol()
+    hlt_bdt_score_ncorr7 = FloatCol()
+    hlt_bdt_score_ncorr8 = FloatCol()
+
+def add_bdt_scores(tree):
+    tree.create_buffer()
+    tree.set_buffer(Model(), create_branches=True)
+    branches = [
+        tree.GetBranch('hlt_bdt_score_ncorr0'),
+        tree.GetBranch('hlt_bdt_score_ncorr1'),
+        tree.GetBranch('hlt_bdt_score_ncorr2'),
+        tree.GetBranch('hlt_bdt_score_ncorr3'),
+        tree.GetBranch('hlt_bdt_score_ncorr4'),
+        tree.GetBranch('hlt_bdt_score_ncorr5'),
+        tree.GetBranch('hlt_bdt_score_ncorr6'),
+        tree.GetBranch('hlt_bdt_score_ncorr7'),
+        tree.GetBranch('hlt_bdt_score_ncorr8'),
+        ]
+    tree.define_object('hlt_tau', prefix='hlt_')
+
+    for event in tree:
+        tree.hlt_bdt_score_ncorr0 = evaluate_bdt(
+        tree, readers['ncorr0'], 
+        {'1p': features_pileup(features_1p, ncorr=0), 
+         'mp': features_pileup(features_mp, ncorr=0)})
+
+        tree.hlt_bdt_score_ncorr1 = evaluate_bdt(
+        tree, readers['ncorr1'], 
+        {'1p': features_pileup(features_1p, ncorr=1), 
+         'mp': features_pileup(features_mp, ncorr=1)})
+
+        tree.hlt_bdt_score_ncorr2 = evaluate_bdt(
+        tree, readers['ncorr2'], 
+        {'1p': features_pileup(features_1p, ncorr=2), 
+         'mp': features_pileup(features_mp, ncorr=2)})
+
+        tree.hlt_bdt_score_ncorr3 = evaluate_bdt(
+        tree, readers['ncorr3'], 
+        {'1p': features_pileup(features_1p, ncorr=3), 
+         'mp': features_pileup(features_mp, ncorr=3)})
+
+        tree.hlt_bdt_score_ncorr0 = evaluate_bdt(
+        tree, readers['ncorr4'], 
+        {'1p': features_pileup(features_1p, ncorr=4), 
+         'mp': features_pileup(features_mp, ncorr=4)})
+
+        tree.hlt_bdt_score_ncorr5 = evaluate_bdt(
+        tree, readers['ncorr5'], 
+        {'1p': features_pileup(features_1p, ncorr=5), 
+         'mp': features_pileup(features_mp, ncorr=5)})
+
+        tree.hlt_bdt_score_ncorr6 = evaluate_bdt(
+        tree, readers['ncorr6'], 
+        {'1p': features_pileup(features_1p, ncorr=6), 
+         'mp': features_pileup(features_mp, ncorr=6)})
+
+        tree.hlt_bdt_score_ncorr7 = evaluate_bdt(
+        tree, readers['ncorr7'], 
+        {'1p': features_pileup(features_1p, ncorr=7), 
+         'mp': features_pileup(features_mp, ncorr=7)})
+
+        tree.hlt_bdt_score_ncorr8 = evaluate_bdt(
+        tree, readers['ncorr8'], 
+        {'1p': features_pileup(features_1p, ncorr=8), 
+         'mp': features_pileup(features_mp, ncorr=8)})
+
+        for branch in branches:
+            branch.Fill()
+    tree.SetEntries(-1)
+
+class Job(Process):
+    def __init__(self, filename):
+        super(Job, self).__init__()
+        self.filename = filename
+
+    def run(self):
+        filename = self.filename
+        path, name = os.path.split(filename)
+        # copy to new file
+        output = os.path.join(path, 'weighted.ncorr.' + name)
+        if os.path.exists(output):
+            return 
+        log.info("copying {0} to {1} ...".format(filename, output))
+        shutil.copy(filename, output)
+        with root_open(output, 'UPDATE') as file:
+            tree = file.tau
+            if 'hlt_bdt_score_ncorr0' in tree:
+                log.info("scores already exist in {0} ...".format(output))
+                return
+            log.info("adding bdt scores to {0} ...".format(output))
+            add_bdt_scores(tree)
+            tree.Write(tree.name, ROOT.TObject.kOverwrite)
+
+
+if __name__ == '__main__':
+    from rootpy.extern.argparse import ArgumentParser
+
+    parser = ArgumentParser()
+    parser.add_argument('files', nargs='+')
+    args = parser.parse_args()
+
+    from tauperf.jobs import run_pool
+    jobs = [Job(f) for f in args.files]
+    run_pool(jobs, n_jobs=-1)
+
+
