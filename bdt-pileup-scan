@@ -76,6 +76,7 @@ if __name__ == '__main__':
 
     jobs = []
     for ncorr in xrange(len(features_1p) + 1):
+        print ncorr
         clses = classifiers(Category_1P_HLT, features_1p, ncorr=ncorr)
         jobs.append(Job(clses[0]))
         jobs.append(Job(clses[1]))

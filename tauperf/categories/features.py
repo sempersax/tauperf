@@ -31,13 +31,13 @@ features_1p_pileup_corrected = [
     # 'trkAvgDist',
     'InnerTrkAvgDist_pileup_corrected',
     'etOverPtLeadTrk_pileup_corrected',
-    'ipSigLeadTrk_BS',
+    'AbsipSigLeadTrk_BS_pileup_corrected',
     'SumPtTrkFrac_pileup_corrected',
     # 'nwidetracks',
-    'ChPiEMEOverCaloEME',
+    'ChPiEMEOverCaloEME_pileup_corrected',
     'EMPOverTrkSysP_pileup_corrected',
     'centFrac_pileup_corrected',
-    'approx_ptRatio',
+    'approx_ptRatio_pileup_corrected',
     # 'approx_vistau_m',
 ]
 

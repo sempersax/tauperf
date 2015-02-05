@@ -1,30 +1,31 @@
 Ztautau:
-  dirs: [group.phys-higgs.mc14_13TeV.147408.PowhegPythia8_AZNLO_Ztautau.merge.AOD.e3059_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11264511,
-    group.phys-higgs.mc14_13TeV.147408.PowhegPythia8_AZNLO_Ztautau.merge.AOD.e3059_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11005809,
-    group.phys-higgs.mc14_13TeV.147408.PowhegPythia8_AZNLO_Ztautau.merge.AOD.e3059_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11029038,
-    group.phys-higgs.mc14_13TeV.147408.PowhegPythia8_AZNLO_Ztautau.merge.AOD.e3059_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11004702,
-    group.phys-higgs.mc14_13TeV.147408.PowhegPythia8_AZNLO_Ztautau.merge.AOD.e3059_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11004616,
-    group.phys-higgs.mc14_13TeV.147408.PowhegPythia8_AZNLO_Ztautau.merge.AOD.e3059_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.10959318,
-    group.phys-higgs.mc14_13TeV.147408.PowhegPythia8_AZNLO_Ztautau.merge.AOD.e3059_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11004681,
-    group.phys-higgs.mc14_13TeV.147408.PowhegPythia8_AZNLO_Ztautau.merge.AOD.e3059_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11005868,
-    group.phys-higgs.mc14_13TeV.147408.PowhegPythia8_AZNLO_Ztautau.merge.AOD.e3059_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11004738,
-    group.phys-higgs.mc14_13TeV.147408.PowhegPythia8_AZNLO_Ztautau.merge.AOD.e3059_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11005889,
-    group.phys-higgs.mc14_13TeV.147408.PowhegPythia8_AZNLO_Ztautau.merge.AOD.e3059_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11004674,
-    group.phys-higgs.mc14_13TeV.147408.PowhegPythia8_AZNLO_Ztautau.merge.AOD.e3059_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11004660]
+  dirs: [group.phys-higgs.mc14_13TeV.147408.PowPy8_AZNLO_Ztautau.merge.AOD.e3059_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16595384,
+    group.phys-higgs.mc14_13TeV.147408.PowPy8_AZNLO_Ztautau.merge.AOD.e3059_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16608893,
+    group.phys-higgs.mc14_13TeV.147408.PowPy8_AZNLO_Ztautau.merge.AOD.e3059_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16608900,
+    group.phys-higgs.mc14_13TeV.147408.PowPy8_AZNLO_Ztautau.merge.AOD.e3059_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.17032711,
+    group.phys-higgs.mc14_13TeV.147408.PowPy8_AZNLO_Ztautau.merge.AOD.e3059_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16669984,
+    group.phys-higgs.mc14_13TeV.147408.PowPy8_AZNLO_Ztautau.merge.AOD.e3059_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.17032719,
+    group.phys-higgs.mc14_13TeV.147408.PowPy8_AZNLO_Ztautau.merge.AOD.e3059_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16610719,
+    group.phys-higgs.mc14_13TeV.147408.PowPy8_AZNLO_Ztautau.merge.AOD.e3059_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16609407,
+    group.phys-higgs.mc14_13TeV.147408.PowPy8_AZNLO_Ztautau.merge.AOD.e3059_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.17032729,
+    group.phys-higgs.mc14_13TeV.147408.PowPy8_AZNLO_Ztautau.merge.AOD.e3059_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16608842,
+    group.phys-higgs.mc14_13TeV.147408.PowPy8_AZNLO_Ztautau.merge.AOD.e3059_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16608863,
+    group.phys-higgs.mc14_13TeV.147408.PowPy8_AZNLO_Ztautau.merge.AOD.e3059_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.17032707]
   dyrange: null
-  gen: PowhegPythia8
+  gen: PowPy8
   id: '147408'
   pdf: AZNLO
   prefix: group.phys-higgs
   sample: Ztautau
   skim: tau_trigger
-  suffix: [OUT.11264511, OUT.11005809, OUT.11029038, OUT.11004702, OUT.11004616, OUT.10959318,
-    OUT.11004681, OUT.11005868, OUT.11004738, OUT.11005889, OUT.11004674, OUT.11004660]
+  suffix: [OUT.16595384, OUT.16608893, OUT.16608900, OUT.17032711, OUT.16669984, OUT.17032719,
+    OUT.16610719, OUT.16609407, OUT.17032729, OUT.16608842, OUT.16608863, OUT.17032707]
   tag: e3059_s1982_s2008_r5787_r5853
   type: mc14_13TeV
-  version: '7'
+  version: '10'
 Ztautau_1000M1250:
-  dirs: [group.phys-higgs.mc14_13TeV.187456.PowPy8_AU2CT10_Ztautau_1000M1250.merge.AOD.e3101_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.12655435]
+  dirs: [group.phys-higgs.mc14_13TeV.187456.PowPy8_AU2CT10_Ztautau_1000M1250.merge.AOD.e3101_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16623688,
+    group.phys-higgs.mc14_13TeV.187456.PowPy8_AU2CT10_Ztautau_1000M1250.merge.AOD.e3101_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16595654]
   dyrange: 1000M1250
   gen: PowPy8
   id: '187456'
@@ -32,12 +33,12 @@ Ztautau_1000M1250:
   prefix: group.phys-higgs
   sample: Ztautau
   skim: tau_trigger
-  suffix: OUT.12655435
+  suffix: [OUT.16623688, OUT.16595654]
   tag: e3101_s1982_s2008_r5787_r5853
   type: mc14_13TeV
-  version: '7'
+  version: '10'
 Ztautau_1250M1500:
-  dirs: [group.phys-higgs.mc14_13TeV.187457.PowPy8_AU2CT10_Ztautau_1250M1500.merge.AOD.e3119_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.12655454]
+  dirs: [group.phys-higgs.mc14_13TeV.187457.PowPy8_AU2CT10_Ztautau_1250M1500.merge.AOD.e3119_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16595727]
   dyrange: 1250M1500
   gen: PowPy8
   id: '187457'
@@ -45,13 +46,14 @@ Ztautau_1250M1500:
   prefix: group.phys-higgs
   sample: Ztautau
   skim: tau_trigger
-  suffix: OUT.12655454
+  suffix: OUT.16595727
   tag: e3119_s1982_s2008_r5787_r5853
   type: mc14_13TeV
-  version: '7'
+  version: '10'
 Ztautau_1500M1750:
-  dirs: [group.phys-higgs.mc14_13TeV.187458.PowPy8_AU2CT10_Ztautau_1500M1750.merge.AOD.e3119_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.12655488,
-    group.phys-higgs.mc14_13TeV.187458.PowPy8_AU2CT10_Ztautau_1500M1750.merge.AOD.e3119_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.12712619]
+  dirs: [group.phys-higgs.mc14_13TeV.187458.PowPy8_AU2CT10_Ztautau_1500M1750.merge.AOD.e3119_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16767673,
+    group.phys-higgs.mc14_13TeV.187458.PowPy8_AU2CT10_Ztautau_1500M1750.merge.AOD.e3119_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16595731,
+    group.phys-higgs.mc14_13TeV.187458.PowPy8_AU2CT10_Ztautau_1500M1750.merge.AOD.e3119_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16751561]
   dyrange: 1500M1750
   gen: PowPy8
   id: '187458'
@@ -59,26 +61,25 @@ Ztautau_1500M1750:
   prefix: group.phys-higgs
   sample: Ztautau
   skim: tau_trigger
-  suffix: [OUT.12655488, OUT.12712619]
+  suffix: [OUT.16767673, OUT.16595731, OUT.16751561]
   tag: e3119_s1982_s2008_r5787_r5853
   type: mc14_13TeV
-  version: '7'
-Ztautau_180M250:
-  dirs: [group.phys-higgs.mc14_13TeV.187451.PowPy8_AU2CT10_Ztautau_180M250.merge.AOD.e3101_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.12757821,
-    group.phys-higgs.mc14_13TeV.187451.PowPy8_AU2CT10_Ztautau_180M250.merge.AOD.e3101_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.12655329]
-  dyrange: 180M250
+  version: '10'
+Ztautau_1750M2000:
+  dirs: [group.phys-higgs.mc14_13TeV.187459.PowPy8_AU2CT10_Ztautau_1750M2000.merge.AOD.e3119_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16601368]
+  dyrange: 1750M2000
   gen: PowPy8
-  id: '187451'
+  id: '187459'
   pdf: AU2CT10
   prefix: group.phys-higgs
   sample: Ztautau
   skim: tau_trigger
-  suffix: [OUT.12757821, OUT.12655329]
-  tag: e3101_s1982_s2008_r5787_r5853
+  suffix: OUT.16601368
+  tag: e3119_s1982_s2008_r5787_r5853
   type: mc14_13TeV
-  version: '7'
+  version: '10'
 Ztautau_2000M2250:
-  dirs: [group.phys-higgs.mc14_13TeV.187460.PowPy8_AU2CT10_Ztautau_2000M2250.merge.AOD.e3119_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.12655575]
+  dirs: [group.phys-higgs.mc14_13TeV.187460.PowPy8_AU2CT10_Ztautau_2000M2250.merge.AOD.e3119_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16595718]
   dyrange: 2000M2250
   gen: PowPy8
   id: '187460'
@@ -86,12 +87,13 @@ Ztautau_2000M2250:
   prefix: group.phys-higgs
   sample: Ztautau
   skim: tau_trigger
-  suffix: OUT.12655575
+  suffix: OUT.16595718
   tag: e3119_s1982_s2008_r5787_r5853
   type: mc14_13TeV
-  version: '7'
+  version: '10'
 Ztautau_2250M2500:
-  dirs: [group.phys-higgs.mc14_13TeV.187461.PowPy8_AU2CT10_Ztautau_2250M2500.merge.AOD.e3119_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.12655619]
+  dirs: [group.phys-higgs.mc14_13TeV.187461.PowPy8_AU2CT10_Ztautau_2250M2500.merge.AOD.e3119_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16635873,
+    group.phys-higgs.mc14_13TeV.187461.PowPy8_AU2CT10_Ztautau_2250M2500.merge.AOD.e3119_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16595822]
   dyrange: 2250M2500
   gen: PowPy8
   id: '187461'
@@ -99,12 +101,12 @@ Ztautau_2250M2500:
   prefix: group.phys-higgs
   sample: Ztautau
   skim: tau_trigger
-  suffix: OUT.12655619
+  suffix: [OUT.16635873, OUT.16595822]
   tag: e3119_s1982_s2008_r5787_r5853
   type: mc14_13TeV
-  version: '7'
+  version: '10'
 Ztautau_2500M2750:
-  dirs: [group.phys-higgs.mc14_13TeV.187462.PowPy8_AU2CT10_Ztautau_2500M2750.merge.AOD.e3119_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.12655668]
+  dirs: [group.phys-higgs.mc14_13TeV.187462.PowPy8_AU2CT10_Ztautau_2500M2750.merge.AOD.e3119_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16595885]
   dyrange: 2500M2750
   gen: PowPy8
   id: '187462'
@@ -112,12 +114,13 @@ Ztautau_2500M2750:
   prefix: group.phys-higgs
   sample: Ztautau
   skim: tau_trigger
-  suffix: OUT.12655668
+  suffix: OUT.16595885
   tag: e3119_s1982_s2008_r5787_r5853
   type: mc14_13TeV
-  version: '7'
+  version: '10'
 Ztautau_250M400:
-  dirs: [group.phys-higgs.mc14_13TeV.187452.PowPy8_AU2CT10_Ztautau_250M400.merge.AOD.e3101_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.12655359]
+  dirs: [group.phys-higgs.mc14_13TeV.187452.PowPy8_AU2CT10_Ztautau_250M400.merge.AOD.e3101_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16632692,
+    group.phys-higgs.mc14_13TeV.187452.PowPy8_AU2CT10_Ztautau_250M400.merge.AOD.e3101_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16595549]
   dyrange: 250M400
   gen: PowPy8
   id: '187452'
@@ -125,12 +128,13 @@ Ztautau_250M400:
   prefix: group.phys-higgs
   sample: Ztautau
   skim: tau_trigger
-  suffix: OUT.12655359
+  suffix: [OUT.16632692, OUT.16595549]
   tag: e3101_s1982_s2008_r5787_r5853
   type: mc14_13TeV
-  version: '7'
+  version: '10'
 Ztautau_2750M3000:
-  dirs: [group.phys-higgs.mc14_13TeV.187463.PowPy8_AU2CT10_Ztautau_2750M3000.merge.AOD.e3119_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.12655699]
+  dirs: [group.phys-higgs.mc14_13TeV.187463.PowPy8_AU2CT10_Ztautau_2750M3000.merge.AOD.e3119_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16625654,
+    group.phys-higgs.mc14_13TeV.187463.PowPy8_AU2CT10_Ztautau_2750M3000.merge.AOD.e3119_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16595889]
   dyrange: 2750M3000
   gen: PowPy8
   id: '187463'
@@ -138,13 +142,13 @@ Ztautau_2750M3000:
   prefix: group.phys-higgs
   sample: Ztautau
   skim: tau_trigger
-  suffix: OUT.12655699
+  suffix: [OUT.16625654, OUT.16595889]
   tag: e3119_s1982_s2008_r5787_r5853
   type: mc14_13TeV
-  version: '7'
+  version: '10'
 Ztautau_3000M:
-  dirs: [group.phys-higgs.mc14_13TeV.187464.PowPy8_AU2CT10_Ztautau_3000M.merge.AOD.e3119_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.12655731,
-    group.phys-higgs.mc14_13TeV.187464.PowPy8_AU2CT10_Ztautau_3000M.merge.AOD.e3119_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.12678121]
+  dirs: [group.phys-higgs.mc14_13TeV.187464.PowPy8_AU2CT10_Ztautau_3000M.merge.AOD.e3119_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16595906,
+    group.phys-higgs.mc14_13TeV.187464.PowPy8_AU2CT10_Ztautau_3000M.merge.AOD.e3119_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16751659]
   dyrange: 3000M
   gen: PowPy8
   id: '187464'
@@ -152,12 +156,14 @@ Ztautau_3000M:
   prefix: group.phys-higgs
   sample: Ztautau
   skim: tau_trigger
-  suffix: [OUT.12655731, OUT.12678121]
+  suffix: [OUT.16595906, OUT.16751659]
   tag: e3119_s1982_s2008_r5787_r5853
   type: mc14_13TeV
-  version: '7'
+  version: '10'
 Ztautau_400M600:
-  dirs: [group.phys-higgs.mc14_13TeV.187453.PowPy8_AU2CT10_Ztautau_400M600.merge.AOD.e3101_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.12655375]
+  dirs: [group.phys-higgs.mc14_13TeV.187453.PowPy8_AU2CT10_Ztautau_400M600.merge.AOD.e3101_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16595576,
+    group.phys-higgs.mc14_13TeV.187453.PowPy8_AU2CT10_Ztautau_400M600.merge.AOD.e3101_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16683469,
+    group.phys-higgs.mc14_13TeV.187453.PowPy8_AU2CT10_Ztautau_400M600.merge.AOD.e3101_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16668427]
   dyrange: 400M600
   gen: PowPy8
   id: '187453'
@@ -165,12 +171,26 @@ Ztautau_400M600:
   prefix: group.phys-higgs
   sample: Ztautau
   skim: tau_trigger
-  suffix: OUT.12655375
+  suffix: [OUT.16595576, OUT.16683469, OUT.16668427]
   tag: e3101_s1982_s2008_r5787_r5853
   type: mc14_13TeV
-  version: '7'
+  version: '10'
+Ztautau_600M800:
+  dirs: [group.phys-higgs.mc14_13TeV.187454.PowPy8_AU2CT10_Ztautau_600M800.merge.AOD.e3101_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16601153]
+  dyrange: 600M800
+  gen: PowPy8
+  id: '187454'
+  pdf: AU2CT10
+  prefix: group.phys-higgs
+  sample: Ztautau
+  skim: tau_trigger
+  suffix: OUT.16601153
+  tag: e3101_s1982_s2008_r5787_r5853
+  type: mc14_13TeV
+  version: '10'
 Ztautau_800M1000:
-  dirs: [group.phys-higgs.mc14_13TeV.187455.PowPy8_AU2CT10_Ztautau_800M1000.merge.AOD.e3101_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.12655403]
+  dirs: [group.phys-higgs.mc14_13TeV.187455.PowPy8_AU2CT10_Ztautau_800M1000.merge.AOD.e3101_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16595673,
+    group.phys-higgs.mc14_13TeV.187455.PowPy8_AU2CT10_Ztautau_800M1000.merge.AOD.e3101_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.17033113]
   dyrange: 800M1000
   gen: PowPy8
   id: '187455'
@@ -178,20 +198,21 @@ Ztautau_800M1000:
   prefix: group.phys-higgs
   sample: Ztautau
   skim: tau_trigger
-  suffix: OUT.12655403
+  suffix: [OUT.16595673, OUT.17033113]
   tag: e3101_s1982_s2008_r5787_r5853
   type: mc14_13TeV
-  version: '7'
+  version: '10'
 jetjet_JZ0W:
-  dirs: [group.phys-higgs.mc14_13TeV.147910.Pythia8_AU2CT10_jetjet_JZ0W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11029762,
-    group.phys-higgs.mc14_13TeV.147910.Pythia8_AU2CT10_jetjet_JZ0W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.10959584,
-    group.phys-higgs.mc14_13TeV.147910.Pythia8_AU2CT10_jetjet_JZ0W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11006015,
-    group.phys-higgs.mc14_13TeV.147910.Pythia8_AU2CT10_jetjet_JZ0W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11037552,
-    group.phys-higgs.mc14_13TeV.147910.Pythia8_AU2CT10_jetjet_JZ0W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11005933,
-    group.phys-higgs.mc14_13TeV.147910.Pythia8_AU2CT10_jetjet_JZ0W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11117882,
-    group.phys-higgs.mc14_13TeV.147910.Pythia8_AU2CT10_jetjet_JZ0W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11074850,
-    group.phys-higgs.mc14_13TeV.147910.Pythia8_AU2CT10_jetjet_JZ0W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11028976,
-    group.phys-higgs.mc14_13TeV.147910.Pythia8_AU2CT10_jetjet_JZ0W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11007237]
+  dirs: [group.phys-higgs.mc14_13TeV.147910.Pythia8_AU2CT10_jetjet_JZ0W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.17032762,
+    group.phys-higgs.mc14_13TeV.147910.Pythia8_AU2CT10_jetjet_JZ0W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16621298,
+    group.phys-higgs.mc14_13TeV.147910.Pythia8_AU2CT10_jetjet_JZ0W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16751323,
+    group.phys-higgs.mc14_13TeV.147910.Pythia8_AU2CT10_jetjet_JZ0W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16621291,
+    group.phys-higgs.mc14_13TeV.147910.Pythia8_AU2CT10_jetjet_JZ0W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16751333,
+    group.phys-higgs.mc14_13TeV.147910.Pythia8_AU2CT10_jetjet_JZ0W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16632581,
+    group.phys-higgs.mc14_13TeV.147910.Pythia8_AU2CT10_jetjet_JZ0W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16621966,
+    group.phys-higgs.mc14_13TeV.147910.Pythia8_AU2CT10_jetjet_JZ0W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16595358,
+    group.phys-higgs.mc14_13TeV.147910.Pythia8_AU2CT10_jetjet_JZ0W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16633467,
+    group.phys-higgs.mc14_13TeV.147910.Pythia8_AU2CT10_jetjet_JZ0W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16753119]
   dyrange: null
   gen: Pythia8
   id: '147910'
@@ -199,14 +220,18 @@ jetjet_JZ0W:
   prefix: group.phys-higgs
   sample: jetjet_JZ0W
   skim: tau_trigger
-  suffix: [OUT.11029762, OUT.10959584, OUT.11006015, OUT.11037552, OUT.11005933, OUT.11117882,
-    OUT.11074850, OUT.11028976, OUT.11007237]
+  suffix: [OUT.17032762, OUT.16621298, OUT.16751323, OUT.16621291, OUT.16751333, OUT.16632581,
+    OUT.16621966, OUT.16595358, OUT.16633467, OUT.16753119]
   tag: e2743_s1982_s2008_r5787_r5853
   type: mc14_13TeV
-  version: '7'
+  version: '10'
 jetjet_JZ1W:
-  dirs: [group.phys-higgs.mc14_13TeV.147911.Pythia8_AU2CT10_jetjet_JZ1W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11020508,
-    group.phys-higgs.mc14_13TeV.147911.Pythia8_AU2CT10_jetjet_JZ1W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.10980268]
+  dirs: [group.phys-higgs.mc14_13TeV.147911.Pythia8_AU2CT10_jetjet_JZ1W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16649035,
+    group.phys-higgs.mc14_13TeV.147911.Pythia8_AU2CT10_jetjet_JZ1W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16620824,
+    group.phys-higgs.mc14_13TeV.147911.Pythia8_AU2CT10_jetjet_JZ1W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16620860,
+    group.phys-higgs.mc14_13TeV.147911.Pythia8_AU2CT10_jetjet_JZ1W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16620864,
+    group.phys-higgs.mc14_13TeV.147911.Pythia8_AU2CT10_jetjet_JZ1W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16601165,
+    group.phys-higgs.mc14_13TeV.147911.Pythia8_AU2CT10_jetjet_JZ1W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16620819]
   dyrange: null
   gen: Pythia8
   id: '147911'
@@ -214,13 +239,16 @@ jetjet_JZ1W:
   prefix: group.phys-higgs
   sample: jetjet_JZ1W
   skim: tau_trigger
-  suffix: [OUT.11020508, OUT.10980268]
+  suffix: [OUT.16649035, OUT.16620824, OUT.16620860, OUT.16620864, OUT.16601165, OUT.16620819]
   tag: e2743_s1982_s2008_r5787_r5853
   type: mc14_13TeV
-  version: '7'
+  version: '10'
 jetjet_JZ2W:
-  dirs: [group.phys-higgs.mc14_13TeV.147912.Pythia8_AU2CT10_jetjet_JZ2W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v8_OUT.10997527,
-    group.phys-higgs.mc14_13TeV.147912.Pythia8_AU2CT10_jetjet_JZ2W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v8_OUT.11032881]
+  dirs: [group.phys-higgs.mc14_13TeV.147912.Pythia8_AU2CT10_jetjet_JZ2W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16595422,
+    group.phys-higgs.mc14_13TeV.147912.Pythia8_AU2CT10_jetjet_JZ2W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16660694,
+    group.phys-higgs.mc14_13TeV.147912.Pythia8_AU2CT10_jetjet_JZ2W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16751371,
+    group.phys-higgs.mc14_13TeV.147912.Pythia8_AU2CT10_jetjet_JZ2W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16628979,
+    group.phys-higgs.mc14_13TeV.147912.Pythia8_AU2CT10_jetjet_JZ2W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16628975]
   dyrange: null
   gen: Pythia8
   id: '147912'
@@ -228,14 +256,13 @@ jetjet_JZ2W:
   prefix: group.phys-higgs
   sample: jetjet_JZ2W
   skim: tau_trigger
-  suffix: [OUT.10997527, OUT.11032881]
+  suffix: [OUT.16595422, OUT.16660694, OUT.16751371, OUT.16628979, OUT.16628975]
   tag: e2743_s1982_s2008_r5787_r5853
   type: mc14_13TeV
-  version: '8'
+  version: '10'
 jetjet_JZ3W:
-  dirs: [group.phys-higgs.mc14_13TeV.147913.Pythia8_AU2CT10_jetjet_JZ3W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11024185,
-    group.phys-higgs.mc14_13TeV.147913.Pythia8_AU2CT10_jetjet_JZ3W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11024196,
-    group.phys-higgs.mc14_13TeV.147913.Pythia8_AU2CT10_jetjet_JZ3W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.10960301]
+  dirs: [group.phys-higgs.mc14_13TeV.147913.Pythia8_AU2CT10_jetjet_JZ3W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16597420,
+    group.phys-higgs.mc14_13TeV.147913.Pythia8_AU2CT10_jetjet_JZ3W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16623111]
   dyrange: null
   gen: Pythia8
   id: '147913'
@@ -243,12 +270,16 @@ jetjet_JZ3W:
   prefix: group.phys-higgs
   sample: jetjet_JZ3W
   skim: tau_trigger
-  suffix: [OUT.11024185, OUT.11024196, OUT.10960301]
+  suffix: [OUT.16597420, OUT.16623111]
   tag: e2743_s1982_s2008_r5787_r5853
   type: mc14_13TeV
-  version: '7'
+  version: '10'
 jetjet_JZ4W:
-  dirs: [group.phys-higgs.mc14_13TeV.147914.Pythia8_AU2CT10_jetjet_JZ4W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11916006]
+  dirs: [group.phys-higgs.mc14_13TeV.147914.Pythia8_AU2CT10_jetjet_JZ4W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16646627,
+    group.phys-higgs.mc14_13TeV.147914.Pythia8_AU2CT10_jetjet_JZ4W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16633695,
+    group.phys-higgs.mc14_13TeV.147914.Pythia8_AU2CT10_jetjet_JZ4W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16678744,
+    group.phys-higgs.mc14_13TeV.147914.Pythia8_AU2CT10_jetjet_JZ4W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16595480,
+    group.phys-higgs.mc14_13TeV.147914.Pythia8_AU2CT10_jetjet_JZ4W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.17032861]
   dyrange: null
   gen: Pythia8
   id: '147914'
@@ -256,13 +287,14 @@ jetjet_JZ4W:
   prefix: group.phys-higgs
   sample: jetjet_JZ4W
   skim: tau_trigger
-  suffix: OUT.11916006
+  suffix: [OUT.16646627, OUT.16633695, OUT.16678744, OUT.16595480, OUT.17032861]
   tag: e2743_s1982_s2008_r5787_r5853
   type: mc14_13TeV
-  version: '7'
+  version: '10'
 jetjet_JZ5W:
-  dirs: [group.phys-higgs.mc14_13TeV.147915.Pythia8_AU2CT10_jetjet_JZ5W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11012952,
-    group.phys-higgs.mc14_13TeV.147915.Pythia8_AU2CT10_jetjet_JZ5W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.10960509]
+  dirs: [group.phys-higgs.mc14_13TeV.147915.Pythia8_AU2CT10_jetjet_JZ5W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16751765,
+    group.phys-higgs.mc14_13TeV.147915.Pythia8_AU2CT10_jetjet_JZ5W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16751768,
+    group.phys-higgs.mc14_13TeV.147915.Pythia8_AU2CT10_jetjet_JZ5W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16595505]
   dyrange: null
   gen: Pythia8
   id: '147915'
@@ -270,13 +302,15 @@ jetjet_JZ5W:
   prefix: group.phys-higgs
   sample: jetjet_JZ5W
   skim: tau_trigger
-  suffix: [OUT.11012952, OUT.10960509]
+  suffix: [OUT.16751765, OUT.16751768, OUT.16595505]
   tag: e2743_s1982_s2008_r5787_r5853
   type: mc14_13TeV
-  version: '7'
+  version: '10'
 jetjet_JZ6W:
-  dirs: [group.phys-higgs.mc14_13TeV.147916.Pythia8_AU2CT10_jetjet_JZ6W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11191319,
-    group.phys-higgs.mc14_13TeV.147916.Pythia8_AU2CT10_jetjet_JZ6W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.10960694]
+  dirs: [group.phys-higgs.mc14_13TeV.147916.Pythia8_AU2CT10_jetjet_JZ6W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16664933,
+    group.phys-higgs.mc14_13TeV.147916.Pythia8_AU2CT10_jetjet_JZ6W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16629384,
+    group.phys-higgs.mc14_13TeV.147916.Pythia8_AU2CT10_jetjet_JZ6W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16596774,
+    group.phys-higgs.mc14_13TeV.147916.Pythia8_AU2CT10_jetjet_JZ6W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16629388]
   dyrange: null
   gen: Pythia8
   id: '147916'
@@ -284,13 +318,13 @@ jetjet_JZ6W:
   prefix: group.phys-higgs
   sample: jetjet_JZ6W
   skim: tau_trigger
-  suffix: [OUT.11191319, OUT.10960694]
+  suffix: [OUT.16664933, OUT.16629384, OUT.16596774, OUT.16629388]
   tag: e2743_s1982_s2008_r5787_r5853
   type: mc14_13TeV
-  version: '7'
+  version: '10'
 jetjet_JZ7W:
-  dirs: [group.phys-higgs.mc14_13TeV.147917.Pythia8_AU2CT10_jetjet_JZ7W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11009212,
-    group.phys-higgs.mc14_13TeV.147917.Pythia8_AU2CT10_jetjet_JZ7W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.10961104]
+  dirs: [group.phys-higgs.mc14_13TeV.147917.Pythia8_AU2CT10_jetjet_JZ7W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16595484,
+    group.phys-higgs.mc14_13TeV.147917.Pythia8_AU2CT10_jetjet_JZ7W.merge.AOD.e2743_s1982_s2008_r5787_r5853.tau_trigger.v10_OUT.16629420]
   dyrange: null
   gen: Pythia8
   id: '147917'
@@ -298,37 +332,7 @@ jetjet_JZ7W:
   prefix: group.phys-higgs
   sample: jetjet_JZ7W
   skim: tau_trigger
-  suffix: [OUT.11009212, OUT.10961104]
+  suffix: [OUT.16595484, OUT.16629420]
   tag: e2743_s1982_s2008_r5787_r5853
   type: mc14_13TeV
-  version: '7'
-perf_JF17:
-  dirs: [group.phys-higgs.mc14_13TeV.129160.Pythia8_AU2CTEQ6L1_perf_JF17.merge.AOD.e3084_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11003969,
-    group.phys-higgs.mc14_13TeV.129160.Pythia8_AU2CTEQ6L1_perf_JF17.merge.AOD.e3084_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11026478,
-    group.phys-higgs.mc14_13TeV.129160.Pythia8_AU2CTEQ6L1_perf_JF17.merge.AOD.e3084_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11348988,
-    group.phys-higgs.mc14_13TeV.129160.Pythia8_AU2CTEQ6L1_perf_JF17.merge.AOD.e3084_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11004065,
-    group.phys-higgs.mc14_13TeV.129160.Pythia8_AU2CTEQ6L1_perf_JF17.merge.AOD.e3084_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11003878,
-    group.phys-higgs.mc14_13TeV.129160.Pythia8_AU2CTEQ6L1_perf_JF17.merge.AOD.e3084_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11005193,
-    group.phys-higgs.mc14_13TeV.129160.Pythia8_AU2CTEQ6L1_perf_JF17.merge.AOD.e3084_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11029594,
-    group.phys-higgs.mc14_13TeV.129160.Pythia8_AU2CTEQ6L1_perf_JF17.merge.AOD.e3084_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11005242,
-    group.phys-higgs.mc14_13TeV.129160.Pythia8_AU2CTEQ6L1_perf_JF17.merge.AOD.e3084_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.12612968,
-    group.phys-higgs.mc14_13TeV.129160.Pythia8_AU2CTEQ6L1_perf_JF17.merge.AOD.e3084_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11004062,
-    group.phys-higgs.mc14_13TeV.129160.Pythia8_AU2CTEQ6L1_perf_JF17.merge.AOD.e3084_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11003867,
-    group.phys-higgs.mc14_13TeV.129160.Pythia8_AU2CTEQ6L1_perf_JF17.merge.AOD.e3084_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11004068,
-    group.phys-higgs.mc14_13TeV.129160.Pythia8_AU2CTEQ6L1_perf_JF17.merge.AOD.e3084_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11003937,
-    group.phys-higgs.mc14_13TeV.129160.Pythia8_AU2CTEQ6L1_perf_JF17.merge.AOD.e3084_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.10961155,
-    group.phys-higgs.mc14_13TeV.129160.Pythia8_AU2CTEQ6L1_perf_JF17.merge.AOD.e3084_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11004009,
-    group.phys-higgs.mc14_13TeV.129160.Pythia8_AU2CTEQ6L1_perf_JF17.merge.AOD.e3084_s1982_s2008_r5787_r5853.tau_trigger.v7_OUT.11005377]
-  dyrange: null
-  gen: Pythia8
-  id: '129160'
-  pdf: AU2CTEQ6L1
-  prefix: group.phys-higgs
-  sample: perf_JF17
-  skim: tau_trigger
-  suffix: [OUT.11003969, OUT.11026478, OUT.11348988, OUT.11004065, OUT.11003878, OUT.11005193,
-    OUT.11029594, OUT.11005242, OUT.12612968, OUT.11004062, OUT.11003867, OUT.11004068,
-    OUT.11003937, OUT.10961155, OUT.11004009, OUT.11005377]
-  tag: e3084_s1982_s2008_r5787_r5853
-  type: mc14_13TeV
-  version: '7'
+  version: '10'

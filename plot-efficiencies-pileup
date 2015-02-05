@@ -17,7 +17,7 @@ style.SetPadRightMargin(0.10)
 style.cd()
 
 tau = Tau(ntuple_path=os.path.join(UNMERGED_NTUPLE_PATH, 'merge_pileup'))
-vars = {'mu': VARIABLES['mu'], 'npv': VARIABLES['npv']}
+vars = {'averageintpercrossing': VARIABLES['averageintpercrossing'], 'npv': VARIABLES['npv']}
 
 ncorrs = [0, 1, 2, 3, 5, 6, 7, 8]
 effs_dict = {}
@@ -27,14 +27,14 @@ for var in vars:
 category = Category_1P_HLT
 cut_val = CUT_1P
 
+field_hist = tau.get_field_hist(vars, 'hlt')
+field_hist_den = tau.get_hist_array(field_hist, category)
 for ncorr in ncorrs:
     cut = 'hlt_bdt_score_ncorr{0}>={1}'.format(ncorr, cut_val)
-    field_hist = tau.get_field_hist(vars, 'hlt')
-    field_hist = tau.get_hist_array(field_hist, category)
     field_hist_cut = tau.get_hist_array(field_hist, category, cut)
     for var in field_hist:
-        eff_s = Efficiency(field_hist_cut[var], field_hist[var])
-        eff_s.title = '{0} corrected variables'.format(ncorr)
+        eff_s = Efficiency(field_hist_cut[var], field_hist_den[var])
+        eff_s.title = 'ncorr = {0}'.format(ncorr)
         effs_dict[var].append(eff_s)
 
 for var in vars:        

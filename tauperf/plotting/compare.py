@@ -282,16 +282,16 @@ def draw_efficiencies(
         10, 
         effs[0].painted_graph.xaxis.min,
         effs[0].painted_graph.xaxis.max)
+    h.yaxis.SetRangeUser(0.0, 1.1)
     h.Draw('HIST')
+    h.yaxis.title = 'Efficiency'
+    h.xaxis.title = xtitle
 
-    colors = ['black', 'red', 'blue', 'green', 'purple']
+    colors = ['black', 'red', 'orange', 'blue', 'green', 'purple', 'yellow', 'pink',]
     if len(effs) > len(colors):
         colors = len(effs) * colors
     for eff, col in zip(effs, colors):
         eff.color = col
-        eff.painted_graph.yaxis.SetRangeUser(0, 1.10)
-        eff.painted_graph.yaxis.title = 'Efficiency'
-        eff.painted_graph.xaxis.title = xtitle
         eff.color = col
         eff.painted_graph.legendstyle = 'l'
         eff.painted_graph.Draw('SAMEP')

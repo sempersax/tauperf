@@ -210,9 +210,20 @@ def add_bdt_scores(tree):
         tree, readers['ncorr8'], 
         {'1p': features_pileup(features_1p, ncorr=8), 
          'mp': features_pileup(features_mp, ncorr=8)})
+        log.info(20 * '*')
+        log.info(tree.hlt_bdt_score_ncorr0)
+        log.info(tree.hlt_bdt_score_ncorr1)
+        log.info(tree.hlt_bdt_score_ncorr2)
+        log.info(tree.hlt_bdt_score_ncorr3)
+        log.info(tree.hlt_bdt_score_ncorr4)
+        log.info(tree.hlt_bdt_score_ncorr5)
+        log.info(tree.hlt_bdt_score_ncorr6)
+        log.info(tree.hlt_bdt_score_ncorr7)
+        log.info(tree.hlt_bdt_score_ncorr8)
 
         for branch in branches:
             branch.Fill()
+        
     tree.SetEntries(-1)
 
 class Job(Process):

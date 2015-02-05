@@ -4,7 +4,7 @@ import copy
 import yaml
 import re
 
-from . import NTUPLE_PATH
+from . import UNMERGED_NTUPLE_PATH
 from . import log; log = log[__name__]
 
 log = logging.getLogger(os.path.basename(__file__))
@@ -30,8 +30,8 @@ def create_samples():
     KEYS = []
     
 
-    for d in os.listdir(NTUPLE_PATH):
-        abs_dir = os.path.join(NTUPLE_PATH, d)
+    for d in os.listdir(UNMERGED_NTUPLE_PATH):
+        abs_dir = os.path.join(UNMERGED_NTUPLE_PATH, d)
         if os.path.isdir(abs_dir):
             match = re.match(PATTERN, d)
             if match:

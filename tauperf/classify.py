@@ -46,6 +46,8 @@ class Classifier(TMVA.Factory):
         else:
             self.split_cut = Cut(split_cut)
             
+
+
     def set_variables(self, category, prefix):
         if self.features is None:
             self.features = category.features
