@@ -27,7 +27,7 @@ VARIABLES = {
         },
 
     'npv': {
-        'name': 'npv',
+        'name': 'good_npv',
         'root': 'Number of Primary Vertices',
         'type': 'i',
         'bins': 20,
@@ -270,7 +270,7 @@ VARIABLES = {
 
     'SumPtTrkFrac_pileup_corrected': {
         'name': 'SumPtTrkFrac_pileup_corrected',
-        'root': '1 - p_{T}^{trk in 0.2} / p_{T}^{trk in 0.4}',
+        'root': '1 - p_{T}^{trk in 0.2} / p_{T}^{trk in 0.4} (PU corrected)',
         'type': 'f',
         'prefix': ('off', 'hlt'),
         'bins' : 20,
@@ -288,7 +288,7 @@ VARIABLES = {
     
     'ChPiEMEOverCaloEME_pileup_corrected': {
         'name': 'ChPiEMEOverCaloEME_pileup_corrected',
-        'root': 'E_{#pi^{#pm}}/E_{calo}',
+        'root': 'E_{#pi^{#pm}}/E_{calo} (PU corrected)',
         'type': 'f',
         'prefix': ('hlt'),
         'bins': 20,
@@ -306,7 +306,7 @@ VARIABLES = {
     
     'etOverPtLeadTrk_pileup_corrected': {
         'name': 'etOverPtLeadTrk_pileup_corrected',
-        'root': '1./f_{track}',
+        'root': '1./f_{track} (PU corrected)',
         'type': 'f',
         'prefix': ('off', 'hlt'),
         'bins': 20,
@@ -324,7 +324,7 @@ VARIABLES = {
 
     'EMPOverTrkSysP_pileup_corrected': {
         'name' : 'EMPOverTrkSysP_pileup_corrected',
-        'root': 'p_{EM}/p_{tracks}',
+        'root': 'p_{EM}/p_{tracks} (PU corrected)',
         'prefix': ('hlt'),
         'type': 'f',
         'bins': 20,
@@ -369,7 +369,7 @@ VARIABLES = {
 
     'AbsipSigLeadTrk_BS_pileup_corrected': {
         'name' : 'AbsipSigLeadTrk_BS_pileup_corrected',
-        'root': '|S_{lead track} (Beamspot)|',
+        'root': '|S_{lead track} (Beamspot)|  (PU corrected)',
         'type': 'f',
         'prefix': ('hlt'),
         'bins': 20,
@@ -387,7 +387,7 @@ VARIABLES = {
     
     'dRmax_pileup_corrected': {
         'name' : 'dRmax_pileup_corrected',
-        'root': '#DeltaR_{max}',
+        'root': '#DeltaR_{max} (PU corrected)',
         'type': 'f',
         'prefix': ('off', 'hlt'),
         'bins': 20,
@@ -405,7 +405,7 @@ VARIABLES = {
     
     'trFlightPathSig_pileup_corrected': {
         'name' : 'trFlightPathSig_pileup_corrected',
-        'root': 'S_{T}^{flight}',
+        'root': 'S_{T}^{flight} (PU corrected)',
         'type': 'f',
         'prefix': ('off', 'hlt'),
         'bins': 20,
@@ -425,7 +425,7 @@ VARIABLES = {
 
     'massTrkSys_pileup_corrected': {
         'name' : 'massTrkSys',
-        'root': 'm_{track}',
+        'root': 'm_{track} (PU corrected)',
         'type': 'f',
         'prefix': ('off', 'hlt'),
         'bins': 20,
@@ -445,7 +445,7 @@ VARIABLES = {
 
     'approx_ptRatio_pileup_corrected': {
         'name' : 'approx_ptRatio_pileup_corrected',
-        'root': 'Approximated p_{T} ratio',
+        'root': 'Approximated p_{T} ratio (PU corrected)',
         'type': 'f',
         'prefix': ('off', 'hlt'),
         'bins': 20,
@@ -465,7 +465,7 @@ VARIABLES = {
 
     'approx_vistau_m_pileup_corrected': {
         'name' : 'approx_vistau_m_pileup_corrected',
-        'root': 'Approximated m_{#tau}^{vis}',
+        'root': 'Approximated m_{#tau}^{vis} (PU corrected)',
         'type': 'f',
         'prefix': ('off', 'hlt'),
         'bins': 20,

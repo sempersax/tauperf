@@ -64,7 +64,7 @@ if __name__ == '__main__':
                 input_list = ' '.join(all_files)
                 
                 input_chunks = [
-                    filter(lambda a: a is not None, chunk) for chunk in grouper(all_files, 999)
+                    filter(lambda a: a is not None, chunk) for chunk in grouper(all_files, 500)
                     ] 
                 chunk_names = [
                     'chunk_{0}_{1}'.format(key, i) for i, _ in enumerate(input_chunks)

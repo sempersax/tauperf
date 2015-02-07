@@ -37,7 +37,7 @@ if __name__ == "__main__":
         else:
             raise RuntimeError('Wrong key (see variables.py)')
 
-    ana = Analysis(use_drellyan=args.use_dy, ntuple_path=os.path.join(UNMERGED_NTUPLE_PATH, 'merge'))
+    ana = Analysis(use_drellyan=args.use_dy, ntuple_path=os.path.join(UNMERGED_NTUPLE_PATH, 'merge_pileup'))
     for cat in ana.iter_categories(args.categories):
         hist_samples_array = ana.get_hist_samples_array(vars, 'hlt', cat, cuts=cuts)
         for field, hists_dict in hist_samples_array.items():

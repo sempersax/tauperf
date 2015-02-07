@@ -86,7 +86,7 @@ class Classifier(TMVA.Factory):
 
     def train(self, **kwargs):
         self.set_variables(self.category, self.prefix)
-        ana = Analysis(ntuple_path=os.path.join(UNMERGED_NTUPLE_PATH, 'merge_corr'))
+        ana = Analysis(ntuple_path=os.path.join(UNMERGED_NTUPLE_PATH, 'merge_pileup'))
         tau = ana.tau
         jet = ana.jet
         self.sig_cut = tau.cuts(self.category) & self.split_cut

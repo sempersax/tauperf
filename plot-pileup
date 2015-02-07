@@ -2,6 +2,7 @@
 # python imports
 import os
 import re
+import logging
 # root/rootpy imports
 import ROOT
 from rootpy.plotting import Canvas, Graph, Legend
@@ -14,78 +15,81 @@ from tauperf.analysis import Analysis, VAR_PATTERN
 from tauperf.variables import VARIABLES
 from tauperf.categories import Category_1P_HLT, Category_MP_HLT
 from tauperf import UNMERGED_NTUPLE_PATH
+
+log = logging.getLogger(os.path.basename(__file__))
+
 set_style('ATLAS', shape='rect')
 
-ana = Analysis(ntuple_path=os.path.join(UNMERGED_NTUPLE_PATH, 'merge_corr'))
+ana = Analysis(ntuple_path=os.path.join(UNMERGED_NTUPLE_PATH, 'merge_pileup'))
 MU_BINS = [(0, 5), (5, 10), (10, 15), (15, 20), (20, 25), (25, 30), (30, 35), (35, 40)]
 
-def mean_vs_npv(keys, category):
+def mean_vs_npv(keys, category, pileup_corr=False):
     if not isinstance(keys, (list, tuple)):
         keys = [keys]
     vars = {}
     graph_sig = {}
-    graph_bkg = {}
     graph_sig_rms = {}
-    graph_bkg_rms = {}
     for key in keys:
+        if pileup_corr:
+            key = key + '_pileup_corrected'
         if key in VARIABLES:
             vars[key] = VARIABLES[key]
             graph_sig[key] = Graph(len(MU_BINS))
-            graph_bkg[key] = Graph(len(MU_BINS))
             graph_sig_rms[key] = Graph(len(MU_BINS))
-            graph_bkg_rms[key] = Graph(len(MU_BINS))
     for i, bin in enumerate(MU_BINS):
         npv_cut = Cut('{0} < averageintpercrossing < {1}'.format(bin[0], bin[1]))
-        hist_samples = ana.get_hist_samples_array(vars, 'hlt', category, npv_cut)
+        hist_samples = ana.tau.get_field_hist(vars, 'hlt')
+        hist_samples = ana.tau.get_hist_array(hist_samples, category, npv_cut)
         for field, hists in hist_samples.items():
+            log.info(field)
+            log.info(hists)
+
+        for field, hist in hist_samples.items():
             match = re.match(VAR_PATTERN, field)
             graph_sig[match.group('var')].SetPoint(
-                i, sum(bin) / 2., hists['tau'].GetMean())
+                i, sum(bin) / 2., hist.GetMean())
             graph_sig[match.group('var')].SetPointError(
             i, (bin[1] - bin[0]) / 2., (bin[1] - bin[0]) / 2., 
-            hists['tau'].GetMeanError() / 2., hists['tau'].GetMeanError() / 2.)
-            graph_bkg[match.group('var')].SetPoint(
-                i, sum(bin) / 2., hists['jet'].GetMean())
-            graph_bkg[match.group('var')].SetPointError(
-            i, (bin[1] - bin[0]) / 2., (bin[1] - bin[0]) / 2., 
-            hists['jet'].GetMeanError() / 2., hists['jet'].GetMeanError() / 2.)
+            hist.GetMeanError() / 2., hist.GetMeanError() / 2.)
 
             graph_sig_rms[match.group('var')].SetPoint(
-                i, sum(bin) / 2., hists['tau'].GetRMS())
+                i, sum(bin) / 2., hist.GetRMS())
             graph_sig_rms[match.group('var')].SetPointError(
             i, (bin[1] - bin[0]) / 2., (bin[1] - bin[0]) / 2., 
-            hists['tau'].GetRMSError() / 2., hists['tau'].GetRMSError() / 2.)
-            graph_bkg_rms[match.group('var')].SetPoint(
-                i, sum(bin) / 2., hists['jet'].GetRMS())
-            graph_bkg_rms[match.group('var')].SetPointError(
-            i, (bin[1] - bin[0]) / 2., (bin[1] - bin[0]) / 2., 
-            hists['jet'].GetRMSError() / 2., hists['jet'].GetRMSError() / 2.)
+            hist.GetRMSError() / 2., hist.GetRMSError() / 2.)
 
 
-    return graph_sig, graph_bkg, graph_sig_rms, graph_bkg_rms
+    return graph_sig, graph_sig_rms
 
 
 
 for category in (Category_1P_HLT, Category_MP_HLT):
-    graph_sig, graph_bkg, graph_sig_rms, graph_bkg_rms = mean_vs_npv(category.features_pileup_corrected, category)
+    gr_sig, gr_sig_rms = mean_vs_npv(category.features, category)
+    gr_sig_cor, gr_sig_rms_cor = mean_vs_npv(category.features, category, pileup_corr=True)
     
-    for key in graph_sig:
-        sig = graph_sig[key]
-        bkg = graph_bkg[key]
+    for key in gr_sig:
+        sig = gr_sig[key]
         sig.xaxis.title = 'Average Interaction Per Bunch Crossing'
         sig.yaxis.title = 'Mean of {0}'.format(VARIABLES[key]['root'])
         sig.yaxis.SetRangeUser(
             VARIABLES[key]['range'][0], VARIABLES[key]['range'][1])
-        sig.title = ana.tau.label
-        bkg.title = ana.jet.label
-        bkg.color = 'red'
-        bkg.markerstyle = 'square'
+
+        sig_cor = gr_sig_cor[key + '_pileup_corrected']
+        sig_cor.xaxis.title = 'Average Interaction Per Bunch Crossing'
+        sig_cor.yaxis.title = 'Mean of {0}'.format(VARIABLES[key]['root'])
+        sig_cor.yaxis.SetRangeUser(
+            VARIABLES[key]['range'][0], VARIABLES[key]['range'][1])
+
+        sig.title = 'Uncorrected'
+        sig_cor.title = 'Corrected'
+        sig_cor.color = 'red'
+        sig_cor.markerstyle = 'square'
 
         c = Canvas()
         sig.Draw('AP')
-        bkg.Draw('sameP')
+        sig_cor.Draw('sameP')
         leg = Legend(
-            [sig, bkg], textsize=22)#, leftmargin=0.6)
+            [sig, sig_cor], textsize=22)#, leftmargin=0.6)
         leg.Draw('same')
         label = TLatex(
             c.GetLeftMargin() + 0.04, 0.9,
@@ -97,35 +101,8 @@ for category in (Category_1P_HLT, Category_MP_HLT):
         
         c.SaveAs('plots/mean_{0}_{1}.png'.format(key, category.name))
 
-        sig_rms = graph_sig_rms[key]
-        bkg_rms = graph_bkg_rms[key]
-        sig_rms.xaxis.title = 'Average Interaction Per Bunch Crossing'
-        sig_rms.yaxis.title = 'RMS of {0}'.format(VARIABLES[key]['root'])
-        sig_rms.yaxis.SetRangeUser(
-            VARIABLES[key]['range'][0], VARIABLES[key]['range'][1])
-        sig_rms.title = ana.tau.label
-        bkg_rms.title = ana.jet.label
-        bkg_rms.color = 'red'
-        bkg_rms.markerstyle = 'square'
-
-        c = Canvas()
-        sig_rms.Draw('AP')
-        bkg_rms.Draw('sameP')
-        leg = Legend(
-            [sig_rms, bkg_rms], textsize=22)#, leftmargin=0.6)
-        leg.Draw('same')
-        label = TLatex(
-            c.GetLeftMargin() + 0.04, 0.9,
-            category.label)
-        label.SetNDC()
-        label.SetTextFont(43)
-        label.SetTextSize(22)
-        label.Draw()
-        c.SaveAs('plots/rms_{0}_{1}.png'.format(key, category.name))
 
     with root_open('pileup_{0}.root'.format(category.name), 'recreate'):
-        for key in graph_sig:
-            graph_sig[key].Write('tau_' + key)
-            graph_bkg[key].Write('jet_' + key)
-            graph_sig_rms[key].Write('tau_rms_' + key)
-            graph_bkg_rms[key].Write('jet_rms_' + key)
+        for key in gr_sig:
+            gr_sig[key].Write('tau_' + key)
+            gr_sig_rms[key].Write('tau_rms_' + key)

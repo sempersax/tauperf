@@ -117,7 +117,7 @@ class Sample(object):
             expr, hist.name, binning)
         log.debug("Plotting {0} using selection: {1}".format(
                 root_string, selection))
-        log.info('Draw {0} with \n selection: {1} ...'.format(root_string, selection))
+        log.info('{0}: Draw {1} with \n selection: {2} ...'.format(self.name, root_string, selection))
         tree.Draw(root_string, selection)
 
         try:
