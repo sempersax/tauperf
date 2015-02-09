@@ -6,7 +6,7 @@ DEFAULT_STUDENT = 'Ztautau'
 DEFAULT_TREE = 'tau'
 UNMERGED_NTUPLE_PATH = os.path.join(
     os.getenv('DATA_AREA'), 'tauperf_skims_xaods', 'v10')
-NTUPLE_PATH = os.path.join(UNMERGED_NTUPLE_PATH, 'training_11_12_2014')
+NTUPLE_PATH = os.path.join(UNMERGED_NTUPLE_PATH, 'merge_weighted')
 
 
 

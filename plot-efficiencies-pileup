@@ -16,13 +16,13 @@ style = get_style('ATLAS', shape='rect')
 style.SetPadRightMargin(0.10)
 style.cd()
 
-tau = Tau(ntuple_path=os.path.join(UNMERGED_NTUPLE_PATH, 'merge_pileup'))
+tau = Tau(ntuple_path=os.path.join(UNMERGED_NTUPLE_PATH, 'merge_weighted'))
 vars = {'averageintpercrossing': VARIABLES['averageintpercrossing'], 'npv': VARIABLES['npv']}
 
 ncorrs = [0, 1, 2, 3, 5, 6, 7, 8]
 effs_dict = {}
-for var in vars:
-    effs_dict[var] = []
+for key in vars.keys():
+    effs_dict[key] = []
 
 category = Category_1P_HLT
 cut_val = CUT_1P
@@ -32,10 +32,12 @@ field_hist_den = tau.get_hist_array(field_hist, category)
 for ncorr in ncorrs:
     cut = 'hlt_bdt_score_ncorr{0}>={1}'.format(ncorr, cut_val)
     field_hist_cut = tau.get_hist_array(field_hist, category, cut)
-    for var in field_hist:
-        eff_s = Efficiency(field_hist_cut[var], field_hist_den[var])
+    print field_hist_cut
+    for key, var in vars.items():
+        print var
+        eff_s = Efficiency(field_hist_cut[var['name']], field_hist_den[var['name']])
         eff_s.title = 'ncorr = {0}'.format(ncorr)
-        effs_dict[var].append(eff_s)
+        effs_dict[key].append(eff_s)
 
 for var in vars:        
     c = draw_efficiencies(effs_dict[var], var, category) 

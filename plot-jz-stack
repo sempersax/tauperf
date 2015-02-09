@@ -85,7 +85,7 @@ if __name__ == "__main__":
             c.SetLogy()
         leg = Legend(hist_comps+[hist_tot], textsize=15)
         leg.Draw('same')
-        c.SaveAs('blurp.png')
+        c.SaveAs('./plots/blurp.png')
     log.info(field_hists_comp)
     log.info(field_hists_tot)
 

@@ -424,7 +424,7 @@ VARIABLES = {
         },
 
     'massTrkSys_pileup_corrected': {
-        'name' : 'massTrkSys',
+        'name' : 'massTrkSys_pileup_corrected',
         'root': 'm_{track} (PU corrected)',
         'type': 'f',
         'prefix': ('off', 'hlt'),
