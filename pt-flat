@@ -100,3 +100,12 @@ if __name__ == '__main__':
     print 15 * '=', '>', cat.name
     print table
     print 
+
+    # print output to be pasted in c++ code
+    print 'Good old C++, this is for you ...'
+    print
+    print 'std::map<int, std::map<double, double> > table_{0};'.format(args.category)
+    for i, _ in enumerate(PT_BINS):
+        for j, target in enumerate(TARGETS):
+            print 'table_{0}[{1}][{2}] = {3};'.format(args.category,
+                i, j, flat_efficiencies[pt_bin][target]['bdt_cut'])
