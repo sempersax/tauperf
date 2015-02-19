@@ -22,7 +22,7 @@ PT_BINS = [
     '80000 < hlt_pt < 90000.',
     '90000 < hlt_pt',
 ]
-TARGETS = [0.4, 0.5, 0.6, 0.7, 0.8]
+TARGETS = [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
 
 def scan_score(h, target=0.6):
     """
