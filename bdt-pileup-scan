@@ -68,7 +68,7 @@ class Job(Process):
 
 if __name__ == '__main__':
     from rootpy.extern.argparse import ArgumentParser
-    from tauperf.jobs import run_pool
+    from tauperf.parallel import run_pool
 
     parser = ArgumentParser()
     parser.add_argument('--jobs', type=int, default=-1)

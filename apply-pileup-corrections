@@ -135,7 +135,7 @@ if __name__ == '__main__':
     parser.add_argument('--jobs', default=1, type=int)
     args = parser.parse_args()
     
-    from tauperf.jobs import run_pool
+    from tauperf.parallel import run_pool
     jobs = [Job(f) for f in args.files]
     run_pool(jobs, n_jobs=args.jobs)
 
