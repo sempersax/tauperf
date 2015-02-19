@@ -44,7 +44,7 @@ if __name__ == '__main__':
             f = f.replace(f.split('/')[-1], args.prefix + '.' + f.split('/')[-1])
         print f
         cmd = './{0} {1}'.format(args.driver, f)
-        name = cmd.replace(" ", "_").replace(UNMERGED_NTUPLE_PATH, '').replace('/', '_')
+        name = cmd.replace(" ", "_").replace(UNMERGED_NTUPLE_PATH, '').replace('/', '_')[1:]
         cmd = "cd %s && %s && %s" % (os.getcwd(), setup, cmd)
         print name
         cluster.qsub(
