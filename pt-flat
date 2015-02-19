@@ -81,8 +81,6 @@ if __name__ == '__main__':
     flat_efficiencies = {}
     for pt_bin, h in zip(PT_BINS, score_hists):
         flat_efficiencies[pt_bin] = {}
-        
-        print h
         h = asrootpy(h)
         # loop over all the targets
         for target in TARGETS:
