@@ -3,11 +3,12 @@ from rootpy.plotting import Hist
 from rootpy import asrootpy
 import ROOT
 
+
 # local imports
-from .db import get_file
+from .db import get_file, cleanup
 from .. import NTUPLE_PATH, DEFAULT_STUDENT, DEFAULT_TREE
 from .. import log; log = log[__name__]
-
+from ..parallel import FuncWorker, run_pool
 
 class Sample(object):
 
@@ -46,10 +47,10 @@ class Sample(object):
 
     def events(self, category=None, cuts=None, weighted=False):
         selection = Cut(self._cuts)
-        if cuts is not None:
-            selection &= cuts
         if category is not None:
             selection &= self.cuts(category)
+        if cuts is not None:
+            selection &= cuts
         if weighted and self.weight_field is not None:
             selection *= self.weight_field
         return self.draw_helper(Hist(1, 0.5, 1.5), '1', selection)
@@ -128,7 +129,9 @@ class Sample(object):
                     self.name, expr, selection))
             return Hist(binning[0], binning[1], binning[2], title=self.label, **self.hist_decor)
 
-    def get_hist_array(self, field_hist_template, category=None, cuts=None):
+    def get_hist_array(
+        self, field_hist_template, 
+        category=None, cuts=None, multi_proc=False):
         """
         """
         sel = self.cuts(category)
@@ -137,7 +140,21 @@ class Sample(object):
         if self.weight_field is not None:
             sel *= self.weight_field
         field_hists = {}
-        for key, hist in field_hist_template.items():
-            field_hists[key] = self.draw_helper(hist, key, sel)
+
+        from .jet import JZ
+        if isinstance(self, JZ):
+            multi_proc = False
+
+        if multi_proc:
+            keys = [key for key in field_hist_template.keys()]
+            workers = [FuncWorker(
+                        self.draw_helper, 
+                        field_hist_template[key], key, sel) for key in keys]
+            run_pool(workers, n_jobs=-1)
+            for key, w in zip(keys, workers):
+                field_hists[key] = asrootpy(w.output)
+        else:
+            for key, hist in field_hist_template.items():
+                field_hists[key] = self.draw_helper(hist, key, sel)
         return field_hists
 

@@ -15,6 +15,7 @@ CATEGORIES = {
         Category_2P_HLT,
         Category_3P_HLT,
         Category_MP_HLT,
+        Category_HLT,
         ],
     'plotting': [
         Category_Preselection,
@@ -24,5 +25,6 @@ CATEGORIES = {
     'plotting_hlt': [
         Category_1P_HLT,
         Category_MP_HLT,
+        # Category_HLT,
         ],
 }

@@ -13,8 +13,8 @@ VARIABLES = {
         'units': 'GeV',
         'scale': 0.001,
         'prefix': ('off', 'hlt', 'true'),
-        'bins': 15,
-        'range': (25, 100)
+        'bins': 10,
+        'range': (20, 120)
         },
     
     'eta': {
@@ -51,6 +51,15 @@ VARIABLES = {
         'range': (0, 6)
         },
     
+    'nprongs': {
+        'name': 'nprongs',
+        'root': 'Number of Prongs',
+        'type': 'i',
+        'prefix': ('true'),
+        'bins': 6,
+        'range': (0, 6)
+        },
+
     'centFrac': {
         'name': 'centFrac',
         'root': 'f_{core}',

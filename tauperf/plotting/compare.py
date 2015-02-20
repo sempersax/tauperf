@@ -1,3 +1,4 @@
+import re
 from rootpy.plotting import Legend, Hist, Graph, Canvas
 from rootpy.plotting.style.atlas.labels import ATLAS_label
 
@@ -6,6 +7,21 @@ import ROOT
 from ..variables import VARIABLES, get_label
 from .templates import RatioPlot, SimplePlot
 from .. import ATLAS_LABEL
+from ..analysis import VAR_PATTERN
+
+
+def get_xtitle(field):
+    if field in VARIABLES:
+        return get_label(VARIABLES[field])
+    elif re.match(VAR_PATTERN, field):
+        match = re.match(VAR_PATTERN, field)
+        if match.group('var') in VARIABLES:
+            return get_label(VARIABLES[match.group('var')])
+        else:
+            return field
+    else:
+        return field
+
 
 
 def draw_ratio(a, b, field, category,
@@ -24,10 +40,8 @@ def draw_ratio(a, b, field, category,
     - field: variable field (see variables.py)
     - category: analysis category (see categories/*)
     """
-    if field in VARIABLES:
-        xtitle = get_label(VARIABLES[field])
-    else:
-        xtitle = field
+    xtitle = get_xtitle(field)
+
     plot = RatioPlot(xtitle=xtitle,
                      ytitle='{0}Events'.format(
                          'Normalized ' if normalize else ''),
@@ -135,10 +149,8 @@ def draw_shape(a, b, field, category,
     - field: variable field (see variables.py)
     - category: analysis category (see categories/*)
     """
-    if field in VARIABLES:
-        xtitle = get_label(VARIABLES[field])
-    else:
-        xtitle = field
+    xtitle = get_xtitle(field)
+
     plot = SimplePlot(xtitle=xtitle,
                      ytitle='{0}Events'.format(
                          'Normalized ' if normalize else ''),
@@ -223,10 +235,7 @@ def draw_efficiency(
     eff_s, rej_b, field, 
     category, textsize=22):
 
-    if field in VARIABLES:
-        xtitle = get_label(VARIABLES[field])
-    else:
-        xtitle = field
+    xtitle = get_xtitle(field)
 
     c = Canvas()
     c.SetGridx()
@@ -267,10 +276,7 @@ def draw_efficiencies(
     effs, field, 
     category, textsize=22):
 
-    if field in VARIABLES:
-        xtitle = get_label(VARIABLES[field])
-    else:
-        xtitle = field
+    xtitle = get_xtitle(field)
 
     c = Canvas()
     c.SetGridx()

@@ -48,15 +48,15 @@ class Analysis(object):
                 log.info("Cuts: %s" % self.tau.cuts(category))
                 yield category
 
-    def get_hist_samples_array(self, vars, prefix, category=None, cuts=None):
+    def get_hist_samples_array(self, vars, prefix, **kwargs):
         """
         """
         field_hist_tau = self.tau.get_field_hist(vars, prefix)
         log.debug('Retrieve Tau histograms')
-        field_hist_tau = self.tau.get_hist_array(field_hist_tau, category=category, cuts=cuts)
+        field_hist_tau = self.tau.get_hist_array(field_hist_tau, **kwargs)
         field_hist_jet = self.jet.get_field_hist(vars, prefix)
         log.debug('Retrieve Jet histograms')
-        field_hist_jet = self.jet.get_hist_array(field_hist_jet, category=category, cuts=cuts)
+        field_hist_jet = self.jet.get_hist_array(field_hist_jet, **kwargs)
         hist_samples_array = {}
         for key in field_hist_tau:
             match = re.match(VAR_PATTERN, key)
@@ -69,14 +69,14 @@ class Analysis(object):
                 log.warning('No pattern matching for {0}'.format(key))
         return hist_samples_array
 
-    def get_hist_signal_array(self, vars, prefix1, prefix2, category=None, cuts=None):
+    def get_hist_signal_array(self, vars, prefix1, prefix2, **kwargs):
         """
         """
         field_hist_tau_1 = self.tau.get_field_hist(vars, prefix1)
         field_hist_tau_2 = self.tau.get_field_hist(vars, prefix2)
         log.debug('Retrieve Tau histograms')
-        field_hist_tau_1 = self.tau.get_hist_array(field_hist_tau_1, category=category, cuts=cuts)
-        field_hist_tau_2 = self.tau.get_hist_array(field_hist_tau_2, category=category, cuts=cuts)
+        field_hist_tau_1 = self.tau.get_hist_array(field_hist_tau_1, **kwargs)
+        field_hist_tau_2 = self.tau.get_hist_array(field_hist_tau_2, **kwargs)
         
         hist_samples_array = {}
         for key in field_hist_tau_1:

@@ -39,6 +39,12 @@ class Category_2P_HLT(Category_Preselection):
     common_cuts = Category_Preselection.common_cuts
     cuts = TWOPRONG & HLT_PRESEL
 
+class Category_HLT(Category_Preselection):
+    name = 'HLT taus'
+    label = '#tau_{had} (HLT)'
+    common_cuts = Category_Preselection.common_cuts
+    cuts = HLT_PRESEL
+
 class Category_3P_HLT(Category_Preselection):
     name = '3prongs_hlt'
     label = '#tau_{had} (3P HLT)'

@@ -13,7 +13,7 @@ from tauperf.categories import Category_1P_HLT, Category_MP_HLT
 from tauperf.default import CUT_1P, CUT_MP
 from tauperf.plotting import draw_efficiency
 from tauperf.plotting.templates import rejection_linear
-from tauperf.extern.cuttable import BDT_Cut_1P, BDT_Cut_MP 
+from tauperf.extern.cuttable import BDT_Cut
 from tauperf.parallel import run_pool, FuncWorker
 
 style = get_style('ATLAS', shape='rect')
@@ -27,30 +27,19 @@ vars = {
     'npv': VARIABLES['good_npv'], 
     'averageintpercrossing': VARIABLES['averageintpercrossing']}
 
-target = 0.5
+TARGETS = [0.7, 0.5] 
+for category, target in zip((Category_1P_HLT, Category_MP_HLT), TARGETS):
+    cut = 'hlt_bdt_score_pileup_corrected>=BDT_Cut(hlt_pt, hlt_ntracks, {0})'.format(target)
+    anticut = 'hlt_bdt_score_pileup_corrected<BDT_Cut(hlt_pt, hlt_ntracks, {0})'.format(target)
 
-def get_hist_arr(vars, cat, cut):
-    return ana.get_hist_samples_array(vars, 'hlt', cat, cut)
-
-for category, cut_val, cut_func in zip((Category_1P_HLT, Category_MP_HLT), (CUT_1P, CUT_MP), ('BDT_Cut_1P', 'BDT_Cut_MP')):
-    cut = 'hlt_bdt_score_pileup_corrected>={0}(hlt_pt, {1})'.format(cut_func, target)
-    anticut = 'hlt_bdt_score_pileup_corrected<{0}(hlt_pt, {1})'.format(cut_func, target)
-
-    # workers = [FuncWorker(get_hist_arr, vars, category, c) for c in (cut, anticut, '')]
-    # run_pool(workers, n_jobs=-1)
-    # hist_samples_cut, hist_samples_anticut, hist_samples = [w.output for w in workers]
-
-    hist_samples_cut = ana.get_hist_samples_array(vars, 'hlt', category, cut)
-    hist_samples_anticut = ana.get_hist_samples_array(vars, 'hlt', category, anticut)
-    hist_samples = ana.get_hist_samples_array(vars, 'hlt', category)
+    hist_samples_cut = ana.get_hist_samples_array(vars, 'hlt', category=category, cuts=cut, multi_proc=True)
+    hist_samples_anticut = ana.get_hist_samples_array(vars, 'hlt', category=category, cuts=anticut, multi_proc=True)
+    hist_samples = ana.get_hist_samples_array(vars, 'hlt', category=category, multi_proc=True)
 
     for var in hist_samples:
         eff_s = Efficiency(
             hist_samples_cut[var]['tau'], hist_samples[var]['tau'])
         eff_s.title = asrootpy(hist_samples_cut[var]['tau']).title
-        # eff_b = Efficiency(
-        #     hist_samples_cut[var]['jet'], hist_samples[var]['jet'])
-        # rej_b = rejection_linear(eff_b)
         rej_b = Efficiency(
             hist_samples_anticut[var]['jet'], hist_samples[var]['jet'])
         rej_b.title = asrootpy(hist_samples_anticut[var]['jet']).title

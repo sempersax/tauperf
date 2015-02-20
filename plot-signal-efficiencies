@@ -1,0 +1,59 @@
+#!/usr/bin/env python
+import os
+# root/rootpy imports
+import ROOT
+from rootpy.plotting import Efficiency
+from rootpy.plotting.style import get_style
+from rootpy import asrootpy
+
+from tauperf import UNMERGED_NTUPLE_PATH
+from tauperf.samples import Tau
+from tauperf.variables import VARIABLES, get_label
+from tauperf.categories import CATEGORIES
+from tauperf.plotting import draw_efficiencies
+from tauperf.extern.cuttable import BDT_Cut
+
+style = get_style('ATLAS', shape='rect')
+style.SetPadRightMargin(0.10)
+style.cd()
+
+# INSTANTIATE THE TAU SAMPLE
+tau = Tau(ntuple_path=os.path.join(UNMERGED_NTUPLE_PATH, 'merge_weighted_nominal'))
+
+vars = {
+    'pt': VARIABLES['pt'], 
+    'eta': VARIABLES['eta'], 
+    'npv': VARIABLES['good_npv'], 
+    'averageintpercrossing': VARIABLES['averageintpercrossing'],
+    }
+
+vars_truth = {'nprongs': VARIABLES['nprongs']}
+
+TARGETS = [0.5, 0.7, 0.8]
+
+for category in CATEGORIES['plotting_hlt']:
+
+    hist_samples = tau.get_field_hist(vars, 'hlt')
+    hist_samples.update(tau.get_field_hist(vars_truth, 'true'))
+    hist_samples = tau.get_hist_array(hist_samples, category, multi_proc=True)
+
+    hists_array = []
+    for target in TARGETS:
+        cut = 'hlt_bdt_score_pileup_corrected>=BDT_Cut(hlt_pt, hlt_ntracks, {0})'.format(target)
+        hist_samples_cut = tau.get_field_hist(vars, 'hlt')
+        hist_samples_cut.update(tau.get_field_hist(vars_truth, 'true'))
+        hist_samples_cut = tau.get_hist_array(hist_samples_cut, category, cut, multi_proc=True)
+        hists_array.append(hist_samples_cut)
+
+    for var in hist_samples:
+        effs = []
+        for t, hists in zip(TARGETS, hists_array):
+            eff = Efficiency(
+                hists[var], hist_samples[var])
+            eff.title = 'target = {0}'.format(t)
+            effs.append(eff)
+
+        canvas = draw_efficiencies(effs, var, category) 
+        canvas.SaveAs('plots/efficiencies_signal_{0}_{1}.png'.format(var, category.name))
+        
+        

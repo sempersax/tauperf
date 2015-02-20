@@ -1,0 +1,86 @@
+#!/usr/bin/env python
+import os
+
+from rootpy.extern.argparse import ArgumentParser
+from rootpy.extern.tabulartext import PrettyTable
+from rootpy import ROOT
+
+from tauperf import UNMERGED_NTUPLE_PATH
+from tauperf.analysis import Analysis
+from tauperf.categories import Category_1P_HLT, Category_MP_HLT, Category_Preselection
+from tauperf.categories.hlt import HLT_PRESEL, ONEPRONG, MULTIPRONG
+from tauperf.extern.cuttable import BDT_Cut
+
+parser = ArgumentParser()
+parser.add_argument('--target-1p', type=float, default=0.7)
+parser.add_argument('--target-mp', type=float, default=0.5)
+parser.add_argument('--include-presel', default=False, action='store_true')
+args = parser.parse_args()
+
+
+TARGETS = [args.target_1p, args.target_mp]
+
+ana = Analysis(ntuple_path=os.path.join(UNMERGED_NTUPLE_PATH, 'merge_weighted_nominal'))
+table = PrettyTable(['Category', 'Target', 'Signal efficiency', 'Background rejection (1/eff(B)'])
+
+sig_tot = 0
+sig_cut = 0
+bkg_tot = 0
+bkg_cut = 0
+
+if not args.include_presel:
+    for cat, target in zip((Category_1P_HLT, Category_MP_HLT), TARGETS):
+
+        # Schedule the signal in // jobs
+        cut = 'hlt_bdt_score_pileup_corrected>=BDT_Cut(hlt_pt, hlt_ntracks, {0})'.format(target)
+        sig_cat_tot = ana.tau.events(cat)[1].value
+        sig_cat_cut = ana.tau.events(cat, cut)[1].value
+        
+        # Calculate the bkg -- Can't // it for now :-(
+        bkg_cat_tot = ana.jet.events(cat, weighted=True)[1].value
+        bkg_cat_cut = ana.jet.events(cat, cuts=cut, weighted=True)[1].value
+    
+        table.add_row([
+                cat.name, target, 
+                '{0:1.3f}'.format(sig_cat_cut / sig_cat_tot),
+                '{0:1.3f}'.format(bkg_cat_tot / bkg_cat_cut)])
+        sig_tot += sig_cat_tot
+        sig_cut += sig_cat_cut
+        bkg_tot += bkg_cat_tot
+        bkg_cut += bkg_cat_cut
+
+    table.add_row([
+            'Total', '--', 
+            '{0:1.3f}'.format(sig_cut / sig_tot),
+            '{0:1.3f}'.format(bkg_tot / bkg_cut)])
+
+
+else:
+    for cut, target, name in zip((ONEPRONG, MULTIPRONG), TARGETS, ['1prong_hlt', 'multiprongs_hlt']):
+
+        # Schedule the signal in // jobs
+        cut_bdt = 'hlt_bdt_score_pileup_corrected>=BDT_Cut(hlt_pt, hlt_ntracks, {0})'.format(target)
+        sig_cat_tot = ana.tau.events(Category_Preselection, cuts=cut)[1].value
+        sig_cat_cut = ana.tau.events(Category_Preselection, cuts=(cut & HLT_PRESEL & cut_bdt))[1].value
+        
+        # Calculate the bkg -- Can't // it for now :-(
+        bkg_cat_tot = ana.jet.events(Category_Preselection, cuts=cut, weighted=True)[1].value
+        bkg_cat_cut = ana.jet.events(Category_Preselection, cuts=(cut & HLT_PRESEL & cut_bdt), weighted=True)[1].value
+    
+        table.add_row([
+                name, target, 
+                '{0:1.3f}'.format(sig_cat_cut / sig_cat_tot),
+                '{0:1.3f}'.format(bkg_cat_tot / bkg_cat_cut)])
+        sig_tot += sig_cat_tot
+        sig_cut += sig_cat_cut
+        bkg_tot += bkg_cat_tot
+        bkg_cut += bkg_cat_cut
+
+    table.add_row([
+            'Total', '--', 
+            '{0:1.3f}'.format(sig_cut / sig_tot),
+            '{0:1.3f}'.format(bkg_tot / bkg_cut)])
+
+
+print table
+
