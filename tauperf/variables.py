@@ -13,8 +13,8 @@ VARIABLES = {
         'units': 'GeV',
         'scale': 0.001,
         'prefix': ('off', 'hlt', 'true'),
-        'bins': 30,
-        'range': (10, 2500)
+        'bins': 15,
+        'range': (25, 100)
         },
     
     'eta': {
@@ -26,7 +26,7 @@ VARIABLES = {
         'range': (-2.5, 2.5)
         },
 
-    'npv': {
+    'good_npv': {
         'name': 'good_npv',
         'root': 'Number of Primary Vertices',
         'type': 'i',

@@ -12,6 +12,7 @@ class Analysis(object):
     def __init__(self, 
                  ntuple_path=NTUPLE_PATH,
                  use_drellyan=False):
+        log.info('Analysis object is being instantiated')
         if use_drellyan:
             log.info('Use Drell-Yan simulation')
             self.tau = samples.DY(
@@ -32,6 +33,7 @@ class Analysis(object):
             label='Fake #tau_{had}',
             weight_field='mc_event_weight', 
             color='#00FF00')
+        log.info('Analysis object is instantiated')
 
     def iter_categories(self, *definitions, **kwargs):
         names = kwargs.pop('names', None)

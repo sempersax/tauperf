@@ -119,47 +119,45 @@ leg = Legend([gr_sp, gr_mp])
 leg.Draw('same')
 c.SaveAs('plots/roc.png')
 
-# TARGET_REJECTION = [2, 6, 10, 14, 18]
-# TARGET_1P = []
-# TARGET_MP = []
-# for target in TARGET_REJECTION:
-#     target_eff_b = 1. / target
+TARGET_REJECTION = [2, 6, 10, 14, 18]
+TARGET_1P = []
+TARGET_MP = []
+for target in TARGET_REJECTION:
+    target_eff_b = 1. / target
 
-#     sorted_list = sorted(wp_sp, key=lambda wp: abs(wp.eff_b - target_eff_b))
-#     log.info(sorted_list[0])
-#     TARGET_1P.append(sorted_list[0])
+    sorted_list = sorted(wp_sp, key=lambda wp: abs(wp.eff_b - target_eff_b))
+    log.info(sorted_list[0])
+    TARGET_1P.append(sorted_list[0])
 
-#     sorted_list = sorted(wp_mp, key=lambda wp: abs(wp.eff_b - target_eff_b))
-#     log.info(sorted_list[0])
-#     TARGET_MP.append(sorted_list[0])
+    sorted_list = sorted(wp_mp, key=lambda wp: abs(wp.eff_b - target_eff_b))
+    log.info(sorted_list[0])
+    TARGET_MP.append(sorted_list[0])
     
     
 
+plot_1P = score_plot(Category_1P_HLT)
+plot_1P.SaveAs('plots/scores_1p.png')
 
+plot_MP = score_plot(Category_MP_HLT)
+plot_MP.SaveAs('plots/scores_mp.png')
 
-# plot_1P = score_plot(Category_1P_HLT)
-# plot_1P.SaveAs('plots/scores_1p.png')
+plot_eff_1P = efficiencies_plot(Category_1P_HLT, TARGET_1P)
+plot_eff_1P.SaveAs('plots/efficiencies_npv_optim_1p.png')
 
-# plot_MP = score_plot(Category_MP_HLT)
-# plot_MP.SaveAs('plots/scores_mp.png')
+plot_eff_MP = efficiencies_plot(Category_MP_HLT, TARGET_MP)
+plot_eff_MP.SaveAs('plots/efficiencies_npv_optim_mp.png')
 
-# plot_eff_1P = efficiencies_plot(Category_1P_HLT, TARGET_1P)
-# plot_eff_1P.SaveAs('plots/efficiencies_npv_optim_1p.png')
-
-# plot_eff_MP = efficiencies_plot(Category_MP_HLT, TARGET_MP)
-# plot_eff_MP.SaveAs('plots/efficiencies_npv_optim_mp.png')
-
-# table = PrettyTable(['Category', 'cut', 'signal efficiency', 'background rejection (1/eff_b)'])
-# for t in TARGET_1P:
-#     table.add_row([
-#             Category_1P_HLT.name, 
-#             t.cut, t.eff_s, 
-#             1. / t.eff_b if t.eff_b != 0. else -9999.])
-# for t in TARGET_MP:
-#     table.add_row([
-#             Category_MP_HLT.name, 
-#             t.cut, t.eff_s, 
-#             1. / t.eff_b if t.eff_b != 0. else -9999.])
-# log.info(40 * '=')
-# print table
-# log.info(40 * '=')
+table = PrettyTable(['Category', 'cut', 'signal efficiency', 'background rejection (1/eff_b)'])
+for t in TARGET_1P:
+    table.add_row([
+            Category_1P_HLT.name, 
+            t.cut, t.eff_s, 
+            1. / t.eff_b if t.eff_b != 0. else -9999.])
+for t in TARGET_MP:
+    table.add_row([
+            Category_MP_HLT.name, 
+            t.cut, t.eff_s, 
+            1. / t.eff_b if t.eff_b != 0. else -9999.])
+log.info(40 * '=')
+print table
+log.info(40 * '=')

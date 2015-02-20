@@ -105,7 +105,7 @@ if __name__ == '__main__':
     print 'Good old C++, this is for you ...'
     print
     print 'std::map<int, std::map<double, double> > table_{0};'.format(args.category)
-    for i, _ in enumerate(PT_BINS):
-        for j, target in enumerate(TARGETS):
+    for i, pt_bin in enumerate(PT_BINS):
+        for target in TARGETS:
             print 'table_{0}[{1}][{2}] = {3};'.format(args.category,
-                i, j, flat_efficiencies[pt_bin][target]['bdt_cut'])
+                i, target, flat_efficiencies[pt_bin][target]['bdt_cut'])
