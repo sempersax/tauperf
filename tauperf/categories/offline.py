@@ -4,6 +4,7 @@ from .base import Category
 # All basic cut definitions are here
 
 L1_TAUCLUS = Cut('l1_tauclus>=12000')
+L1_ISOL = Cut('(l1_emisol < 1000 * (2.0 + 0.10 * l1_tauclus / 1000.) && l1_tauclus <= 60000.) || l1_tauclus > 60000.')
 OFFLINE_L1_MATCHED = Cut('l1_matched_to_offline != -1')
 OFFLINE_HLT_MATCHED = Cut('hlt_matched_to_offline != -1')
 
@@ -17,13 +18,19 @@ MULTIPRONG = Cut('off_ntracks > 1')
 PRESELECTION = (
     OFFLINE_L1_MATCHED
     & OFFLINE_HLT_MATCHED
-    & L1_TAUCLUS
+    & L1_TAUCLUS #& L1_ISOL
 )
+
+
+class Category_NoCut(Category):
+    name = 'NoCut'
+    label = '#tau_{had} (off p_{T} > 30 GeV)'
+    cuts = OFFLINE_L1_MATCHED & OFFLINE_HLT_MATCHED & Cut('off_pt > 30000.')
 
 class Category_Preselection(Category):
     name = 'inclusive'
     label = '#tau_{had}'
-    common_cuts = PRESELECTION
+    common_cuts = PRESELECTION & Cut('off_pt > 30000.')
 
 
 class Category_1P(Category_Preselection):

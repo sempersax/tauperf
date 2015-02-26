@@ -42,16 +42,16 @@ features_1p_pileup_corrected = [
 ]
 
 features_mp_pileup_corrected = [
-    'dRmax',
+    'dRmax_pileup_corrected',
     'InnerTrkAvgDist_pileup_corrected',
     # 'trkAvgDist',
     'etOverPtLeadTrk_pileup_corrected',
-    'trFlightPathSig',
-    'massTrkSys',
-    'ChPiEMEOverCaloEME',
+    'trFlightPathSig_pileup_corrected',
+    'massTrkSys_pileup_corrected',
+    'ChPiEMEOverCaloEME_pileup_corrected',
     'EMPOverTrkSysP_pileup_corrected',
     'centFrac_pileup_corrected',
-    'approx_ptRatio',
-    'approx_vistau_m',
+    'approx_ptRatio_pileup_corrected',
+    'approx_vistau_m_pileup_corrected',
 ]
 

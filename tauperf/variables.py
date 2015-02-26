@@ -13,8 +13,19 @@ VARIABLES = {
         'units': 'GeV',
         'scale': 0.001,
         'prefix': ('off', 'hlt', 'true'),
-        'bins': 10,
-        'range': (20, 120)
+        'bins': 24,
+        'range': (0, 120)
+        },
+
+    'presel_pt': {
+        'name': 'presel_pt',
+        'root': 'Presel. p_{T}',
+        'type': 'f',
+        'units': 'GeV',
+        'scale': 0.001,
+        'prefix': ('hlt'),
+        'bins': 24,
+        'range': (0, 120)
         },
     
     'eta': {
@@ -469,7 +480,7 @@ VARIABLES = {
         'bins': 20,
         'scale': 0.001,
         'units': 'GeV',
-        'range': (0, 2),
+        'range': (0.1, 0.2),
         },
 
     'approx_vistau_m_pileup_corrected': {

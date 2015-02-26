@@ -27,4 +27,8 @@ CATEGORIES = {
         Category_MP_HLT,
         # Category_HLT,
         ],
+    'presel': [
+        Category_Preselection
+        ],
+
 }
