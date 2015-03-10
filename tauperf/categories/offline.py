@@ -18,7 +18,7 @@ MULTIPRONG = Cut('off_ntracks > 1')
 PRESELECTION = (
     OFFLINE_L1_MATCHED
     & OFFLINE_HLT_MATCHED
-    & L1_TAUCLUS #& L1_ISOL
+    & L1_TAUCLUS & L1_ISOL
 )
 
 
@@ -30,7 +30,7 @@ class Category_NoCut(Category):
 class Category_Preselection(Category):
     name = 'inclusive'
     label = '#tau_{had}'
-    common_cuts = PRESELECTION & Cut('off_pt > 30000.')
+    common_cuts = PRESELECTION # & Cut('off_pt > 30000.')
 
 
 class Category_1P(Category_Preselection):

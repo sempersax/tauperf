@@ -21,7 +21,7 @@ if __name__ == '__main__':
     from rootpy.extern.argparse import ArgumentParser
     parser = ArgumentParser()
     parser.add_argument('action', type=str, choices=['db', 'clean', 'merge', 'dev'])
-    parser.add_argument('--key', type=str, choices=['corrected', 'weighted.corrected', 'extended'], default='weighted.corrected')
+    parser.add_argument('--key', type=str, choices=['corrected', 'weighted.corrected', 'extended', ''], default='')
     parser.add_argument('--dry', action='store_true', default=False)
     args = parser.parse_args()
     print args

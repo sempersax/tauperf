@@ -11,7 +11,7 @@ function setup_ROOT_cvmfs()
 {
     # 5.34.25-x86_64-slc6-gcc48-opt #
     export rootVersion=6.02.05-x86_64-slc6-gcc48-opt
-    source ${ATLAS_LOCAL_ROOT_BASE}/packageSetups/atlasLocalROOTSetup.sh --rootVersion ${rootVersion}
+    source ${ATLAS_LOCAL_ROOT_BASE}/packageSetups/atlasLocalROOTSetup.sh --rootVersion ${rootVersion} --skipConfirm
 }
 
 function setup_ROOT_sfu()
@@ -22,7 +22,7 @@ function setup_ROOT_sfu()
     #export ROOT_VERSION=5.34.head
     # export ROOT_VERSION=5.34.14
     export ROOT_VERSION=5.34.18 # new TMVA
-    source /atlas/software/bleedingedge/setup.sh
+    source /atlas/software/bleedingedge/setup.sh 
 }
 
 function setup_PYTHON()

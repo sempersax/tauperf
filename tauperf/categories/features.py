@@ -10,7 +10,7 @@ features_1p = [
     'EMPOverTrkSysP',
     'centFrac',
     'approx_ptRatio',
-    # 'approx_vistau_m',
+    'approx_vistau_m',
 ]
 
 features_mp = [

@@ -76,8 +76,8 @@ VARIABLES = {
         'root': 'f_{core}',
         'type': 'f',
         'prefix': ('off', 'hlt'),
-        'bins': 20,
-        'range': (0, 1)
+        'bins': 60,
+        'range': (0, 1.5)
         },
     
     'centFrac_pileup_corrected': {
@@ -85,8 +85,8 @@ VARIABLES = {
         'root': 'f_{core} (PU corrected)',
         'type': 'f',
         'prefix': ('hlt'),
-        'bins': 20,
-        'range': (0, 1)
+        'bins': 60,
+        'range': (0, 1.5)
         },
 
     'isolFrac': {
@@ -284,7 +284,7 @@ VARIABLES = {
         'root': '1 - p_{T}^{trk in 0.2} / p_{T}^{trk in 0.4}',
         'type': 'f',
         'prefix': ('off', 'hlt'),
-        'bins' : 20,
+        'bins' : 40,
         'range': (0, 1),
         },
 
@@ -293,7 +293,7 @@ VARIABLES = {
         'root': '1 - p_{T}^{trk in 0.2} / p_{T}^{trk in 0.4} (PU corrected)',
         'type': 'f',
         'prefix': ('off', 'hlt'),
-        'bins' : 20,
+        'bins' : 40,
         'range': (0, 1),
         },
 
@@ -302,8 +302,8 @@ VARIABLES = {
         'root': 'E_{#pi^{#pm}}/E_{calo}',
         'type': 'f',
         'prefix': ('off', 'hlt'),
-        'bins': 20,
-        'range': (-1, 1),
+        'bins': 80,
+        'range': (-1, 3),
         },
     
     'ChPiEMEOverCaloEME_pileup_corrected': {
@@ -311,8 +311,8 @@ VARIABLES = {
         'root': 'E_{#pi^{#pm}}/E_{calo} (PU corrected)',
         'type': 'f',
         'prefix': ('hlt'),
-        'bins': 20,
-        'range': (0, 1),
+        'bins': 40,
+        'range': (-1, 3),
         },
 
     'etOverPtLeadTrk': {
@@ -320,8 +320,8 @@ VARIABLES = {
         'root': '1./f_{track}',
         'type': 'f',
         'prefix': ('off', 'hlt'),
-        'bins': 20,
-        'range': (0, 3),
+        'bins': 25,
+        'range': (0, 5),
         },
     
     'etOverPtLeadTrk_pileup_corrected': {
@@ -329,8 +329,8 @@ VARIABLES = {
         'root': '1./f_{track} (PU corrected)',
         'type': 'f',
         'prefix': ('off', 'hlt'),
-        'bins': 20,
-        'range': (0, 3),
+        'bins': 25,
+        'range': (0, 5),
         },
 
     'EMPOverTrkSysP': {
@@ -338,8 +338,8 @@ VARIABLES = {
         'root': 'p_{EM}/p_{tracks}',
         'prefix': ('off', 'hlt'),
         'type': 'f',
-        'bins': 20,
-        'range': (0, 3),
+        'bins': 70,
+        'range': (0, 7),
         },
 
     'EMPOverTrkSysP_pileup_corrected': {
@@ -347,8 +347,8 @@ VARIABLES = {
         'root': 'p_{EM}/p_{tracks} (PU corrected)',
         'prefix': ('hlt'),
         'type': 'f',
-        'bins': 20,
-        'range': (0, 3),
+        'bins': 70,
+        'range': (0, 7),
         },
 
     'ipSigLeadTrk': {
@@ -437,10 +437,10 @@ VARIABLES = {
         'root': 'm_{track}',
         'type': 'f',
         'prefix': ('off', 'hlt'),
-        'bins': 20,
-        'scale': 0.001,
-        'units': 'GeV',
-        'range': (0, 20),
+        'bins': 25,
+        # 'scale': 0.001,
+        'units': 'MeV',
+        'range': (0., 5000.),
         },
 
     'massTrkSys_pileup_corrected': {
@@ -448,10 +448,10 @@ VARIABLES = {
         'root': 'm_{track} (PU corrected)',
         'type': 'f',
         'prefix': ('off', 'hlt'),
-        'bins': 20,
-        'scale': 0.001,
-        'units': 'GeV',
-        'range': (0, 20),
+        'bins': 25,
+        # 'scale': 0.001,
+        'units': 'MeV',
+        'range': (0, 5000,),
         },
 
     'approx_ptRatio': {
@@ -459,8 +459,8 @@ VARIABLES = {
         'root': 'Approximated p_{T} ratio',
         'type': 'f',
         'prefix': ('off', 'hlt'),
-        'bins': 20,
-        'range': (0, 2),
+        'bins': 40,
+        'range': (0, 4),
         },
 
     'approx_ptRatio_pileup_corrected': {
@@ -468,8 +468,8 @@ VARIABLES = {
         'root': 'Approximated p_{T} ratio (PU corrected)',
         'type': 'f',
         'prefix': ('off', 'hlt'),
-        'bins': 20,
-        'range': (0, 2),
+        'bins': 40,
+        'range': (0, 4),
         },
 
     'approx_vistau_m': {
@@ -477,10 +477,10 @@ VARIABLES = {
         'root': 'Approximated m_{#tau}^{vis}',
         'type': 'f',
         'prefix': ('off', 'hlt'),
-        'bins': 20,
-        'scale': 0.001,
-        'units': 'GeV',
-        'range': (0.1, 0.2),
+        'bins': 25,
+        # 'scale': 0.001,
+        'units': 'MeV',
+        'range': (0.0, 5000.),
         },
 
     'approx_vistau_m_pileup_corrected': {
@@ -488,10 +488,10 @@ VARIABLES = {
         'root': 'Approximated m_{#tau}^{vis} (PU corrected)',
         'type': 'f',
         'prefix': ('off', 'hlt'),
-        'bins': 20,
-        'scale': 0.001,
-        'units': 'GeV',
-        'range': (0, 2),
+        'bins': 25,
+        # 'scale': 0.001,
+        # 'units': 'GeV',
+        'range': (0, 5000.),
         },
 
 }

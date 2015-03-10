@@ -22,6 +22,15 @@ def get_xtitle(field):
     else:
         return field
 
+def get_ymax(hists):
+    """ Return the y max of several hist """
+    if not isinstance(hists, (list, tuple)):
+        return 0.
+    
+    sorted_hists = sorted(
+        hists, key=lambda h: h.GetBinContent(h.GetMaximumBin()),
+        reverse=True)
+    return sorted_hists[0].GetBinContent(sorted_hists[0].GetMaximumBin())
 
 
 def draw_ratio(a, b, field, category,
@@ -309,6 +318,60 @@ def draw_efficiencies(
     label.SetTextSize(textsize)
     label.Draw()
     leg = Legend(effs, pad=c, textsize=20)
+        # textsize=20, leftmargin=0.6, topmargin=0.6)
+    leg.Draw('same')
+    return c
+
+
+def draw_hists(
+    hists, field,
+    category, textsize=22, logy=False, unit_area=False):
+
+    xtitle = get_xtitle(field)
+    print xtitle
+    c = Canvas()
+    c.SetGridx()
+    c.SetGridy()
+    c.SetLogy(logy)
+
+
+    if not isinstance(hists, (list, tuple)):
+        hists = [hists]
+
+    if unit_area:
+        for h in hists:
+            if h.integral() != 0:
+                h /= h.integral()
+
+    hists[0].xaxis.title = xtitle
+    hists[0].yaxis.title = 'Arbitrary Unit'
+
+    y_max = get_ymax(hists)
+    hists[0].yaxis.SetRangeUser(0., 1.05 * y_max) 
+
+    hists[0].Draw('HIST')
+
+    colors = ['black', 'red', 'orange', 'blue', 'green', 'purple', 'yellow', 'pink',]
+    if len(hists) > len(colors):
+        colors = len(hists) * colors
+    for hist, col in zip(hists, colors):
+        hist.color = col
+        hist.color = col
+        hist.fillstyle = 'hollow'
+        hist.markersize = 0
+        hist.linewidth = 2
+        hist.linestyle = 'solid'
+        hist.drawstyle = 'hist E0'
+        hist.legendstyle = 'l'
+        hist.Draw('SAMEHIST')
+    label = ROOT.TLatex(
+        c.GetLeftMargin() + 0.04, 0.9,
+        category.label)
+    label.SetNDC()
+    label.SetTextFont(43)
+    label.SetTextSize(textsize)
+    label.Draw()
+    leg = Legend(hists, pad=c, textsize=20)
         # textsize=20, leftmargin=0.6, topmargin=0.6)
     leg.Draw('same')
     return c
