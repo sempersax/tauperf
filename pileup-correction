@@ -17,6 +17,7 @@ log = logging.getLogger(os.path.basename(__file__))
 
 parser = ArgumentParser()
 parser.add_argument('--cat', default='1p', type=str, choices = ['1p', 'mp'])
+
 args = parser.parse_args()
 if args.cat == '1p':
     cat = Category_1P_HLT
@@ -27,6 +28,7 @@ else:
 set_style('ATLAS', shape='rect')
 filename = os.path.join('cache', 'pileup_' + cat.name + '.root')
 path, name = os.path.split(filename)
+print name
 output = os.path.join(path, 'fitted.' + name)
 shutil.copy(filename, output)
 
