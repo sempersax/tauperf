@@ -102,6 +102,17 @@ class Sample(object):
             h = rfile['Nevents']
         return h[1].value
 
+
+    def records(self):
+        ""
+        ""
+        from root_numpy import tree2rec
+        rfile = get_file(self.ntuple_path, self.student)
+        tree = rfile[self.tree_name]
+        log.info('Converting tree to record array, sorry if this is long ...')
+        rec = tree2rec(tree)
+        return rec
+
     def draw_helper(self, hist_template, expr, selection): 
         """
         """

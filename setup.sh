@@ -1,11 +1,11 @@
 #!/bin/bash
 
-function setup_rootcore()
-{
-    current_dir=${PWD}
-    cd ../packages ;source RootCore/scripts/setup.sh; cd ${current_dir}
-}
-setup_rootcore
+# function setup_rootcore()
+# {
+#     current_dir=${PWD}
+#     cd ../packages ;source RootCore/scripts/setup.sh; cd ${current_dir}
+# }
+# setup_rootcore
 
 SOURCE_TAUPERF_SETUP="${BASH_SOURCE[0]:-$0}"
 DIR_TAUPERF_SETUP="$( dirname "$SOURCE_TAUPERF_SETUP" )"

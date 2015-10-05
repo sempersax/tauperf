@@ -24,8 +24,8 @@ PRESELECTION = (
 
 class Category_NoCut(Category):
     name = 'NoCut'
-    label = '#tau_{had} (off p_{T} > 30 GeV)'
-    cuts = OFFLINE_L1_MATCHED & OFFLINE_HLT_MATCHED & Cut('off_pt > 30000.')
+    label = '#tau_{had}'
+    cuts = Cut('off_pt > 20000. && off_pt < 80000.')
 
 class Category_Preselection(Category):
     name = 'inclusive'

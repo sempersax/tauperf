@@ -11,7 +11,8 @@ class Analysis(object):
     
     def __init__(self, 
                  ntuple_path=NTUPLE_PATH,
-                 use_drellyan=False):
+                 use_drellyan=False,
+                 use_jz_slices=False):
         log.info('Analysis object is being instantiated')
         if use_drellyan:
             log.info('Use Drell-Yan simulation')
@@ -26,13 +27,21 @@ class Analysis(object):
                 name='tau', label='Real #tau_{had}',
                 color='#00A3FF')
 
-
-        self.jet = samples.JZ(
-            ntuple_path=ntuple_path,
-            name='jet', 
-            label='Fake #tau_{had}',
-            weight_field='mc_event_weight', 
-            color='#00FF00')
+        if use_jz_slices:
+            self.jet = samples.JZ(
+                ntuple_path=ntuple_path,
+                name='jet', 
+                label='Fake #tau_{had}',
+                weight_field='mc_event_weight', 
+                color='#00FF00')
+        else:
+            self.jet = samples.Jet(
+                ntuple_path=ntuple_path,
+                student='jetjet_JZ1W',
+                name='jet', 
+                label='Fake #tau_{had}',
+                color='#00FF00')
+            
         log.info('Analysis object is instantiated')
 
     def iter_categories(self, *definitions, **kwargs):

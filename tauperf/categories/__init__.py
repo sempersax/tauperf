@@ -2,6 +2,9 @@ from .offline import *
 from .hlt import *
 
 CATEGORIES = {
+    'nocut': [
+        Category_NoCut
+        ],
     'offline': [
         Category_Preselection,
         Category_1P,
