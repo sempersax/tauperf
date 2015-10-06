@@ -41,6 +41,8 @@ if __name__ == "__main__":
     ana = Analysis(use_drellyan=args.use_dy)
     for cat in ana.iter_categories(args.categories):
         hist_samples_array = ana.get_hist_samples_array(vars, args.level, category=cat, cuts=cuts)
+        print ana.tau.events(cat)[1].value
+        print ana.jet.events(cat)[1].value
         for field, hists_dict in hist_samples_array.items():
             log.info(field)
             plot = draw_ratio(
