@@ -52,7 +52,11 @@ class Sample(object):
         if cuts is not None:
             selection &= cuts
         if weighted and self.weight_field is not None:
-            selection *= self.weight_field
+            if isinstance(self.weight_field, (list, tuple)):
+                for w in self.weight_field:
+                    selection *= w
+            else:
+                selection *= self.weight_field
         return self.draw_helper(Hist(1, 0.5, 1.5), '1', selection)
 
     def cuts(self, category=None, **kwargs):
@@ -62,12 +66,14 @@ class Sample(object):
         return cuts
 
 
-    def get_field_hist(self, vars, prefix=None):
+    def get_field_hist(self, vars, prefix=None, dummy_range=False):
         """
         """
         field_hist = {}
         for field, var_info in vars.items():
             nbins, xmin, xmax = var_info['bins'], var_info['range'][0], var_info['range'][1]
+            if dummy_range:
+                nbins, xmin, xmax = 1000, -2000 , 2000
             exprs = []
             if 'prefix' in var_info:
                 if not isinstance(var_info['prefix'], (list)):
@@ -103,14 +109,14 @@ class Sample(object):
         return h[1].value
 
 
-    def records(self):
+    def records(self, **kwargs):
         ""
         ""
         from root_numpy import tree2rec
         rfile = get_file(self.ntuple_path, self.student)
         tree = rfile[self.tree_name]
         log.info('Converting tree to record array, sorry if this is long ...')
-        rec = tree2rec(tree)
+        rec = tree2rec(tree, **kwargs)
         return rec
 
     def draw_helper(self, hist_template, expr, selection): 
@@ -123,22 +129,30 @@ class Sample(object):
             hist_template.nbins(), 
             list(hist_template.xedges())[0], 
             list(hist_template.xedges())[-1])
+        # ROOT.gDirectory.cd()
         hist = hist_template.Clone()
         hist.Sumw2()
-        root_string = '{0}>>{1}{2}'.format(
-            expr, hist.name, binning)
+        # root_string = '{0}>>{1}{2}'.format(
+        #     expr, hist.name, binning)
+        root_string = expr
         log.debug("Plotting {0} using selection: {1}".format(
                 root_string, selection))
         log.info('{0}: Draw {1} with \n selection: {2} ...'.format(self.name, root_string, selection))
-        tree.Draw(root_string, selection)
-
-        try:
-            hist = asrootpy(ROOT.gPad.GetPrimitive(hist.name))
-            return Hist(hist, title=self.label, **self.hist_decor)
-        except:
-            log.warning('{0}: unable to retrieve histogram for {1} with selection {2}'.format(
-                    self.name, expr, selection))
-            return Hist(binning[0], binning[1], binning[2], title=self.label, **self.hist_decor)
+        hist = tree.Draw(
+            root_string, 
+            selection=selection,
+            hist=hist,
+            **self.hist_decor)
+        hist.title = self.label
+        return hist
+        # try:
+        #     # hist = asrootpy(ROOT.gPad.GetPrimitive(hist.GetName()))
+        #     hist = asrootpy(ROOT.gDirectory.Get(hist.GetName()))
+        #     return Hist(hist, title=self.label, **self.hist_decor)
+        # except:
+        #     log.warning('{0}: unable to retrieve histogram for {1} with selection {2}'.format(
+        #             self.name, expr, selection))
+        #     return Hist(binning[0], binning[1], binning[2], title=self.label, **self.hist_decor)
 
     def get_hist_array(
         self, field_hist_template, 

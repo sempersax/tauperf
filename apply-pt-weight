@@ -1,0 +1,77 @@
+#!/usr/bin/env python
+import os
+import shutil
+
+from rootpy.io import root_open
+from rootpy.tree import TreeModel, FloatCol
+from rootpy.plotting import Graph
+
+import logging
+from multiprocessing import Process
+import ROOT
+
+
+log = logging.getLogger('apply-pt-weight')
+
+
+
+class Model(TreeModel):
+    pt_weight = FloatCol()
+
+def add_bdt_scores(tree):
+    tree.create_buffer()
+    tree.set_buffer(Model(), create_branches=True)
+    branches = [
+        tree.GetBranch('pt_weight'),
+        ]
+    tree.define_object('tau', prefix='off_')
+
+    w_file = root_open('cache/pt_weights.root')
+    gr_1p = Graph(w_file['pt_weight_1prong'])
+    gr_mp = Graph(w_file['pt_weight_multiprongs'])
+    w_file.Close()
+    for event in tree:
+        if tree.off_ntracks == 1:
+            tree.pt_weight = gr_1p.Eval(tree.off_pt / 1000.)
+        else:
+            tree.pt_weight = gr_mp.Eval(tree.off_pt / 1000.)
+        for branch in branches:
+            branch.Fill()
+    tree.SetEntries(-1)
+
+class Job(Process):
+    def __init__(self, filename):
+        super(Job, self).__init__()
+        self.filename = filename
+
+    def run(self):
+        filename = self.filename
+        path, name = os.path.split(filename)
+        # copy to new file
+        output = os.path.join(path, 'weighted.' + name)
+        if os.path.exists(output):
+            return 
+        log.info("copying {0} to {1} ...".format(filename, output))
+        shutil.copy(filename, output)
+        with root_open(output, 'UPDATE') as file:
+            tree = file.tau
+            if 'hlt_bdt_score' in tree:
+                log.info("scores already exist in {0} ...".format(output))
+                return
+            log.info("adding bdt scores to {0} ...".format(output))
+            add_bdt_scores(tree)
+            tree.Write(tree.name, ROOT.TObject.kOverwrite)
+
+
+if __name__ == '__main__':
+    from rootpy.extern.argparse import ArgumentParser
+
+    parser = ArgumentParser()
+    parser.add_argument('files', nargs='+')
+    args = parser.parse_args()
+
+    from tauperf.parallel import run_pool
+    jobs = [Job(f) for f in args.files]
+    run_pool(jobs, n_jobs=-1)
+
+

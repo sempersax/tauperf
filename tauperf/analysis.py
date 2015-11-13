@@ -12,8 +12,9 @@ class Analysis(object):
     def __init__(self, 
                  ntuple_path=NTUPLE_PATH,
                  use_drellyan=False,
-                 use_jz_slices=False):
-        log.info('Analysis object is being instantiated')
+                 use_jz_slices=False,
+                 no_weight=False):
+
         if use_drellyan:
             log.info('Use Drell-Yan simulation')
             self.tau = samples.DY(
@@ -22,12 +23,14 @@ class Analysis(object):
             name='tau', label='Real #tau_{had}',
             color='#00A3FF')
         else:
+            log.info('Use Z->tautau simulation')
             self.tau = samples.Tau(
                 ntuple_path=ntuple_path,
                 name='tau', label='Real #tau_{had}',
                 color='#00A3FF')
 
         if use_jz_slices:
+            log.info('Use JZ samples for bkg')
             self.jet = samples.JZ(
                 ntuple_path=ntuple_path,
                 name='jet', 
@@ -35,11 +38,13 @@ class Analysis(object):
                 weight_field='mc_event_weight', 
                 color='#00FF00')
         else:
+            log.info('Use data for bkg')
             self.jet = samples.Jet(
                 ntuple_path=ntuple_path,
-                student='jetjet_JZ1W',
+                student='data',
                 name='jet', 
                 label='Fake #tau_{had}',
+                weight_field='pt_weight' if not no_weight else None,
                 color='#00FF00')
             
         log.info('Analysis object is instantiated')
@@ -57,13 +62,13 @@ class Analysis(object):
                 log.info("Cuts: %s" % self.tau.cuts(category))
                 yield category
 
-    def get_hist_samples_array(self, vars, prefix, **kwargs):
+    def get_hist_samples_array(self, vars, prefix, dummy_range=False, **kwargs):
         """
         """
-        field_hist_tau = self.tau.get_field_hist(vars, prefix)
+        field_hist_tau = self.tau.get_field_hist(vars, prefix, dummy_range=dummy_range)
         log.debug('Retrieve Tau histograms')
         field_hist_tau = self.tau.get_hist_array(field_hist_tau, **kwargs)
-        field_hist_jet = self.jet.get_field_hist(vars, prefix)
+        field_hist_jet = self.jet.get_field_hist(vars, prefix, dummy_range=dummy_range)
         log.debug('Retrieve Jet histograms')
         field_hist_jet = self.jet.get_hist_array(field_hist_jet, **kwargs)
         hist_samples_array = {}

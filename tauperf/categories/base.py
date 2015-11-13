@@ -24,8 +24,10 @@ class Category(object):
     plot_label = None
 
     @classmethod
-    def get_cuts(cls):
+    def get_cuts(cls, feat_cuts=False):
         cuts = cls.cuts & cls.common_cuts
+        if feat_cuts:
+            cuts &= cls.features_cuts
         return cuts
 
     @classmethod

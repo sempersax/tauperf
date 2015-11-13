@@ -3,7 +3,7 @@ import shutil
 from rootpy.io import root_open, Directory
 from rootpy.tree import Tree
 
-from tauperf.categories.hlt import Category_1P_HLT, Category_MP_HLT
+from tauperf.categories.offline import Category_1P, Category_3P
 from tauperf.classify import Classifier
 from multiprocessing import Process
 
@@ -24,11 +24,16 @@ method = '{0}_ntrees{1}_depth{2}_nodesize{3}'.format(
 
 
 if args.cat == '1p':
-    category = Category_1P_HLT
+    category = Category_1P
 else:
-    category = Category_MP_HLT
+    category = Category_3P
 
-cls = Classifier(category, output, method, training_mode='dev')
+cls = Classifier(
+    category, output, method, 
+    prefix='off',
+    training_mode='dev',
+    features=category.features_pileup_corrected)
+
 cls.train(
     ntrees=args.ntrees,
     node_size=args.node_size,
