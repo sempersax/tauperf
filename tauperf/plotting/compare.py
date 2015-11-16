@@ -11,12 +11,16 @@ from ..analysis import VAR_PATTERN
 
 
 def get_xtitle(field):
+
     if field in VARIABLES:
         return get_label(VARIABLES[field])
     elif re.match(VAR_PATTERN, field):
         match = re.match(VAR_PATTERN, field)
         if match.group('var') in VARIABLES:
-            return get_label(VARIABLES[match.group('var')])
+            if match.group('prefix') == 'hlt':
+                return 'HLT ' + get_label(VARIABLES[match.group('var')])
+            else:
+                return get_label(VARIABLES[match.group('var')])
         else:
             return field
     else:

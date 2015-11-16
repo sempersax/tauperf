@@ -16,6 +16,7 @@ def get_parser(action=None):
     parser.add_argument('--var', default=None, help='Specify a particular variable')
     parser.add_argument('--cut', default=None, type=str, help='additional cut to apply')
     parser.add_argument('--level', default='off', type=str, choices=['off', 'hlt'], help='additional cut to apply')
+    parser.add_argument('--trigger', default=False, action='store_true')
 
     if action == 'plot':
         parser.add_argument('--logy', default=False, action='store_true')

@@ -5,7 +5,6 @@ from .features import *
 from .centfrac import CentFrac_Cut
 # All basic cut definitions are here
 
-
 # OFFLINE_L1_MATCHED = Cut('l1_matched_to_offline != -1')
 OFFLINE_HLT_MATCHED = Cut('hlt_matched_to_offline != -1')
 # L1_TAUCLUS = Cut('l1_tauclus>=12000')
@@ -26,7 +25,7 @@ FAST_TRACK_ISO = Cut('hlt_fasttrack_Niso4 < 2')
 FAST_TRACK = FAST_TRACK_CORE & FAST_TRACK_ISO
 
 # HLT_PRESEL = HLT_PRESEL_CALO & FAST_TRACK
-HLT_PRESEL = OFFLINE_HLT_MATCHED & HLT_PT_CUT
+HLT_PRESEL = HLT_PT_CUT
 
 class Category_1P_HLT(Category_Preselection):
     name = '1prong_hlt'

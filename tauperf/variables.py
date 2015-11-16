@@ -37,8 +37,8 @@ VARIABLES = {
         'range': (-2.5, 2.5)
         },
 
-    'good_npv': {
-        'name': 'good_npv',
+    'npv': {
+        'name': 'npv',
         'root': 'Number of Primary Vertices',
         'type': 'i',
         'bins': 20,

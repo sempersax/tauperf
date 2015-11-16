@@ -13,11 +13,14 @@ ONEPRONG = Cut('off_ntracks == 1')
 TWOPRONG = Cut('off_ntracks == 2')
 THREEPRONG = Cut('off_ntracks == 3')
 MULTIPRONG = Cut('off_ntracks > 1')
+
+OFF_PT = Cut('off_pt > 20000.')
 OFF_ETA = Cut('abs(off_eta) < 2.5')
 
 # common preselection cuts
 PRESELECTION = (
-    OFF_ETA
+    OFF_PT
+    & OFF_ETA
     # OFFLINE_L1_MATCHED
     # & OFFLINE_HLT_MATCHED
     # & L1_TAUCLUS & L1_ISOL

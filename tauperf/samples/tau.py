@@ -11,7 +11,7 @@ class Tau(Sample):
 
     def cuts(self, *args, **kwargs):
         cut = super(Tau, self).cuts(*args, **kwargs)
-        # cut &= Cut('true_matched_to_offline != -1')
+        cut &= Cut('true_matched_to_offline != -1')
         return cut
 
 DYRANGES = [

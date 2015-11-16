@@ -13,6 +13,7 @@ class Analysis(object):
                  ntuple_path=NTUPLE_PATH,
                  use_drellyan=False,
                  use_jz_slices=False,
+                 trigger=False,
                  no_weight=False):
 
         if use_drellyan:
@@ -20,13 +21,17 @@ class Analysis(object):
             self.tau = samples.DY(
             ntuple_path=ntuple_path,
             # weight_field='mc_event_weight',
-            name='tau', label='Real #tau_{had}',
+            name='tau', 
+            label='Real #tau_{had}',
+            trigger=trigger,
             color='#00A3FF')
         else:
             log.info('Use Z->tautau simulation')
             self.tau = samples.Tau(
                 ntuple_path=ntuple_path,
-                name='tau', label='Real #tau_{had}',
+                name='tau', 
+                label='Real #tau_{had}',
+                trigger=trigger,
                 color='#00A3FF')
 
         if use_jz_slices:
@@ -35,6 +40,7 @@ class Analysis(object):
                 ntuple_path=ntuple_path,
                 name='jet', 
                 label='Fake #tau_{had}',
+                trigger=trigger,
                 weight_field='mc_event_weight', 
                 color='#00FF00')
         else:
@@ -44,9 +50,11 @@ class Analysis(object):
                 student='data',
                 name='jet', 
                 label='Fake #tau_{had}',
+                trigger=trigger,
                 weight_field='pt_weight' if not no_weight else None,
                 color='#00FF00')
             
+        self.trigger = trigger
         log.info('Analysis object is instantiated')
 
     def iter_categories(self, *definitions, **kwargs):
@@ -59,7 +67,8 @@ class Analysis(object):
                 log.info("=" * 40)
                 log.info("%s category" % category.name)
                 log.info("=" * 40)
-                log.info("Cuts: %s" % self.tau.cuts(category))
+                log.info("Signal cuts: %s" % self.tau.cuts(category))
+                log.info("Background cuts: %s" % self.jet.cuts(category))
                 yield category
 
     def get_hist_samples_array(self, vars, prefix, dummy_range=False, **kwargs):

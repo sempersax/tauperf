@@ -18,6 +18,7 @@ class Sample(object):
                  tree_name=DEFAULT_TREE,
                  name='Sample',
                  label='Sample',
+                 trigger=False,
                  weight_field=None,
                  **hist_decor):
 
@@ -25,11 +26,13 @@ class Sample(object):
             self._cuts = Cut()
         else:
             self._cuts = cuts
+
         self.ntuple_path = ntuple_path
         self.student = student
         self.tree_name = tree_name
         self.name = name
         self.label = label
+        self.trigger = trigger
         self.weight_field = weight_field
         self.hist_decor = hist_decor
 
@@ -45,7 +48,7 @@ class Sample(object):
             self.hist_decor.update(hist_decor)
         return self
 
-    def events(self, category=None, cuts=None, weighted=False):
+    def events(self, category=None, cuts=None, weighted=False, force_reopen=False):
         selection = Cut(self._cuts)
         if category is not None:
             selection &= self.cuts(category)
@@ -57,12 +60,16 @@ class Sample(object):
                     selection *= w
             else:
                 selection *= self.weight_field
-        return self.draw_helper(Hist(1, 0.5, 1.5), '1', selection)
+        return self.draw_helper(
+            Hist(1, 0.5, 1.5), '1', 
+            selection, force_reopen=force_reopen)
 
     def cuts(self, category=None, **kwargs):
         cuts = Cut(self._cuts)
         if category is not None:
             cuts &= category.get_cuts(**kwargs)
+        if self.trigger:
+            cuts &= Cut('hlt_matched_to_offline == 1')
         return cuts
 
 
@@ -100,8 +107,8 @@ class Sample(object):
                 
         return field_hist
 
-    def total_events(self, weighted=False):
-        rfile = get_file(self.ntuple_path, self.student)
+    def total_events(self, weighted=False, force_reopen=False):
+        rfile = get_file(self.ntuple_path, self.student, force_reopen=force_reopen)
         if weighted:
             h = rfile['Nweights']
         else:
@@ -119,10 +126,10 @@ class Sample(object):
         rec = tree2rec(tree, **kwargs)
         return rec
 
-    def draw_helper(self, hist_template, expr, selection): 
+    def draw_helper(self, hist_template, expr, selection, force_reopen=False): 
         """
         """
-        rfile = get_file(self.ntuple_path, self.student)
+        rfile = get_file(self.ntuple_path, self.student, force_reopen=force_reopen)
         tree = rfile[self.tree_name]
         # use TTree Draw for now (limited to Nbins, Xmin, Xmax)
         binning = (
@@ -137,7 +144,7 @@ class Sample(object):
         root_string = expr
         log.debug("Plotting {0} using selection: {1}".format(
                 root_string, selection))
-        log.info('{0}: Draw {1} with \n selection: {2} ...'.format(self.name, root_string, selection))
+        log.debug('{0}: Draw {1} with \n selection: {2} ...'.format(self.name, root_string, selection))
         hist = tree.Draw(
             root_string, 
             selection=selection,
