@@ -14,7 +14,6 @@ from rootpy.tree import Cut
 
 from . import log; log=log[__name__]
 from samples.db import get_file
-from .analysis import Analysis
 from . import UNMERGED_NTUPLE_PATH
 from samples import Tau, Jet, JZ
 from .variables import VARIABLES
@@ -71,7 +70,7 @@ class Classifier(TMVA.Factory):
         params += ["AdaBoostBeta=0.2"]
         params += ["DoBoostMonitor"]
         params += ["MaxDepth={0}".format(depth)]
-        params += ["MinNodeSize={0}%".format(node_size)]
+        params += ["MinNodeSize={0}".format(node_size)]
         params += ["NTrees={0}".format(ntrees)]
         #         params += ["nCuts={0}".format(nCuts)]
         #         params += ["NNodesMax={0}".format(NNodesMax)]
@@ -88,13 +87,11 @@ class Classifier(TMVA.Factory):
             method_name,
             params_string)
 
-    def train(self, **kwargs):
+    def train(self, ana, **kwargs):
+
         self.set_variables(self.category, self.prefix)
-        ana = Analysis()
-        tau = ana.tau
-        jet = ana.jet
-        self.sig_cut = tau.cuts(self.category, feat_cuts=True) & self.split_cut
-        self.bkg_cut = jet.cuts(self.category, feat_cuts=True) & self.split_cut
+        self.sig_cut = ana.tau.cuts(self.category, feat_cuts=True) & self.split_cut
+        self.bkg_cut = ana.jet.cuts(self.category, feat_cuts=True) & self.split_cut
 
         params = ['NormMode=EqualNumEvents']
         params += ['SplitMode=Random']
@@ -109,23 +106,24 @@ class Classifier(TMVA.Factory):
         
         # Signal file
         log.info('prepare signal tree')
-        sig_file = get_file(tau.ntuple_path, tau.student) 
-        self.sig_tree = sig_file[tau.tree_name]
+        sig_file = get_file(ana.tau.ntuple_path, ana.tau.student) 
+        self.sig_tree = sig_file[ana.tau.tree_name]
         self.AddSignalTree(self.sig_tree)
+        self.SetSignalWeightExpression(ana.tau.weight_field)
 
         # Bkg files
         log.info('prepare background tree')
-        if isinstance(jet, JZ):
-            for sample, scale in zip(jet.components, jet.scales):
+        if isinstance(ana.jet, JZ):
+            for sample, scale in zip(ana.jet.components, ana.jet.scales):
                 rfile = get_file(sample.ntuple_path, sample.student)
                 tree = rfile[sample.tree_name]
                 self.AddBackgroundTree(tree, scale)
         else:
-            bkg_file = get_file(jet.ntuple_path, jet.student)
-            self.bkg_tree = bkg_file[jet.tree_name]
+            bkg_file = get_file(ana.jet.ntuple_path, ana.jet.student)
+            self.bkg_tree = bkg_file[ana.jet.tree_name]
             self.AddBackgroundTree(self.bkg_tree)
 
-        self.SetBackgroundWeightExpression(jet.weight_field)
+        self.SetBackgroundWeightExpression(ana.jet.weight_field)
         log.info('preparation is done, start booking')
         # Actual training
         self.bookBDT(**kwargs)

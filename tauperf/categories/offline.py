@@ -27,7 +27,8 @@ PRESELECTION = (
 )
 
 FEATURES_CUTS_ONEPRONG = (
-    Cut('off_centFrac > -1110')
+    Cut('off_pt < 150000.')
+    & Cut('off_centFrac > -1110')
     & Cut('off_innerTrkAvgDist > -1110')
     & Cut('off_ipSigLeadTrk > -999')
     & Cut('off_etOverPtLeadTrk > 1./3.')
@@ -39,7 +40,8 @@ FEATURES_CUTS_ONEPRONG = (
 )
 
 FEATURES_CUTS_THREEPRONG = (
-    Cut('off_centFrac > -1110')
+    Cut('off_pt < 150000.')
+    & Cut('off_centFrac > -1110')
     & Cut('off_innerTrkAvgDist > -1110')
     & Cut('off_dRmax > -1110')
     & Cut('off_trFlightPathSig > -1110')

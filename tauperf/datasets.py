@@ -3,6 +3,7 @@ import logging
 import copy
 import yaml
 import re
+import subprocess
 
 from . import UNMERGED_NTUPLE_PATH
 from . import log; log = log[__name__]
@@ -10,7 +11,7 @@ from . import log; log = log[__name__]
 log = logging.getLogger(os.path.basename(__file__))
 
 PATTERN = re.compile(
-    '^(?P<prefix>group.phys-higgs|user.qbuat)'
+    '^(?P<prefix>group.perf-tau|group.phys-higgs|user.qbuat)'
     '\.(?P<type>mc\d+_\d+TeV)'
     '\.(?P<id>\d+)'
     '\.(?P<gen>Pythia8|PowhegPythia8|PowPy8)_'
@@ -22,8 +23,16 @@ PATTERN = re.compile(
     '\.v(?P<version>\d+)_'
     '(?P<suffix>\S+)$')
 
-
-
+DATA_PATTERN = re.compile(
+    '^(?P<prefix>group.perf-tau|group.phys-higgs|user.qbuat)'
+    '\.(?P<type>data\d+_\d+TeV)'
+    '\.(?P<run>\d+)'
+    '\.physics_Main'
+    '\.merge.AOD.(?P<tag>f\d+_m\d+)'
+    '\.(?P<skim>tau_trigger|higgs|tauid)'
+    '\.v(?P<version>\d+)_'
+    '(?P<suffix>\S+)$')
+    
 def create_samples():
     log.info('Building samples using regular expressions ...')
     SAMPLES_RAW = {}
@@ -74,6 +83,22 @@ def create_samples():
                 print '\t %s  = %s' % (k, sample[k])
 
     return SAMPLES
+
+
+def create_data_runs():
+
+    for d in os.listdir(UNMERGED_NTUPLE_PATH):
+        abs_dir = os.path.join(UNMERGED_NTUPLE_PATH, d)
+        log.info(abs_dir)
+        if os.path.isdir(abs_dir):
+            match = re.match(DATA_PATTERN, d)
+            if match:
+                log.info(d)
+                run = int(match.group('run'))
+                cmd = 'hadd {0}/data.{1}.root {2}/*root*'.format(
+                    UNMERGED_NTUPLE_PATH, run, abs_dir)
+                log.info(cmd)
+                subprocess.call(cmd, shell=True)
 
 def create_database(db_name='datasets.yml'):
     SAMPLES = create_samples()

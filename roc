@@ -38,9 +38,10 @@ def get_sig_bkg(ana, cat, cut):
 
     return y_sig, y_bkg
 
-def roc(ana, 
-    discr_var,
-    category):
+def roc(
+    ana, 
+    category,
+    discr_var):
     """
     Calculates the ROC curve
     Returns the sorted list of wp and a TGraph
@@ -52,7 +53,7 @@ def roc(ana,
     log.info('create the workers')
     workers = [FuncWorker(
             get_sig_bkg, ana,
-            category, '{0} > {1}'.format(discri_var, val))
+            category, '{0} > {1}'.format(discr_var, val))
                for val in cut_vals]
     log.info('run the pool')
     run_pool(workers, n_jobs=-1)
@@ -112,7 +113,7 @@ def efficiencies_plot(
     vars = {
         'pt': VARIABLES['pt'],
         'eta': VARIABLES['eta'],
-        'npv': VARIABLES['npv'],
+        'good_npv': VARIABLES['good_npv'],
         'averageintpercrossing': VARIABLES['averageintpercrossing'],
         }
     canvases = {}

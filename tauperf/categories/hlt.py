@@ -27,12 +27,42 @@ FAST_TRACK = FAST_TRACK_CORE & FAST_TRACK_ISO
 # HLT_PRESEL = HLT_PRESEL_CALO & FAST_TRACK
 HLT_PRESEL = HLT_PT_CUT
 
+
+FEATURES_CUTS_ONEPRONG = (
+    Cut('hlt_pt < 150000.')
+    & Cut('hlt_centFrac > -1110')
+    & Cut('hlt_innerTrkAvgDist > -1110')
+    & Cut('hlt_ipSigLeadTrk > -999')
+    & Cut('hlt_etOverPtLeadTrk > 1./3.')
+    & Cut("hlt_ChPiEMEOverCaloEME > -10.")
+    & Cut("hlt_ChPiEMEOverCaloEME < 10.")
+    & Cut("hlt_EMPOverTrkSysP >= 0.")
+    & Cut("hlt_ptRatioEflowApprox < 10.")
+    & Cut("hlt_mEflowApprox < 10000.")
+)
+
+FEATURES_CUTS_THREEPRONG = (
+    Cut('hlt_pt < 150000.')
+    & Cut('hlt_centFrac > -1110')
+    & Cut('hlt_innerTrkAvgDist > -1110')
+    & Cut('hlt_dRmax > -1110')
+    & Cut('hlt_trFlightPathSig > -1110')
+    & Cut('hlt_massTrkSys >= 0')
+    & Cut('hlt_etOverPtLeadTrk > 1./3.')
+    & Cut("hlt_ChPiEMEOverCaloEME > -10.")
+    & Cut("hlt_ChPiEMEOverCaloEME < 10.")
+    & Cut("hlt_EMPOverTrkSysP >= 0.")
+    & Cut("hlt_ptRatioEflowApprox < 10.")
+    & Cut("hlt_mEflowApprox < 10000.")
+)
+
+
 class Category_1P_HLT(Category_Preselection):
     name = '1prong_hlt'
     label = '#tau_{had} (1P HLT)'
     common_cuts = Category_Preselection.common_cuts
     cuts = ONEPRONG & HLT_PRESEL
-    features = features_1p
+    features_cuts = FEATURES_CUTS_ONEPRONG
     features_pileup_corrected = features_1p_pileup_corrected
 
 class Category_2P_HLT(Category_Preselection):
@@ -51,6 +81,8 @@ class Category_3P_HLT(Category_Preselection):
     name = '3prongs_hlt'
     label = '#tau_{had} (3P HLT)'
     common_cuts = Category_Preselection.common_cuts
+    features_cuts = FEATURES_CUTS_THREEPRONG
+    features_pileup_corrected = features_mp_pileup_corrected
     cuts = THREEPRONG & HLT_PRESEL
 
 class Category_MP_HLT(Category_Preselection):

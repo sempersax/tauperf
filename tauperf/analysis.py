@@ -1,8 +1,10 @@
 import re
-
 from . import log; log = log[__name__]
 from . import samples
+from .classify import Classifier
+from .parallel import FuncWorker, run_pool
 from .categories import CATEGORIES
+
 from . import NTUPLE_PATH
 VAR_PATTERN = re.compile('((?P<prefix>hlt|off|true)_)?(?P<var>[A-Za-z0-9_]+)(\*(?P<scale>\d+\.\d*))?$')
 
@@ -20,7 +22,7 @@ class Analysis(object):
             log.info('Use Drell-Yan simulation')
             self.tau = samples.DY(
             ntuple_path=ntuple_path,
-            # weight_field='mc_event_weight',
+            weight_field='pu_weight', #mc_event_weight',
             name='tau', 
             label='Real #tau_{had}',
             trigger=trigger,
@@ -32,6 +34,7 @@ class Analysis(object):
                 name='tau', 
                 label='Real #tau_{had}',
                 trigger=trigger,
+                weight_field='pu_weight', 
                 color='#00A3FF')
 
         if use_jz_slices:
@@ -45,13 +48,13 @@ class Analysis(object):
                 color='#00FF00')
         else:
             log.info('Use data for bkg')
-            self.jet = samples.Jet(
+            self.jet = samples.DataJet(
                 ntuple_path=ntuple_path,
                 student='data',
                 name='jet', 
                 label='Fake #tau_{had}',
                 trigger=trigger,
-                weight_field='pt_weight' if not no_weight else None,
+                weight_field=None if no_weight else 'pt_weight',
                 color='#00FF00')
             
         self.trigger = trigger
@@ -113,3 +116,56 @@ class Analysis(object):
                 field_hist_tau_2[key].title += ' ({0})'.format(prefix2)
                 hist_samples_array[match.group('var')][prefix2] = field_hist_tau_2[key]
         return hist_samples_array
+
+
+    def train(self, 
+              prefix,
+              category=None,
+              training_mode='prod',
+              verbose='',
+              n_jobs=1,
+              **kwargs):
+
+        if category is not None:
+            categories = [category]
+        else:
+            if self.trigger:
+                categories = CATEGORIES['training_hlt']
+            else:
+                categories = CATEGORIES['training']
+
+        classifiers = []
+        for cat in categories:
+            cls_odd = Classifier(
+                cat, 
+                'weights/summary_odd_{0}.root'.format(cat.name),
+                '{0}_odd'.format(cat.name),
+                prefix=prefix,
+                split_cut='eventnumber%2==0',
+                training_mode=training_mode,
+                features=cat.features_pileup_corrected,
+                verbose=verbose)
+
+            cls_even = Classifier(
+                cat, 
+                'weights/summary_even_{0}.root'.format(cat.name),
+                '{0}_even'.format(cat.name),
+                prefix=prefix,
+                training_mode=training_mode,
+                split_cut='eventnumber%2!=0',
+                features=cat.features_pileup_corrected,
+                verbose=verbose)
+
+            classifiers.append(cls_odd)
+            classifiers.append(cls_even)
+
+        
+        if n_jobs == 1:
+            for cls in classifiers:
+                cls.train(self, **kwargs)
+        else:
+            procs = [FuncWorker(
+                    cls.train, self, **kwargs)
+                     for cls in classifiers]
+            run_pool(procs, n_jobs=n_jobs)
+

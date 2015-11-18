@@ -6,6 +6,27 @@ def get_label(variable):
 
 
 VARIABLES = {
+
+    'met': {
+        'name': 'met',
+        'root': 'missing-E_{T}',
+        'type': 'f',
+        'units': 'GeV',
+        'scale': 0.001,
+        'bins': 24,
+        'range': (-20, 120)
+        },
+
+    'met_significance': {
+        'name': 'met_significance',
+        'root': 'missing-E_{T} Significance',
+        'type': 'f',
+        'units': '#sqrt{GeV}',
+        'scale': 0.1,
+        'bins': 24,
+        'range': (-20, 120)
+        },
+
     'pt': {
         'name': 'pt',
         'root': 'p_{T}',
@@ -13,8 +34,8 @@ VARIABLES = {
         'units': 'GeV',
         'scale': 0.001,
         'prefix': ('off', 'hlt', 'true'),
-        'bins': 24,
-        'range': (0, 120)
+        'bins': 30,
+        'range': (0, 150)
         },
 
     'presel_pt': {
@@ -24,8 +45,8 @@ VARIABLES = {
         'units': 'GeV',
         'scale': 0.001,
         'prefix': ('hlt'),
-        'bins': 24,
-        'range': (0, 120)
+        'bins': 50,
+        'range': (0, 500)
         },
     
     'eta': {
@@ -37,19 +58,28 @@ VARIABLES = {
         'range': (-2.5, 2.5)
         },
 
-    'npv': {
-        'name': 'npv',
+    'phi': {
+        'name': 'phi',
+        'root': '#phi',
+        'type': 'f',
+        'prefix': ('off', 'hlt', 'l1', 'true'),
+        'bins': 20,
+        'range': (-3.15, 3.15)
+        },
+
+    'good_npv': {
+        'name': 'good_npv',
         'root': 'Number of Primary Vertices',
         'type': 'i',
         'bins': 20,
-        'range': (0, 80)
+        'range': (0, 40)
     },
     
     'averageintpercrossing': {
         'name': 'averageintpercrossing',
         'root': 'Average Interactions Per Bunch Crossing',
         'type': 'i',
-        'bins': 80,
+        'bins': 40,
         'range': (0, 40)
         },
 
@@ -80,8 +110,8 @@ VARIABLES = {
         'range': (0, 1.5)
         },
     
-    'test_centFracCorrected': {
-        'name': 'test_centFracCorrected',
+    'centFracCorrected': {
+        'name': 'centFracCorrected',
         'root': 'f_{core} (PU corrected)',
         'type': 'f',
         'prefix': ('off', 'hlt'),
@@ -261,8 +291,8 @@ VARIABLES = {
         'range': (0, 0.2),
         },
    
-    'test_innerTrkAvgDistCorrected': {
-        'name': 'test_innerTrkAvgDistCorrected',
+    'innerTrkAvgDistCorrected': {
+        'name': 'innerTrkAvgDistCorrected',
         'root': 'Inner R_{track} (PU corrected)',
         'prefix': ('hlt'),
         'type': 'f',
@@ -288,8 +318,8 @@ VARIABLES = {
         'range': (0, 1),
         },
 
-    'test_SumPtTrkFracCorrected': {
-        'name': 'test_SumPtTrkFracCorrected',
+    'SumPtTrkFracCorrected': {
+        'name': 'SumPtTrkFracCorrected',
         'root': '1 - p_{T}^{trk in 0.2} / p_{T}^{trk in 0.4} (PU corrected)',
         'type': 'f',
         'prefix': ('off', 'hlt'),
@@ -306,8 +336,8 @@ VARIABLES = {
         'range': (-1, 3),
         },
     
-    'test_ChPiEMEOverCaloEMECorrected': {
-        'name': 'test_ChPiEMEOverCaloEMECorrected',
+    'ChPiEMEOverCaloEMECorrected': {
+        'name': 'ChPiEMEOverCaloEMECorrected',
         'root': 'E_{#pi^{#pm}}/E_{calo} (PU corrected)',
         'type': 'f',
         'prefix': ('hlt'),
@@ -324,8 +354,8 @@ VARIABLES = {
         'range': (0, 5),
         },
     
-    'test_etOverPtLeadTrkCorrected': {
-        'name': 'test_etOverPtLeadTrkCorrected',
+    'etOverPtLeadTrkCorrected': {
+        'name': 'etOverPtLeadTrkCorrected',
         'root': '1./f_{track} (PU corrected)',
         'type': 'f',
         'prefix': ('off', 'hlt'),
@@ -342,8 +372,8 @@ VARIABLES = {
         'range': (0, 7),
         },
 
-    'test_EMPOverTrkSysPCorrected': {
-        'name' : 'test_EMPOverTrkSysPCorrected',
+    'EMPOverTrkSysPCorrected': {
+        'name' : 'EMPOverTrkSysPCorrected',
         'root': 'p_{EM}/p_{tracks} (PU corrected)',
         'prefix': ('hlt'),
         'type': 'f',
@@ -360,8 +390,8 @@ VARIABLES = {
         'range': (-5, 5),
         },
     
-    'test_ipSigLeadTrkCorrected': {
-        'name' : 'test_ipSigLeadTrkCorrected',
+    'ipSigLeadTrkCorrected': {
+        'name' : 'ipSigLeadTrkCorrected',
         'root': 'S_{lead track}',
         'type': 'f',
         'prefix': ('off', 'hlt'),
@@ -414,8 +444,8 @@ VARIABLES = {
         'range': (0, 0.2),
         },
     
-    'test_dRmaxCorrected': {
-        'name' : 'test_dRmaxCorrected',
+    'dRmaxCorrected': {
+        'name' : 'dRmaxCorrected',
         'root': '#DeltaR_{max} (PU corrected)',
         'type': 'f',
         'prefix': ('off', 'hlt'),
@@ -432,8 +462,8 @@ VARIABLES = {
         'range': (-10, 30),
         },
     
-    'test_trFlightPathSigCorrected': {
-        'name' : 'test_trFlightPathSigCorrected',
+    'trFlightPathSigCorrected': {
+        'name' : 'trFlightPathSigCorrected',
         'root': 'S_{T}^{flight} (PU corrected)',
         'type': 'f',
         'prefix': ('off', 'hlt'),
@@ -452,8 +482,8 @@ VARIABLES = {
         'range': (0., 5000.),
         },
 
-    'test_massTrkSysCorrected': {
-        'name' : 'test_massTrkSysCorrected',
+    'massTrkSysCorrected': {
+        'name' : 'massTrkSysCorrected',
         'root': 'm_{track} (PU corrected)',
         'type': 'f',
         'prefix': ('off', 'hlt'),
@@ -472,8 +502,8 @@ VARIABLES = {
         'range': (0, 4),
         },
 
-    'test_ptRatioEflowApproxCorrected': {
-        'name' : 'test_ptRatioEflowApproxCorrected',
+    'ptRatioEflowApproxCorrected': {
+        'name' : 'ptRatioEflowApproxCorrected',
         'root': 'Approximated p_{T} ratio (PU corrected)',
         'type': 'f',
         'prefix': ('off', 'hlt'),
@@ -492,8 +522,8 @@ VARIABLES = {
         'range': (0.0, 5000.),
         },
 
-    'test_mEflowApproxCorrected': {
-        'name' : 'test_mEflowApproxCorrected',
+    'mEflowApproxCorrected': {
+        'name' : 'mEflowApproxCorrected',
         'root': 'Approximated m_{#tau}^{vis} (PU corrected)',
         'type': 'f',
         'prefix': ('off', 'hlt'),

@@ -28,27 +28,27 @@ features_mp = [
 ]
 
 features_1p_pileup_corrected = [
-    'test_centFracCorrected',
-    'test_etOverPtLeadTrkCorrected'   ,
-    'test_innerTrkAvgDistCorrected'   ,
-    'test_ipSigLeadTrkCorrected'      ,
-    'test_SumPtTrkFracCorrected'      ,
-    'test_ptRatioEflowApproxCorrected',
-    'test_mEflowApproxCorrected'      ,
-    'test_ChPiEMEOverCaloEMECorrected',
-    'test_EMPOverTrkSysPCorrected'    , 
+    'centFracCorrected',
+    'etOverPtLeadTrkCorrected'   ,
+    'innerTrkAvgDistCorrected'   ,
+    'ipSigLeadTrkCorrected'      ,
+    'SumPtTrkFracCorrected'      ,
+    'ptRatioEflowApproxCorrected',
+    'mEflowApproxCorrected'      ,
+    'ChPiEMEOverCaloEMECorrected',
+    'EMPOverTrkSysPCorrected'    , 
 ]
 
 features_mp_pileup_corrected = [
-    'test_centFracCorrected',
-    'test_etOverPtLeadTrkCorrected',
-    'test_innerTrkAvgDistCorrected',
-    'test_dRmaxCorrected',
-    'test_trFlightPathSigCorrected',
-    'test_massTrkSysCorrected',
-    'test_ptRatioEflowApproxCorrected',
-    'test_mEflowApproxCorrected',
-    'test_ChPiEMEOverCaloEMECorrected',
-    'test_EMPOverTrkSysPCorrected',
+    'centFracCorrected',
+    'etOverPtLeadTrkCorrected',
+    'innerTrkAvgDistCorrected',
+    'dRmaxCorrected',
+    'trFlightPathSigCorrected',
+    'massTrkSysCorrected',
+    'ptRatioEflowApproxCorrected',
+    'mEflowApproxCorrected',
+    'ChPiEMEOverCaloEMECorrected',
+    'EMPOverTrkSysPCorrected',
 ]
 

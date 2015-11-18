@@ -26,7 +26,10 @@ if __name__ == "__main__":
     if args.cut:
         cuts = Cut(args.cut)
 
-    ana = Analysis(use_drellyan=args.use_dy)
+    ana = Analysis(
+        use_drellyan=args.use_dy,
+        trigger=args.trigger)
+
     for cat in ana.iter_categories(args.categories):
         vars = {}
         for v in cat.features_pileup_corrected:

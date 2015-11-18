@@ -11,7 +11,7 @@ if 'lxplus' in os.getenv('HOSTNAME'):
 else:
     UNMERGED_NTUPLE_PATH = os.path.join(
         # os.getenv('DATA_AREA'), 'crackpotauid_ntuples', 'v3')
-        os.getenv('DATA_AREA'), 'tauid_ntuples', 'v2')
+        os.getenv('DATA_AREA'), 'tauid_ntuples', 'v3')
     NTUPLE_PATH = UNMERGED_NTUPLE_PATH
     # NTUPLE_PATH = os.path.join(UNMERGED_NTUPLE_PATH, 'merge_weighted')
 

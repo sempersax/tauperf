@@ -18,7 +18,7 @@ log = logging.getLogger('apply-pt-weight')
 class Model(TreeModel):
     pt_weight = FloatCol()
 
-def add_bdt_scores(tree):
+def add_pt_weight(tree):
     tree.create_buffer()
     tree.set_buffer(Model(), create_branches=True)
     branches = [
@@ -28,7 +28,7 @@ def add_bdt_scores(tree):
 
     w_file = root_open('cache/pt_weights.root')
     gr_1p = Graph(w_file['pt_weight_1prong'])
-    gr_mp = Graph(w_file['pt_weight_multiprongs'])
+    gr_mp = Graph(w_file['pt_weight_3prongs'])
     w_file.Close()
     for event in tree:
         if tree.off_ntracks == 1:
@@ -55,11 +55,11 @@ class Job(Process):
         shutil.copy(filename, output)
         with root_open(output, 'UPDATE') as file:
             tree = file.tau
-            if 'hlt_bdt_score' in tree:
-                log.info("scores already exist in {0} ...".format(output))
+            if 'pt_weight' in tree:
+                log.info("weight already exist in {0} ...".format(output))
                 return
-            log.info("adding bdt scores to {0} ...".format(output))
-            add_bdt_scores(tree)
+            log.info("adding weight to {0} ...".format(output))
+            add_pt_weight(tree)
             tree.Write(tree.name, ROOT.TObject.kOverwrite)
 
 

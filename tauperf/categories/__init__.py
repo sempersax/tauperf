@@ -34,5 +34,16 @@ CATEGORIES = {
     'presel': [
         Category_Preselection
         ],
+    'training': [
+        Category_1P,
+        Category_3P,
+        ],
+    'training_hlt': [
+        Category_1P_HLT,
+        Category_3P_HLT,
+        ],
+    
+
+
 
 }

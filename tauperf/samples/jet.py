@@ -1,9 +1,20 @@
 from .sample import Sample
 from .. import NTUPLE_PATH
 from .. import log; log = log[__name__]
+from rootpy.tree import Cut
 
 class Jet(Sample):
     pass
+
+class DataJet(Jet):
+
+    def __init__(self, *args, **kwargs):
+        super (DataJet, self).__init__(*args, **kwargs)
+
+    def cuts(self, *args, **kwargs):
+        cut = super(DataJet, self).cuts(*args, **kwargs)
+        cut &= Cut('met < 100000.')
+        return cut
 
 
 XSEC_FILTER = {

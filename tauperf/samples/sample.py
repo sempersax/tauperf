@@ -34,6 +34,7 @@ class Sample(object):
         self.label = label
         self.trigger = trigger
         self.weight_field = weight_field
+        log.debug(weight_field)
         self.hist_decor = hist_decor
 
         if 'fillstyle' not in hist_decor:
