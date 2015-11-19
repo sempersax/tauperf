@@ -91,12 +91,12 @@ def add_bdt_scores(tree):
         # hlt
         if hlt_tau.ntracks == 1:
             event.hlt_bdt_score_off_training_dev = evaluate_score(
-                event, hlt_tau, readers_1p, Category_1P)
+                event, hlt_tau, readers_1p, Category_1P_HLT)
             event.hlt_bdt_score_hlt_training_dev = evaluate_score(
                 event, hlt_tau, readers_1p_hlt, Category_1P_HLT)
         elif hlt_tau.ntracks > 1: 
             event.hlt_bdt_score_off_training_dev = evaluate_score(
-                event, hlt_tau, readers_3p, Category_3P)
+                event, hlt_tau, readers_3p, Category_3P_HLT)
             event.hlt_bdt_score_hlt_training_dev = evaluate_score(
                 event, hlt_tau, readers_3p_hlt, Category_3P_HLT)
         else:

@@ -155,6 +155,7 @@ if __name__ == '__main__':
     from tauperf.cmd import get_parser
     parser = get_parser()
     parser.add_argument('--no-roc', action='store_true', default=False)
+    parser.add_argument('--score-var', default=None, type=str)
     args = parser.parse_args()
     ana = Analysis(
         trigger=args.trigger)
@@ -165,6 +166,9 @@ if __name__ == '__main__':
     else:
         score_var = 'off_bdtjetscore'
         wp_level = 'off'
+        
+    if args.score_var is not None:
+        score_var = args.score_var
 
     table = PrettyTable([
             'Category', 
