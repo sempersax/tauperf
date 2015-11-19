@@ -54,11 +54,11 @@ class Classifier(TMVA.Factory):
             var = VARIABLES[varName]
             self.AddVariable(prefix + '_' + var['name'], var['root'], '', var['type'])
 
-    def bookBDT(self,
-                ntrees=100,
-                node_size=5,
-                depth=8):
-
+    def book(self,
+             ntrees=100,
+             node_size=5,
+             depth=8):
+        
         #         params  = ["PruneBeforeBoost=False"]
         params = ["SeparationType=GiniIndex"]
         params += ["BoostType=AdaBoost"]
@@ -126,7 +126,7 @@ class Classifier(TMVA.Factory):
         self.SetBackgroundWeightExpression(ana.jet.weight_field)
         log.info('preparation is done, start booking')
         # Actual training
-        self.bookBDT(**kwargs)
+        self.book(**kwargs)
         # booking is done, start training
         self.TrainAllMethods()
         if self.training_mode == 'dev':
