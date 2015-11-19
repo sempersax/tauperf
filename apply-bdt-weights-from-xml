@@ -40,30 +40,6 @@ def get_readers(category):
     return reader_odd, reader_even
 
 
-def evaluate_single_bdt(reader, feats, tree):
-    feats = vector('double')()
-    for feat in feats:
-        vals.push_back(getattr(tree, feat))
-    return reader.GetMvaValue(vals)
-
-def evaluate_bdt(tree, readers, feats):
-    if tree.hlt_tau.ntracks == 1:
-        if tree.eventnumber % 2 == 0:
-            return evaluate_single_bdt(
-                readers['1p_even'], feats['1p'], tree)
-        else:
-            return evaluate_single_bdt(
-                readers['1p_odd'], feats['1p'], tree)
-    elif tree.hlt_tau.ntracks > 1:
-        if tree.eventnumber % 2 == 0:
-            return evaluate_single_bdt(
-                readers['mp_even'], feats['mp'], tree)
-        else:
-            return evaluate_single_bdt(
-                readers['mp_odd'], feats['mp'], tree)
-    else:
-        return -9999.
-
 def evaluate_score(event, tau, readers, category):
     
     feats = ROOT.vector('double')()
