@@ -15,8 +15,9 @@ rootpy.log.setLevel(logging.INFO)
 if __name__ == "__main__":
 
     parser = get_parser('plot')
+    parser.add_argument('--jobs', default=-1, type=int)
     args = parser.parse_args()
-
+    
     ana = Analysis(
         use_drellyan=args.use_dy,
         trigger=args.trigger,
@@ -28,6 +29,6 @@ if __name__ == "__main__":
         ntrees=70,
         node_size=0.1,
         depth=10000,
-        n_jobs=-1)
+        n_jobs=args.jobs)
 
 

@@ -9,12 +9,13 @@ from prettytable import PrettyTable
 from rootpy import ROOT
 
 from tauperf import UNMERGED_NTUPLE_PATH
-from tauperf.analysis import Analysis
+from tauperf.analysis import Analysis, old_working_points, get_sig_bkg
 from tauperf.variables import VARIABLES
 from tauperf.plotting import draw_shape, draw_efficiencies
 from tauperf.parallel import run_pool, FuncWorker
 from tauperf.categories import Category_1P_HLT, Category_MP_HLT
 from tauperf.samples.db import cleanup
+from tauperf.classify import working_point
 
 log = logging.getLogger(os.path.basename(__file__))
 if not os.environ.get("DEBUG", False):
@@ -23,20 +24,6 @@ rootpy.log.setLevel(logging.INFO)
 set_style('ATLAS', shape='rect')
 
 
-class working_point(object):
-    def __init__(self, cut, eff_s, eff_b, name='wp'):
-        self.name = name
-        self.cut = cut
-        self.eff_s = eff_s
-        self.eff_b = eff_b
-    
-def get_sig_bkg(ana, cat, cut):
-    """small function to calculate sig and bkg yields"""
-    y_sig = ana.tau.events(cat, cut, force_reopen=True)[1].value
-    y_bkg = ana.jet.events(cat, cut, weighted=True, force_reopen=True)[1].value
-    
-
-    return y_sig, y_bkg
 
 def roc(
     ana, 
@@ -196,17 +183,17 @@ if __name__ == '__main__':
             c.SetLogy(True)
             roc_new.Draw('AL')
             gr_old.Draw('sameP')
-            c.SaveAs('plots/roc_cat_{0}.png'.format(cat.name))
+            c.SaveAs('plots/roc_cat_{0}_score_{1}.png'.format(cat.name, score_var))
         
         TARGET = wp_old
         
         plot_score = score_plot(ana, cat, score_var)
-        plot_score.SaveAs('plots/scores_cat_{0}.png'.format(cat.name))
+        plot_score.SaveAs('plots/scores_cat_{0}_score_{1}.png'.format(cat.name, score_var))
         
 
         plot_effs = efficiencies_plot(ana, cat, score_var, wp_level, TARGET)
         for v, plt in plot_effs.items():
-            plt.SaveAs('plots/efficiencies_var_{0}_cat_{1}.png'.format(v, cat.name))
+            plt.SaveAs('plots/efficiencies_var_{0}_cat_{1}_score_{2}.png'.format(v, cat.name, score_var))
         
 
         for t in TARGET:

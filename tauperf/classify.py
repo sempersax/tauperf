@@ -7,7 +7,7 @@ I dediced to stick to this for now.
 import os
 from multiprocessing import Process
 
-from ROOT import TMVA
+import ROOT
 from rootpy.utils.lock import lock
 from rootpy.io import root_open
 from rootpy.tree import Cut
@@ -17,8 +17,12 @@ from samples.db import get_file
 from . import UNMERGED_NTUPLE_PATH
 from samples import Tau, Jet, JZ
 from .variables import VARIABLES
+from .parallel import FuncWorker, run_pool
 
-class Classifier(TMVA.Factory):
+
+
+# class Classifier(ROOT.TMVA.Factory):
+class Classifier(object):
 
     def __init__(self, 
                  category,
@@ -28,38 +32,35 @@ class Classifier(TMVA.Factory):
                  tree_name='tau',
                  training_mode='dev', # 'prod'
                  features=None,
-                 split_cut=None,
+                 train_split='odd',
+                 test_split='even',
                  verbose=''):
 
-        self.output = root_open(output_name, 'recreate')
-        TMVA.Factory.__init__(
-            self, factory_name, self.output, verbose)
+        self.output_name = output_name
         self.factory_name = factory_name
         self.category = category
         self.prefix = prefix
         self.tree_name = tree_name
         self.training_mode = training_mode
         self.features = features
-        if split_cut is None:
-            self.split_cut = Cut()
-        else:
-            self.split_cut = Cut(split_cut)
-            
+        self.train_split = train_split
+        self.test_split = test_split
+        self.verbose = verbose
 
 
-    def set_variables(self, category, prefix):
+    def set_variables(self, factory, category, prefix):
         if self.features is None:
             self.features = category.features
         for varName in self.features:
             var = VARIABLES[varName]
-            self.AddVariable(prefix + '_' + var['name'], var['root'], '', var['type'])
+            factory.AddVariable(prefix + '_' + var['name'], var['root'], '', var['type'])
 
     def book(self,
+             factory,
              ntrees=100,
              node_size=5,
              depth=8):
         
-        #         params  = ["PruneBeforeBoost=False"]
         params = ["SeparationType=GiniIndex"]
         params += ["BoostType=AdaBoost"]
         params += ["PruneMethod=CostComplexity"]
@@ -72,9 +73,6 @@ class Classifier(TMVA.Factory):
         params += ["MaxDepth={0}".format(depth)]
         params += ["MinNodeSize={0}".format(node_size)]
         params += ["NTrees={0}".format(ntrees)]
-        #         params += ["nCuts={0}".format(nCuts)]
-        #         params += ["NNodesMax={0}".format(NNodesMax)]
-        #         params += ["nEventsMin={0}".format(nEventsMin)]
         log.info(params)
 
         method_name = "BDT_{0}".format(self.factory_name)
@@ -82,55 +80,74 @@ class Classifier(TMVA.Factory):
         for param in params:
             params_string+= ":"+param
         log.info('booking ..')
-        self.BookMethod(
-            TMVA.Types.kBDT,
+        factory.BookMethod(
+            ROOT.TMVA.Types.kBDT,
             method_name,
             params_string)
 
-    def train(self, ana, **kwargs):
+    def train(self, tau, jet, **kwargs):
 
-        self.set_variables(self.category, self.prefix)
-        self.sig_cut = ana.tau.cuts(self.category, feat_cuts=True) & self.split_cut
-        self.bkg_cut = ana.jet.cuts(self.category, feat_cuts=True) & self.split_cut
+        #         params  = ["PruneBeforeBoost=False"]
+        output = root_open(self.output_name, 'recreate')
+        factory = ROOT.TMVA.Factory(self.factory_name, output, self.verbose)
+
+        self.set_variables(factory, self.category, self.prefix)
+        self.sig_cut = tau.cuts(self.category, feat_cuts=True) 
+        self.bkg_cut = jet.cuts(self.category, feat_cuts=True) 
 
         params = ['NormMode=EqualNumEvents']
-        params += ['SplitMode=Random']
-        if self.training_mode == 'prod':
-            params += ['nTest_Background=1']
-            params += ['nTest_Signal=1']
-            params += ['!V']
+        params += ['SplitMode=Block']
         params_string = ':'.join(params)
+
         log.info(self.sig_cut)
         log.info(self.bkg_cut)
-        self.PrepareTrainingAndTestTree(self.sig_cut, self.bkg_cut, params_string)
         
         # Signal file
         log.info('prepare signal tree')
-        sig_file = get_file(ana.tau.ntuple_path, ana.tau.student) 
-        self.sig_tree = sig_file[ana.tau.tree_name]
-        self.AddSignalTree(self.sig_tree)
-        self.SetSignalWeightExpression(ana.tau.weight_field)
+        sig_file = get_file(tau.ntuple_path, tau.student) 
+        self.sig_tree_train = sig_file.Get(tau.tree_name + '_' + self.train_split)
+        self.sig_tree_test = sig_file.Get(tau.tree_name + '_' + self.test_split)
+
+        factory.AddSignalTree(self.sig_tree_train, 1., ROOT.TMVA.Types.kTraining)
+        factory.AddSignalTree(self.sig_tree_test, 1., ROOT.TMVA.Types.kTesting)
+        factory.SetSignalWeightExpression(tau.weight_field)
 
         # Bkg files
         log.info('prepare background tree')
-        if isinstance(ana.jet, JZ):
-            for sample, scale in zip(ana.jet.components, ana.jet.scales):
+        if isinstance(jet, JZ):
+            for sample, scale in zip(jet.components, jet.scales):
                 rfile = get_file(sample.ntuple_path, sample.student)
                 tree = rfile[sample.tree_name]
                 self.AddBackgroundTree(tree, scale)
         else:
-            bkg_file = get_file(ana.jet.ntuple_path, ana.jet.student)
-            self.bkg_tree = bkg_file[ana.jet.tree_name]
-            self.AddBackgroundTree(self.bkg_tree)
+            bkg_file = get_file(jet.ntuple_path, jet.student)
+            self.bkg_tree = bkg_file[jet.tree_name]
+            self.bkg_tree_train = bkg_file.Get(jet.tree_name + '_' + self.train_split)
+            self.bkg_tree_test = bkg_file.Get(jet.tree_name + '_' + self.test_split)
+            factory.AddBackgroundTree(self.bkg_tree_train, 1., ROOT.TMVA.Types.kTraining)
+            factory.AddBackgroundTree(self.bkg_tree_test, 1., ROOT.TMVA.Types.kTesting)
 
-        self.SetBackgroundWeightExpression(ana.jet.weight_field)
+        factory.SetBackgroundWeightExpression(jet.weight_field)
+        log.info('preparation the trees')
+        output.cd()
+        factory.PrepareTrainingAndTestTree(
+            self.sig_cut, self.bkg_cut, params_string)
         log.info('preparation is done, start booking')
         # Actual training
-        self.book(**kwargs)
+        self.book(factory, **kwargs)
         # booking is done, start training
-        self.TrainAllMethods()
-        if self.training_mode == 'dev':
-            self.output.cd()
-            self.TestAllMethods()
-            self.EvaluateAllMethods()
-            self.output.Close()
+        log.info(ROOT.gDirectory.GetPath())
+        factory.TrainAllMethods()
+        factory.TestAllMethods()
+        factory.EvaluateAllMethods()
+        log.info(ROOT.gDirectory.GetPath())
+        output.Close()
+
+
+
+class working_point(object):
+    def __init__(self, cut, eff_s, eff_b, name='wp'):
+        self.name = name
+        self.cut = cut
+        self.eff_s = eff_s
+        self.eff_b = eff_b

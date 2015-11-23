@@ -1,8 +1,9 @@
 import re
+from rootpy.plotting import Graph
 from . import log; log = log[__name__]
 from . import samples
-from .classify import Classifier
-from .parallel import FuncWorker, run_pool
+from .classify import Classifier, working_point
+from .parallel import FuncWorker, Worker, run_pool
 from .categories import CATEGORIES
 
 from . import NTUPLE_PATH
@@ -141,31 +142,70 @@ class Analysis(object):
                 'weights/summary_odd_{0}.root'.format(cat.name),
                 '{0}_odd'.format(cat.name),
                 prefix=prefix,
-                split_cut='eventnumber%2==0',
+                train_split='odd',
+                test_split='even',
                 training_mode=training_mode,
                 features=cat.features_pileup_corrected,
                 verbose=verbose)
-
             cls_even = Classifier(
                 cat, 
                 'weights/summary_even_{0}.root'.format(cat.name),
                 '{0}_even'.format(cat.name),
                 prefix=prefix,
+                train_split='even',
+                test_split='odd',
                 training_mode=training_mode,
-                split_cut='eventnumber%2!=0',
                 features=cat.features_pileup_corrected,
                 verbose=verbose)
-
-            classifiers.append(cls_odd)
-            classifiers.append(cls_even)
-
+            classifiers += [cls_odd, cls_even]
+            
         
         if n_jobs == 1:
             for cls in classifiers:
-                cls.train(self, **kwargs)
+                cls.train(self.tau, self.jet, **kwargs)
         else:
             procs = [FuncWorker(
-                    cls.train, self, **kwargs)
+                    cls.train, self.tau, self.jet, **kwargs)
                      for cls in classifiers]
             run_pool(procs, n_jobs=n_jobs)
 
+
+
+
+def get_sig_bkg(ana, cat, cut):
+    """small function to calculate sig and bkg yields"""
+    y_sig = ana.tau.events(cat, cut, force_reopen=True)[1].value
+    y_bkg = ana.jet.events(cat, cut, weighted=True, force_reopen=True)[1].value
+    return y_sig, y_bkg
+
+
+def old_working_points(ana, category, wp_level):
+    log.info('create the workers')
+
+    wp_names = ['loose', 'medium', 'tight']
+    cuts = [
+        wp_level + '_is_loose == 1', 
+        wp_level + '_is_medium == 1',
+        wp_level + '_is_tight == 1' 
+        ]
+    
+    workers = [FuncWorker(
+            get_sig_bkg, 
+            ana, category, 
+            cut) for cut in cuts]
+    run_pool(workers, n_jobs=-1)
+    yields = [w.output for w in workers]
+
+    log.info('--> Calculate the total yields')
+    sig_tot = ana.tau.events(category)[1].value
+    bkg_tot = ana.jet.events(category, weighted=True)[1].value
+    gr = Graph(len(cuts))
+    wps = []
+    for i, (name, val, yields) in enumerate(zip(wp_names, cuts, yields)):
+        eff_sig = yields[0] / sig_tot
+        eff_bkg = yields[1] / bkg_tot
+        rej_bkg = 1. / eff_bkg if eff_bkg != 0 else 0
+        wps.append(working_point(
+                val, eff_sig, eff_bkg, name=name))
+        gr.SetPoint(i, eff_sig, rej_bkg)
+    return gr, wps
