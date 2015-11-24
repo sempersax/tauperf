@@ -1,30 +1,27 @@
 
 features_1p = [
-    # 'trkAvgDist',
-    'InnerTrkAvgDist',
-    'etOverPtLeadTrk',
-    'AbsipSigLeadTrk_BS',
-    'SumPtTrkFrac',
-    # 'nwidetracks',
-    'ChPiEMEOverCaloEME',
-    'EMPOverTrkSysP',
     'centFrac',
-    'approx_ptRatio',
-    'approx_vistau_m',
+    'etOverPtLeadTrk'   ,
+    'innerTrkAvgDist'   ,
+    'ipSigLeadTrk'      ,
+    'SumPtTrkFrac'      ,
+    'ptRatioEflowApprox',
+    'mEflowApprox'      ,
+    'ChPiEMEOverCaloEME',
+    'EMPOverTrkSysP'    , 
 ]
 
 features_mp = [
-    'dRmax',
-    'InnerTrkAvgDist',
-    # 'trkAvgDist',
+    'centFrac',
     'etOverPtLeadTrk',
+    'innerTrkAvgDist',
+    'dRmax',
     'trFlightPathSig',
     'massTrkSys',
+    'ptRatioEflowApprox',
+    'mEflowApprox',
     'ChPiEMEOverCaloEME',
     'EMPOverTrkSysP',
-    'centFrac',
-    'approx_ptRatio',
-    'approx_vistau_m',
 ]
 
 features_1p_pileup_corrected = [

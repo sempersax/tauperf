@@ -282,8 +282,8 @@ VARIABLES = {
         'range': (0, 0.4),
         },
 
-    'InnerTrkAvgDist': {
-        'name': 'InnerTrkAvgDist',
+    'innerTrkAvgDist': {
+        'name': 'innerTrkAvgDist',
         'root': 'Inner R_{track}',
         'prefix': ('off', 'hlt'),
         'type': 'f',
@@ -493,8 +493,8 @@ VARIABLES = {
         'range': (0, 10000,),
         },
 
-    'approx_ptRatio': {
-        'name' : 'approx_ptRatio',
+    'ptRatioEflowApprox': {
+        'name' : 'ptRatioEflowApprox',
         'root': 'Approximated p_{T} ratio',
         'type': 'f',
         'prefix': ('off', 'hlt'),
@@ -511,8 +511,8 @@ VARIABLES = {
         'range': (0, 4),
         },
 
-    'approx_vistau_m': {
-        'name' : 'approx_vistau_m',
+    'mEflowApprox': {
+        'name' : 'mEflowApprox',
         'root': 'Approximated m_{#tau}^{vis}',
         'type': 'f',
         'prefix': ('off', 'hlt'),

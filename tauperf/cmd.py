@@ -18,6 +18,7 @@ def get_parser(action=None):
     parser.add_argument('--level', default='off', type=str, choices=['off', 'hlt'], help='additional cut to apply')
     parser.add_argument('--trigger', default=False, action='store_true')
     parser.add_argument('--no-weight', default=False, action='store_true')
+    parser.add_argument('--verbose', default=False, action='store_true')
     if action == 'plot':
         parser.add_argument('--logy', default=False, action='store_true')
 

@@ -25,7 +25,7 @@ FAST_TRACK_ISO = Cut('hlt_fasttrack_Niso4 < 2')
 FAST_TRACK = FAST_TRACK_CORE & FAST_TRACK_ISO
 
 # HLT_PRESEL = HLT_PRESEL_CALO & FAST_TRACK
-HLT_PRESEL = HLT_PT_CUT
+HLT_PRESEL = HLT_PT_CUT & Cut('hlt_pt < 150000.')
 
 
 FEATURES_CUTS_ONEPRONG = (
@@ -63,6 +63,7 @@ class Category_1P_HLT(Category_Preselection):
     common_cuts = Category_Preselection.common_cuts
     cuts = ONEPRONG & HLT_PRESEL
     features_cuts = FEATURES_CUTS_ONEPRONG
+    features = features_1p
     features_pileup_corrected = features_1p_pileup_corrected
 
 class Category_2P_HLT(Category_Preselection):
@@ -82,6 +83,7 @@ class Category_3P_HLT(Category_Preselection):
     label = '#tau_{had} (3P HLT)'
     common_cuts = Category_Preselection.common_cuts
     features_cuts = FEATURES_CUTS_THREEPRONG
+    features = features_mp
     features_pileup_corrected = features_mp_pileup_corrected
     cuts = THREEPRONG & HLT_PRESEL
 

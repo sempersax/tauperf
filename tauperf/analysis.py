@@ -122,8 +122,8 @@ class Analysis(object):
     def train(self, 
               prefix,
               category=None,
-              training_mode='prod',
               verbose='',
+              features='features_pileup_corrected',
               n_jobs=1,
               **kwargs):
 
@@ -139,23 +139,21 @@ class Analysis(object):
         for cat in categories:
             cls_odd = Classifier(
                 cat, 
-                'weights/summary_odd_{0}.root'.format(cat.name),
+                'weights/summary_odd_{0}_{1}.root'.format(cat.name, features),
                 '{0}_odd'.format(cat.name),
                 prefix=prefix,
                 train_split='odd',
                 test_split='even',
-                training_mode=training_mode,
-                features=cat.features_pileup_corrected,
+                features=getattr(cat, features),
                 verbose=verbose)
             cls_even = Classifier(
                 cat, 
-                'weights/summary_even_{0}.root'.format(cat.name),
+                'weights/summary_even_{0}_{1}.root'.format(cat.name, features),
                 '{0}_even'.format(cat.name),
                 prefix=prefix,
                 train_split='even',
                 test_split='odd',
-                training_mode=training_mode,
-                features=cat.features_pileup_corrected,
+                features=getattr(cat, features),
                 verbose=verbose)
             classifiers += [cls_odd, cls_even]
             

@@ -30,7 +30,6 @@ class Classifier(object):
                  factory_name,
                  prefix='hlt',
                  tree_name='tau',
-                 training_mode='dev', # 'prod'
                  features=None,
                  train_split='odd',
                  test_split='even',
@@ -41,7 +40,6 @@ class Classifier(object):
         self.category = category
         self.prefix = prefix
         self.tree_name = tree_name
-        self.training_mode = training_mode
         self.features = features
         self.train_split = train_split
         self.test_split = test_split
