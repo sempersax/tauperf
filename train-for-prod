@@ -16,7 +16,6 @@ if __name__ == "__main__":
 
     parser = get_parser()
     parser.add_argument('--jobs', default=-1, type=int)
-    parser.add_argument('--features', default='features_pileup_corrected', type=str)
     args = parser.parse_args()
     
     ana = Analysis(

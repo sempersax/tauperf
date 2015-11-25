@@ -32,7 +32,7 @@ if __name__ == "__main__":
 
     for cat in ana.iter_categories(args.categories):
         vars = {}
-        for v in cat.features_pileup_corrected:
+        for v in getattr(cat, args.features):
             vars[v] = VARIABLES[v]
         
         hist_samples_array = ana.get_hist_samples_array(vars, args.level, category=cat, cuts=cuts, dummy_range=args.dummy_range)

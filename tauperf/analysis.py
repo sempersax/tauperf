@@ -140,7 +140,7 @@ class Analysis(object):
             cls_odd = Classifier(
                 cat, 
                 'weights/summary_odd_{0}_{1}.root'.format(cat.name, features),
-                '{0}_odd'.format(cat.name),
+                '{0}_odd_{1}'.format(cat.name, features),
                 prefix=prefix,
                 train_split='odd',
                 test_split='even',
