@@ -3,7 +3,7 @@ features_1p = [
     'centFrac',
     'etOverPtLeadTrk'   ,
     'innerTrkAvgDist'   ,
-    'ipSigLeadTrk'      ,
+    'AbsipSigLeadTrk'      ,
     'SumPtTrkFrac'      ,
     'ptRatioEflowApprox',
     'mEflowApprox'      ,

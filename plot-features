@@ -32,6 +32,7 @@ if __name__ == "__main__":
 
     for cat in ana.iter_categories(args.categories):
         vars = {}
+        # vars['pt'] = VARIABLES['pt']
         for v in getattr(cat, args.features):
             vars[v] = VARIABLES[v]
         
@@ -43,9 +44,9 @@ if __name__ == "__main__":
                 field, cat, logy=args.logy)
             log.info(plot)
             if args.logy:
-                plot.SaveAs(os.path.join('plots', args.level + '_' + field+'_'+cat.name+'_logy.png'))
+                plot.SaveAs(os.path.join('plots/features/', args.level + '_' + field+'_'+cat.name+'_logy.png'))
             else: 
-                plot.SaveAs(os.path.join('plots', args.level + '_' + field + '_' + cat.name+'.png'))
+                plot.SaveAs(os.path.join('plots/features/', args.level + '_' + field + '_' + cat.name+'.png'))
 
     # for cat in ana.iter_categories(args.categories):
     #     hist_samples_array = ana.get_hist_signal_array(vars, 'off', 'hlt', cat, cuts=cuts)

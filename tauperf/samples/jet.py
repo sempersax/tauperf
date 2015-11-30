@@ -38,31 +38,31 @@ class JZ(Jet):
             #     name='JZ0', label='JZ0'),
             Jet(
                 ntuple_path=ntuple_path,
-                cuts=self._cuts, student='jetjet_JZ1W', 
+                cuts=self._cuts, student='jz1w', 
                 name='JZ1', label='JZ1'),
             Jet(
                 ntuple_path=ntuple_path,
-                cuts=self._cuts, student='jetjet_JZ2W', 
+                cuts=self._cuts, student='jz2w', 
                 name='JZ2', label='JZ2'),
             Jet(
                 ntuple_path=ntuple_path,
-                cuts=self._cuts, student='jetjet_JZ3W', 
+                cuts=self._cuts, student='jz3w', 
                 name='JZ3', label='JZ3'),
             Jet(
                 ntuple_path=ntuple_path,
-                cuts=self._cuts, student='jetjet_JZ4W', 
+                cuts=self._cuts, student='jz4w', 
                 name='JZ4', label='JZ4'),
             Jet(
                 ntuple_path=ntuple_path,
-                cuts=self._cuts, student='jetjet_JZ5W', 
+                cuts=self._cuts, student='jz5w', 
                 name='JZ5', label='JZ5'),
             Jet(
                 ntuple_path=ntuple_path,
-                cuts=self._cuts, student='jetjet_JZ6W', 
+                cuts=self._cuts, student='jz6w', 
                 name='JZ6', label='JZ6'),
             Jet(
                 ntuple_path=ntuple_path,
-                cuts=self._cuts, student='jetjet_JZ7W', 
+                cuts=self._cuts, student='jz7w', 
                 name='JZ7', label='JZ7'),
             ]
         self._scales = []

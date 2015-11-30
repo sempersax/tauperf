@@ -26,7 +26,7 @@ def add_pt_weight(tree):
         ]
     tree.define_object('tau', prefix='off_')
 
-    w_file = root_open('cache/pt_weights.root')
+    w_file = root_open('cache/pt_weights_jz.root')
     gr_1p = Graph(w_file['pt_weight_1prong'])
     gr_mp = Graph(w_file['pt_weight_3prongs'])
     w_file.Close()

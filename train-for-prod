@@ -4,7 +4,7 @@ import logging
 import rootpy
 from tauperf.analysis import Analysis
 from tauperf.cmd import get_parser
-
+from tauperf import NTUPLE_PATH
 log = logging.getLogger(os.path.basename(__file__))
 if not os.environ.get("DEBUG", False):
     log.setLevel(logging.INFO)
@@ -19,6 +19,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     ana = Analysis(
+        ntuple_path=os.path.join(NTUPLE_PATH, 'training'),
         use_drellyan=args.use_dy,
         trigger=args.trigger,
         no_weight=args.no_weight)

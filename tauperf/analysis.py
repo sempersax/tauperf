@@ -45,7 +45,7 @@ class Analysis(object):
                 name='jet', 
                 label='Fake #tau_{had}',
                 trigger=trigger,
-                weight_field='mc_event_weight', 
+                weight_field=('mc_event_weight', 'pu_weight', 'pt_weight'), 
                 color='#00FF00')
         else:
             log.info('Use data for bkg')
@@ -149,7 +149,7 @@ class Analysis(object):
             cls_even = Classifier(
                 cat, 
                 'weights/summary_even_{0}_{1}.root'.format(cat.name, features),
-                '{0}_even'.format(cat.name),
+                '{0}_even_{1}'.format(cat.name, features),
                 prefix=prefix,
                 train_split='even',
                 test_split='odd',

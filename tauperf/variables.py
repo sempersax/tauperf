@@ -333,7 +333,7 @@ VARIABLES = {
         'type': 'f',
         'prefix': ('off', 'hlt'),
         'bins': 80,
-        'range': (-1, 3),
+        'range': (-40, 40),
         },
     
     'ChPiEMEOverCaloEMECorrected': {
@@ -341,8 +341,8 @@ VARIABLES = {
         'root': 'E_{#pi^{#pm}}/E_{calo} (PU corrected)',
         'type': 'f',
         'prefix': ('hlt'),
-        'bins': 40,
-        'range': (-10, 10),
+        'bins': 80,
+        'range': (-40, 40),
         },
 
     'etOverPtLeadTrk': {
@@ -392,11 +392,11 @@ VARIABLES = {
     
     'ipSigLeadTrkCorrected': {
         'name' : 'ipSigLeadTrkCorrected',
-        'root': 'S_{lead track}',
+        'root': '|S_{lead track}| (PU Corrected)',
         'type': 'f',
         'prefix': ('off', 'hlt'),
-        'bins': 20,
-        'range': (-5, 5),
+        'bins': 22,
+        'range': (-2, 20),
         },
 
     'ipSigLeadTrk_BS': {
@@ -410,11 +410,11 @@ VARIABLES = {
 
     'AbsipSigLeadTrk': {
         'name' : 'AbsipSigLeadTrk',
-        'root': '|S_{lead track} (PV)|',
+        'root': '|S_{lead track}|',
         'type': 'f',
         'prefix': ('off', 'hlt'),
-        'bins': 20,
-        'range': (0, 5),
+        'bins': 22,
+        'range': (-2, 20),
         },
     
     'AbsipSigLeadTrk_BS': {
@@ -490,7 +490,7 @@ VARIABLES = {
         'bins': 25,
         # 'scale': 0.001,
         'units': 'MeV',
-        'range': (0, 10000,),
+        'range': (0, 5000.),
         },
 
     'ptRatioEflowApprox': {

@@ -21,7 +21,8 @@ set_style('ATLAS', shape='rect')
 if __name__ == "__main__":
     from argparse import ArgumentParser
     parser = ArgumentParser()
-    parser.add_argument('--use-dy', default=False, action='store_true', help='Use DY simulation for signal')
+    parser.add_argument('--dy', default=False, action='store_true', help='Use DY simulation for signal')
+    parser.add_argument('--jz', default=False, action='store_true', help='Use JZ simulation for signal')
     parser.add_argument('--categories', default='plotting')
     parser.add_argument('--logy', default=False, action='store_true')
     parser.add_argument('--cut', default=None, type=str, help='additional cut to apply')
@@ -35,7 +36,8 @@ if __name__ == "__main__":
     vars = {'pt': VARIABLES['pt']}
 
     ana = Analysis(
-        use_drellyan=args.use_dy,
+        use_drellyan=args.dy,
+        use_jz_slices=args.jz,
         no_weight=True)
     out_file = root_open("pt_weights.root", "RECREATE")
     for cat in ana.iter_categories(args.categories):

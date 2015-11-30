@@ -74,6 +74,7 @@ class Category_1P(Category_Preselection):
     common_cuts = Category_Preselection.common_cuts
     cuts = ONEPRONG
     features_cuts = FEATURES_CUTS_ONEPRONG
+    features = features_1p
     features_pileup_corrected = features_1p_pileup_corrected
 
 class Category_2P(Category_Preselection):
@@ -89,6 +90,7 @@ class Category_3P(Category_Preselection):
     common_cuts = Category_Preselection.common_cuts
     cuts = THREEPRONG
     features_cuts = FEATURES_CUTS_THREEPRONG
+    features = features_mp
     features_pileup_corrected = features_mp_pileup_corrected
 
 class Category_MP(Category_Preselection):

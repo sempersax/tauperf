@@ -16,7 +16,7 @@ from tauperf.categories import (Category_1P_HLT, Category_3P_HLT,
 log = logging.getLogger('apply-bdt-weights-from-xml')
 
 
-def get_readers(category):
+def get_readers(category, features='features_pileup_corrected'):
 
     reader_odd = ROOT.TMVA.Reader()
     reader_even = ROOT.TMVA.Reader()
@@ -26,42 +26,51 @@ def get_readers(category):
         prefix = 'off_'
 
     dummy_v = array.array('f', [0.])
-    for f in category.features_pileup_corrected:
+    for f in getattr(category, features):
         reader_odd.AddVariable(prefix + f, dummy_v)
         reader_even.AddVariable(prefix +f, dummy_v)
 
     reader_odd.BookMVA(
-        'BDT', 'weights/{0}_odd_BDT_{0}_odd.weights.xml'.format(
-            category.name))
+        'BDT', 'weights/{0}_odd_{1}_BDT_{0}_odd_{1}.weights.xml'.format(
+            category.name, features))
     reader_even.BookMVA(
-        'BDT', 'weights/{0}_even_BDT_{0}_even.weights.xml'.format(
-            category.name))
+        'BDT', 'weights/{0}_even_{1}_BDT_{0}_even_{1}.weights.xml'.format(
+            category.name, features))
 
-    return reader_odd, reader_even
+    return {'odd': reader_odd, 'even': reader_even}
 
 
-def evaluate_score(event, tau, readers, category):
+def evaluate_score(event, tau, readers, category, features='features_pileup_corrected'):
     
     feats = ROOT.vector('double')()
-    for f in category.features_pileup_corrected:
+    for f in getattr(category, features):
         feats.push_back(getattr(tau, f))
     if event.eventnumber % 2 != 0:
-        return readers[0].EvaluateMVA(feats, 'BDT')
+        return readers['even'].EvaluateMVA(feats, 'BDT')
     else:
-        return readers[1].EvaluateMVA(feats, 'BDT')
+        return readers['odd'].EvaluateMVA(feats, 'BDT')
 
 class Model(TreeModel):
     hlt_bdt_score_off_training_dev = FloatCol()
     hlt_bdt_score_hlt_training_dev = FloatCol()
-    off_bdt_score_dev = FloatCol()
+    off_bdt_score_off_training_dev = FloatCol()
+
+    hlt_bdt_score_off_training_nopucorr_dev = FloatCol()
+    hlt_bdt_score_hlt_training_nopucorr_dev = FloatCol()
+    off_bdt_score_off_training_nopucorr_dev = FloatCol()
 
 def add_bdt_scores(tree):
+    '''
+    '''
     tree.create_buffer()
     tree.set_buffer(Model(), create_branches=True)
     branches = [
         tree.GetBranch('hlt_bdt_score_off_training_dev'),
         tree.GetBranch('hlt_bdt_score_hlt_training_dev'),
-        tree.GetBranch('off_bdt_score_dev'),
+        tree.GetBranch('off_bdt_score_off_training_dev'),
+        tree.GetBranch('hlt_bdt_score_off_training_nopucorr_dev'),
+        tree.GetBranch('hlt_bdt_score_hlt_training_nopucorr_dev'),
+        tree.GetBranch('off_bdt_score_off_training_nopucorr_dev'),
         ]
 
     readers_1p = get_readers(Category_1P)
@@ -69,6 +78,12 @@ def add_bdt_scores(tree):
 
     readers_1p_hlt = get_readers(Category_1P_HLT)
     readers_3p_hlt = get_readers(Category_3P_HLT)
+
+    readers_1p_nopu = get_readers(Category_1P, features='features')
+    readers_3p_nopu = get_readers(Category_3P, features='features')
+
+    readers_1p_hlt_nopu = get_readers(Category_1P_HLT, features='features')
+    readers_3p_hlt_nopu = get_readers(Category_3P_HLT, features='features')
 
     tree.define_object('hlt_tau', prefix='hlt_')
     tree.define_object('off_tau', prefix='off_')
@@ -80,28 +95,49 @@ def add_bdt_scores(tree):
 
         # offline
         if tau.ntracks == 1:
-            event.off_bdt_score_dev = evaluate_score(
+            event.off_bdt_score_off_training_dev = evaluate_score(
                 event, tau, readers_1p, Category_1P)
+            event.off_bdt_score_off_training_nopucorr_dev = evaluate_score(
+                event, tau, readers_1p_nopu, Category_1P, features='features')
         elif tau.ntracks > 1: 
-            event.off_bdt_score_dev = evaluate_score(
-                event, tau, readers_3p, Category_3P)
+            event.off_bdt_score_off_training_dev = evaluate_score(
+                event, tau, readers_1p, Category_3P)
+            event.off_bdt_score_off_training_nopucorr_dev = evaluate_score(
+                event, tau, readers_1p_nopu, Category_3P, features='features')
         else:
-            event.off_bdt_score_dev = -9999
+            event.off_bdt_score_off_training_dev = -9999
+            event.off_bdt_score_off_training_nopucorr_dev = -9999
 
         # hlt
         if hlt_tau.ntracks == 1:
+
             event.hlt_bdt_score_off_training_dev = evaluate_score(
                 event, hlt_tau, readers_1p, Category_1P_HLT)
             event.hlt_bdt_score_hlt_training_dev = evaluate_score(
                 event, hlt_tau, readers_1p_hlt, Category_1P_HLT)
+
+            event.hlt_bdt_score_off_training_nopucorr_dev = evaluate_score(
+                event, hlt_tau, readers_1p_nopu, Category_1P_HLT, features='features')
+            event.hlt_bdt_score_hlt_training_nopucorr_dev = evaluate_score(
+                event, hlt_tau, readers_1p_hlt_nopu, Category_1P_HLT, features='features')
+
         elif hlt_tau.ntracks > 1: 
+
             event.hlt_bdt_score_off_training_dev = evaluate_score(
                 event, hlt_tau, readers_3p, Category_3P_HLT)
             event.hlt_bdt_score_hlt_training_dev = evaluate_score(
                 event, hlt_tau, readers_3p_hlt, Category_3P_HLT)
+
+            event.hlt_bdt_score_off_training_nopucorr_dev = evaluate_score(
+                event, hlt_tau, readers_3p_nopu, Category_3P_HLT, features='features')
+            event.hlt_bdt_score_hlt_training_nopucorr_dev = evaluate_score(
+                event, hlt_tau, readers_3p_hlt_nopu, Category_3P_HLT, features='features')
+
         else:
             event.hlt_bdt_score_hlt_training_dev = -9999
             event.hlt_bdt_score_off_training_dev = -9999
+            event.hlt_bdt_score_off_training_nopucorr_dev = -9999
+            event.hlt_bdt_score_hlt_training_nopucorr_dev = -9999
 
 
 

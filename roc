@@ -24,7 +24,6 @@ rootpy.log.setLevel(logging.INFO)
 set_style('ATLAS', shape='rect')
 
 
-
 def roc(
     ana, 
     category,
@@ -33,31 +32,29 @@ def roc(
     Calculates the ROC curve
     Returns the sorted list of wp and a TGraph
     """
-    cut_vals = [0.01 * (i + 1) for i in xrange(98)]
-    roc_gr = Graph(len(cut_vals))
+    h_template = Hist(1000, 0, 1)
+
+    h_sig = ana.tau.get_hist_array(
+        {discr_var: h_template},
+        category=cat)
+    h_sig = h_sig[discr_var]
+
+    h_bkg = ana.jet.get_hist_array(
+        {discr_var: h_template},
+        category=cat)
+    h_bkg = h_bkg[discr_var]
+
+    roc_gr = Graph(h_sig.GetNbinsX())
     roc_list = []
-    
-    log.info('create the workers')
-    workers = [FuncWorker(
-            get_sig_bkg, ana,
-            category, '{0} > {1}'.format(discr_var, val))
-               for val in cut_vals]
-    log.info('run the pool')
-    run_pool(workers, n_jobs=-1)
-    yields = [w.output for w in workers]
-
-    log.info('--> Calculate the total yields')
-    sig_tot = ana.tau.events(category)[1].value
-    bkg_tot = ana.jet.events(category, weighted=True)[1].value
-    for i, (val, yields) in enumerate(zip(cut_vals, yields)):
-        eff_sig = yields[0] / sig_tot
-        eff_bkg = yields[1] / bkg_tot
-        rej_bkg = 1. / eff_bkg if eff_bkg !=0 else 0
+    for i in range(1, h_sig.GetNbinsX()):
+        eff_sig_i = (h_sig.Integral() - h_sig.Integral(0, i)) / h_sig.Integral()
+        eff_bkg_i = (h_bkg.Integral() - h_bkg.Integral(0, i)) / h_bkg.Integral()
+        rej_bkg_i = 1. / eff_bkg_i if eff_bkg_i != 0 else 0.
         roc_list.append(working_point(
-                val, eff_sig, eff_bkg))
-        roc_gr.SetPoint(i, eff_sig, rej_bkg)
-    return roc_gr, roc_list
+                h_sig.GetBinLowEdge(i), eff_sig_i, eff_bkg_i))
 
+        roc_gr.SetPoint(i, eff_sig_i, rej_bkg_i)
+    return roc_gr, roc_list
 
 def old_working_points(ana, category, wp_level):
     log.info('create the workers')
@@ -163,7 +160,6 @@ if __name__ == '__main__':
             'signal efficiency', 
             'background rejection (1/eff_b)'])
 
-
     for cat in ana.iter_categories(args.categories):
 
         gr_old, wp_old = old_working_points(ana, cat, wp_level)
@@ -191,9 +187,9 @@ if __name__ == '__main__':
         plot_score.SaveAs('plots/scores_cat_{0}_score_{1}.png'.format(cat.name, score_var))
         
 
-        plot_effs = efficiencies_plot(ana, cat, score_var, wp_level, TARGET)
-        for v, plt in plot_effs.items():
-            plt.SaveAs('plots/efficiencies_var_{0}_cat_{1}_score_{2}.png'.format(v, cat.name, score_var))
+        # plot_effs = efficiencies_plot(ana, cat, score_var, wp_level, TARGET)
+        # for v, plt in plot_effs.items():
+        #     plt.SaveAs('plots/efficiencies_var_{0}_cat_{1}_score_{2}.png'.format(v, cat.name, score_var))
         
 
         for t in TARGET:

@@ -34,7 +34,7 @@ class Sample(object):
         self.label = label
         self.trigger = trigger
         self.weight_field = weight_field
-        log.debug(weight_field)
+        log.debug('{0}: weights are {1}'.format(self.name, weight_field))
         self.hist_decor = hist_decor
 
         if 'fillstyle' not in hist_decor:
@@ -171,7 +171,11 @@ class Sample(object):
         if not cuts is None:
             sel &= cuts
         if self.weight_field is not None:
-            sel *= self.weight_field
+            if isinstance(self.weight_field, (list, tuple)):
+                for w in self.weight_field:
+                    sel *= w
+            else:
+                sel *= self.weight_field
         field_hists = {}
 
         from .jet import JZ
