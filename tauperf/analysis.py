@@ -170,40 +170,5 @@ class Analysis(object):
 
 
 
-def get_sig_bkg(ana, cat, cut):
-    """small function to calculate sig and bkg yields"""
-    y_sig = ana.tau.events(cat, cut, force_reopen=True)[1].value
-    y_bkg = ana.jet.events(cat, cut, weighted=True, force_reopen=True)[1].value
-    return y_sig, y_bkg
 
 
-def old_working_points(ana, category, wp_level):
-    log.info('create the workers')
-
-    wp_names = ['loose', 'medium', 'tight']
-    cuts = [
-        wp_level + '_is_loose == 1', 
-        wp_level + '_is_medium == 1',
-        wp_level + '_is_tight == 1' 
-        ]
-    
-    workers = [FuncWorker(
-            get_sig_bkg, 
-            ana, category, 
-            cut) for cut in cuts]
-    run_pool(workers, n_jobs=-1)
-    yields = [w.output for w in workers]
-
-    log.info('--> Calculate the total yields')
-    sig_tot = ana.tau.events(category)[1].value
-    bkg_tot = ana.jet.events(category, weighted=True)[1].value
-    gr = Graph(len(cuts))
-    wps = []
-    for i, (name, val, yields) in enumerate(zip(wp_names, cuts, yields)):
-        eff_sig = yields[0] / sig_tot
-        eff_bkg = yields[1] / bkg_tot
-        rej_bkg = 1. / eff_bkg if eff_bkg != 0 else 0
-        wps.append(working_point(
-                val, eff_sig, eff_bkg, name=name))
-        gr.SetPoint(i, eff_sig, rej_bkg)
-    return gr, wps
