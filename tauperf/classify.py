@@ -20,8 +20,10 @@ from .variables import VARIABLES
 from .parallel import FuncWorker, run_pool
 
 
-
+# TMVA sucks. You can't make several instances of a Factory
+# because they will write the output to the same file
 # class Classifier(ROOT.TMVA.Factory):
+# the classifier can't inherit from TMVA.Factory
 class Classifier(object):
 
     def __init__(self, 
@@ -30,7 +32,7 @@ class Classifier(object):
                  factory_name,
                  prefix='hlt',
                  tree_name='tau',
-                 features=None,
+                 features='features_pileup_corrected',
                  train_split='odd',
                  test_split='even',
                  verbose=''):
@@ -40,18 +42,18 @@ class Classifier(object):
         self.category = category
         self.prefix = prefix
         self.tree_name = tree_name
-        self.features = features
         self.train_split = train_split
         self.test_split = test_split
         self.verbose = verbose
+        self.features = getattr(category, features)
+        self.cut_features = getattr(category, 'cuts_' + features)
 
-
-    def set_variables(self, factory, category, prefix):
-        if self.features is None:
-            self.features = category.features
+    def set_variables(self, factory, prefix):
         for varName in self.features:
             var = VARIABLES[varName]
-            factory.AddVariable(prefix + '_' + var['name'], var['root'], '', var['type'])
+            factory.AddVariable(
+                prefix + '_' + var['name'], 
+                var['root'], '', var['type'])
 
     def book(self,
              factory,
@@ -85,13 +87,12 @@ class Classifier(object):
 
     def train(self, tau, jet, **kwargs):
 
-        #         params  = ["PruneBeforeBoost=False"]
         output = root_open(self.output_name, 'recreate')
         factory = ROOT.TMVA.Factory(self.factory_name, output, self.verbose)
 
-        self.set_variables(factory, self.category, self.prefix)
-        self.sig_cut = tau.cuts(self.category, feat_cuts=True) 
-        self.bkg_cut = jet.cuts(self.category, feat_cuts=True) 
+        self.set_variables(factory, self.prefix)
+        self.sig_cut = tau.cuts(self.category)  & self.cut_features
+        self.bkg_cut = jet.cuts(self.category) & self.cut_features
 
         params = ['NormMode=EqualNumEvents']
         params += ['SplitMode=Block']

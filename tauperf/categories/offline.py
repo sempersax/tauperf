@@ -39,6 +39,19 @@ FEATURES_CUTS_ONEPRONG = (
     & Cut("off_mEflowApprox < 10000.")
 )
 
+FEATURES_CUTS_ONEPRONG_PU = (
+    Cut('off_pt < 150000.')
+    & Cut('off_centFracCorrected > -1110')
+    & Cut('off_innerTrkAvgDistCorrected > -1110')
+    & Cut('off_ipSigLeadTrkCorrected < 999')
+    & Cut('off_etOverPtLeadTrkCorrected > 1./3.')
+    & Cut("off_ChPiEMEOverCaloEMECorrected > -10.")
+    & Cut("off_ChPiEMEOverCaloEMECorrected < 10.")
+    & Cut("off_EMPOverTrkSysPCorrected >= 0.")
+    & Cut("off_ptRatioEflowApproxCorrected < 10.")
+    & Cut("off_mEflowApproxCorrected < 10000.")
+)
+
 FEATURES_CUTS_THREEPRONG = (
     Cut('off_pt < 150000.')
     & Cut('off_centFrac > -1110')
@@ -54,6 +67,20 @@ FEATURES_CUTS_THREEPRONG = (
     & Cut("off_mEflowApprox < 10000.")
 )
 
+FEATURES_CUTS_THREEPRONG_PU = (
+    Cut('off_pt < 150000.')
+    & Cut('off_centFracCorrected > -1110')
+    & Cut('off_innerTrkAvgDistCorrected > -1110')
+    & Cut('off_dRmaxCorrected > -1110')
+    & Cut('off_trFlightPathSigCorrected > -1110')
+    & Cut('off_massTrkSysCorrected >= 0')
+    & Cut('off_etOverPtLeadTrkCorrected > 1./3.')
+    & Cut("off_ChPiEMEOverCaloEMECorrected > -10.")
+    & Cut("off_ChPiEMEOverCaloEMECorrected < 10.")
+    & Cut("off_EMPOverTrkSysPCorrected >= 0.")
+    & Cut("off_ptRatioEflowApproxCorrected < 10.")
+    & Cut("off_mEflowApproxCorrected < 10000.")
+)
 
 
 
@@ -73,29 +100,29 @@ class Category_1P(Category_Preselection):
     label = '#tau_{had} (1P)'
     common_cuts = Category_Preselection.common_cuts
     cuts = ONEPRONG
-    features_cuts = FEATURES_CUTS_ONEPRONG
     features = features_1p
+    cuts_features = FEATURES_CUTS_ONEPRONG
     features_pileup_corrected = features_1p_pileup_corrected
+    cuts_features_pileup_corrected = FEATURES_CUTS_ONEPRONG_PU
 
 class Category_2P(Category_Preselection):
     name = '2prongs'
     label = '#tau_{had} (2P)'
     common_cuts = Category_Preselection.common_cuts
     cuts = TWOPRONG
-    features_pileup_corrected = features_mp_pileup_corrected
 
 class Category_3P(Category_Preselection):
     name = '3prongs'
     label = '#tau_{had} (3P)'
     common_cuts = Category_Preselection.common_cuts
     cuts = THREEPRONG
-    features_cuts = FEATURES_CUTS_THREEPRONG
     features = features_mp
+    cuts_features = FEATURES_CUTS_THREEPRONG
     features_pileup_corrected = features_mp_pileup_corrected
+    cuts_features_pileup_corrected = FEATURES_CUTS_THREEPRONG_PU
 
 class Category_MP(Category_Preselection):
     name = 'multiprongs'
     label = '#tau_{had} (MP)'
     common_cuts = Category_Preselection.common_cuts
     cuts = MULTIPRONG
-    features_pileup_corrected = features_mp_pileup_corrected

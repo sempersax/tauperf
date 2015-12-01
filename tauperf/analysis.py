@@ -144,7 +144,7 @@ class Analysis(object):
                 prefix=prefix,
                 train_split='odd',
                 test_split='even',
-                features=getattr(cat, features),
+                features=features,
                 verbose=verbose)
             cls_even = Classifier(
                 cat, 
@@ -153,7 +153,7 @@ class Analysis(object):
                 prefix=prefix,
                 train_split='even',
                 test_split='odd',
-                features=getattr(cat, features),
+                features=features,
                 verbose=verbose)
             classifiers += [cls_odd, cls_even]
             

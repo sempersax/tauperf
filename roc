@@ -36,12 +36,12 @@ def roc(
 
     h_sig = ana.tau.get_hist_array(
         {discr_var: h_template},
-        category=cat)
+        category=category)
     h_sig = h_sig[discr_var]
 
     h_bkg = ana.jet.get_hist_array(
         {discr_var: h_template},
-        category=cat)
+        category=category)
     h_bkg = h_bkg[discr_var]
 
     roc_gr = Graph(h_sig.GetNbinsX())

@@ -41,6 +41,20 @@ FEATURES_CUTS_ONEPRONG = (
     & Cut("hlt_mEflowApprox < 10000.")
 )
 
+FEATURES_CUTS_ONEPRONG_PU = (
+    Cut('hlt_pt < 150000.')
+    & Cut('hlt_centFracCorrected > -1110')
+    & Cut('hlt_innerTrkAvgDistCorrected > -1110')
+    & Cut('hlt_ipSigLeadTrkCorrected < 999')
+    & Cut('hlt_etOverPtLeadTrkCorrected > 1./3.')
+    & Cut("hlt_ChPiEMEOverCaloEMECorrected > -10.")
+    & Cut("hlt_ChPiEMEOverCaloEMECorrected < 10.")
+    & Cut("hlt_EMPOverTrkSysPCorrected >= 0.")
+    & Cut("hlt_ptRatioEflowApproxCorrected < 10.")
+    & Cut("hlt_mEflowApproxCorrected < 10000.")
+)
+
+
 FEATURES_CUTS_THREEPRONG = (
     Cut('hlt_pt < 150000.')
     & Cut('hlt_centFrac > -1110')
@@ -56,15 +70,31 @@ FEATURES_CUTS_THREEPRONG = (
     & Cut("hlt_mEflowApprox < 10000.")
 )
 
+FEATURES_CUTS_THREEPRONG_PU = (
+    Cut('hlt_pt < 150000.')
+    & Cut('hlt_centFracCorrected > -1110')
+    & Cut('hlt_innerTrkAvgDistCorrected > -1110')
+    & Cut('hlt_dRmaxCorrected > -1110')
+    & Cut('hlt_trFlightPathSigCorrected > -1110')
+    & Cut('hlt_massTrkSysCorrected >= 0')
+    & Cut('hlt_etOverPtLeadTrkCorrected > 1./3.')
+    & Cut("hlt_ChPiEMEOverCaloEMECorrected > -10.")
+    & Cut("hlt_ChPiEMEOverCaloEMECorrected < 10.")
+    & Cut("hlt_EMPOverTrkSysPCorrected >= 0.")
+    & Cut("hlt_ptRatioEflowApproxCorrected < 10.")
+    & Cut("hlt_mEflowApproxCorrected < 10000.")
+)
+
 
 class Category_1P_HLT(Category_Preselection):
     name = '1prong_hlt'
     label = '#tau_{had} (1P HLT)'
     common_cuts = Category_Preselection.common_cuts
     cuts = ONEPRONG & HLT_PRESEL
-    features_cuts = FEATURES_CUTS_ONEPRONG
     features = features_1p
+    cuts_features = FEATURES_CUTS_ONEPRONG
     features_pileup_corrected = features_1p_pileup_corrected
+    cuts_features_pileup_corrected = FEATURES_CUTS_ONEPRONG_PU
 
 class Category_2P_HLT(Category_Preselection):
     name = '2prongs_hlt'
@@ -82,15 +112,15 @@ class Category_3P_HLT(Category_Preselection):
     name = '3prongs_hlt'
     label = '#tau_{had} (3P HLT)'
     common_cuts = Category_Preselection.common_cuts
-    features_cuts = FEATURES_CUTS_THREEPRONG
-    features = features_mp
-    features_pileup_corrected = features_mp_pileup_corrected
     cuts = THREEPRONG & HLT_PRESEL
+    features_cut = FEATURES_CUTS_THREEPRONG
+    features = features_mp
+    cuts_features = FEATURES_CUTS_THREEPRONG
+    features_pileup_corrected = features_mp_pileup_corrected
+    cuts_features_pileup_corrected = FEATURES_CUTS_THREEPRONG_PU
 
 class Category_MP_HLT(Category_Preselection):
     name = 'multiprongs_hlt'
     label = '#tau_{had} (MP HLT)'
     common_cuts = Category_Preselection.common_cuts
     cuts = MULTIPRONG & HLT_PRESEL
-    features = features_mp
-    features_pileup_corrected = features_mp_pileup_corrected
