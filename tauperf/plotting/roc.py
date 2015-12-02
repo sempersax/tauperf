@@ -1,7 +1,6 @@
 from rootpy.plotting import Graph, Canvas, Hist, Legend, Efficiency
 
 from . import draw_shape, draw_efficiencies
-from ..analysis import get_sig_bkg
 from ..parallel import run_pool, FuncWorker
 from ..classify import working_point
 from .. import log; log = log[__name__]

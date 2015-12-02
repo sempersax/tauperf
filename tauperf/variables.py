@@ -294,7 +294,7 @@ VARIABLES = {
     'innerTrkAvgDistCorrected': {
         'name': 'innerTrkAvgDistCorrected',
         'root': 'Inner R_{track} (PU corrected)',
-        'prefix': ('hlt'),
+        'prefix': ('off', 'hlt'),
         'type': 'f',
         'bins': 20,
         'range': (0, 0.2),
@@ -340,7 +340,7 @@ VARIABLES = {
         'name': 'ChPiEMEOverCaloEMECorrected',
         'root': 'E_{#pi^{#pm}}/E_{calo} (PU corrected)',
         'type': 'f',
-        'prefix': ('hlt'),
+        'prefix': ('hlt', 'off'),
         'bins': 80,
         'range': (-40, 40),
         },
@@ -368,17 +368,17 @@ VARIABLES = {
         'root': 'p_{EM}/p_{tracks}',
         'prefix': ('off', 'hlt'),
         'type': 'f',
-        'bins': 70,
-        'range': (0, 7),
+        'bins': 120,
+        'range': (-1, 10),
         },
 
     'EMPOverTrkSysPCorrected': {
         'name' : 'EMPOverTrkSysPCorrected',
         'root': 'p_{EM}/p_{tracks} (PU corrected)',
-        'prefix': ('hlt'),
+        'prefix': ('hlt', 'off'),
         'type': 'f',
-        'bins': 70,
-        'range': (0, 7),
+        'bins': 120,
+        'range': (-1, 10),
         },
 
     'ipSigLeadTrk': {

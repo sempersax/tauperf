@@ -1,5 +1,6 @@
+# ROOT/rootpy imports
 from rootpy.tree import Cut
-from rootpy.plotting import Hist
+from rootpy.plotting import Hist, Hist2D
 from rootpy import asrootpy
 import ROOT
 
@@ -12,15 +13,16 @@ from ..parallel import FuncWorker, run_pool
 
 class Sample(object):
 
-    def __init__(self, cuts=None,
-                 ntuple_path=NTUPLE_PATH,
-                 student=DEFAULT_STUDENT,
-                 tree_name=DEFAULT_TREE,
-                 name='Sample',
-                 label='Sample',
-                 trigger=False,
-                 weight_field=None,
-                 **hist_decor):
+    def __init__(
+        self, cuts=None,
+        ntuple_path=NTUPLE_PATH,
+        student=DEFAULT_STUDENT,
+        tree_name=DEFAULT_TREE,
+        name='Sample',
+        label='Sample',
+        trigger=False,
+        weight_field=None,
+        **hist_decor):
 
         if cuts is None:
             self._cuts = Cut()
@@ -34,7 +36,7 @@ class Sample(object):
         self.label = label
         self.trigger = trigger
         self.weight_field = weight_field
-        log.debug('{0}: weights are {1}'.format(self.name, weight_field))
+        log.info('{0}: weights are {1}'.format(self.name, weight_field))
         self.hist_decor = hist_decor
 
         if 'fillstyle' not in hist_decor:
@@ -108,6 +110,7 @@ class Sample(object):
                 
         return field_hist
 
+
     def total_events(self, weighted=False, force_reopen=False):
         rfile = get_file(self.ntuple_path, self.student, force_reopen=force_reopen)
         if weighted:
@@ -127,25 +130,24 @@ class Sample(object):
         rec = tree2rec(tree, **kwargs)
         return rec
 
-    def draw_helper(self, hist_template, expr, selection, force_reopen=False): 
+    def draw_helper(
+        self, hist_template, 
+        expr, selection, 
+        force_reopen=False): 
         """
+        Arguments
+        ---------
+        hist_template: rootpy Hist, template histogram
+        expr: str expression to draw
+        selection: str selection (TCut)
         """
         rfile = get_file(self.ntuple_path, self.student, force_reopen=force_reopen)
         tree = rfile[self.tree_name]
-        # use TTree Draw for now (limited to Nbins, Xmin, Xmax)
-        binning = (
-            hist_template.nbins(), 
-            list(hist_template.xedges())[0], 
-            list(hist_template.xedges())[-1])
-        # ROOT.gDirectory.cd()
         hist = hist_template.Clone()
         hist.Sumw2()
-        # root_string = '{0}>>{1}{2}'.format(
-        #     expr, hist.name, binning)
         root_string = expr
-        log.debug("Plotting {0} using selection: {1}".format(
-                root_string, selection))
-        log.debug('{0}: Draw {1} with \n selection: {2} ...'.format(self.name, root_string, selection))
+        log.debug('{0}: Draw {1} with \n selection: {2} ...'.format(
+                self.name, root_string, selection))
         hist = tree.Draw(
             root_string, 
             selection=selection,
@@ -153,14 +155,6 @@ class Sample(object):
             **self.hist_decor)
         hist.title = self.label
         return hist
-        # try:
-        #     # hist = asrootpy(ROOT.gPad.GetPrimitive(hist.GetName()))
-        #     hist = asrootpy(ROOT.gDirectory.Get(hist.GetName()))
-        #     return Hist(hist, title=self.label, **self.hist_decor)
-        # except:
-        #     log.warning('{0}: unable to retrieve histogram for {1} with selection {2}'.format(
-        #             self.name, expr, selection))
-        #     return Hist(binning[0], binning[1], binning[2], title=self.label, **self.hist_decor)
 
     def get_hist_array(
         self, field_hist_template, 
@@ -195,3 +189,63 @@ class Sample(object):
                 field_hists[key] = self.draw_helper(hist, key, sel)
         return field_hists
 
+    def get_2d_map(
+        self, var1, var2, prefix='off',
+        category=None, cuts=None):
+        """
+        """
+        sel = self.cuts(category)
+
+        if cuts is not None:
+            sel &= cuts
+
+        if self.weight_field is not None:
+            if isinstance(self.weight_field, (list, tuple)):
+                for w in self.weight_field:
+                    sel *= w
+            else:
+                sel *= self.weight_field
+
+        nbins1, xmin1, xmax1 = var1['bins'], var1['range'][0], var1['range'][1]
+        nbins2, xmin2, xmax2 = var2['bins'], var2['range'][0], var2['range'][1]
+        
+
+        if 'prefix' in var1:
+            if not isinstance(var1['prefix'], (list, tuple)):
+                var1['prefix'] = [var1['prefix']]
+
+            if prefix in var1['prefix']:
+                var1_expr = prefix + '_' + var1['name']
+            else:
+                var1_expr = var1['name']
+        else:
+            var1_expr = var1['name']
+            
+
+        if 'scale' in var1:
+            var1_expr = '{0}*{1}'.format(var1_expr, var1['scale'])
+
+
+        if 'prefix' in var2:
+            if not isinstance(var2['prefix'], (list, tuple)):
+                var2['prefix'] = [var2['prefix']]
+
+            if prefix in var2['prefix']:
+                var2_expr = prefix + '_' + var2['name']
+            else:
+                var2_expr = var2['name']
+        else:
+            var2_expr = var2['name']
+            
+
+        if 'scale' in var2:
+            var2_expr = '{0}*{1}'.format(var2_expr, var2['scale'])
+
+        expr = '{0}:{1}'.format(var1_expr, var2_expr)
+        log.debug(expr)
+        hist= Hist2D(
+            nbins1, xmin1, xmax1,
+            nbins2, xmin2, xmax2, 
+            type='D')
+        hist = self.draw_helper(hist, expr, sel)
+        return hist

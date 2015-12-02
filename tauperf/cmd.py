@@ -12,6 +12,10 @@ def get_parser(action=None):
         '--use-dy', default=False, 
         action='store_true', 
         help='Use DY simulation for signal')
+    parser.add_argument(
+        '--use-jz', default=False, 
+        action='store_true', 
+        help='Use JZ simulation for background')
     parser.add_argument('--categories', default='plotting')
     parser.add_argument('--var', default=None, nargs='*', help='Specify a particular variable')
     parser.add_argument('--cut', default=None, type=str, help='additional cut to apply')

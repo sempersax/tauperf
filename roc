@@ -27,7 +27,8 @@ if __name__ == '__main__':
     parser.add_argument('--score-var', default=None, type=str)
     args = parser.parse_args()
     ana = Analysis(
-        trigger=args.trigger)
+        trigger=args.trigger,
+        use_jz_slices=args.use_jz)
 
     if args.trigger:
         score_var = 'hlt_bdtjetscore'
