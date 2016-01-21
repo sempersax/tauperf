@@ -35,7 +35,7 @@ class Analysis(object):
                 name='tau', 
                 label='Real #tau_{had}',
                 trigger=trigger,
-                weight_field='pu_weight', 
+                weight_field=None if no_weight else 'pu_weight', 
                 color='#00A3FF')
 
         if use_jz_slices:
@@ -49,13 +49,15 @@ class Analysis(object):
                 color='#00FF00')
         else:
             log.info('Use data for bkg')
+            log.warning('Fix the bkg weight ASAP!!! This is very misleading.')
             self.jet = samples.DataJet(
                 ntuple_path=ntuple_path,
                 student='data',
                 name='jet', 
                 label='Fake #tau_{had}',
                 trigger=trigger,
-                weight_field=None if no_weight else 'pt_weight',
+                # weird, please fix asap!
+                weight_field=('pt_weight', 'anti_pu_weight') if no_weight else 'pt_weight',
                 color='#00FF00')
             
         self.trigger = trigger
@@ -124,6 +126,7 @@ class Analysis(object):
               category=None,
               verbose='',
               features='features_pileup_corrected',
+              cuts_features='cuts_features_pileup_corrected',
               n_jobs=1,
               **kwargs):
 
@@ -145,6 +148,7 @@ class Analysis(object):
                 train_split='odd',
                 test_split='even',
                 features=features,
+                cuts_features=cuts_features,
                 verbose=verbose)
             cls_even = Classifier(
                 cat, 
@@ -154,6 +158,7 @@ class Analysis(object):
                 train_split='even',
                 test_split='odd',
                 features=features,
+                cuts_features=cuts_features,
                 verbose=verbose)
             classifiers += [cls_odd, cls_even]
             

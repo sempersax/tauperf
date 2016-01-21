@@ -1,0 +1,85 @@
+#!/usr/bin/env python
+import os
+import logging
+import re
+import rootpy
+from rootpy.plotting import Hist
+from rootpy.plotting.style import set_style
+from rootpy.io import root_open
+from rootpy.tree import Cut
+from tauperf.analysis import Analysis
+from tauperf.variables import VARIABLES
+from tauperf.plotting import draw_ratio
+from tauperf import UNMERGED_NTUPLE_PATH
+log = logging.getLogger(os.path.basename(__file__))
+if not os.environ.get("DEBUG", False):
+    log.setLevel(logging.INFO)
+rootpy.log.setLevel(logging.INFO)
+set_style('ATLAS', shape='rect')
+
+
+if __name__ == "__main__":
+    from argparse import ArgumentParser
+    parser = ArgumentParser()
+    parser.add_argument('--dy', default=False, action='store_true', help='Use DY simulation for signal')
+    parser.add_argument('--jz', default=False, action='store_true', help='Use JZ simulation for signal')
+    parser.add_argument('--categories', default='plotting')
+    parser.add_argument('--logy', default=False, action='store_true')
+    parser.add_argument('--cut', default=None, type=str, help='additional cut to apply')
+    parser.add_argument('--level', default='off', type=str, choices=['off', 'hlt'], help='additional cut to apply')
+    args = parser.parse_args()
+
+    cuts = None
+    if args.cut:
+        cuts = Cut(args.cut)
+
+    vars = {'pt': VARIABLES['pt']}
+
+    ana = Analysis(
+        use_drellyan=args.dy,
+        use_jz_slices=args.jz,
+        no_weight=True)
+    out_file = root_open("anti_pileup_weights.root", "RECREATE")
+    h_template = Hist([0, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+                       11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22]) #300, 0, 30)
+    h_tau = ana.tau.get_hist_array(
+        {'averageintpercrossing': h_template},
+        cuts=cuts)
+
+    h_jet = ana.jet.get_hist_array(
+        {'averageintpercrossing': h_template},
+        cuts=cuts)
+
+
+    h_tau = h_tau['averageintpercrossing']
+    h_jet = h_jet['averageintpercrossing']
+
+    h_weight = (h_tau / h_tau.Integral()) / (h_jet / h_jet.Integral())
+    h_jet *= h_weight
+
+    h_weight.name = 'averageintpercrossing_weight'
+    h_weight.title = 'real / fake'
+    out_file.Add(h_weight)
+    plot = draw_ratio(
+        h_tau, h_jet,
+        'averageintpercrossing', None, logy=args.logy)
+    log.info(plot)
+    if args.logy:
+        plot.SaveAs(os.path.join('plots', 'pileup_weight_logy.png'))
+    else: 
+        plot.SaveAs(os.path.join('plots', 'pileup_weight.png'))
+    out_file.Write()
+    out_file.Close()
+
+    # for cat in ana.iter_categories(args.categories):
+    #     hist_samples_array = ana.get_hist_signal_array(vars, 'off', 'hlt', cat, cuts=cuts)
+    #     for field, hists_dict in hist_samples_array.items():
+    #         plot = draw_ratio(
+    #             hists_dict['off'], hists_dict['hlt'], field, cat, 
+    #             normalize=False, logy=args.logy)
+    #         log.info(plot)
+    #         if args.logy:
+    #             plot.SaveAs(os.path.join('plots', 'hlt_vs_off_'+field+'_'+cat.name+'_logy.png'))
+    #         else:
+    #             plot.SaveAs(os.path.join('plots', 'hlt_vs_off_'+field+'_'+cat.name+'.png'))
+                               

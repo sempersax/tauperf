@@ -1,0 +1,70 @@
+#!/usr/bin/env python
+import os
+import logging
+import re
+import rootpy
+from rootpy.plotting.style import set_style
+from tauperf.samples import DataJet, JZ
+from tauperf.cmd import get_parser
+from tauperf.variables import VARIABLES
+from tauperf.plotting import draw_ratio
+from tauperf.categories import CATEGORIES
+
+log = logging.getLogger(os.path.basename(__file__))
+if not os.environ.get("DEBUG", False):
+    log.setLevel(logging.INFO)
+rootpy.log.setLevel(logging.INFO)
+set_style('ATLAS', shape='rect')
+
+
+if __name__ == "__main__":
+
+    parser = get_parser('plot')
+    args = parser.parse_args()
+
+
+    categories = CATEGORIES['plotting_hlt']
+
+    data = DataJet(
+        student='data',
+        name='data',
+        label='Fake #tau_{had}',
+        trigger=args.trigger,
+        weight_field='pt_weight',
+        color='#00FF00')
+
+    jz = JZ(
+        name='JZ', 
+        label='Fake #tau_{had}',
+        trigger=args.trigger,
+        weight_field=('mc_event_weight', 'pu_weight', 'pt_weight'), 
+        color='#00FF00')
+    for cat in categories:
+        vars = {}
+        # vars['pt'] = VARIABLES['pt']
+        for v in cat.features + ['pt', 'eta']:
+            vars[v] = VARIABLES[v]
+
+        field_hist = data.get_field_hist(vars, 'hlt')
+        data_hist = data.get_hist_array(
+            field_hist, category=cat)
+
+        mc_hist = jz.get_hist_array(
+            field_hist,
+            category=cat)
+
+        print mc_hist, data_hist
+        for k in mc_hist.keys():
+            h_mc = mc_hist[k]
+            h_d = data_hist[k]
+
+            h_mc.title = 'JZ'
+            h_d.title = 'data'
+            c = draw_ratio(h_d, h_mc, k, cat)
+            c.SaveAs('plots/data_mc/data_mc_{0}_{1}.png'.format(k, cat.name))
+
+            h_mc.title = 'JZ'
+            h_d.title = 'data'
+            c1 = draw_ratio(h_d, h_mc, k, cat, logy=True)
+            c1.SaveAs('plots/data_mc/data_mc_{0}_{1}_logy.png'.format(k, cat.name))
+            

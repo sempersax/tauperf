@@ -1,0 +1,64 @@
+#!/usr/bin/env python
+import os
+import logging
+import re
+import rootpy
+from rootpy.plotting import Hist
+from rootpy.plotting.style import set_style
+from rootpy.tree import Cut
+from tauperf.analysis import Analysis
+from tauperf.cmd import get_parser
+from tauperf.variables import VARIABLES
+from tauperf.plotting import draw_ratio
+from tauperf import UNMERGED_NTUPLE_PATH
+log = logging.getLogger(os.path.basename(__file__))
+if not os.environ.get("DEBUG", False):
+    log.setLevel(logging.INFO)
+rootpy.log.setLevel(logging.INFO)
+set_style('ATLAS', shape='rect')
+
+
+if __name__ == "__main__":
+
+    parser = get_parser('plot')				
+    parser.add_argument('--dummy-range', action='store_true', default=False)
+    args = parser.parse_args()
+
+    cuts = None
+    if args.cut:
+        cuts = Cut(args.cut)
+
+    ana = Analysis(
+        use_drellyan=args.use_dy,
+        trigger=args.trigger)
+
+    for cat in ana.iter_categories(args.categories):
+        vars = {}
+        for v in cat.features:
+            vars[v] = VARIABLES[v]
+        vars_pu = {}
+        for v in cat.features_pileup_corrected:
+            vars_pu[v] = VARIABLES[v]
+        
+        residuals = {}
+        for v1, v2 in zip(cat.features, cat.features_pileup_corrected):
+            res = '({0}_{1} - {0}_{2}) / {0}_{1}'.format(args.level, v1, v2)
+
+            bins = [-1000, -700, -500, -300, -100, -50, -30, -20, -10] 
+            bins += [-9 + i for i in range(0, 19)] 
+            bins += [10, 20, 30, 50, 100, 300, 500, 700, 1000]
+            print bins
+            residuals[res] = Hist(bins)
+
+        hist_res_tau = ana.tau.get_hist_array(residuals, category=cat, cuts=cuts)
+        hist_res_jet = ana.jet.get_hist_array(residuals, category=cat, cuts=cuts)
+
+        for f in hist_res_jet.keys():
+            plot = draw_ratio(
+                hist_res_tau[f], hist_res_jet[f], f, cat, logy=args.logy)
+
+            if args.logy:
+                plot.SaveAs(os.path.join('plots/features/', 'res_' + f.replace(' ', '_').replace('/', '') + '_' + cat.name + '_logy.png'))
+            else:
+                plot.SaveAs(os.path.join('plots/features/', 'res_' + f.replace(' ', '_').replace('/', '') + '_' + cat.name + '.png'))
+

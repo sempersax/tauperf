@@ -31,10 +31,10 @@ def get_readers(category, features='features_pileup_corrected'):
         reader_even.AddVariable(prefix +f, dummy_v)
 
     reader_odd.BookMVA(
-        'BDT', 'weights/{0}_odd_{1}_BDT_{0}_odd_{1}.weights.xml'.format(
+        'BDT', 'weights_prod/{0}_odd_{1}_BDT_{0}_odd_{1}.weights.xml'.format(
             category.name, features))
     reader_even.BookMVA(
-        'BDT', 'weights/{0}_even_{1}_BDT_{0}_even_{1}.weights.xml'.format(
+        'BDT', 'weights_prod/{0}_even_{1}_BDT_{0}_even_{1}.weights.xml'.format(
             category.name, features))
 
     return {'odd': reader_odd, 'even': reader_even}
@@ -73,8 +73,8 @@ def add_bdt_scores(tree):
         tree.GetBranch('off_bdt_score_off_training_nopucorr_dev'),
         ]
 
-    readers_1p = get_readers(Category_1P)
-    readers_3p = get_readers(Category_3P)
+    # readers_1p = get_readers(Category_1P)
+    # readers_3p = get_readers(Category_3P)
 
     readers_1p_hlt = get_readers(Category_1P_HLT)
     readers_3p_hlt = get_readers(Category_3P_HLT)
@@ -111,20 +111,21 @@ def add_bdt_scores(tree):
         # hlt
         if hlt_tau.ntracks == 1:
 
-            event.hlt_bdt_score_off_training_dev = evaluate_score(
-                event, hlt_tau, readers_1p, Category_1P_HLT)
+            # event.hlt_bdt_score_off_training_dev = evaluate_score(
+            #     event, hlt_tau, readers_1p, Category_1P_HLT)
             event.hlt_bdt_score_hlt_training_dev = evaluate_score(
                 event, hlt_tau, readers_1p_hlt, Category_1P_HLT)
 
             event.hlt_bdt_score_off_training_nopucorr_dev = evaluate_score(
                 event, hlt_tau, readers_1p_nopu, Category_1P_HLT, features='features')
+
             event.hlt_bdt_score_hlt_training_nopucorr_dev = evaluate_score(
                 event, hlt_tau, readers_1p_hlt_nopu, Category_1P_HLT, features='features')
 
         elif hlt_tau.ntracks > 1: 
 
-            event.hlt_bdt_score_off_training_dev = evaluate_score(
-                event, hlt_tau, readers_3p, Category_3P_HLT)
+            # event.hlt_bdt_score_off_training_dev = evaluate_score(
+            #     event, hlt_tau, readers_3p, Category_3P_HLT)
             event.hlt_bdt_score_hlt_training_dev = evaluate_score(
                 event, hlt_tau, readers_3p_hlt, Category_3P_HLT)
 

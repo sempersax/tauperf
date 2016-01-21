@@ -1,0 +1,120 @@
+#!/usr/bin/env python
+import os
+import logging
+import rootpy
+from rootpy.plotting.style import set_style
+from rootpy.plotting import Hist, Efficiency
+from tauperf.plotting import draw_efficiencies
+from tauperf.plotting.roc import  old_working_points
+from tauperf.analysis import Analysis
+from tauperf.classify import working_point
+from tauperf.variables import VARIABLES
+from tauperf.cmd import get_parser
+from prettytable import PrettyTable
+
+log = logging.getLogger(os.path.basename(__file__))
+if not os.environ.get("DEBUG", False):
+    log.setLevel(logging.INFO)
+
+rootpy.log.setLevel(logging.INFO)
+
+set_style('ATLAS', shape='rect')
+if __name__ == "__main__":
+
+    parser = get_parser('plot')
+    parser.add_argument('--jobs', default=-1, type=int)
+    group_driver = parser.add_mutually_exclusive_group()
+    group_driver.add_argument(
+        '--target-eff', dest='target', 
+        action='store_const', const='eff')
+    group_driver.add_argument(
+        '--target-rej', dest='target', 
+        action='store_const', const='rej')
+    group_driver.set_defaults(target='eff')
+    parser.add_argument('--target-value', default=0.5, type=float)
+    parser.add_argument('--score-var', default='hlt_bdt_score_hlt_training_dev', type=str)
+    args = parser.parse_args()
+    
+
+    if args.trigger:
+        wp_level = 'hlt'
+    else:
+        wp_level = 'off'
+
+    ana = Analysis(
+        use_drellyan=args.use_dy,
+        trigger=args.trigger,
+        no_weight=args.no_weight)
+
+
+    ana_mc = Analysis(
+        use_drellyan=args.use_dy,
+        trigger=args.trigger,
+	use_jz_slices=True,
+        no_weight=args.no_weight)
+
+
+
+    # score_var = 'hlt_bdt_score_{1}_training_dev'.format(wp_level)
+    
+    score_var = args.score_var
+    cut_vals = {'1prong_hlt': 0.3223, 'multiprongs_hlt': 0.5833}
+
+    vars = {
+        'pt': VARIABLES['pt'],
+        'eta': VARIABLES['eta'],
+        'good_npv': VARIABLES['good_npv'],
+        'averageintpercrossing': VARIABLES['averageintpercrossing'],
+        }
+
+
+    for cat in ana.iter_categories(args.categories):
+        _, wps = old_working_points(ana, cat, wp_level)
+
+        hist_denom = ana.get_hist_samples_array(
+            vars, wp_level, category=cat)
+
+        hist_denom_mc = ana_mc.get_hist_samples_array(
+            vars, wp_level, category=cat)
+
+        hist_wp = ana.get_hist_samples_array(
+            vars, wp_level, category=cat, cuts=wps[1].cut)
+
+        hist_wp_mc = ana_mc.get_hist_samples_array(
+            vars, wp_level, category=cat, cuts=wps[1].cut)
+
+        hist_new = ana.get_hist_samples_array(
+            vars, wp_level, category=cat, cuts='{0} > {1}'.format(
+                score_var, cut_vals[cat.name]))
+
+        hist_new_mc = ana_mc.get_hist_samples_array(
+            vars, wp_level, category=cat, cuts='{0} > {1}'.format(
+                score_var, cut_vals[cat.name]))
+
+
+        for v in vars.keys():
+
+            bkg_effs = [
+                Efficiency(
+                    hist_wp[v]['jet'],
+                    hist_denom[v]['jet'],
+                    title='Data: MC15 menu'),
+                Efficiency(
+                    hist_new[v]['jet'],
+                    hist_denom[v]['jet'],
+                    title='Data: new tauID'),
+                Efficiency(
+                    hist_wp_mc[v]['jet'],
+                    hist_denom_mc[v]['jet'],
+                    title='JZ: MC15 menu'),
+                Efficiency(
+                    hist_new_mc[v]['jet'],
+                    hist_denom_mc[v]['jet'],
+                    title='JZ: new tauID')]
+
+            
+            c_bkg = draw_efficiencies(bkg_effs, wp_level + '_' + v, cat)
+            c_bkg.SaveAs('./plots/data_mc_bkg_eff_comparison_{0}_{1}.png'.format(
+                    v, cat.name))
+
+

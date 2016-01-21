@@ -40,6 +40,8 @@ def roc(
 def old_working_points(ana, category, wp_level):
     log.info('create the workers')
 
+    names = ['loose', 'medium', 'tight']
+
     cuts = [
         wp_level + '_is_loose == 1', 
         wp_level + '_is_medium == 1',
@@ -58,12 +60,12 @@ def old_working_points(ana, category, wp_level):
     bkg_tot = ana.jet.events(category, weighted=True)[1].value
     gr = Graph(len(cuts))
     wps = []
-    for i, (val, yields) in enumerate(zip(cuts, yields)):
+    for i, (val, yields, name) in enumerate(zip(cuts, yields, names)):
         eff_sig = yields[0] / sig_tot
         eff_bkg = yields[1] / bkg_tot
         rej_bkg = 1. / eff_bkg if eff_bkg != 0 else 0
         wps.append(working_point(
-                val, eff_sig, eff_bkg))
+                val, eff_sig, eff_bkg, name=name))
         gr.SetPoint(i, eff_sig, rej_bkg)
     return gr, wps
     

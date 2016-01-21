@@ -29,7 +29,7 @@ XSEC_FILTER = {
 }
 
 class JZ(Jet):
-    def __init__(self, cuts=None, ntuple_path=NTUPLE_PATH, **kwargs):
+    def __init__(self, cuts=None, ntuple_path=NTUPLE_PATH, weight_field=None, **kwargs):
         super(JZ, self).__init__(cuts=cuts, ntuple_path=ntuple_path, **kwargs)
         self._sub_samples = [
             # Jet(
@@ -39,31 +39,31 @@ class JZ(Jet):
             Jet(
                 ntuple_path=ntuple_path,
                 cuts=self._cuts, student='jz1w', 
-                name='JZ1', label='JZ1'),
+                name='JZ1', label='JZ1', weight_field=weight_field),
             Jet(
                 ntuple_path=ntuple_path,
                 cuts=self._cuts, student='jz2w', 
-                name='JZ2', label='JZ2'),
+                name='JZ2', label='JZ2', weight_field=weight_field),
             Jet(
                 ntuple_path=ntuple_path,
                 cuts=self._cuts, student='jz3w', 
-                name='JZ3', label='JZ3'),
+                name='JZ3', label='JZ3', weight_field=weight_field),
             Jet(
                 ntuple_path=ntuple_path,
                 cuts=self._cuts, student='jz4w', 
-                name='JZ4', label='JZ4'),
+                name='JZ4', label='JZ4', weight_field=weight_field),
             Jet(
                 ntuple_path=ntuple_path,
                 cuts=self._cuts, student='jz5w', 
-                name='JZ5', label='JZ5'),
+                name='JZ5', label='JZ5', weight_field=weight_field),
             Jet(
                 ntuple_path=ntuple_path,
                 cuts=self._cuts, student='jz6w', 
-                name='JZ6', label='JZ6'),
+                name='JZ6', label='JZ6', weight_field=weight_field),
             Jet(
                 ntuple_path=ntuple_path,
                 cuts=self._cuts, student='jz7w', 
-                name='JZ7', label='JZ7'),
+                name='JZ7', label='JZ7', weight_field=weight_field),
             ]
         self._scales = []
         for s in self._sub_samples:

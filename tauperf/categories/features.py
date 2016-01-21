@@ -29,10 +29,10 @@ features_1p_pileup_corrected = [
     'etOverPtLeadTrkCorrected'   ,
     'innerTrkAvgDistCorrected'   ,
     'ipSigLeadTrkCorrected'      ,
-    'SumPtTrkFracCorrected'      ,
+    'SumPtTrkFrac'      ,
+    # 'SumPtTrkFracCorrected'      ,
     'ptRatioEflowApproxCorrected',
     'mEflowApproxCorrected'      ,
-    # 'ChPiEMEOverCaloEME',
     'ChPiEMEOverCaloEMECorrected',
     'EMPOverTrkSysPCorrected'    , 
 ]

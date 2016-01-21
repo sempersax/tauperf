@@ -34,8 +34,8 @@ VARIABLES = {
         'units': 'GeV',
         'scale': 0.001,
         'prefix': ('off', 'hlt', 'true'),
-        'bins': 30,
-        'range': (0, 150)
+        'bins': 50,
+        'range': (0, 200)
         },
 
     'presel_pt': {
@@ -106,8 +106,8 @@ VARIABLES = {
         'root': 'f_{core}',
         'type': 'f',
         'prefix': ('off', 'hlt'),
-        'bins': 60,
-        'range': (0, 1.5)
+        'bins': 80,
+        'range': (-0.1, 1.5)
         },
     
     'centFracCorrected': {
@@ -115,8 +115,8 @@ VARIABLES = {
         'root': 'f_{core} (PU corrected)',
         'type': 'f',
         'prefix': ('off', 'hlt'),
-        'bins': 60,
-        'range': (0, 1.5)
+        'bins': 80,
+        'range': (-0.1, 1.5)
         },
 
     'isolFrac': {
@@ -287,8 +287,8 @@ VARIABLES = {
         'root': 'Inner R_{track}',
         'prefix': ('off', 'hlt'),
         'type': 'f',
-        'bins': 20,
-        'range': (0, 0.2),
+        'bins': 60,
+        'range': (-0.1, 0.2),
         },
    
     'innerTrkAvgDistCorrected': {
@@ -296,8 +296,8 @@ VARIABLES = {
         'root': 'Inner R_{track} (PU corrected)',
         'prefix': ('off', 'hlt'),
         'type': 'f',
-        'bins': 20,
-        'range': (0, 0.2),
+        'bins': 60,
+        'range': (-0.1, 0.2),
         },
 
     'nwidetracks': {
@@ -314,8 +314,8 @@ VARIABLES = {
         'root': '1 - p_{T}^{trk in 0.2} / p_{T}^{trk in 0.4}',
         'type': 'f',
         'prefix': ('off', 'hlt'),
-        'bins' : 40,
-        'range': (0, 1),
+        'bins' : 44,
+        'range': (-0.1, 1),
         },
 
     'SumPtTrkFracCorrected': {
@@ -323,8 +323,8 @@ VARIABLES = {
         'root': '1 - p_{T}^{trk in 0.2} / p_{T}^{trk in 0.4} (PU corrected)',
         'type': 'f',
         'prefix': ('off', 'hlt'),
-        'bins' : 40,
-        'range': (0, 1),
+        'bins' : 44,
+        'range': (-0.1, 1),
         },
 
     'ChPiEMEOverCaloEME': {
@@ -350,8 +350,8 @@ VARIABLES = {
         'root': '1./f_{track}',
         'type': 'f',
         'prefix': ('off', 'hlt'),
-        'bins': 25,
-        'range': (0, 5),
+        'bins': 30,
+        'range': (-1, 5),
         },
     
     'etOverPtLeadTrkCorrected': {
@@ -359,8 +359,8 @@ VARIABLES = {
         'root': '1./f_{track} (PU corrected)',
         'type': 'f',
         'prefix': ('off', 'hlt'),
-        'bins': 25,
-        'range': (0, 5),
+        'bins': 30,
+        'range': (-1, 5),
         },
 
     'EMPOverTrkSysP': {
@@ -395,7 +395,7 @@ VARIABLES = {
         'root': '|S_{lead track}| (PU Corrected)',
         'type': 'f',
         'prefix': ('off', 'hlt'),
-        'bins': 22,
+        'bins': 44,
         'range': (-2, 20),
         },
 
@@ -413,7 +413,7 @@ VARIABLES = {
         'root': '|S_{lead track}|',
         'type': 'f',
         'prefix': ('off', 'hlt'),
-        'bins': 22,
+        'bins': 44,
         'range': (-2, 20),
         },
     
@@ -498,8 +498,8 @@ VARIABLES = {
         'root': 'Approximated p_{T} ratio',
         'type': 'f',
         'prefix': ('off', 'hlt'),
-        'bins': 40,
-        'range': (0, 4),
+        'bins': 50,
+        'range': (-1, 4),
         },
 
     'ptRatioEflowApproxCorrected': {
@@ -507,8 +507,8 @@ VARIABLES = {
         'root': 'Approximated p_{T} ratio (PU corrected)',
         'type': 'f',
         'prefix': ('off', 'hlt'),
-        'bins': 40,
-        'range': (0, 4),
+        'bins': 50,
+        'range': (-1, 4),
         },
 
     'mEflowApprox': {
@@ -516,10 +516,10 @@ VARIABLES = {
         'root': 'Approximated m_{#tau}^{vis}',
         'type': 'f',
         'prefix': ('off', 'hlt'),
-        'bins': 25,
+        'bins': 30,
         # 'scale': 0.001,
         'units': 'MeV',
-        'range': (0.0, 5000.),
+        'range': (-100, 5000.),
         },
 
     'mEflowApproxCorrected': {
@@ -527,10 +527,9 @@ VARIABLES = {
         'root': 'Approximated m_{#tau}^{vis} (PU corrected)',
         'type': 'f',
         'prefix': ('off', 'hlt'),
-        'bins': 25,
-        # 'scale': 0.001,
-        # 'units': 'GeV',
-        'range': (0, 5000.),
+        'bins': 30,
+        'units': 'MeV',
+        'range': (-100, 5000.),
         },
 
 }

@@ -32,6 +32,7 @@ if __name__ == "__main__":
         depth=10000,
         verbose='v' if args.verbose else '',
         features=args.features,
+        cuts_features='cuts_' + args.features,
         n_jobs=args.jobs)
 
 

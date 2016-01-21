@@ -25,7 +25,7 @@ FAST_TRACK_ISO = Cut('hlt_fasttrack_Niso4 < 2')
 FAST_TRACK = FAST_TRACK_CORE & FAST_TRACK_ISO
 
 # HLT_PRESEL = HLT_PRESEL_CALO & FAST_TRACK
-HLT_PRESEL = HLT_PT_CUT & Cut('hlt_pt < 150000.')
+HLT_PRESEL = HLT_PT_CUT #& Cut('hlt_pt < 150000.')
 
 
 FEATURES_CUTS_ONEPRONG = (
@@ -45,13 +45,14 @@ FEATURES_CUTS_ONEPRONG_PU = (
     Cut('hlt_pt < 150000.')
     & Cut('hlt_centFracCorrected > -1110')
     & Cut('hlt_innerTrkAvgDistCorrected > -1110')
-    & Cut('hlt_ipSigLeadTrkCorrected < 999')
+    # & Cut('hlt_ipSigLeadTrkCorrected < 999')
     & Cut('hlt_etOverPtLeadTrkCorrected > 1./3.')
     & Cut("hlt_ChPiEMEOverCaloEMECorrected > -10.")
     & Cut("hlt_ChPiEMEOverCaloEMECorrected < 10.")
     & Cut("hlt_EMPOverTrkSysPCorrected >= 0.")
     & Cut("hlt_ptRatioEflowApproxCorrected < 10.")
     & Cut("hlt_mEflowApproxCorrected < 10000.")
+    # & Cut("10 < averageintpercrossing< 20")
 )
 
 
@@ -95,6 +96,10 @@ class Category_1P_HLT(Category_Preselection):
     cuts_features = FEATURES_CUTS_ONEPRONG
     features_pileup_corrected = features_1p_pileup_corrected
     cuts_features_pileup_corrected = FEATURES_CUTS_ONEPRONG_PU
+    eff_target = {
+        'loose': 0.99,
+        'medium': 0.95,
+        'tight': 0.9}
 
 class Category_2P_HLT(Category_Preselection):
     name = '2prongs_hlt'
@@ -124,3 +129,9 @@ class Category_MP_HLT(Category_Preselection):
     label = '#tau_{had} (MP HLT)'
     common_cuts = Category_Preselection.common_cuts
     cuts = MULTIPRONG & HLT_PRESEL
+    eff_target = {
+        'loose': 0.85,
+        'medium': 0.70,
+        'tight': 0.55}
+
+

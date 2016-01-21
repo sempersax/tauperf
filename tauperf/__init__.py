@@ -13,7 +13,7 @@ else:
         # os.getenv('DATA_AREA'), 'crackpotauid_ntuples', 'v3')
         os.getenv('DATA_AREA'), 'tauid_ntuples', 'v3')
     NTUPLE_PATH = UNMERGED_NTUPLE_PATH
-    # NTUPLE_PATH = os.path.join(UNMERGED_NTUPLE_PATH, 'merge_weighted')
+    # NTUPLE_PATH = os.path.join(UNMERGED_NTUPLE_PATH, 'nocorr_on_sumptfrac')
 
 
 

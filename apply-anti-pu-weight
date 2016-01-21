@@ -11,30 +11,26 @@ from multiprocessing import Process
 import ROOT
 
 
-log = logging.getLogger('apply-pt-weight')
+log = logging.getLogger('apply-anti-pileup-weight')
 
 
 
 class Model(TreeModel):
-    pt_weight = FloatCol()
+    anti_pu_weight = FloatCol()
 
-def add_pt_weight(tree):
+def add_pu_weight(tree):
     tree.create_buffer()
     tree.set_buffer(Model(), create_branches=True)
     branches = [
-        tree.GetBranch('pt_weight'),
+        tree.GetBranch('anti_pu_weight'),
         ]
-    tree.define_object('tau', prefix='off_')
 
-    w_file = root_open('cache/pt_weights.root')
-    gr_1p = Graph(w_file['pt_weight_1prong'])
-    gr_mp = Graph(w_file['pt_weight_3prongs'])
+    w_file = root_open('cache/anti_pileup_weights.root')
+    gr = Graph(w_file['averageintpercrossing_weight'])
     w_file.Close()
+
     for event in tree:
-        if tree.off_ntracks == 1:
-            tree.pt_weight = gr_1p.Eval(tree.off_pt / 1000.)
-        else:
-            tree.pt_weight = gr_mp.Eval(tree.off_pt / 1000.)
+        tree.anti_pu_weight = gr.Eval(tree.averageintpercrossing)
         for branch in branches:
             branch.Fill()
     tree.SetEntries(-1)
@@ -54,13 +50,16 @@ class Job(Process):
         log.info("copying {0} to {1} ...".format(filename, output))
         shutil.copy(filename, output)
         with root_open(output, 'UPDATE') as file:
-            tree = file.tau
-            if 'pt_weight' in tree:
+            tree_even = file.tau_even
+            tree_odd = file.tau_odd
+            if 'anti_pu_weight' in tree_even:
                 log.info("weight already exist in {0} ...".format(output))
                 return
             log.info("adding weight to {0} ...".format(output))
-            add_pt_weight(tree)
-            tree.Write(tree.name, ROOT.TObject.kOverwrite)
+            add_pu_weight(tree_even)
+            tree_even.Write('tau_even', ROOT.TObject.kOverwrite)
+            add_pu_weight(tree_odd)
+            tree_odd.Write('tau_odd', ROOT.TObject.kOverwrite)
 
 
 if __name__ == '__main__':

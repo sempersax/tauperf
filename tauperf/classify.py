@@ -33,6 +33,7 @@ class Classifier(object):
                  prefix='hlt',
                  tree_name='tau',
                  features='features_pileup_corrected',
+                 cuts_features='cuts_features_pileup_corrected',
                  train_split='odd',
                  test_split='even',
                  verbose=''):
@@ -46,7 +47,7 @@ class Classifier(object):
         self.test_split = test_split
         self.verbose = verbose
         self.features = getattr(category, features)
-        self.cut_features = getattr(category, 'cuts_' + features)
+        self.cut_features = getattr(category, cuts_features)
 
     def set_variables(self, factory, prefix):
         for varName in self.features:
@@ -109,7 +110,8 @@ class Classifier(object):
 
         factory.AddSignalTree(self.sig_tree_train, 1., ROOT.TMVA.Types.kTraining)
         factory.AddSignalTree(self.sig_tree_test, 1., ROOT.TMVA.Types.kTesting)
-        factory.SetSignalWeightExpression(tau.weight_field)
+        if tau.weight_field is not None:
+            factory.SetSignalWeightExpression(tau.weight_field)
 
         # Bkg files
         log.info('prepare background tree')
@@ -126,7 +128,11 @@ class Classifier(object):
             factory.AddBackgroundTree(self.bkg_tree_train, 1., ROOT.TMVA.Types.kTraining)
             factory.AddBackgroundTree(self.bkg_tree_test, 1., ROOT.TMVA.Types.kTesting)
 
-        factory.SetBackgroundWeightExpression(jet.weight_field)
+        if isinstance(jet.weight_field, (list, tuple)):
+            bkg_weight = '*'.join(list(jet.weight_field))
+        else:
+            bkg_weight = jet.weight_field
+        factory.SetBackgroundWeightExpression(bkg_weight)
         log.info('preparation the trees')
         output.cd()
         factory.PrepareTrainingAndTestTree(
@@ -150,3 +156,7 @@ class working_point(object):
         self.cut = cut
         self.eff_s = eff_s
         self.eff_b = eff_b
+
+    def __str__(self):
+        return '{0}: eff(S) = {1:1.2f}, eff(B) = {2:1.2f}'.format(
+            self.name, self.eff_s, self.eff_b)

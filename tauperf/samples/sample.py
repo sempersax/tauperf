@@ -191,7 +191,7 @@ class Sample(object):
 
     def get_2d_map(
         self, var1, var2, prefix='off',
-        category=None, cuts=None):
+        category=None, cuts=None, dummy_range=False):
         """
         """
         sel = self.cuts(category)
@@ -209,6 +209,10 @@ class Sample(object):
         nbins1, xmin1, xmax1 = var1['bins'], var1['range'][0], var1['range'][1]
         nbins2, xmin2, xmax2 = var2['bins'], var2['range'][0], var2['range'][1]
         
+        if dummy_range:
+            nbins1, xmin1, xmax1 = 40, -1e5, 1e5
+            nbins2, xmin2, xmax2 = 40, -1e5, 1e5
+            
 
         if 'prefix' in var1:
             if not isinstance(var1['prefix'], (list, tuple)):
