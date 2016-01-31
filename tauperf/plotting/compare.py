@@ -130,7 +130,7 @@ def draw_ratio(a, b, field, category,
         chi2_label.SetTextSize(textsize)
         chi2_label.Draw()
         if optional_label_text is not None:
-            optional_label = ROOT.TLatex(pad.GetLeftMargin()+0.55,0.87,
+            optional_label = ROOT.TLatex(pad.GetLeftMargin()+0.01, 1 - pad.GetTopMargin() + 0.005,
                                          optional_label_text )
             optional_label.SetNDC(True)
             optional_label.SetTextFont(43)
