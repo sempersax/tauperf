@@ -50,7 +50,11 @@ if __name__ == "__main__":
         ]
 
     PT_BINS += [
-        (50 + 4 * i, 50 + 4 * (i + 1)) for i in range(0, 15)
+        (50 + 4 * i, 50 + 4 * (i + 1)) for i in range(0, 5)
+        ]
+
+    PT_BINS += [
+        (70 + 8 * i, 70 + 8 * (i + 1)) for i in range(0, 5)
         ]
 
     PT_BINS += [

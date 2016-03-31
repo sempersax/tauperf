@@ -95,13 +95,13 @@ def add_bdt_scores(tree):
 
         # offline
         if tau.ntracks == 1:
-            event.off_bdt_score_off_training_dev = evaluate_score(
-                event, tau, readers_1p, Category_1P)
+            # event.off_bdt_score_off_training_dev = evaluate_score(
+            #     event, tau, readers_1p, Category_1P)
             event.off_bdt_score_off_training_nopucorr_dev = evaluate_score(
                 event, tau, readers_1p_nopu, Category_1P, features='features')
         elif tau.ntracks > 1: 
-            event.off_bdt_score_off_training_dev = evaluate_score(
-                event, tau, readers_1p, Category_3P)
+            # event.off_bdt_score_off_training_dev = evaluate_score(
+            #     event, tau, readers_1p, Category_3P)
             event.off_bdt_score_off_training_nopucorr_dev = evaluate_score(
                 event, tau, readers_1p_nopu, Category_3P, features='features')
         else:

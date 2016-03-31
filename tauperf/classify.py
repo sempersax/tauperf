@@ -105,8 +105,10 @@ class Classifier(object):
         # Signal file
         log.info('prepare signal tree')
         sig_file = get_file(tau.ntuple_path, tau.student) 
-        self.sig_tree_train = sig_file.Get(tau.tree_name + '_' + self.train_split)
-        self.sig_tree_test = sig_file.Get(tau.tree_name + '_' + self.test_split)
+        # self.sig_tree_train = sig_file.Get(tau.tree_name + '_' + self.train_split)
+        # self.sig_tree_test = sig_file.Get(tau.tree_name + '_' + self.test_split)
+        self.sig_tree_train = sig_file.Get(tau.tree_name)
+        self.sig_tree_test = sig_file.Get(tau.tree_name) 
 
         factory.AddSignalTree(self.sig_tree_train, 1., ROOT.TMVA.Types.kTraining)
         factory.AddSignalTree(self.sig_tree_test, 1., ROOT.TMVA.Types.kTesting)

@@ -1,0 +1,49 @@
+#!/usr/bin/env python
+import os
+import logging
+# root/rootpy imports
+import rootpy
+from rootpy.plotting import Hist
+from rootpy import asrootpy
+from rootpy.plotting.style import set_style
+from tauperf.analysis import Analysis
+from tauperf.plotting.roc import roc, score_plot, old_working_points
+
+log = logging.getLogger(os.path.basename(__file__))
+if not os.environ.get("DEBUG", False):
+    log.setLevel(logging.INFO)
+rootpy.log.setLevel(logging.INFO)
+set_style('ATLAS', shape='rect')
+
+
+if __name__ == '__main__':
+
+    from tauperf.cmd import get_parser
+    parser = get_parser()
+    parser.add_argument('--no-roc', action='store_true', default=False)
+    parser.add_argument('--score-var', default=None, type=str)
+    args = parser.parse_args()
+    ana = Analysis(
+        trigger=args.trigger,
+        use_jz_slices=args.use_jz)
+
+    if args.trigger:
+        score_var = 'hlt_bdtjetscore'
+        wp_level = 'hlt'
+    else:
+        score_var = 'off_bdtjetscore'
+        wp_level = 'off'
+        
+    if args.score_var is not None:
+        score_var = args.score_var
+    
+
+    for cat in ana.iter_categories(args.categories):
+
+        _, wps = old_working_points(ana, cat, wp_level)
+        
+        for wp in wps:
+            log.info(wp)
+
+
+        
