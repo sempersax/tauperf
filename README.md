@@ -150,5 +150,48 @@ INFO:ROOT.TCanvas.Print] png file plots/pt_weight_multiprongs_hlt.png has been c
 ```
 In addition to the two plots, a file `pt_weights.root` has been created. If you want to use this file to recompute the pt weights, you need to copy/move it over to the `cache` directory.
 
- 
- 
+## Make plots of the discriminating variables
+### Command
+```bash
+# Make plots of the discri variables in the plot directory
+plot-features --trigger --categories plotting_hlt --level hlt
+plot-features --trigger --categories plotting_hlt --level hlt --logy
+```
+
+### Output
+
+## Training
+### Making training sample
+For training we need to separate the data events in two trees based on the oddity of the event number. We then train 2 bdts, and then compute the BDT score for all events using cross-validation.
+```bash
+prepare-train-test-trees path_to_file/data.root
+```
+Once the training tree is prepared, you need to rename the newly created `training.data.root` into `data.root` and to put it in another directory with the Ztautau training sample.
+
+### Training command
+
+```bash
+nohup ./train --trigger --level hlt --features features --categories training_hlt &
+nohup ./train --trigger --level hlt --features features_pileup_corrected --categories training_hlt &
+```
+
+### Output
+
+Too long to be pasted here. Sorry you will have to run it by yourself.
+
+## ROC curve and BDT score
+### Command
+
+### Output
+
+
+## Efficiency and rejection plots for a given working point
+### Command
+### Output
+
+## Pt-dependent cut 
+### Command
+### Output
+
+
+
