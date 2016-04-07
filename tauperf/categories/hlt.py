@@ -98,7 +98,7 @@ class Category_1P_HLT(Category_Preselection):
     cuts_features_pileup_corrected = FEATURES_CUTS_ONEPRONG_PU
     eff_target = {
         'loose': 0.99,
-        'medium': 0.95,
+        'medium': 0.97,
         'tight': 0.9}
 
 class Category_2P_HLT(Category_Preselection):
