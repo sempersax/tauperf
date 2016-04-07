@@ -296,7 +296,91 @@ working-point-picker --categories plotting_hlt --trigger --level hlt
 ```
 ### Output
 ```bash
+INFO:rootpy.plotting.style] using ROOT style 'ATLAS(shape=rect)'
+INFO:tauperf.analysis] Use Z->tautau simulation
+INFO:tauperf.samples.sample] tau: weights are pu_weight
+INFO:tauperf.analysis] Use data for bkg
+INFO:tauperf.samples.sample] jet: weights are pt_weight
+INFO:tauperf.analysis] Analysis object is instantiated
+INFO:tauperf.analysis]
+INFO:tauperf.analysis] ========================================
+INFO:tauperf.analysis] 1prong_hlt category
+INFO:tauperf.analysis] ========================================
+INFO:tauperf.analysis] Signal cuts: (((hlt_ntracks==1)&&(hlt_pt>25000))&&((off_pt>20000.)&&(abs(off_eta)<2.5)))&&(hlt_matched_to_offline==1)
+INFO:tauperf.analysis] Background cuts: ((((hlt_ntracks==1)&&(hlt_pt>25000))&&((off_pt>20000.)&&(abs(off_eta)<2.5)))&&(hlt_matched_to_offline==1))&&(met<100000.)
+INFO:tauperf.plotting.roc] create the workers
+INFO:tauperf.samples.db] opening /cluster/warehouse/qbuat/tauid_ntuples/v3/new_Z_training_sample/Ztautau.root ...
+INFO:tauperf.samples.db] opening /cluster/warehouse/qbuat/tauid_ntuples/v3/new_Z_training_sample/Ztautau.root ...
+INFO:tauperf.samples.db] opening /cluster/warehouse/qbuat/tauid_ntuples/v3/new_Z_training_sample/Ztautau.root ...
+INFO:tauperf.samples.db] opening /cluster/warehouse/qbuat/tauid_ntuples/v3/new_Z_training_sample/data.root ...
+INFO:tauperf.samples.db] opening /cluster/warehouse/qbuat/tauid_ntuples/v3/new_Z_training_sample/data.root ...
+INFO:tauperf.samples.db] opening /cluster/warehouse/qbuat/tauid_ntuples/v3/new_Z_training_sample/data.root ...
+INFO:tauperf.plotting.roc] --> Calculate the total yields
+INFO:tauperf.samples.db] opening /cluster/warehouse/qbuat/tauid_ntuples/v3/new_Z_training_sample/Ztautau.root ...
+INFO:tauperf.samples.db] opening /cluster/warehouse/qbuat/tauid_ntuples/v3/new_Z_training_sample/data.root ...
+loose 0.784653651245
+medium 0.502074629042
+tight 0.344279093295
++------------+---------------+---------------------+---------------------+-----------+
+|  Category  | working point | old eff(B) / eff(S) | new eff(B) / eff(S) | cut value |
++------------+---------------+---------------------+---------------------+-----------+
+| 1prong_hlt |     loose     |    0.785 / 0.995    |    0.785 / 0.998    |   0.1885  |
+| 1prong_hlt |     medium    |    0.502 / 0.967    |    0.502 / 0.980    |   0.3232  |
+| 1prong_hlt |     tight     |    0.344 / 0.914    |    0.344 / 0.946    |   0.4084  |
++------------+---------------+---------------------+---------------------+-----------+
 
+.........................
+
+INFO:ROOT.TCanvas.Print] png file ./plots/new_wp_sig_comparison_pt_1prong_hlt.png has been created
+
+.........................
+
+INFO:ROOT.TCanvas.Print] png file ./plots/new_wp_bkg_comparison_pt_1prong_hlt.png has been created
+INFO:tauperf.analysis]
+INFO:tauperf.analysis] ========================================
+INFO:tauperf.analysis] multiprongs_hlt category
+INFO:tauperf.analysis] ========================================
+INFO:tauperf.analysis] Signal cuts: ((((hlt_ntracks>1)&&(hlt_ntracks<4))&&(hlt_pt>25000))&&((off_pt>20000.)&&(abs(off_eta)<2.5)))&&(hlt_matched_to_offline==1)
+INFO:tauperf.analysis] Background cuts: (((((hlt_ntracks>1)&&(hlt_ntracks<4))&&(hlt_pt>25000))&&((off_pt>20000.)&&(abs(off_eta)<2.5)))&&(hlt_matched_to_offline==1))&&(met<100000.)
+INFO:tauperf.plotting.roc] create the workers
+INFO:tauperf.samples.db] opening /cluster/warehouse/qbuat/tauid_ntuples/v3/new_Z_training_sample/Ztautau.root ...
+INFO:tauperf.samples.db] opening /cluster/warehouse/qbuat/tauid_ntuples/v3/new_Z_training_sample/Ztautau.root ...
+INFO:tauperf.samples.db] opening /cluster/warehouse/qbuat/tauid_ntuples/v3/new_Z_training_sample/Ztautau.root ...
+INFO:tauperf.samples.db] opening /cluster/warehouse/qbuat/tauid_ntuples/v3/new_Z_training_sample/data.root ...
+INFO:tauperf.samples.db] opening /cluster/warehouse/qbuat/tauid_ntuples/v3/new_Z_training_sample/data.root ...
+INFO:tauperf.samples.db] opening /cluster/warehouse/qbuat/tauid_ntuples/v3/new_Z_training_sample/data.root ...
+INFO:tauperf.plotting.roc] --> Calculate the total yields
+loose 0.198225101148
+medium 0.0747821530004
+tight 0.0381461318723
++-----------------+---------------+---------------------+---------------------+-----------+
+|     Category    | working point | old eff(B) / eff(S) | new eff(B) / eff(S) | cut value |
++-----------------+---------------+---------------------+---------------------+-----------+
+|    1prong_hlt   |     loose     |    0.785 / 0.995    |    0.785 / 0.998    |   0.1885  |
+|    1prong_hlt   |     medium    |    0.502 / 0.967    |    0.502 / 0.980    |   0.3232  |
+|    1prong_hlt   |     tight     |    0.344 / 0.914    |    0.344 / 0.946    |   0.4084  |
+| multiprongs_hlt |     loose     |    0.198 / 0.863    |    0.198 / 0.886    |   0.4698  |
+| multiprongs_hlt |     medium    |    0.075 / 0.687    |    0.075 / 0.712    |   0.5861  |
+| multiprongs_hlt |     tight     |    0.038 / 0.557    |    0.038 / 0.580    |   0.6363  |
++-----------------+---------------+---------------------+---------------------+-----------+
+
+.........................
+
+INFO:ROOT.TCanvas.Print] png file ./plots/new_wp_sig_comparison_pt_multiprongs_hlt.png has been created
+
+.........................
+
+INFO:ROOT.TCanvas.Print] png file ./plots/new_wp_bkg_comparison_pt_multiprongs_hlt.png has been created
++-----------------+---------------+---------------------+---------------------+-----------+
+|     Category    | working point | old eff(B) / eff(S) | new eff(B) / eff(S) | cut value |
++-----------------+---------------+---------------------+---------------------+-----------+
+|    1prong_hlt   |     loose     |    0.785 / 0.995    |    0.785 / 0.998    |   0.1885  |
+|    1prong_hlt   |     medium    |    0.502 / 0.967    |    0.502 / 0.980    |   0.3232  |
+|    1prong_hlt   |     tight     |    0.344 / 0.914    |    0.344 / 0.946    |   0.4084  |
+| multiprongs_hlt |     loose     |    0.198 / 0.863    |    0.198 / 0.886    |   0.4698  |
+| multiprongs_hlt |     medium    |    0.075 / 0.687    |    0.075 / 0.712    |   0.5861  |
+| multiprongs_hlt |     tight     |    0.038 / 0.557    |    0.038 / 0.580    |   0.6363  |
++-----------------+---------------+---------------------+---------------------+-----------+
 ```
 ## Pt-dependent cut 
 ### Command
