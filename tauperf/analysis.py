@@ -49,7 +49,6 @@ class Analysis(object):
                 color='#00FF00')
         else:
             log.info('Use data for bkg')
-            log.warning('Fix the bkg weight ASAP!!! This is very misleading.')
             self.jet = samples.DataJet(
                 ntuple_path=ntuple_path,
                 student='data',
@@ -57,7 +56,7 @@ class Analysis(object):
                 label='Fake #tau_{had}',
                 trigger=trigger,
                 # weird, please fix asap!
-                weight_field=('pt_weight', 'anti_pu_weight') if no_weight else 'pt_weight',
+                weight_field=None if no_weight else 'pt_weight',
                 color='#00FF00')
             
         self.trigger = trigger
