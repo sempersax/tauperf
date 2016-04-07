@@ -128,6 +128,8 @@ class Category_MP_HLT(Category_Preselection):
     name = 'multiprongs_hlt'
     label = '#tau_{had} (MP HLT)'
     common_cuts = Category_Preselection.common_cuts
+    features = features_mp
+    features_pileup_corrected = features_mp_pileup_corrected
     cuts = MULTIPRONG & HLT_PRESEL
     eff_target = {
         'loose': 0.85,
