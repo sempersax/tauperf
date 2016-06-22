@@ -28,7 +28,8 @@ if __name__ == "__main__":
 
     ana = Analysis(
         use_drellyan=args.use_dy,
-        trigger=args.trigger)
+        trigger=args.trigger,
+        no_weight=args.no_weight)
 
     for cat in ana.iter_categories(args.categories):
         vars = {}
