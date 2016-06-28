@@ -1,0 +1,164 @@
+#!/usr/bin/env python
+import os
+import logging
+import rootpy
+from rootpy.tree import Cut
+from tauperf.analysis import Analysis
+from tauperf.cmd import get_parser
+from tauperf.categories import Category_1P
+from tauperf.plotting.mpl import score_plot
+
+import numpy as np
+import matplotlib.pyplot as plt
+from numpy.lib import recfunctions
+
+from root_numpy import rec2array
+from sklearn import cross_validation
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import roc_curve, auc
+
+log = logging.getLogger(os.path.basename(__file__))
+if not os.environ.get("DEBUG", False):
+    log.setLevel(logging.INFO)
+
+rootpy.log.setLevel(logging.INFO)
+
+
+if __name__ == "__main__":
+
+    parser = get_parser()
+    parser.add_argument('--jobs', default=-1, type=int)
+    parser.add_argument('--train', default=False, action='store_true')
+    args = parser.parse_args()
+
+    ana = Analysis(
+        use_drellyan=args.use_dy,
+        trigger=args.trigger,
+        no_weight=args.no_weight)
+
+
+    cat = Category_1P
+
+    old_tauid_branches = [
+        'off_bdtjetscore',
+        'off_is_loose',
+        'off_is_medium',
+        'off_is_tight',
+        ]
+    
+
+    features = ['off_' + f for f in cat.features_pileup_corrected]
+    fields = features + old_tauid_branches
+    
+    
+
+    cuts = cat.cuts_features_pileup_corrected
+    cuts_sig = cuts & Cut('pu_weight !=0')
+    print cuts.GetTitle()
+    rec_sig = ana.tau.records(
+        branches=fields + ['pu_weight'], 
+        selection=cuts_sig.GetTitle())
+
+    rec_bkg = ana.jet.records(
+        branches=fields + ['pt_weight'], 
+        selection=cuts.GetTitle())
+
+            
+    
+    feat_sig = rec2array(rec_sig, fields=features + ['pu_weight'])
+    feat_bkg = rec2array(rec_bkg, fields=features+ ['pt_weight'])
+
+
+    old_scores = np.concatenate((
+            rec_sig['off_bdtjetscore'],
+            rec_bkg['off_bdtjetscore']))
+
+    weights = np.concatenate((
+            rec_sig['pu_weight'],
+            rec_bkg['pt_weight']))
+
+    target = np.concatenate((
+            np.ones(feat_sig.shape[0]),
+            np.zeros(feat_bkg.shape[0])))
+
+    data = np.concatenate((feat_sig, feat_bkg))
+
+    
+    log.info('splitting')
+    data_train, data_test, y_train, y_test = cross_validation.train_test_split(
+        data, target, test_size=0.4, random_state=42)
+
+
+    X_train = data_train[:,:-1]
+    weights_train = data_train[:,-1]
+
+    X_test = data_test[:,:-1]
+    weights_test = data_test[:,-1]
+
+
+    if args.train:
+        log.info('classifier')
+        clf = AdaBoostClassifier(
+            DecisionTreeClassifier(
+                max_depth=8),
+            #             learning_rate=0.1,
+            n_estimators=50)
+        log.info('fitting')
+        clf.fit(X_train, y_train, sample_weight=weights_train)
+    else:
+        from sklearn.externals import joblib
+        clf = joblib.load('sk_out/bdt_100.pkl')
+
+
+    new_scores = clf.decision_function(X_test)
+
+    
+    data_test = recfunctions.append_fields(
+        data_test, ('new_score', 'is_sig'), [new_scores, y_test], asrecarray=True)
+
+
+    fpr, tpr, thresholds = roc_curve(target, old_scores, sample_weight=weights)
+
+    fpr_new, tpr_new, _ = roc_curve(y_test, new_scores, sample_weight=weights_test)
+    plt.plot([0, 1], [0, 1], '--', color=(0.6, 0.6, 0.6), label='Luck')
+    plt.plot(fpr, tpr, color='red', label='2015')
+    plt.plot(fpr_new, tpr_new, color='blue', label='2016')
+
+    plt.xlim([-0.05, 1.05])
+    plt.ylim([-0.05, 1.05])
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('Tau ID ROC')
+    plt.legend(loc="lower right")
+#     plt.show()
+    plt.savefig('plots/roc.pdf')
+
+#     pl = score_plot(
+#         rec_sig['off_bdtjetscore'],
+#         rec_bkg['off_bdtjetscore'],
+#         rec_sig['pu_weight'],
+#         rec_bkg['pt_weight'])
+#     pl.savefig('plots/scores.pdf')
+
+    pl = score_plot(
+        data_test[data_test['is_sig'] == 1]['new_score'],
+        data_test[data_test['is_sig'] == 0]['new_score'],
+        data_test[data_test['is_sig'] == 1]['pu_weight'],
+        data_test[data_test['is_sig'] == 0]['pt_weight'])
+    pl.savefig('plots/scores.pdf')
+
+
+
+
+#     ana.train(
+#         args.level, 
+#         ntrees=70,
+#         node_size=0.1,
+#         depth=10000,
+#         verbose='v' if args.verbose else '',
+#         features=args.features,
+#         cuts_features='cuts_' + args.features,
+#         n_jobs=args.jobs)
+
+

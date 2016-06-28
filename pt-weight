@@ -41,7 +41,7 @@ if __name__ == "__main__":
         no_weight=True)
     out_file = root_open("pt_weights.root", "RECREATE")
     for cat in ana.iter_categories(args.categories):
-        h_template = Hist([0, 25, 30, 35, 40, 45, 50, 55, 60, 70, 80, 90, 100, 125, 150, 200, 250, 300, 400, 500])
+        h_template = Hist([0, 20, 25, 30, 35, 40, 45, 50, 55, 60, 70, 80, 90, 100, 125, 150, 200, 250, 300, 400, 500])
         h_tau = ana.tau.get_hist_array(
             {'off_pt*0.001': h_template},
             category=cat,

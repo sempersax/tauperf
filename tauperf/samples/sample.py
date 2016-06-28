@@ -3,7 +3,7 @@ from rootpy.tree import Cut
 from rootpy.plotting import Hist, Hist2D
 from rootpy import asrootpy
 import ROOT
-
+import numpy as np
 
 # local imports
 from .db import get_file, cleanup
@@ -123,12 +123,21 @@ class Sample(object):
     def records(self, **kwargs):
         ""
         ""
-        from root_numpy import tree2rec
+        from root_numpy import tree2array
         rfile = get_file(self.ntuple_path, self.student)
         tree = rfile[self.tree_name]
         log.info('Converting tree to record array, sorry if this is long ...')
-        rec = tree2rec(tree, **kwargs)
+        rec = tree2array(tree, **kwargs).view(np.recarray)
         return rec
+
+    def array(self, **kwargs):
+        ""
+        ""
+        from root_numpy import rec2array
+        rec = self.records(**kwargs)
+        arr = rec2array(rec)
+        return arr
+
 
     def draw_helper(
         self, hist_template, 

@@ -38,16 +38,16 @@ VARIABLES = {
         'range': (0, 200)
         },
 
-    'presel_pt': {
-        'name': 'presel_pt',
-        'root': 'Presel. p_{T}',
-        'type': 'f',
-        'units': 'GeV',
-        'scale': 0.001,
-        'prefix': ('hlt'),
-        'bins': 50,
-        'range': (0, 500)
-        },
+#     'presel_pt': {
+#         'name': 'presel_pt',
+#         'root': 'Presel. p_{T}',
+#         'type': 'f',
+#         'units': 'GeV',
+#         'scale': 0.001,
+#         'prefix': ('hlt'),
+#         'bins': 50,
+#         'range': (0, 500)
+#         },
     
     'eta': {
         'name': 'eta',
@@ -92,14 +92,14 @@ VARIABLES = {
         'range': (0, 6)
         },
     
-    'nprongs': {
-        'name': 'nprongs',
-        'root': 'Number of Prongs',
-        'type': 'i',
-        'prefix': ('true'),
-        'bins': 6,
-        'range': (0, 6)
-        },
+#     'nprongs': {
+#         'name': 'nprongs',
+#         'root': 'Number of Prongs',
+#         'type': 'i',
+#         'prefix': ('true'),
+#         'bins': 6,
+#         'range': (0, 6)
+#         },
 
     'centFrac': {
         'name': 'centFrac',
@@ -399,14 +399,14 @@ VARIABLES = {
         'range': (-2, 20),
         },
 
-    'ipSigLeadTrk_BS': {
-        'name' : 'ipSigLeadTrk_BS',
-        'root': 'S_{lead track} (Beamspot)',
-        'type': 'f',
-        'prefix': ('hlt'),
-        'bins': 20,
-        'range': (-5, 5),
-        },
+#     'ipSigLeadTrk_BS': {
+#         'name' : 'ipSigLeadTrk_BS',
+#         'root': 'S_{lead track} (Beamspot)',
+#         'type': 'f',
+#         'prefix': ('hlt'),
+#         'bins': 20,
+#         'range': (-5, 5),
+#         },
 
     'AbsipSigLeadTrk': {
         'name' : 'AbsipSigLeadTrk',
@@ -417,23 +417,23 @@ VARIABLES = {
         'range': (-2, 20),
         },
     
-    'AbsipSigLeadTrk_BS': {
-        'name' : 'AbsipSigLeadTrk_BS',
-        'root': '|S_{lead track} (Beamspot)|',
-        'type': 'f',
-        'prefix': ('hlt'),
-        'bins': 20,
-        'range': (0, 5),
-        },
+#     'AbsipSigLeadTrk_BS': {
+#         'name' : 'AbsipSigLeadTrk_BS',
+#         'root': '|S_{lead track} (Beamspot)|',
+#         'type': 'f',
+#         'prefix': ('hlt'),
+#         'bins': 20,
+#         'range': (0, 5),
+#         },
 
-    'AbsipSigLeadTrk_BS_pileup_corrected': {
-        'name' : 'AbsipSigLeadTrk_BS_pileup_corrected',
-        'root': '|S_{lead track} (Beamspot)|  (PU corrected)',
-        'type': 'f',
-        'prefix': ('hlt'),
-        'bins': 20,
-        'range': (0, 5),
-        },
+#     'AbsipSigLeadTrk_BS_pileup_corrected': {
+#         'name' : 'AbsipSigLeadTrk_BS_pileup_corrected',
+#         'root': '|S_{lead track} (Beamspot)|  (PU corrected)',
+#         'type': 'f',
+#         'prefix': ('hlt'),
+#         'bins': 20,
+#         'range': (0, 5),
+#         },
 
     'dRmax': {
         'name' : 'dRmax',
