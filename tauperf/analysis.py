@@ -171,8 +171,3 @@ class Analysis(object):
                      for cls in classifiers]
             run_pool(procs, n_jobs=n_jobs)
 
-
-
-
-
-

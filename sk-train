@@ -6,7 +6,7 @@ from rootpy.tree import Cut
 from tauperf.analysis import Analysis
 from tauperf.cmd import get_parser
 from tauperf.categories import Category_1P
-from tauperf.plotting.mpl import score_plot
+from tauperf.plotting.mpl import score_plot, eff_curve, eff_plot
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -16,6 +16,9 @@ from root_numpy import rec2array
 from sklearn import cross_validation
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.linear_model import PassiveAggressiveClassifier as Q
+from sklearn.externals import joblib
+
 from sklearn.metrics import roc_curve, auc
 
 log = logging.getLogger(os.path.basename(__file__))
@@ -40,6 +43,14 @@ if __name__ == "__main__":
 
     cat = Category_1P
 
+    kin_branches = [
+        'averageintpercrossing',
+        'off_pt',
+        'off_eta',
+        'off_ntracks',
+        ]
+
+
     old_tauid_branches = [
         'off_bdtjetscore',
         'off_is_loose',
@@ -49,13 +60,12 @@ if __name__ == "__main__":
     
 
     features = ['off_' + f for f in cat.features_pileup_corrected]
-    fields = features + old_tauid_branches
+    fields = features + old_tauid_branches + kin_branches
     
     
 
     cuts = cat.cuts_features_pileup_corrected
     cuts_sig = cuts & Cut('pu_weight !=0')
-    print cuts.GetTitle()
     rec_sig = ana.tau.records(
         branches=fields + ['pu_weight'], 
         selection=cuts_sig.GetTitle())
@@ -87,7 +97,7 @@ if __name__ == "__main__":
     
     log.info('splitting')
     data_train, data_test, y_train, y_test = cross_validation.train_test_split(
-        data, target, test_size=0.4, random_state=42)
+        data, target, test_size=0.2, random_state=42)
 
 
     X_train = data_train[:,:-1]
@@ -99,66 +109,52 @@ if __name__ == "__main__":
 
     if args.train:
         log.info('classifier')
-        clf = AdaBoostClassifier(
-            DecisionTreeClassifier(
-                max_depth=8),
-            #             learning_rate=0.1,
-            n_estimators=50)
+        clf = AdaBoostClassifier(n_estimators=100)
+
+        #         clf = Q()
         log.info('fitting')
         clf.fit(X_train, y_train, sample_weight=weights_train)
+        joblib.dump(clf, 'sk_out/clf.pkl')
     else:
-        from sklearn.externals import joblib
-        clf = joblib.load('sk_out/bdt_100.pkl')
+        clf = joblib.load('sk_out/clf.pkl')
 
 
+    log.info('evaluating')
     new_scores = clf.decision_function(X_test)
 
-    
+    log.info('preparing test data')
     data_test = recfunctions.append_fields(
-        data_test, ('new_score', 'is_sig'), [new_scores, y_test], asrecarray=True)
+        data_test, ('new_score', 'is_sig', 'weight'), [new_scores, y_test, weights_test], asrecarray=True)
 
 
-    fpr, tpr, thresholds = roc_curve(target, old_scores, sample_weight=weights)
+    log.info('plotting')
+ #    fpr, tpr, thresholds = roc_curve(target, old_scores, sample_weight=weights)
+#     fpr_new, tpr_new, _ = roc_curve(y_test, new_scores, sample_weight=weights_test)
+#     plt.plot([0, 1], [0, 1], '--', color=(0.6, 0.6, 0.6), label='Luck')
+#     plt.plot(fpr, tpr, color='red', label='2015')
+#     plt.plot(fpr_new, tpr_new, color='blue', label='2016')
 
-    fpr_new, tpr_new, _ = roc_curve(y_test, new_scores, sample_weight=weights_test)
-    plt.plot([0, 1], [0, 1], '--', color=(0.6, 0.6, 0.6), label='Luck')
-    plt.plot(fpr, tpr, color='red', label='2015')
-    plt.plot(fpr_new, tpr_new, color='blue', label='2016')
+#     plt.xlim([-0.05, 1.05])
+#     plt.ylim([-0.05, 1.05])
+#     plt.xlabel('False Positive Rate')
+#     plt.ylabel('True Positive Rate')
+#     plt.title('Tau ID ROC')
+#     plt.legend(loc="lower right")
+#     plt.savefig('plots/roc.pdf')
 
-    plt.xlim([-0.05, 1.05])
-    plt.ylim([-0.05, 1.05])
-    plt.xlabel('False Positive Rate')
-    plt.ylabel('True Positive Rate')
-    plt.title('Tau ID ROC')
-    plt.legend(loc="lower right")
-#     plt.show()
-    plt.savefig('plots/roc.pdf')
 
 #     pl = score_plot(
-#         rec_sig['off_bdtjetscore'],
-#         rec_bkg['off_bdtjetscore'],
-#         rec_sig['pu_weight'],
-#         rec_bkg['pt_weight'])
+#         data_test[data_test['is_sig'] == 1]['new_score'],
+#         data_test[data_test['is_sig'] == 0]['new_score'],
+#         data_test[data_test['is_sig'] == 1]['weight'],
+#         data_test[data_test['is_sig'] == 0]['weight'])
 #     pl.savefig('plots/scores.pdf')
 
-    pl = score_plot(
-        data_test[data_test['is_sig'] == 1]['new_score'],
-        data_test[data_test['is_sig'] == 0]['new_score'],
-        data_test[data_test['is_sig'] == 1]['pu_weight'],
-        data_test[data_test['is_sig'] == 0]['pt_weight'])
-    pl.savefig('plots/scores.pdf')
-
-
-
-
-#     ana.train(
-#         args.level, 
-#         ntrees=70,
-#         node_size=0.1,
-#         depth=10000,
-#         verbose='v' if args.verbose else '',
-#         features=args.features,
-#         cuts_features='cuts_' + args.features,
-#         n_jobs=args.jobs)
+    
+    
+    eff = eff_curve(rec_sig[rec_sig['off_is_medium'] == 1], rec_sig, 'averageintpercrossing', 'pu_weight', prefix=None)
+    log.info(eff)
+    plt1 = eff_plot(eff)
+    plt1.savefig('plots/eff.pdf')
 
 
