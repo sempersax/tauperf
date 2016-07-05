@@ -19,7 +19,9 @@ def get_parser(action=None):
     parser.add_argument('--categories', default='plotting')
     parser.add_argument('--var', default=None, nargs='*', help='Specify a particular variable')
     parser.add_argument('--cut', default=None, type=str, help='additional cut to apply')
-    parser.add_argument('--level', default='off', type=str, choices=['off', 'hlt'], help='additional cut to apply')
+    parser.add_argument(
+        '--level', default='off', type=str, 
+        choices=['off', 'hlt'], help='Specify if HLT or OFFLINE quantities')
     parser.add_argument('--trigger', default=False, action='store_true')
     parser.add_argument('--no-weight', default=False, action='store_true')
     parser.add_argument('--features', default='features_pileup_corrected', type=str)

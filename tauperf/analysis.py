@@ -45,7 +45,7 @@ class Analysis(object):
                 name='jet', 
                 label='Fake #tau_{had}',
                 trigger=trigger,
-                weight_field=('mc_event_weight', 'pu_weight', 'pt_weight'), 
+                weight_field=None if no_weight else ('mc_event_weight', 'pu_weight', 'pt_weight'), 
                 color='#00FF00')
         else:
             log.info('Use data for bkg')
@@ -55,7 +55,6 @@ class Analysis(object):
                 name='jet', 
                 label='Fake #tau_{had}',
                 trigger=trigger,
-                # weird, please fix asap!
                 weight_field=None if no_weight else 'pt_weight',
                 color='#00FF00')
             

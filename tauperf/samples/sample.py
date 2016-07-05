@@ -2,14 +2,18 @@
 from rootpy.tree import Cut
 from rootpy.plotting import Hist, Hist2D
 from rootpy import asrootpy
+from root_numpy import fill_hist
 import ROOT
 import numpy as np
+from numpy.lib import recfunctions
 
 # local imports
 from .db import get_file, cleanup
 from .. import NTUPLE_PATH, DEFAULT_STUDENT, DEFAULT_TREE
-from .. import log; log = log[__name__]
+from . import log; log = log[__name__]
 from ..parallel import FuncWorker, run_pool
+
+import cache
 
 class Sample(object):
 
@@ -35,9 +39,20 @@ class Sample(object):
         self.name = name
         self.label = label
         self.trigger = trigger
-        self.weight_field = weight_field
-        log.info('{0}: weights are {1}'.format(self.name, weight_field))
+
+        if weight_field is not None:
+            if isinstance(weight_field, (list, tuple)):
+                self.weight_field = weight_field
+            elif isinstance(weight_field, str):
+                self.weight_field = [weight_field]
+            else:
+                raise ValueError('wrong type for weight_field')
+            log.info('{0}: weights are {1}'.format(self.name, self.weight_field))
+        else:
+            self.weight_field = None
+
         self.hist_decor = hist_decor
+        self._branches = None
 
         if 'fillstyle' not in hist_decor:
             self.hist_decor['fillstyle'] = 'solid'
@@ -119,17 +134,42 @@ class Sample(object):
             h = rfile['Nevents']
         return h[1].value
 
-
-    def records(self, **kwargs):
+    def records_helper(self, **kwargs):
         ""
         ""
         from root_numpy import tree2array
         rfile = get_file(self.ntuple_path, self.student)
         tree = rfile[self.tree_name]
-        log.info('Converting tree to record array, sorry if this is long ...')
+        log.info('{0}: Converting tree to record array, sorry if this is long ...'.format(self.name))
         rec = tree2array(tree, **kwargs).view(np.recarray)
+        if self.weight_field is not None:
+            weights = reduce(np.multiply,
+                             [rec[br] for br in self.weight_field])
+            rec = recfunctions.rec_append_fields(
+                rec,
+                names='weight',
+                data=weights,
+                dtypes='f8')
         return rec
 
+    @cache.memoize_or_nothing
+    def records(self, **kwargs):
+        return self.records_helper(
+            branches=self.branches, **kwargs)
+
+    @property
+    def branches(self):
+        return self._branches
+
+    @branches.setter
+    def branches(self, b):
+        if not isinstance(b , (list, tuple, str)):
+            raise ValueError
+        self._branches = list(b)
+        if self.weight_field is not None:
+            for field in self.weight_field:
+                self._branches.append(field)
+    
     def array(self, **kwargs):
         ""
         ""
@@ -137,6 +177,7 @@ class Sample(object):
         rec = self.records(**kwargs)
         arr = rec2array(rec)
         return arr
+    
 
 
     def draw_helper(
@@ -150,18 +191,22 @@ class Sample(object):
         expr: str expression to draw
         selection: str selection (TCut)
         """
-        rfile = get_file(self.ntuple_path, self.student, force_reopen=force_reopen)
-        tree = rfile[self.tree_name]
+#         rfile = get_file(self.ntuple_path, self.student, force_reopen=force_reopen)
+#         tree = rfile[self.tree_name]
+        rec = self.records(
+            selection=selection.GetTitle())
+
         hist = hist_template.Clone()
         hist.Sumw2()
         root_string = expr
         log.debug('{0}: Draw {1} with \n selection: {2} ...'.format(
                 self.name, root_string, selection))
-        hist = tree.Draw(
-            root_string, 
-            selection=selection,
-            hist=hist,
-            **self.hist_decor)
+
+        if self.weight_field is not None:
+            fill_hist(hist, rec[expr], rec['weight'])
+        else:
+            fill_hist(hist, rec[expr])
+
         hist.title = self.label
         return hist
 
@@ -173,14 +218,9 @@ class Sample(object):
         sel = self.cuts(category)
         if not cuts is None:
             sel &= cuts
-        if self.weight_field is not None:
-            if isinstance(self.weight_field, (list, tuple)):
-                for w in self.weight_field:
-                    sel *= w
-            else:
-                sel *= self.weight_field
         field_hists = {}
-
+        self.branches = field_hist_template.keys()
+        log.debug('Will access branches: {0}'.format(self.branches))
         from .jet import JZ
         if isinstance(self, JZ):
             multi_proc = False
@@ -207,13 +247,6 @@ class Sample(object):
 
         if cuts is not None:
             sel &= cuts
-
-        if self.weight_field is not None:
-            if isinstance(self.weight_field, (list, tuple)):
-                for w in self.weight_field:
-                    sel *= w
-            else:
-                sel *= self.weight_field
 
         nbins1, xmin1, xmax1 = var1['bins'], var1['range'][0], var1['range'][1]
         nbins2, xmin2, xmax2 = var2['bins'], var2['range'][0], var2['range'][1]

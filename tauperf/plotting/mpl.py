@@ -68,8 +68,8 @@ def eff_curve(accept, total, var, weight_field=None, prefix='off'):
         num *= var_info['scale']
         den *= var_info['scale']
 
-    fill_hist(hnum, accept[prefix + '_' + var], accept[weight_field])
-    fill_hist(hden, total[prefix + '_' + var], total[weight_field])
+    fill_hist(hnum, num, accept[weight_field])
+    fill_hist(hden, den, total[weight_field])
     eff = Efficiency(
         hnum, hden, 
         name='eff_{0}'.format(var),
