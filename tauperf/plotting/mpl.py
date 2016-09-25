@@ -18,7 +18,7 @@ def var_plot(sig_hist, bkg_hist, title=''):
     sig_hist /= sig_hist.Integral()
     bkg_hist /= bkg_hist.Integral()
     fig = plt.figure()
-    rmpl.hist([sig_hist, bkg_hist], stacked=False)
+    rmpl.bar([sig_hist, bkg_hist], stacked='cluster')
     plt.ylabel('Arbitrary Unit')
     plt.xlabel(title)
     plt.legend(loc='upper right')
@@ -42,7 +42,7 @@ def score_plot(sig_arr, bkg_arr, sig_weight, bkg_weight):
     hsig.title = 'signal'
     hbkg.title = 'background'
     fig = plt.figure()
-    rmpl.hist([hsig, hbkg], stacked=False)
+    rmpl.bar([hsig, hbkg], stacked='cluster')
     plt.ylabel('Arbitrary Unit')
     plt.xlabel('BDT Score')
     plt.legend(loc='upper right')
