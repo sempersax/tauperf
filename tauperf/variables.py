@@ -52,6 +52,7 @@ VARIABLES = {
     'eta': {
         'name': 'eta',
         'root': '#eta',
+        'mpl': 'pseudorapidity',
         'type': 'f',
         'prefix': ('off', 'hlt', 'l1', 'true'),
         'bins': 20,
@@ -61,6 +62,7 @@ VARIABLES = {
     'phi': {
         'name': 'phi',
         'root': '#phi',
+        'mpl': r'$\phi(\tau)$',
         'type': 'f',
         'prefix': ('off', 'hlt', 'l1', 'true'),
         'bins': 20,
@@ -70,6 +72,7 @@ VARIABLES = {
     'good_npv': {
         'name': 'good_npv',
         'root': 'Number of Primary Vertices',
+        'mpl': 'Number of Primary Vertices',
         'type': 'i',
         'bins': 20,
         'range': (0, 40)
@@ -78,6 +81,7 @@ VARIABLES = {
     'averageintpercrossing': {
         'name': 'averageintpercrossing',
         'root': 'Average Interactions Per Bunch Crossing',
+        'mpl': 'Average Interactions Per Bunch Crossing',
         'type': 'i',
         'bins': 40,
         'range': (0, 40)
@@ -86,6 +90,7 @@ VARIABLES = {
     'ntracks': {
         'name': 'ntracks',
         'root': 'Number of Tracks',
+        'mpl': 'Number of Tracks',
         'type': 'i',
         'prefix': ('off', 'hlt'),
         'bins': 6,
@@ -104,6 +109,7 @@ VARIABLES = {
     'centFrac': {
         'name': 'centFrac',
         'root': 'f_{core}',
+        'mpl': r'$f_{core}$',
         'type': 'f',
         'prefix': ('off', 'hlt'),
         'bins': 80,
@@ -113,6 +119,7 @@ VARIABLES = {
     'centFracCorrected': {
         'name': 'centFracCorrected',
         'root': 'f_{core} (PU corrected)',
+        'mpl': r'$f_{core}$ (PU corrected)',
         'type': 'f',
         'prefix': ('off', 'hlt'),
         'bins': 80,
