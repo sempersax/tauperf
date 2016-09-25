@@ -10,6 +10,21 @@ from . import log; log = log[__name__]
 
 set_style('ATLAS', mpl=True)
 
+def var_plot(sig_hist, bkg_hist, title=''):
+    sig_hist.color = 'red'
+    bkg_hist.color = 'blue'
+    sig_hist.title = 'signal'
+    bkg_hist.title = 'background'
+    sig_hist /= sig_hist.Integral()
+    bkg_hist /= bkg_hist.Integral()
+    fig = plt.figure()
+    rmpl.hist([sig_hist, bkg_hist], stacked=False)
+    plt.ylabel('Arbitrary Unit')
+    plt.xlabel(title)
+    plt.legend(loc='upper right')
+    return fig
+
+
 def score_plot(sig_arr, bkg_arr, sig_weight, bkg_weight):
     '''
     make a plot of the score for bkg and signal

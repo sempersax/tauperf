@@ -20,7 +20,6 @@ class Analysis(object):
                  no_weight=False):
 
         if use_drellyan:
-            log.info('Use Drell-Yan simulation')
             self.tau = samples.DY(
             ntuple_path=ntuple_path,
             weight_field='pu_weight', #mc_event_weight',
@@ -28,8 +27,9 @@ class Analysis(object):
             label='Real #tau_{had}',
             trigger=trigger,
             color='#00A3FF')
+            log.info('Sample {0}: Use Drell-Yan simulation'.format(
+                    self.tau.name))
         else:
-            log.info('Use Z->tautau simulation')
             self.tau = samples.Tau(
                 ntuple_path=ntuple_path,
                 name='tau', 
@@ -37,9 +37,10 @@ class Analysis(object):
                 trigger=trigger,
                 weight_field=None if no_weight else 'pu_weight', 
                 color='#00A3FF')
+            log.info('Sample {0}: Use Z->tautau simulation'.format(
+                    self.tau.name))
 
         if use_jz_slices:
-            log.info('Use JZ samples for bkg')
             self.jet = samples.JZ(
                 ntuple_path=ntuple_path,
                 name='jet', 
@@ -47,8 +48,9 @@ class Analysis(object):
                 trigger=trigger,
                 weight_field=None if no_weight else ('mc_event_weight', 'pu_weight', 'pt_weight'), 
                 color='#00FF00')
+            log.info('Sample {0}: Use JZ slices simulation'.format(
+                    self.jet.name))
         else:
-            log.info('Use data for bkg')
             self.jet = samples.DataJet(
                 ntuple_path=ntuple_path,
                 student='data',
@@ -57,6 +59,8 @@ class Analysis(object):
                 trigger=trigger,
                 weight_field=None if no_weight else 'pt_weight',
                 color='#00FF00')
+            log.info('Sample {0}: Use data'.format(
+                    self.jet.name))
             
         self.trigger = trigger
         log.info('Analysis object is instantiated')

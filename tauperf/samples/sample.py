@@ -140,7 +140,7 @@ class Sample(object):
         from root_numpy import tree2array
         rfile = get_file(self.ntuple_path, self.student)
         tree = rfile[self.tree_name]
-        log.info('{0}: Converting tree to record array, sorry if this is long ...'.format(self.name))
+        log.info('{0}: converting tree to record array, sorry if this is long ...'.format(self.name))
         rec = tree2array(tree, **kwargs).view(np.recarray)
         if self.weight_field is not None:
             weights = reduce(np.multiply,
@@ -166,8 +166,16 @@ class Sample(object):
         if not isinstance(b , (list, tuple, str)):
             raise ValueError
         self._branches = list(b)
+        
+        log.info(50 * '-')
+        log.info('Sample {0}, activating the following branches:'.format(
+                self.name))
+        for branch in self._branches:
+            log.info('\t' + branch)
+
         if self.weight_field is not None:
             for field in self.weight_field:
+                log.info('\t' + field)
                 self._branches.append(field)
     
     def array(self, **kwargs):
@@ -191,8 +199,6 @@ class Sample(object):
         expr: str expression to draw
         selection: str selection (TCut)
         """
-#         rfile = get_file(self.ntuple_path, self.student, force_reopen=force_reopen)
-#         tree = rfile[self.tree_name]
         rec = self.records(
             selection=selection.GetTitle())
 
