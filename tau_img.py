@@ -1,13 +1,54 @@
 import os
+from copy import deepcopy
 import numpy as np
 from root_numpy import tree2array
 from rootpy.io import root_open
 import matplotlib as mpl
+mpl.use('TkAgg')
 import matplotlib.pyplot as plt
-from scipy import interpolate
 import math
 import skimage.transform as sk
+from tauperf.parallel import Worker, run_pool
+from tauperf import print_progress
 
+def interpolate_rbf(x, y, z, function='linear', rotate_pc=True):
+    """
+    """
+#     print 'interpolate ..'
+    xi, yi = np.meshgrid(
+        np.linspace(x.min(), x.max(), 16),
+        np.linspace(y.min(), y.max(), 16))
+    from scipy import interpolate
+    rbf = interpolate.Rbf(x, y, z, function=function)
+    im = rbf(xi, yi)
+    if rotate_pc:
+        scat_mat, cent = make_xy_scatter_matrix(x, y, z)
+        #         scat_mat, cent = make_xy_scatter_matrix(xi, yi, im)
+        paxes, pvars = get_principle_axis(scat_mat)
+        angle = np.arctan2(paxes[0, 0], paxes[0, 1])
+        im = sk.rotate(
+            im, np.rad2deg(angle), order=3)
+    return im
+
+def tau_image(rec, cal_layer=2, rotate_pc=True):
+    """
+    """
+    indices = np.where(rec['off_cells_samp'] == cal_layer)
+    if len(indices) == 0:
+        return None
+    eta_ = rec['off_cells_deta'].take(indices[0])
+    phi_ = rec['off_cells_dphi'].take(indices[0])
+    ene_ = rec['off_cells_e_norm'].take(indices[0])
+
+    square_ = (np.abs(eta_) < 0.2) * (np.abs(phi_) < 0.2)
+    eta = eta_[square_]
+    phi = phi_[square_]
+    ene = ene_[square_]
+
+    if len(ene) == 0:
+        return None
+    image = interpolate_rbf(eta, phi, ene, rotate_pc=rotate_pc)
+    return image, eta, phi, ene
 
 def make_xy_scatter_matrix(x, y, z, scat_pow=2, mean_pow=1):
 
@@ -40,22 +81,6 @@ def get_principle_axis(mat):
     las, lav = np.linalg.eigh(mat)
     return -1 * lav[::-1], las[::-1]
 
-def interpolate_rbf(x, y, z, function='linear', rotate_pc=True):
-
-    xi, yi = np.meshgrid(
-        np.linspace(x.min(), x.max(), 100),
-        np.linspace(y.min(), y.max(), 100))
-
-    rbf = interpolate.Rbf(x, y, z, function=function)
-    im = rbf(xi, yi)
-
-    if rotate_pc:
-        scat_mat, cent = make_xy_scatter_matrix(x, y, z)
-        paxes, pvars = get_principle_axis(scat_mat)
-        angle = np.arctan2(paxes[0, 0], paxes[0, 1])
-        im = sk.rotate(
-            im, np.rad2deg(angle), order=3)
-    return im
 
 
 def dphi(phi_1, phi_2):
@@ -67,40 +92,49 @@ def dphi(phi_1, phi_2):
     return d_phi
 
 
-def tau_image(rec, cal_layer=2, rotate_pc=True):
-    """
-    """
-    indices = np.where(rec['off_cells_samp'] == cal_layer)
-    if len(indices) == 0:
-        return None
-    eta = rec['off_cells_deta'].take(indices[0])
-    phi = rec['off_cells_dphi'].take(indices[0])
-    ene = rec['off_cells_e_norm'].take(indices[0])
-    if len(ene) == 0:
-        return None
-    im = interpolate_rbf(eta, phi, ene, rotate_pc=rotate_pc)
-    return im
-
+data_dir = 'data_test'
 rfile = root_open(os.path.join(
         os.getenv('DATA_AREA'), 
-        'tauid_ntuples', 'output.root'))
+        'tauid_ntuples', 'output_6files.root'))
 
 
 tree = rfile['tau']
-rec_1p1n = tree2array(tree, selection='true_nprongs==1 && true_npi0s == 1 && abs(off_eta) < 1.3').view(np.recarray)
+rec_1p1n = tree2array(
+    tree, selection='true_nprongs==1 && true_npi0s == 1 && abs(off_eta) < 1.1').view(np.recarray)
 
 
 print 'process 1p1n:', len(rec_1p1n)
-tau_1pn_images = [
-    tau_image(rec_1p1n[ir]) for ir in xrange(len(rec_1p1n))
-] 
+tau_1p1n_images = [] 
+for ir in xrange(len(rec_1p1n)):
+    print_progress(ir, len(rec_1p1n), prefix='Progress')
+    image_tuple = tau_image(rec_1p1n[ir])
+    if image_tuple is not None:
+        image, eta, phi, ene = image_tuple
+        tau_1p1n_images.append(image)
+        if ir < 100:
+            plt.figure()
+            plt.scatter(eta, phi, c=ene, marker='s', label= 'Number of cells = {0}'.format(len(eta)))
+            plt.xlim(-0.4, 0.4)
+            plt.ylim(-0.4, 0.4)
+            plt.legend(loc='upper right', fontsize='small', numpoints=1)
+            plt.savefig('plots/grid_1p1n_%s.pdf' % ir)
+            plt.clf()
+            plt.close()
 
-for ir, image in enumerate(tau_1pn_images):
+
+np.save(os.path.join(
+        data_dir, 'images_1p1n_dr0.2.npy'), tau_1p1n_images)
+
+for ir, image in enumerate(tau_1p1n_images):
+    # only make 100 displays
+    if ir > 100:
+        break
+
     if image is None:
         continue
     r = rec_1p1n[ir]
     plt.imshow(image,
-        extent=[-0.4, 0.4, -0.4, 0.4])
+        extent=[-0.2, 0.2, -0.2, 0.2])
     plt.plot(
         r['true_charged_eta'] - r['true_eta'], 
         dphi(r['true_charged_phi'], r['true_phi']), 'ro', 
@@ -117,20 +151,38 @@ for ir, image in enumerate(tau_1pn_images):
     plt.savefig('plots/heatmap_1p1n_%s.pdf' % ir)
     plt.clf()  
 
-rec_1p0n = tree2array(tree, selection='true_nprongs==1 && true_npi0s == 0 && abs(off_eta) < 1.3').view(np.recarray)
+rec_1p0n = tree2array(
+    tree, selection='true_nprongs==1 && true_npi0s == 0 && abs(off_eta) < 1.1').view(np.recarray)
 
-print 'process 1p0n'
-tau_1p0n_images = [
-    tau_image(rec_1p0n[ir]) for ir in xrange(len(rec_1p0n))
-] 
+print 'process 1p0n', len(rec_1p0n)
+tau_1p0n_images = []
+for ir in xrange(len(rec_1p0n)):
+    print_progress(ir, len(rec_1p0n))
+    image_tuple = tau_image(rec_1p0n[ir])
+    if image_tuple is not None:
+        image, eta, phi, ene = image_tuple
+        tau_1p0n_images.append(image)
+        if ir < 100:
+            plt.figure()
+            plt.scatter(eta, phi, c=ene, marker='s', label= 'Number of cells = {0}'.format(len(eta)))
+            plt.legend(loc='upper right', fontsize='small', numpoints=1)
+            plt.savefig('plots/grid_1p0n_%s.pdf' % ir)
+            plt.clf()  
+            plt.close()
+np.save(os.path.join(
+        data_dir, 'images_1p0n_dr0.2.npy'), tau_1p0n_images)
 
 for ir, image in enumerate(tau_1p0n_images):
+    # only make 100 displays
+    if ir > 100:
+        break
+
     if image is None:
         continue
     r = rec_1p0n[ir]
 
     plt.imshow(image,
-        extent=[-0.4, 0.4, -0.4, 0.4])
+        extent=[-0.2, 0.2, -0.2, 0.2])
     plt.plot(
         r['true_charged_eta'] - r['true_eta'], 
         dphi(r['true_charged_phi'], r['true_phi']), 'ro', 
