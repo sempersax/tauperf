@@ -5,6 +5,8 @@ import rootpy
 DEFAULT_STUDENT = 'Ztautau'
 DEFAULT_TREE = 'tau'
 
+H5_FILE = 'output_100files.h5'
+
 if os.getenv('HOSTNAME') is not None and 'lxplus' in os.getenv('HOSTNAME'):
     UNMERGED_NTUPLE_PATH = '/afs/cern.ch/user/q/qbuat/CrackPotTauID/data/'
     NTUPLE_PATH = UNMERGED_NTUPLE_PATH

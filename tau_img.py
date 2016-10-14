@@ -1,107 +1,13 @@
 import os
-from copy import deepcopy
 import numpy as np
-from root_numpy import tree2array
-from rootpy.io import root_open
-import matplotlib as mpl
-mpl.use('TkAgg')
+import matplotlib as mpl; mpl.use('TkAgg')
 import matplotlib.pyplot as plt
 import math
-import skimage.transform as sk
-from tauperf.parallel import Worker, run_pool
+from h5py import File
+
 from tauperf import print_progress
-
 from tauperf import log; log = log[os.path.basename(__file__)]
-
-def interpolate_rbf(x, y, z, function='linear', rotate_pc=True):
-    """
-    """
-#     print 'interpolate ..'
-    xi, yi = np.meshgrid(
-        np.linspace(x.min(), x.max(), 16),
-        np.linspace(y.min(), y.max(), 16))
-    from scipy import interpolate
-    rbf = interpolate.Rbf(x, y, z, function=function)
-    im = rbf(xi, yi)
-    if rotate_pc:
-        scat_mat, cent = make_xy_scatter_matrix(x, y, z)
-        #         scat_mat, cent = make_xy_scatter_matrix(xi, yi, im)
-        paxes, pvars = get_principle_axis(scat_mat)
-        angle = np.arctan2(paxes[0, 0], paxes[0, 1])
-        im = sk.rotate(
-            im, np.rad2deg(angle), order=3)
-    return im
-
-def tau_image(rec, cal_layer=2, rotate_pc=True):
-    """
-    """
-    indices = np.where(rec['off_cells_samp'] == cal_layer)
-    if len(indices) == 0:
-        return None
-    eta_ = rec['off_cells_deta'].take(indices[0])
-    phi_ = rec['off_cells_dphi'].take(indices[0])
-    ene_ = rec['off_cells_e_norm'].take(indices[0])
-
-    square_ = (np.abs(eta_) < 0.2) * (np.abs(phi_) < 0.2)
-    eta = eta_[square_]
-    phi = phi_[square_]
-    ene = ene_[square_]
-
-    arr = np.array([eta, phi, ene])
-    rec_new = np.core.records.fromarrays(
-        arr, names='x, y, z', formats='f8, f8, f8')
-    rec_new.sort(order=('x', 'y'))
-
-    if len(rec_new) != 256:
-        return None
-
-
-    if len(ene) == 0:
-        return None
-
-    image = rec_new['z'].reshape((16, 16))
-    if rotate_pc:
-        scat_mat, cent = make_xy_scatter_matrix(rec_new['x'], rec_new['y'], rec_new['z'])
-        paxes, pvars = get_principle_axis(scat_mat)
-        angle = np.arctan2(paxes[0, 0], paxes[0, 1])
-        image = sk.rotate(
-            image, np.rad2deg(angle), order=3)
-
-
-    #     image = interpolate_rbf(eta, phi, ene, rotate_pc=rotate_pc)
-    return image, eta, phi, ene
-
-def make_xy_scatter_matrix(x, y, z, scat_pow=2, mean_pow=1):
-
-    cell_values = z
-    cell_x = x
-    cell_y = y
-
-    etot = np.sum((cell_values>0) * np.power(cell_values, mean_pow))
-    if etot == 0:
-        print 'Found a jet with no energy.  DYING!'
-        sys.exit(1)
-
-    x_1  = np.sum((cell_values>0) * np.power(cell_values, mean_pow) * cell_x) / etot
-    y_1  = np.sum((cell_values>0) * np.power(cell_values, mean_pow) * cell_y) / etot
-    x_2  = np.sum((cell_values>0) * np.power(cell_values, scat_pow) * np.square(cell_x -x_1))
-    y_2  = np.sum((cell_values>0) * np.power(cell_values, scat_pow) * np.square(cell_y -y_1))
-    xy   = np.sum((cell_values>0) * np.power(cell_values, scat_pow) * (cell_x - x_1) * (cell_y -y_1))
-
-    ScatM = np.array([[x_2, xy], [xy, y_2]])
-    MeanV = np.array([x_1, y_1])
-
-    return ScatM, MeanV
-
-def get_principle_axis(mat):
-
-    if mat.shape != (2,2):
-        print "ERROR: getPrincipleAxes(theMat), theMat size is not 2x2. DYING!"
-        sys.exit(1)
-
-    las, lav = np.linalg.eigh(mat)
-    return -1 * lav[::-1], las[::-1]
-
+from tauperf.imaging import tau_image
 
 
 def dphi(phi_1, phi_2):
@@ -114,22 +20,35 @@ def dphi(phi_1, phi_2):
 
 
 data_dir = 'data_test'
-root_file = os.path.join(
-    os.getenv('DATA_AREA'), 'tauid_ntuples', 'output_100files.root')
-log.info('open root file {0}'.format(root_file))
-rfile = root_open(root_file)
-tree = rfile['tau']
 
-log.info('create 1p1n record array ...')
-rec_1p1n = tree2array(
-    tree, selection='true_nprongs==1 && true_npi0s == 1 && abs(off_eta) < 1.1').view(np.recarray)
+
+
+h5_filename = os.path.join(
+    os.getenv('DATA_AREA'), 'tauid_ntuples', 'v5', 'output_100files.h5')
+log.info('open h5 file {0}'.format(h5_filename))
+
+h5file = File(h5_filename, mode='r')
+rec_1p1n = h5file.get('rec_1p1n')
+rec_1p0n = h5file.get('rec_1p1n')
 
 
 print 'process 1p1n:', len(rec_1p1n)
 tau_1p1n_images = [] 
 for ir in xrange(len(rec_1p1n)):
     print_progress(ir, len(rec_1p1n), prefix='Progress')
-    image_tuple = tau_image(rec_1p1n[ir])
+    try: 
+        rec = rec_1p1n[ir]
+    except:
+        rec = None
+
+    indices = np.where(rec['off_cells_samp'] == 2)
+    if len(indices) == 0:
+        continue
+    eta_ = rec['off_cells_deta'].take(indices[0])
+    phi_ = rec['off_cells_dphi'].take(indices[0])
+    ene_ = rec['off_cells_e_norm'].take(indices[0])
+    image_tuple = tau_image(eta_, phi_, ene_)
+
     if image_tuple is not None:
         image, eta, phi, ene = image_tuple
         tau_1p1n_images.append(image)
@@ -173,15 +92,28 @@ for ir, image in enumerate(tau_1p1n_images):
     plt.savefig('plots/heatmap_1p1n_%s.pdf' % ir)
     plt.clf()  
 
-log.info('create 1p0n record array ...')
-rec_1p0n = tree2array(
-    tree, selection='true_nprongs==1 && true_npi0s == 0 && abs(off_eta) < 1.1').view(np.recarray)
 
 print 'process 1p0n', len(rec_1p0n)
 tau_1p0n_images = []
 for ir in xrange(len(rec_1p0n)):
     print_progress(ir, len(rec_1p0n))
-    image_tuple = tau_image(rec_1p0n[ir])
+
+    try:
+        rec = rec_1p0n[ir]
+    except:
+        rec = None
+
+    if rec is None:
+        continue;
+
+    indices = np.where(rec['off_cells_samp'] == 2)
+    if len(indices) == 0:
+        continue
+    eta_ = rec['off_cells_deta'].take(indices[0])
+    phi_ = rec['off_cells_dphi'].take(indices[0])
+    ene_ = rec['off_cells_e_norm'].take(indices[0])
+    image_tuple = tau_image(eta_, phi_, ene_)
+
     if image_tuple is not None:
         image, eta, phi, ene = image_tuple
         tau_1p0n_images.append(image)
@@ -192,6 +124,7 @@ for ir in xrange(len(rec_1p0n)):
             plt.savefig('plots/grid_1p0n_%s.pdf' % ir)
             plt.clf()  
             plt.close()
+
 np.save(os.path.join(
         data_dir, 'images_1p0n_dr0.2.npy'), tau_1p0n_images)
 

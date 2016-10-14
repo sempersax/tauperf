@@ -6,7 +6,7 @@ from root_numpy import tree2array
 from h5py import File
 import os
 
-from rootpy import log; log = log['make-h5']
+from rootpy import log; log = log['/make-h5']
 
 
 def get_records(tree, selection):
@@ -38,7 +38,6 @@ if __name__ == '__main__':
     with root_open(root_file) as rfile:
         log.info('Reading {0} with tree {1}'.format(root_file, args.tree))
         tree = rfile[tree_name]
-        print tree.GetEntries()
         h5_name = make_h5_name(root_file)
         log.info('Going to create h5 file {0}'.format(h5_name))
 
