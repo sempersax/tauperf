@@ -118,9 +118,9 @@ if __name__ == "__main__":
         #         clf = Q()
         log.info('fitting')
         clf.fit(X_train, y_train, sample_weight=weights_train)
-        joblib.dump(clf, 'sk_out/clf.pkl')
+        joblib.dump(clf, 'cache/sk_out/clf.pkl')
     else:
-        clf = joblib.load('sk_out/clf.pkl')
+        clf = joblib.load('cache/sk_out/clf.pkl')
     ##########################################################
 
     log.info('evaluating')
