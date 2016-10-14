@@ -1,34 +1,24 @@
-import numpy as np
-import logging
 import os
+import numpy as np
+import matplotlib as mpl; mpl.use('TkAgg')
+import matplotlib.pyplot as plt
 
 from sklearn import model_selection
+from sklearn.metrics import roc_curve, roc_auc_score, confusion_matrix
 
-
-# from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
-from keras.layers.core import Dense, MaxoutDense, Highway, Dropout, Activation, Flatten, Merge
-from keras.layers.local import LocallyConnected1D
-from keras.layers.convolutional import Convolution2D, MaxPooling2D
-from keras.optimizers import SGD, Adadelta, Adagrad
-from keras.utils import np_utils, generic_utils
-from keras.callbacks import EarlyStopping, ModelCheckpoint
-from keras.layers.advanced_activations import PReLU
-
-
+from keras.layers.core import Dense, Activation
 
 from tauperf import log; log = log['/train-img']
+from tauperf.imaging.plotting import plot_confusion_matrix, get_wp
+
+
 log.info('loading data...')
 
 arr_1p1n = np.load(os.path.join(
     os.getenv('DATA_AREA'), 
     'tauid_ntuples', 'v5', 
     'images_1p1n.npy'))
-                   
-# # remove dummies
-# arrs = [arr for arr in arr_1p1n]
-# arrs = filter(lambda a: a != None, arrs)
-# arr_1p1n = np.array(arrs)
 
 arr_1p0n = np.load(os.path.join(
     os.getenv('DATA_AREA'), 
@@ -54,9 +44,6 @@ log.info('Training stat: 1p1n = {0} images, 1p0n = {1} images'.format(
 
 # data_train = data_train.reshape((data_train.shape[0], data.shape[1], data.shape[2]))
 # data_test = data_test.reshape((data_test.shape[0], data.shape[1], data.shape[2]))
-print y_train.shape, y_train.T.shape
-
-
 
 y_train = y_train.reshape((y_train.shape[0], 1))
 y_test = y_test.reshape((y_test.shape[0], 1))
@@ -72,11 +59,10 @@ model.add(Activation('sigmoid'))
 
 
 log.info('compiling model...')
-model.compile(optimizer='rmsprop',
-              loss='binary_crossentropy',
-              metrics=['accuracy'])
-
-NAME = './FIRST_TRAIN'
+model.compile(
+    optimizer='rmsprop',
+    loss='binary_crossentropy',
+    metrics=['accuracy'])
 
 log.info('starting training...')
 try:
@@ -92,23 +78,18 @@ loss = model.evaluate(data_test, y_test, batch_size=32)
 print
 log.info(loss)
 
-
-
 y_pred = model.predict(data_test, batch_size=32, verbose=0)
 
-from sklearn.metrics import roc_curve, roc_auc_score, confusion_matrix
-import matplotlib as mpl
-mpl.use('TkAgg')
-import matplotlib.pyplot as plt
-from tauperf.imaging.plotting import plot_confusion_matrix, get_wp
+
 
 fptr, tpr, thresh = roc_curve(y_test, y_pred)
-
 opt_fptr, opt_tpr, opt_thresh = get_wp(fptr, tpr, thresh)
+
 log.info('Cutting on the score at {0}'.format(opt_thresh))
 log.info('roc auc = {0}'.format(
         roc_auc_score(y_test, y_pred)))
 
+# ROC curve
 plt.figure()
 plt.plot([0, 1], [0, 1], '--', color=(0.6, 0.6, 0.6), label='Luck')
 plt.plot(fptr, tpr, color='red', label='1p1n vs 1p0n')
@@ -118,18 +99,16 @@ plt.plot(
 plt.plot([0, opt_fptr], [1, opt_tpr], linestyle='--', linewidth=2)
 plt.xlabel('1p0n miss-classification efficiency')
 plt.ylabel('1p1n classification efficiency')
-
 plt.legend(loc='lower right', fontsize='small', numpoints=1)
 plt.savefig('./plots/imaging/roc_curve.pdf')
 plt.figure()
 
+# confusion matrix
 cnf_mat = confusion_matrix(y_test, y_pred > opt_thresh)
 np.set_printoptions(precision=2)
 class_names = ['1p0n', '1p1n']
-
 cm = cnf_mat.T.astype('float') / cnf_mat.T.sum(axis=0)
 plot_confusion_matrix(cm, classes=class_names)
 
 
 
-# plt.show()

@@ -1,11 +1,7 @@
 import os
 import numpy as np
-import matplotlib as mpl; mpl.use('TkAgg')
-import matplotlib.pyplot as plt
-import math
 from h5py import File
 
-from tauperf import print_progress
 from tauperf import log; log = log['/tau-image']
 from tauperf.imaging import process_taus
 
