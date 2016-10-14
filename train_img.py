@@ -7,7 +7,8 @@ from sklearn import model_selection
 
 # from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
-from keras.layers.core import Dense, MaxoutDense, Dropout, Activation, Flatten, Merge
+from keras.layers.core import Dense, MaxoutDense, Highway, Dropout, Activation, Flatten, Merge
+from keras.layers.local import LocallyConnected1D
 from keras.layers.convolutional import Convolution2D, MaxPooling2D
 from keras.optimizers import SGD, Adadelta, Adagrad
 from keras.utils import np_utils, generic_utils
@@ -56,17 +57,21 @@ log.info('splitting')
 data_train, data_test, y_train, y_test = model_selection.train_test_split(
     reshaped_data, target, test_size=0.2, random_state=42)
 
+log.info('Training stat: 1p1n = {0} images, 1p0n = {1} images'.format(
+        len(y_train[y_train==1]), len(y_train[y_train==0])))
+
 # data_train = data_train.reshape((data_train.shape[0], data.shape[1], data.shape[2]))
 # data_test = data_test.reshape((data_test.shape[0], data.shape[1], data.shape[2]))
 print y_train.shape, y_train.T.shape
+
+
 
 y_train = y_train.reshape((y_train.shape[0], 1))
 y_test = y_test.reshape((y_test.shape[0], 1))
 
 # -- build the model
 model = Sequential()
-# model.add(Dense(1, input_dim=data_train.T.shape[0], activation='sigmoid'))
-model.add(Dense(32, input_dim=data_train.T.shape[0]))
+model.add(Dense(128, input_dim=data_train.T.shape[0]))
 model.add(Activation('tanh'))
 model.add(Dense(16))
 model.add(Activation('relu'))
@@ -83,14 +88,19 @@ NAME = './FIRST_TRAIN'
 
 log.info('starting training...')
 try:
-    model.fit(data_train, y_train, nb_epoch=30, batch_size=32)
+    model.fit(data_train, y_train, nb_epoch=60, batch_size=32)
 except KeyboardInterrupt:
     log.info('Ended early..')
 
 log.info('testing stuff')
+log.info('Testing stat: 1p1n = {0} images, 1p0n = {1} images'.format(
+        len(y_test[y_test==1]), len(y_test[y_test==0])))
+
 loss = model.evaluate(data_test, y_test, batch_size=32)
 print
-print loss
+log.info(loss)
+
+
 
 y_pred = model.predict(data_test, batch_size=32, verbose=0)
 
@@ -113,9 +123,12 @@ plt.plot(fptr, tpr, color='red', label='1p1n vs 1p0n')
 plt.plot(
     opt_fptr, opt_tpr, 'bx',
     label='Optimal working point')
+plt.plot([0, opt_fptr], [1, opt_tpr], linestyle='--', linewidth=2)
 plt.xlabel('1p0n miss-classification efficiency')
 plt.ylabel('1p1n classification efficiency')
+
 plt.legend(loc='lower right', fontsize='small', numpoints=1)
+plt.savefig('./plots/roc_curve.pdf')
 plt.figure()
 
 cnf_mat = confusion_matrix(y_test, y_pred > opt_thresh)
@@ -124,4 +137,7 @@ class_names = ['1p0n', '1p1n']
 
 cm = cnf_mat.T.astype('float') / cnf_mat.T.sum(axis=0)
 plot_confusion_matrix(cm, classes=class_names)
-plt.show()
+
+
+
+# plt.show()

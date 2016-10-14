@@ -20,7 +20,8 @@ else:
 
 import ROOT
 
-log = logging.getLogger('tauperf')
+# log = logging.getLogger('tauperf')
+from rootpy import log; log = log["/tauperf"]
 if not os.environ.get("DEBUG", False):
     log.setLevel(logging.INFO)
 rootpy.log.setLevel(logging.INFO)

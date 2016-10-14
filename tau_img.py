@@ -11,6 +11,8 @@ import skimage.transform as sk
 from tauperf.parallel import Worker, run_pool
 from tauperf import print_progress
 
+from tauperf import log; log = log[os.path.basename(__file__)]
+
 def interpolate_rbf(x, y, z, function='linear', rotate_pc=True):
     """
     """
@@ -45,9 +47,28 @@ def tau_image(rec, cal_layer=2, rotate_pc=True):
     phi = phi_[square_]
     ene = ene_[square_]
 
+    arr = np.array([eta, phi, ene])
+    rec_new = np.core.records.fromarrays(
+        arr, names='x, y, z', formats='f8, f8, f8')
+    rec_new.sort(order=('x', 'y'))
+
+    if len(rec_new) != 256:
+        return None
+
+
     if len(ene) == 0:
         return None
-    image = interpolate_rbf(eta, phi, ene, rotate_pc=rotate_pc)
+
+    image = rec_new['z'].reshape((16, 16))
+    if rotate_pc:
+        scat_mat, cent = make_xy_scatter_matrix(rec_new['x'], rec_new['y'], rec_new['z'])
+        paxes, pvars = get_principle_axis(scat_mat)
+        angle = np.arctan2(paxes[0, 0], paxes[0, 1])
+        image = sk.rotate(
+            image, np.rad2deg(angle), order=3)
+
+
+    #     image = interpolate_rbf(eta, phi, ene, rotate_pc=rotate_pc)
     return image, eta, phi, ene
 
 def make_xy_scatter_matrix(x, y, z, scat_pow=2, mean_pow=1):
@@ -93,12 +114,13 @@ def dphi(phi_1, phi_2):
 
 
 data_dir = 'data_test'
-rfile = root_open(os.path.join(
-        os.getenv('DATA_AREA'), 
-        'tauid_ntuples', 'output_6files.root'))
-
-
+root_file = os.path.join(
+    os.getenv('DATA_AREA'), 'tauid_ntuples', 'output_100files.root')
+log.info('open root file {0}'.format(root_file))
+rfile = root_open(root_file)
 tree = rfile['tau']
+
+log.info('create 1p1n record array ...')
 rec_1p1n = tree2array(
     tree, selection='true_nprongs==1 && true_npi0s == 1 && abs(off_eta) < 1.1').view(np.recarray)
 
@@ -151,6 +173,7 @@ for ir, image in enumerate(tau_1p1n_images):
     plt.savefig('plots/heatmap_1p1n_%s.pdf' % ir)
     plt.clf()  
 
+log.info('create 1p0n record array ...')
 rec_1p0n = tree2array(
     tree, selection='true_nprongs==1 && true_npi0s == 0 && abs(off_eta) < 1.1').view(np.recarray)
 

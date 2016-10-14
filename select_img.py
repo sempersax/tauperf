@@ -100,8 +100,8 @@ rec_1p1n = tree2array(
 print 'process 1p1n:', len(rec_1p1n)
 
 for ix in xrange(len(rec_1p1n)):
-#     if ix > 100:
-#         break
+    if ix > 100:
+        break
     rec = rec_1p1n[ix]
     indices = np.where(rec['off_cells_samp'] == 2)
     
@@ -115,12 +115,22 @@ for ix in xrange(len(rec_1p1n)):
     phi_ = phi[indices_]
     ene_ = ene[indices_]
     
+    arr = np.array([eta_, phi_, ene_])
+    rec_new = np.core.records.fromarrays(
+        arr, names='x, y, z', formats='f8, f8, f8')
+    rec_new.sort(order=('x', 'y'))
+
+
     print ix, len(ene_), len(ene_) < 256
     plt.figure()
-    plt.scatter(eta_, phi_, c=ene_, marker='s', label= 'Number of cells = {0}'.format(len(eta_)))
+    plt.scatter(
+        rec_new['x'], rec_new['y'], c=rec_new['z'], 
+        marker='s', label= 'Number of cells = {0}'.format(len(eta_)))
     plt.xlim(-0.4, 0.4)
     plt.ylim(-0.4, 0.4)
     plt.legend(loc='upper right', fontsize='small', numpoints=1)
     plt.savefig('plots/grid_1p1n_{0}.pdf'.format(ix))
     plt.clf()
     plt.close()
+
+

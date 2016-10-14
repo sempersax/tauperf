@@ -123,12 +123,14 @@ def plot_confusion_matrix(cm, classes,
 
     if normalize:
         cm = cm.astype('float') / cm.sum(axis=0)#[:, np.newaxis]
-        print("Normalized confusion matrix")
     else:
         print('Confusion matrix, without normalization')
         plt.colorbar()
 
+    log.info('Confusion matrix')
+    log.info('')
     print(cm)
+    log.info('')
 
     thresh = cm.max() / 2.
     for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
@@ -136,7 +138,7 @@ def plot_confusion_matrix(cm, classes,
                  horizontalalignment="center",
                  color="white" if cm[i, j] > thresh else "black")
 
-    plt.tight_layout()
     plt.xlabel('True label')
     plt.ylabel('Predicted label')
-
+    plt.tight_layout()
+    plt.savefig('./plots/confusion_matrix.pdf')
