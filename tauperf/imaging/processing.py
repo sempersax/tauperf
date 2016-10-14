@@ -126,7 +126,7 @@ def process_taus(records, cal_layer=2, do_plot=True, suffix='1p1n'):
         if rec is None:
             continue
 
-        indices = np.where(rec['off_cells_samp'] == 2)
+        indices = np.where(rec['off_cells_samp'] == cal_layer)
         if len(indices) == 0:
             continue
         eta_ = rec['off_cells_deta'].take(indices[0])
