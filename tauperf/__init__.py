@@ -10,11 +10,8 @@ if os.getenv('HOSTNAME') is not None and 'lxplus' in os.getenv('HOSTNAME'):
     NTUPLE_PATH = UNMERGED_NTUPLE_PATH
 else:
     UNMERGED_NTUPLE_PATH = os.path.join(
-        # os.getenv('DATA_AREA'), 'crackpotauid_ntuples', 'v3')
-        os.getenv('DATA_AREA'), 'tauid_ntuples', 'v1')
+        os.getenv('DATA_AREA'), 'tauid_ntuples', 'v5')
     NTUPLE_PATH = UNMERGED_NTUPLE_PATH
-#     NTUPLE_PATH = os.path.join(UNMERGED_NTUPLE_PATH, 'new_Z_training_sample')
-    # NTUPLE_PATH = os.path.join(UNMERGED_NTUPLE_PATH, 'nocorr_on_sumptfrac')
 
 
 
