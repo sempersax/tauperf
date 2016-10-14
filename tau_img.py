@@ -6,20 +6,9 @@ import math
 from h5py import File
 
 from tauperf import print_progress
-from tauperf import log; log = log[os.path.basename(__file__)]
-from tauperf.imaging import tau_image, process_taus
+from tauperf import log; log = log['/tau-image']
+from tauperf.imaging import process_taus
 
-
-def dphi(phi_1, phi_2):
-    d_phi = phi_1 - phi_2
-    if (d_phi >= math.pi):
-        return 2.0 * math.pi - d_phi
-    if (d_phi < -1.0 * math.pi):
-        return 2.0 * math.pi + d_phi
-    return d_phi
-
-
-data_dir = 'data_test'
 
 
 
@@ -37,15 +26,16 @@ log.info('')
 tau_1p1n_images = process_taus(rec_1p1n)
 log.info('')
 
-
-np.save(os.path.join(
-        data_dir, 'images_1p1n_dr0.2.npy'), tau_1p1n_images)
+log.info('save images ...')
+np.save(os.path.join(os.path.dirname(
+            h5_filename), 'images_1p1n.npy'), tau_1p1n_images)
 
 log.info('process 1p0n: {0}'.format(len(rec_1p0n)))
 log.info('')
 tau_1p0n_images = process_taus(rec_1p0n, suffix='1p0n')
 log.info('')
+log.info('save images ...')
+np.save(os.path.join(os.path.dirname(
+            h5_filename), 'images_1p0n.npy'), tau_1p0n_images)
 
-np.save(os.path.join(
-        data_dir, 'images_1p0n_dr0.2.npy'), tau_1p0n_images)
 

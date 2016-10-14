@@ -29,10 +29,7 @@ def get_wp(true_pos, false_pos, thresh):
     # return optimal true positive eff, false positive eff and threshold for cut
     return true_pos[index_min], false_pos[index_min], thresh[index_min]
 
-# logging
-logging.basicConfig(level=logging.DEBUG)
-log = logging.getLogger(os.path.basename(__file__))
-
+from tauperf import log; log = log[os.path.basename(__file__)]
 log.info('loading data...')
 
 arr_1p1n = np.load('data_test/images_1p1n_dr0.2.npy')

@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import math
 import skimage.transform as sk
 
-from . import print_progress
+from .. import print_progress
 from . import log; log = log[__name__]
 
 def dphi(phi_1, phi_2):
@@ -148,7 +148,7 @@ def process_taus(records, cal_layer=2, do_plot=True, suffix='1p1n'):
                 plt.xlabel('eta')
                 plt.ylabel('phi')
                 plt.legend(loc='upper right', fontsize='small', numpoints=1)
-                plt.savefig('plots/selected_grid_%s_%s.pdf' % (suffix, ir))
+                plt.savefig('plots/imaging/selected_grid_%s_%s.pdf' % (suffix, ir))
                 plt.clf()
                 plt.close()
                 # scatter for all the pixels
@@ -161,7 +161,7 @@ def process_taus(records, cal_layer=2, do_plot=True, suffix='1p1n'):
                 plt.xlabel('eta')
                 plt.ylabel('phi')
                 plt.legend(loc='upper right', fontsize='small', numpoints=1)
-                plt.savefig('plots/grid_%s_%s.pdf' % (suffix, ir))
+                plt.savefig('plots/imaging/grid_%s_%s.pdf' % (suffix, ir))
                 plt.clf()
                 plt.close()
                 # heatmap
@@ -178,9 +178,10 @@ def process_taus(records, cal_layer=2, do_plot=True, suffix='1p1n'):
                 plt.xlabel('eta')
                 plt.ylabel('phi')
                 plt.legend(loc='upper right', fontsize='small', numpoints=1)
-                plt.savefig('plots/heatmap_1p1n_%s.pdf' % ir)
+                plt.savefig('plots/imaging/heatmap_1p1n_%s.pdf' % ir)
                 plt.clf()  
                 plt.close()
 
     # return the images to be stored
+    print
     return images
