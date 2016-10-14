@@ -16,29 +16,24 @@ from keras.callbacks import EarlyStopping, ModelCheckpoint
 from keras.layers.advanced_activations import PReLU
 
 
-def get_wp(true_pos, false_pos, thresh):
-    if (true_pos.ndim, false_pos.ndim, thresh.ndim) != (1, 1, 1):
-        raise ValueError('wrong dimension')
-    if len(true_pos) != len(false_pos) or len(true_pos) != len(thresh):
-        raise ValueError('wrong size')
 
-    # compute the distance to the (0, 1) point
-    dr_square = true_pos * true_pos + (false_pos - 1) * (false_pos - 1)
-    # get the index in the dr_square array
-    index_min = np.argmin(dr_square)
-    # return optimal true positive eff, false positive eff and threshold for cut
-    return true_pos[index_min], false_pos[index_min], thresh[index_min]
-
-from tauperf import log; log = log[os.path.basename(__file__)]
+from tauperf import log; log = log['/train-img']
 log.info('loading data...')
 
-arr_1p1n = np.load('data_test/images_1p1n_dr0.2.npy')
-# remove dummies
-arrs = [arr for arr in arr_1p1n]
-arrs = filter(lambda a: a != None, arrs)
-arr_1p1n = np.array(arrs)
+arr_1p1n = np.load(os.path.join(
+    os.getenv('DATA_AREA'), 
+    'tauid_ntuples', 'v5', 
+    'images_1p1n.npy'))
+                   
+# # remove dummies
+# arrs = [arr for arr in arr_1p1n]
+# arrs = filter(lambda a: a != None, arrs)
+# arr_1p1n = np.array(arrs)
 
-arr_1p0n = np.load('data_test/images_1p0n_dr0.2.npy')
+arr_1p0n = np.load(os.path.join(
+    os.getenv('DATA_AREA'), 
+    'tauid_ntuples', 'v5', 
+    'images_1p0n.npy'))
 
 
 data = np.concatenate((
@@ -105,7 +100,7 @@ from sklearn.metrics import roc_curve, roc_auc_score, confusion_matrix
 import matplotlib as mpl
 mpl.use('TkAgg')
 import matplotlib.pyplot as plt
-from tauperf.plotting.mpl import plot_confusion_matrix
+from tauperf.imaging.plotting import plot_confusion_matrix, get_wp
 
 fptr, tpr, thresh = roc_curve(y_test, y_pred)
 
@@ -125,7 +120,7 @@ plt.xlabel('1p0n miss-classification efficiency')
 plt.ylabel('1p1n classification efficiency')
 
 plt.legend(loc='lower right', fontsize='small', numpoints=1)
-plt.savefig('./plots/roc_curve.pdf')
+plt.savefig('./plots/imaging/roc_curve.pdf')
 plt.figure()
 
 cnf_mat = confusion_matrix(y_test, y_pred > opt_thresh)
