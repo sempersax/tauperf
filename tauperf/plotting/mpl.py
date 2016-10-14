@@ -1,5 +1,6 @@
 import itertools
 import numpy as np
+import matplotlib as mpl; mpl.use('TkAgg')
 from root_numpy import fill_hist
 from rootpy.plotting import Hist, Canvas, Efficiency
 from rootpy.plotting import root2matplotlib as rmpl

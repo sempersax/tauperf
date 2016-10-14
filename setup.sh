@@ -7,6 +7,11 @@
 # }
 # setup_rootcore
 
+echo "specific to Quentin's computer"
+thisroot
+source ../crackpot/bin/activate
+
+
 SOURCE_TAUPERF_SETUP="${BASH_SOURCE[0]:-$0}"
 DIR_TAUPERF_SETUP="$( dirname "$SOURCE_TAUPERF_SETUP" )"
 
