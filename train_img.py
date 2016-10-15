@@ -7,7 +7,8 @@ from sklearn import model_selection
 from sklearn.metrics import roc_curve, roc_auc_score, confusion_matrix
 
 from keras.models import Sequential
-from keras.layers.core import Dense, Activation
+from keras.layers.core import Dense, Activation, Flatten
+from keras.layers.convolutional import Convolution1D, Convolution2D
 
 from tauperf import log; log = log['/train-img']
 from tauperf.imaging.plotting import plot_confusion_matrix, get_wp
@@ -42,21 +43,33 @@ data_train, data_test, y_train, y_test = model_selection.train_test_split(
 log.info('Training stat: 1p1n = {0} images, 1p0n = {1} images'.format(
         len(y_train[y_train==1]), len(y_train[y_train==0])))
 
-# data_train = data_train.reshape((data_train.shape[0], data.shape[1], data.shape[2]))
-# data_test = data_test.reshape((data_test.shape[0], data.shape[1], data.shape[2]))
 
 y_train = y_train.reshape((y_train.shape[0], 1))
 y_test = y_test.reshape((y_test.shape[0], 1))
 
+
+
 # -- build the model
+# model = Sequential()
+# model.add(Dense(128, input_dim=data_train.T.shape[0]))
+# model.add(Activation('tanh'))
+# model.add(Dense(16))
+# model.add(Activation('relu'))
+# model.add(Dense(1))
+# model.add(Activation('sigmoid'))
+
+data_train = data_train.reshape((data_train.shape[0], data.shape[1], data.shape[2]))
+data_test = data_test.reshape((data_test.shape[0], data.shape[1], data.shape[2]))
 model = Sequential()
-model.add(Dense(128, input_dim=data_train.T.shape[0]))
+model.add(Convolution1D(64, 3, border_mode='same', input_shape=(16, 16)))
+model.add(Convolution1D(32, 3, border_mode='same'))
+model.add(Flatten())
+model.add(Dense(128))
 model.add(Activation('tanh'))
 model.add(Dense(16))
 model.add(Activation('relu'))
 model.add(Dense(1))
 model.add(Activation('sigmoid'))
-
 
 log.info('compiling model...')
 model.compile(
@@ -66,7 +79,7 @@ model.compile(
 
 log.info('starting training...')
 try:
-    model.fit(data_train, y_train, nb_epoch=60, batch_size=32)
+    model.fit(data_train, y_train, nb_epoch=40, batch_size=32)
 except KeyboardInterrupt:
     log.info('Ended early..')
 

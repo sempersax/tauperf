@@ -178,7 +178,7 @@ def process_taus(records, cal_layer=2, do_plot=True, suffix='1p1n'):
                 plt.xlabel('eta')
                 plt.ylabel('phi')
                 plt.legend(loc='upper right', fontsize='small', numpoints=1)
-                plt.savefig('plots/imaging/heatmap_1p1n_%s.pdf' % ir)
+                plt.savefig('plots/imaging/heatmap_%s_%s.pdf' % (suffix, ir))
                 plt.clf()  
                 plt.close()
 
