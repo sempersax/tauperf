@@ -22,7 +22,8 @@ def get_wp(true_pos, false_pos, thresh):
 def plot_confusion_matrix(cm, classes,
                           normalize=False,
                           title='Confusion matrix',
-                          cmap=plt.cm.Blues):
+                          cmap=plt.cm.Blues,
+                          name='plots/imaging/confusion_matrix.pdf'):
     """
     This function prints and plots the confusion matrix.
     Normalization can be applied by setting `normalize=True`.
@@ -53,6 +54,6 @@ def plot_confusion_matrix(cm, classes,
     plt.xlabel('True label')
     plt.ylabel('Predicted label')
     plt.tight_layout()
-    plt.savefig('./plots/imaging/confusion_matrix.pdf')
+    plt.savefig(name)
 
 
