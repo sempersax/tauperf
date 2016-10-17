@@ -61,7 +61,9 @@ y_test = y_test.reshape((y_test.shape[0], 1))
 data_train = data_train.reshape((data_train.shape[0], data.shape[1], data.shape[2]))
 data_test = data_test.reshape((data_test.shape[0], data.shape[1], data.shape[2]))
 model = Sequential()
-model.add(Convolution1D(64, 3, border_mode='same', input_shape=(16, 16)))
+model.add(Convolution1D(
+        64, 3, border_mode='same', 
+        input_shape=(data.shape[1], data.shape[2])))
 model.add(Convolution1D(32, 3, border_mode='same'))
 model.add(Flatten())
 model.add(Dense(128))

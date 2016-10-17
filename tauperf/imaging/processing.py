@@ -71,18 +71,21 @@ def tau_image(eta, phi, ene, rotate_pc=True, cal_layer=2):
     """
     return a pixelized image of a tau candidate.
     """
-    if cal_layer != 2:
+    if cal_layer != 1 and cal_layer != 2:
         log.error('layer {0} is not implemented yet'.format(cal_layer))
         raise ValueError
 
     # the following only applies to the second layer of the ECAL
     # in the barrel
     
-    square_ = (np.abs(eta) < 0.2) * (np.abs(phi) < 0.2)
+    if cal_layer == 2:
+        square_ = (np.abs(eta) < 0.2) * (np.abs(phi) < 0.2)
+    elif cal_layer == 1:
+        square_ = (np.abs(eta) < 0.151) * (np.abs(phi) < 0.201)
+
     eta_ = eta[square_]
     phi_ = phi[square_]
     ene_ = ene[square_]
-
     arr = np.array([eta_, phi_, ene_])
     rec_new = np.core.records.fromarrays(
         arr, names='x, y, z', formats='f8, f8, f8')
@@ -90,22 +93,29 @@ def tau_image(eta, phi, ene, rotate_pc=True, cal_layer=2):
     # sort first by x and then by y
     rec_new.sort(order=('x', 'y'))
 
-    # disgard image with wrong pixelization (need to fix!)
-    if len(rec_new) != 256:
-        return None
-
     if len(ene) == 0:
         log.warning('pathologic case with 0 cells --> need to figure out why')
         return None
 
-    image = rec_new['z'].reshape((16, 16))
-    if rotate_pc:
-        scat_mat, cent = make_xy_scatter_matrix(
-            rec_new['x'], rec_new['y'], rec_new['z'])
-        paxes, pvars = get_principle_axis(scat_mat)
-        angle = np.arctan2(paxes[0, 0], paxes[0, 1])
-        image = sk.rotate(
-            image, np.rad2deg(angle), order=3)
+    # disgard image with wrong pixelization (need to fix!)
+    if cal_layer == 2 and len(rec_new) != 256:
+        return None
+
+    if cal_layer == 1 and len(rec_new) != 388:
+        return None
+
+    if cal_layer == 1:
+        image = rec_new['z'].reshape((4, 97))
+
+    elif cal_layer == 2:
+        image = rec_new['z'].reshape((16, 16))
+        if rotate_pc:
+            scat_mat, cent = make_xy_scatter_matrix(
+                rec_new['x'], rec_new['y'], rec_new['z'])
+            paxes, pvars = get_principle_axis(scat_mat)
+            angle = np.arctan2(paxes[0, 0], paxes[0, 1])
+            image = sk.rotate(
+                image, np.rad2deg(angle), order=3)
 
     # return image and selected cells eta, phi, ene
     return image, eta_, phi_, ene_

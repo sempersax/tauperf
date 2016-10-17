@@ -89,7 +89,7 @@ def dphi(phi_1, phi_2):
 data_dir = 'data_test'
 rfile = root_open(os.path.join(
         os.getenv('DATA_AREA'), 
-        'tauid_ntuples', 'output.root'))
+        'tauid_ntuples', 'v5', 'output_6files.root'))
 
 
 tree = rfile['tau']
@@ -103,13 +103,13 @@ for ix in xrange(len(rec_1p1n)):
     if ix > 100:
         break
     rec = rec_1p1n[ix]
-    indices = np.where(rec['off_cells_samp'] == 2)
+    indices = np.where(rec['off_cells_samp'] == 1)
     
     eta = rec['off_cells_deta'].take(indices[0])
     phi = rec['off_cells_dphi'].take(indices[0])
     ene = rec['off_cells_e_norm'].take(indices[0])
     
-    indices_ = (np.abs(eta) < 0.2) * (np.abs(phi) < 0.2)
+    indices_ = (np.abs(eta) < 0.151) * (np.abs(phi) < 0.21)
     
     eta_ = eta[indices_]
     phi_ = phi[indices_]
@@ -129,7 +129,7 @@ for ix in xrange(len(rec_1p1n)):
     plt.xlim(-0.4, 0.4)
     plt.ylim(-0.4, 0.4)
     plt.legend(loc='upper right', fontsize='small', numpoints=1)
-    plt.savefig('plots/grid_1p1n_{0}.pdf'.format(ix))
+    plt.savefig('plots/grid_1p1n_S1_{0}.pdf'.format(ix))
     plt.clf()
     plt.close()
 
