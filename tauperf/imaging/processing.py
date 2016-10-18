@@ -1,5 +1,6 @@
 import os
 import numpy as np
+from numpy.lib import recfunctions
 import matplotlib as mpl; mpl.use('TkAgg')
 import matplotlib.pyplot as plt
 import math
@@ -142,8 +143,8 @@ def process_taus(records, cal_layer=2, do_plot=True, suffix='1p1n'):
         eta_ = rec['off_cells_deta'].take(indices[0])
         phi_ = rec['off_cells_dphi'].take(indices[0])
         ene_ = rec['off_cells_e_norm'].take(indices[0])
-        image_tuple = tau_image(eta_, phi_, ene_, cal_layer=cal_layer)
-
+        image_tuple = tau_image(eta_, phi_, ene_, cal_layer=cal_layer, rotate_pc=False)
+        
         if image_tuple is not None:
             image, eta, phi, ene = image_tuple
             images.append(image)
@@ -151,10 +152,18 @@ def process_taus(records, cal_layer=2, do_plot=True, suffix='1p1n'):
                 # scatter for the selected pixels
                 plt.figure()
                 plt.scatter(
-                    eta, phi, c=ene, marker='s', 
+                    eta, phi, c=ene, marker='s', s=40,
                     label= 'Number of cells = {0}'.format(len(eta)))
                 plt.xlim(-0.4, 0.4)
                 plt.ylim(-0.4, 0.4)
+                plt.plot(
+                    rec['true_charged_eta'] - rec['true_eta'], 
+                    dphi(rec['true_charged_phi'], rec['true_phi']), 'ro', 
+                    label='charge pi, pT = %1.2f GeV' % (rec['true_charged_pt'] / 1000.))
+                plt.plot(
+                    rec['true_neutral_eta'] - rec['true_eta'], 
+                    dphi(rec['true_neutral_phi'], rec['true_phi']), 'g^', 
+                    label='neutral pi, pT = %1.2f GeV' % (rec['true_neutral_pt'] / 1000.))
                 plt.xlabel('eta')
                 plt.ylabel('phi')
                 plt.legend(loc='upper right', fontsize='small', numpoints=1)
@@ -175,20 +184,24 @@ def process_taus(records, cal_layer=2, do_plot=True, suffix='1p1n'):
                 plt.clf()
                 plt.close()
                 # heatmap
-                plt.imshow(image, extent=[-0.2, 0.2, -0.2, 0.2])
-                plt.plot(
-                    rec['true_charged_eta'] - rec['true_eta'], 
-                    dphi(rec['true_charged_phi'], rec['true_phi']), 'ro', 
-                    label='charge pi, pT = %1.2f GeV' % (rec['true_charged_pt'] / 1000.))
-                plt.plot(
-                    rec['true_neutral_eta'] - rec['true_eta'], 
-                    dphi(rec['true_neutral_phi'], rec['true_phi']), 'g^', 
-                    label='neutral pi, pT = %1.2f GeV' % (rec['true_neutral_pt'] / 1000.))
+                plt.imshow(image, interpolation='nearest')
                 plt.title('%s heatmap %s' % (suffix, ir))
                 plt.xlabel('eta')
                 plt.ylabel('phi')
                 plt.legend(loc='upper right', fontsize='small', numpoints=1)
                 plt.savefig('plots/imaging/heatmap_%s_%s.pdf' % (suffix, ir))
+                plt.clf()  
+                plt.close()
+                # heatmap for the selected pixels without rotation
+                im_norot, _, _, _ = tau_image(
+                    eta_, phi_, ene_, cal_layer=cal_layer, rotate_pc=False)
+                plt.figure()
+                plt.imshow(im_norot, interpolation='nearest')
+                plt.title('%s heatmap %s' % (suffix, ir))
+                plt.xlabel('eta')
+                plt.ylabel('phi')
+                plt.legend(loc='upper right', fontsize='small', numpoints=1)
+                plt.savefig('plots/imaging/heatmap_norotation_%s_%s.pdf' % (suffix, ir))
                 plt.clf()  
                 plt.close()
 

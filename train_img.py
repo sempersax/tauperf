@@ -8,7 +8,7 @@ from sklearn.metrics import roc_curve, roc_auc_score, confusion_matrix
 
 from keras.models import Sequential
 from keras.layers.core import Dense, Dropout, Activation, Flatten
-from keras.layers.convolutional import Convolution1D, Convolution2D
+from keras.layers.convolutional import Convolution1D, Convolution2D, MaxPooling2D
 from keras.layers.normalization import BatchNormalization
 
 from tauperf import log; log = log['/train-img']
@@ -71,18 +71,24 @@ y_test = y_test.reshape((y_test.shape[0], 1))
 
 data_train = data_train.reshape((data_train.shape[0], data.shape[1], data.shape[2]))
 data_test = data_test.reshape((data_test.shape[0], data.shape[1], data.shape[2]))
+
+
+data_train = np.expand_dims(data_train, axis=1)
+data_test = np.expand_dims(data_test, axis=1)
+
 model = Sequential()
-model.add(Convolution1D(
-        64, 3, border_mode='same', 
-        input_shape=(data.shape[1], data.shape[2])))
-model.add(Convolution1D(32, 3, border_mode='same'))
+model.add(Convolution2D(
+        64, 6, 6, border_mode='same', 
+        input_shape=(1, data.shape[1], data.shape[2])))
+model.add(Activation('relu'))
+model.add(MaxPooling2D((2, 2), dim_ordering='th'))
+model.add(Dropout(0.2))
 model.add(Flatten())
 model.add(Dense(128))
-model.add(Activation('tanh'))
+model.add(Activation('relu'))
 model.add(Dropout(0.2))
 model.add(Dense(16))
 model.add(Activation('relu'))
-model.add(BatchNormalization())
 model.add(Dense(1))
 model.add(Activation('sigmoid'))
 
@@ -94,7 +100,7 @@ model.compile(
 
 log.info('starting training...')
 try:
-    model.fit(data_train, y_train, nb_epoch=40, batch_size=128)
+    model.fit(data_train, y_train, nb_epoch=40, batch_size=128, validation_data=(data_test, y_test))
 except KeyboardInterrupt:
     log.info('Ended early..')
 
