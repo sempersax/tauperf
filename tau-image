@@ -13,8 +13,12 @@ if __name__ == '__main__':
     from argparse import ArgumentParser
     parser = ArgumentParser()
     parser.add_argument(
-        '--cal-layer', default=2, choices=[1, 2], type=int, 
+        '--cal-layer', default=None, choices=[None, 1, 2], type=int, 
         help='select layer for the image selection')
+    parser.add_argument(
+        '--do-plot', default=False, action='store_true',
+        help='make plots of the input images')
+
     args = parser.parse_args()
 
     cal_layer = args.cal_layer
@@ -31,29 +35,43 @@ if __name__ == '__main__':
 
     log.info('process 1p0n: {0}'.format(len(rec_1p0n)))
     log.info('')
-    tau_1p0n_images = process_taus(rec_1p0n, cal_layer=cal_layer, suffix='1p0n')
+    tau_1p0n_images = process_taus(rec_1p0n, cal_layer=cal_layer, do_plot=args.do_plot, suffix='1p0n')
     log.info('')
-    log.info('save images ...')
-    np.save(os.path.join(os.path.dirname(
-                h5_filename), 'images_S{0}_1p0n.npy'.format(cal_layer)), 
-            tau_1p0n_images)
 
     log.info('process 1p1n: {0}'.format(len(rec_1p1n)))
     log.info('')
     tau_1p1n_images = process_taus(rec_1p1n, cal_layer=cal_layer, suffix='1p1n')
     log.info('')
-    log.info('save images ...')
-    np.save(os.path.join(os.path.dirname(
-                h5_filename), 'images_S{0}_1p1n.npy'.format(cal_layer)), 
-            tau_1p1n_images)
 
     log.info('process 1p2n: {0}'.format(len(rec_1p2n)))
     log.info('')
     tau_1p2n_images = process_taus(rec_1p1n, cal_layer=cal_layer, suffix='1p2n')
     log.info('')
+
+
     log.info('save images ...')
-    np.save(os.path.join(os.path.dirname(
-                h5_filename), 'images_S{0}_1p2n.npy'.format(cal_layer)), 
-            tau_1p2n_images)
+    dir_name = os.path.dirname(h5_filename)
+    if cal_layer is not None:
+        np.save(os.path.join(dir_name, 'images_S{0}_1p0n.npy'.format(cal_layer)), tau_1p0n_images)
+        np.save(os.path.join(dir_name, 'images_S{0}_1p1n.npy'.format(cal_layer)), tau_1p1n_images)
+        np.save(os.path.join(dir_name, 'images_S{0}_1p2n.npy'.format(cal_layer)), tau_1p2n_images)
+
+    else:
+        tau_1p0n_images_s1 = [im[0] for im in tau_1p0n_images]
+        tau_1p0n_images_s2 = [im[1] for im in tau_1p0n_images]
+
+        tau_1p1n_images_s1 = [im[0] for im in tau_1p1n_images]
+        tau_1p1n_images_s2 = [im[1] for im in tau_1p1n_images]
+
+        tau_1p2n_images_s1 = [im[0] for im in tau_1p2n_images]
+        tau_1p2n_images_s2 = [im[1] for im in tau_1p2n_images]
+
+        np.save(os.path.join(dir_name, 'images_S1_1p0n.npy'), tau_1p0n_images_s1)
+        np.save(os.path.join(dir_name, 'images_S1_1p1n.npy'), tau_1p1n_images_s1)
+        np.save(os.path.join(dir_name, 'images_S1_1p2n.npy'), tau_1p2n_images_s1)
+
+        np.save(os.path.join(dir_name, 'images_S2_1p0n.npy'), tau_1p0n_images_s2)
+        np.save(os.path.join(dir_name, 'images_S2_1p1n.npy'), tau_1p1n_images_s2)
+        np.save(os.path.join(dir_name, 'images_S2_1p2n.npy'), tau_1p2n_images_s2)
 
 

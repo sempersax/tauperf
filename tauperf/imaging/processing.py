@@ -68,7 +68,7 @@ def interpolate_rbf(x, y, z, function='linear', rotate_pc=True):
     return im
 
 
-def tau_image(eta, phi, ene, rotate_pc=True, cal_layer=2):
+def tau_image(rec, rotate_pc=True, cal_layer=2):
     """
     return a pixelized image of a tau candidate.
     """
@@ -76,22 +76,32 @@ def tau_image(eta, phi, ene, rotate_pc=True, cal_layer=2):
         log.error('layer {0} is not implemented yet'.format(cal_layer))
         raise ValueError
 
-    # the following only applies to the second layer of the ECAL
-    # in the barrel
-    
+
+    # retrieve eta, phi and energy arrays in a given layers
+    indices = np.where(rec['off_cells_samp'] == cal_layer)
+    if len(indices) == 0:
+        return None
+    eta = rec['off_cells_deta'].take(indices[0])
+    phi = rec['off_cells_dphi'].take(indices[0])
+    ene = rec['off_cells_e_norm'].take(indices[0])
+
+
+    # define the square used to collect cells for the image
     if cal_layer == 2:
         square_ = (np.abs(eta) < 0.2) * (np.abs(phi) < 0.2)
     elif cal_layer == 1:
         square_ = (np.abs(eta) < 0.151) * (np.abs(phi) < 0.201)
 
+    # collect cells in a square (or rectangle)
     eta_ = eta[square_]
     phi_ = phi[square_]
     ene_ = ene[square_]
+
+    # create the raw image
     arr = np.array([eta_, phi_, ene_])
     rec_new = np.core.records.fromarrays(
         arr, names='x, y, z', formats='f8, f8, f8')
-
-    # sort first by x and then by y
+    # order the pixels by sorting first by x and then by y
     rec_new.sort(order=('x', 'y'))
 
     if len(ene) == 0:
@@ -105,9 +115,11 @@ def tau_image(eta, phi, ene, rotate_pc=True, cal_layer=2):
     if cal_layer == 1 and len(rec_new) != 388:
         return None
 
+    # reshaping
     if cal_layer == 1:
         image = rec_new['z'].reshape((4, 97))
 
+    #reshaping and rotating
     elif cal_layer == 2:
         image = rec_new['z'].reshape((16, 16))
         if rotate_pc:
@@ -122,7 +134,7 @@ def tau_image(eta, phi, ene, rotate_pc=True, cal_layer=2):
     return image, eta_, phi_, ene_
 
 
-def process_taus(records, cal_layer=2, do_plot=True, suffix='1p1n'):
+def process_taus(records, cal_layer=None, do_plot=True, suffix='1p1n'):
     log.info('')
     images = []
     for ir in xrange(len(records)):
@@ -137,73 +149,47 @@ def process_taus(records, cal_layer=2, do_plot=True, suffix='1p1n'):
         if rec is None:
             continue
 
-        indices = np.where(rec['off_cells_samp'] == cal_layer)
-        if len(indices) == 0:
-            continue
-        eta_ = rec['off_cells_deta'].take(indices[0])
-        phi_ = rec['off_cells_dphi'].take(indices[0])
-        ene_ = rec['off_cells_e_norm'].take(indices[0])
-        image_tuple = tau_image(eta_, phi_, ene_, cal_layer=cal_layer, rotate_pc=False)
-        
-        if image_tuple is not None:
-            image, eta, phi, ene = image_tuple
-            images.append(image)
-            if do_plot and ir < 100:
-                # scatter for the selected pixels
-                plt.figure()
-                plt.scatter(
-                    eta, phi, c=ene, marker='s', s=40,
-                    label= 'Number of cells = {0}'.format(len(eta)))
-                plt.xlim(-0.4, 0.4)
-                plt.ylim(-0.4, 0.4)
-                plt.plot(
+        if cal_layer is None:
+            image_tuple_s1 = tau_image(rec, cal_layer=1, rotate_pc=False)
+            image_tuple_s2 = tau_image(rec, cal_layer=2, rotate_pc=False)
+            if image_tuple_s1 is not None and image_tuple_s2 is not None:
+                images.append((image_tuple_s1[0], image_tuple_s2[0]))
+        else:
+            image_tuple = tau_image(rec, cal_layer=cal_layer, rotate_pc=False)
+            if image_tuple is not None:
+                image, eta, phi, ene = image_tuple
+                images.append(image)
+                if do_plot and ir < 100:
+                    # scatter for the selected pixels
+                    plt.figure()
+                    plt.scatter(
+                        eta, phi, c=ene, marker='s', s=40,
+                        label= 'Number of cells = {0}'.format(len(eta)))
+                    plt.xlim(-0.4, 0.4)
+                    plt.ylim(-0.4, 0.4)
+                    plt.plot(
                     rec['true_charged_eta'] - rec['true_eta'], 
                     dphi(rec['true_charged_phi'], rec['true_phi']), 'ro', 
                     label='charge pi, pT = %1.2f GeV' % (rec['true_charged_pt'] / 1000.))
-                plt.plot(
-                    rec['true_neutral_eta'] - rec['true_eta'], 
-                    dphi(rec['true_neutral_phi'], rec['true_phi']), 'g^', 
-                    label='neutral pi, pT = %1.2f GeV' % (rec['true_neutral_pt'] / 1000.))
-                plt.xlabel('eta')
-                plt.ylabel('phi')
-                plt.legend(loc='upper right', fontsize='small', numpoints=1)
-                plt.savefig('plots/imaging/selected_grid_%s_%s.pdf' % (suffix, ir))
-                plt.clf()
-                plt.close()
-                # scatter for all the pixels
-                plt.figure()
-                plt.scatter(
-                    eta_, phi_, c=ene_, marker='s', 
-                    label= 'Number of cells = {0}'.format(len(eta_)))
-                plt.xlim(-0.4, 0.4)
-                plt.ylim(-0.4, 0.4)
-                plt.xlabel('eta')
-                plt.ylabel('phi')
-                plt.legend(loc='upper right', fontsize='small', numpoints=1)
-                plt.savefig('plots/imaging/grid_%s_%s.pdf' % (suffix, ir))
-                plt.clf()
-                plt.close()
+                    plt.plot(
+                        rec['true_neutral_eta'] - rec['true_eta'], 
+                        dphi(rec['true_neutral_phi'], rec['true_phi']), 'g^', 
+                        label='neutral pi, pT = %1.2f GeV' % (rec['true_neutral_pt'] / 1000.))
+                    plt.xlabel('eta')
+                    plt.ylabel('phi')
+                    plt.legend(loc='upper right', fontsize='small', numpoints=1)
+                    plt.savefig('plots/imaging/selected_grid_%s_%s.pdf' % (suffix, ir))
+                    plt.clf()
+                    plt.close()
                 # heatmap
-                plt.imshow(image, interpolation='nearest')
-                plt.title('%s heatmap %s' % (suffix, ir))
-                plt.xlabel('eta')
-                plt.ylabel('phi')
-                plt.legend(loc='upper right', fontsize='small', numpoints=1)
-                plt.savefig('plots/imaging/heatmap_%s_%s.pdf' % (suffix, ir))
-                plt.clf()  
-                plt.close()
-                # heatmap for the selected pixels without rotation
-                im_norot, _, _, _ = tau_image(
-                    eta_, phi_, ene_, cal_layer=cal_layer, rotate_pc=False)
-                plt.figure()
-                plt.imshow(im_norot, interpolation='nearest')
-                plt.title('%s heatmap %s' % (suffix, ir))
-                plt.xlabel('eta')
-                plt.ylabel('phi')
-                plt.legend(loc='upper right', fontsize='small', numpoints=1)
-                plt.savefig('plots/imaging/heatmap_norotation_%s_%s.pdf' % (suffix, ir))
-                plt.clf()  
-                plt.close()
+                    plt.imshow(image, interpolation='nearest')
+                    plt.title('%s heatmap %s' % (suffix, ir))
+                    plt.xlabel('eta')
+                    plt.ylabel('phi')
+                    plt.legend(loc='upper right', fontsize='small', numpoints=1)
+                    plt.savefig('plots/imaging/heatmap_%s_%s.pdf' % (suffix, ir))
+                    plt.clf()  
+                    plt.close()
 
     # return the images to be stored
     print

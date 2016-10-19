@@ -18,7 +18,7 @@ from tauperf.imaging.plotting import plot_confusion_matrix, get_wp
 from argparse import ArgumentParser
 parser = ArgumentParser()
 parser.add_argument(
-    '--cal-layer', default=2, choices=[1, 2], type=int,
+    '--cal-layer', default=2, choices=[None, 1, 2], type=int,
     help='select layer for the image selection')
 args = parser.parse_args()
 
