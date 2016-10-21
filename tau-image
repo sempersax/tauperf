@@ -24,7 +24,7 @@ if __name__ == '__main__':
     cal_layer = args.cal_layer
 
     h5_filename = os.path.join(
-        os.getenv('DATA_AREA'), 'tauid_ntuples', 'v5', 'output_100files.h5')
+        os.getenv('DATA_AREA'), 'tauid_ntuples', 'v6', 'output_210files.h5')
     log.info('open h5 file {0}'.format(h5_filename))
     
     h5file = File(h5_filename, mode='r')
@@ -59,12 +59,15 @@ if __name__ == '__main__':
     else:
         tau_1p0n_images_s1 = [im[0] for im in tau_1p0n_images]
         tau_1p0n_images_s2 = [im[1] for im in tau_1p0n_images]
+        tau_1p0n_images_s3 = [im[2] for im in tau_1p0n_images]
 
         tau_1p1n_images_s1 = [im[0] for im in tau_1p1n_images]
         tau_1p1n_images_s2 = [im[1] for im in tau_1p1n_images]
+        tau_1p1n_images_s3 = [im[2] for im in tau_1p1n_images]
 
         tau_1p2n_images_s1 = [im[0] for im in tau_1p2n_images]
         tau_1p2n_images_s2 = [im[1] for im in tau_1p2n_images]
+        tau_1p2n_images_s3 = [im[2] for im in tau_1p2n_images]
 
         np.save(os.path.join(dir_name, 'images_S1_1p0n.npy'), tau_1p0n_images_s1)
         np.save(os.path.join(dir_name, 'images_S1_1p1n.npy'), tau_1p1n_images_s1)
@@ -73,5 +76,9 @@ if __name__ == '__main__':
         np.save(os.path.join(dir_name, 'images_S2_1p0n.npy'), tau_1p0n_images_s2)
         np.save(os.path.join(dir_name, 'images_S2_1p1n.npy'), tau_1p1n_images_s2)
         np.save(os.path.join(dir_name, 'images_S2_1p2n.npy'), tau_1p2n_images_s2)
+
+        np.save(os.path.join(dir_name, 'images_S3_1p0n.npy'), tau_1p0n_images_s3)
+        np.save(os.path.join(dir_name, 'images_S3_1p1n.npy'), tau_1p1n_images_s3)
+        np.save(os.path.join(dir_name, 'images_S3_1p2n.npy'), tau_1p2n_images_s3)
 
 

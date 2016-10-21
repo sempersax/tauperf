@@ -50,9 +50,9 @@ if __name__ == '__main__':
             log.info('remove {0}'.format(h5_name))
             os.remove(h5_name)
 
-        sel_1p2n = 'true_nprongs == 1 && true_npi0s == 2 && abs(off_eta) < 1.1'
-        sel_1p1n = 'true_nprongs == 1 && true_npi0s == 1 && abs(off_eta) < 1.1'
-        sel_1p0n = 'true_nprongs == 1 && true_npi0s == 0 && abs(off_eta) < 1.1'
+        sel_1p2n = 'true_nprongs == 1 && true_npi0s == 2 && abs(off_eta) < 1.2'
+        sel_1p1n = 'true_nprongs == 1 && true_npi0s == 1 && abs(off_eta) < 1.2'
+        sel_1p0n = 'true_nprongs == 1 && true_npi0s == 0 && abs(off_eta) < 1.2'
 
         rec_1p2n = get_records(tree, sel_1p2n)
         rec_1p1n = get_records(tree, sel_1p1n)

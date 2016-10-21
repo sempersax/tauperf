@@ -89,7 +89,7 @@ def dphi(phi_1, phi_2):
 data_dir = 'data_test'
 rfile = root_open(os.path.join(
         os.getenv('DATA_AREA'), 
-        'tauid_ntuples', 'v5', 'output_6files.root'))
+        'tauid_ntuples', 'v6', 'output.root'))
 
 
 tree = rfile['tau']
@@ -99,20 +99,49 @@ rec_1p1n = tree2array(
 
 print 'process 1p1n:', len(rec_1p1n)
 
+# s1
+# npixels = 192
+# n_eta = 24
+# r_eta = 0.2
+# n_phi = 2
+# r_phi = 0.401
+# layer = 1
+
+# s2
+# npixels = 256
+# n_eta = 8
+# r_eta = 0.201
+# n_phi = 8
+# r_phi = 0.401
+# layer = 2
+
+# s3
+npixels = 128
+n_eta = 4
+r_eta = 0.201
+n_phi = 8
+r_phi = 0.201
+layer = 3
+
+
+bad_img = 0
+
 for ix in xrange(len(rec_1p1n)):
-    if ix > 100:
-        break
     rec = rec_1p1n[ix]
-    indices = np.where(rec['off_cells_samp'] == 1)
+    indices = np.where(rec['off_cells_samp'] == layer)
     
-    eta = rec['off_cells_deta'].take(indices[0])
-    phi = rec['off_cells_dphi'].take(indices[0])
+    eta_r = rec['off_cells_deta'].take(indices[0])
+    phi_r = rec['off_cells_dphi'].take(indices[0])
+
+    eta = rec['off_cells_deta_digit'].take(indices[0])
+    phi = rec['off_cells_dphi_digit'].take(indices[0])
     ene = rec['off_cells_e_norm'].take(indices[0])
-    
-    indices_ = (np.abs(eta) < 0.151) * (np.abs(phi) < 0.21)
-    
-    eta_ = eta[indices_]
-    phi_ = phi[indices_]
+
+    indices_ =  (np.abs(eta) < n_eta) * (np.abs(phi) < n_phi) *(np.abs(eta_r) < r_eta) * (np.abs(phi_r) < r_phi)
+        
+
+    eta_ = eta_r[indices_]
+    phi_ = phi_r[indices_]
     ene_ = ene[indices_]
     
     arr = np.array([eta_, phi_, ene_])
@@ -120,17 +149,21 @@ for ix in xrange(len(rec_1p1n)):
         arr, names='x, y, z', formats='f8, f8, f8')
     rec_new.sort(order=('x', 'y'))
 
+    if len(ene_) != npixels:
+        bad_img += 1
+    print ix, len(ene_), len(ene_) < npixels
+    
+    if ix < 100 or len(ene_) != npixels:
+        plt.figure()
+        plt.scatter(
+            rec_new['x'], rec_new['y'], c=rec_new['z'], s=40,
+            marker='s', label= 'Number of cells = {0}'.format(len(eta_)))
+        plt.xlim(-0.4, 0.4)
+        plt.ylim(-0.4, 0.4)
+        plt.legend(loc='upper right', fontsize='small', numpoints=1)
+        plt.savefig('plots/grid_1p1n_S{0}_{1}.pdf'.format(layer, ix))
+        plt.clf()
+        plt.close()
 
-    print ix, len(ene_), len(ene_) < 256
-    plt.figure()
-    plt.scatter(
-        rec_new['x'], rec_new['y'], c=rec_new['z'], 
-        marker='s', label= 'Number of cells = {0}'.format(len(eta_)))
-    plt.xlim(-0.4, 0.4)
-    plt.ylim(-0.4, 0.4)
-    plt.legend(loc='upper right', fontsize='small', numpoints=1)
-    plt.savefig('plots/grid_1p1n_S1_{0}.pdf'.format(ix))
-    plt.clf()
-    plt.close()
 
-
+print bad_img, '/', len(rec_1p1n)

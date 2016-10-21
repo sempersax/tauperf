@@ -72,27 +72,42 @@ def tau_image(rec, rotate_pc=True, cal_layer=2):
     """
     return a pixelized image of a tau candidate.
     """
-    if cal_layer != 1 and cal_layer != 2:
-        log.error('layer {0} is not implemented yet'.format(cal_layer))
-        raise ValueError
 
 
     # retrieve eta, phi and energy arrays in a given layers
     indices = np.where(rec['off_cells_samp'] == cal_layer)
     if len(indices) == 0:
         return None
-    eta = rec['off_cells_deta'].take(indices[0])
-    phi = rec['off_cells_dphi'].take(indices[0])
+    eta_r = rec['off_cells_deta'].take(indices[0])
+    phi_r = rec['off_cells_dphi'].take(indices[0])
+    eta = rec['off_cells_deta_digit'].take(indices[0])
+    phi = rec['off_cells_dphi_digit'].take(indices[0])
     ene = rec['off_cells_e_norm'].take(indices[0])
 
 
     # define the square used to collect cells for the image
     if cal_layer == 2:
-        square_ = (np.abs(eta) < 0.2) * (np.abs(phi) < 0.2)
+        n_eta = 8
+        n_phi = 8
+        r_eta = 0.201
+        r_phi = 0.201
     elif cal_layer == 1:
-        square_ = (np.abs(eta) < 0.151) * (np.abs(phi) < 0.201)
+        n_eta = 24
+        n_phi = 2
+        r_eta = 0.201
+        r_phi = 0.401
+    elif cal_layer == 3:
+        n_eta = 4
+        n_phi = 8
+        r_eta = 0.201
+        r_phi = 0.201
+    else:
+        log.error('layer {0} is not implemented yet'.format(cal_layer))
+        raise ValueError
+        
 
     # collect cells in a square (or rectangle)
+    square_ = (np.abs(eta) < n_eta) * (np.abs(phi) < n_phi) *(np.abs(eta_r) < r_eta) * (np.abs(phi_r) < r_phi)
     eta_ = eta[square_]
     phi_ = phi[square_]
     ene_ = ene[square_]
@@ -109,26 +124,36 @@ def tau_image(rec, rotate_pc=True, cal_layer=2):
         return None
 
     # disgard image with wrong pixelization (need to fix!)
+    if cal_layer == 1 and len(rec_new) != 192:
+        return None
+
     if cal_layer == 2 and len(rec_new) != 256:
         return None
 
-    if cal_layer == 1 and len(rec_new) != 388:
+    if cal_layer == 3 and len(rec_new) != 128:
         return None
 
     # reshaping
     if cal_layer == 1:
         image = rec_new['z'].reshape((4, 97))
 
-    #reshaping and rotating
+    # reshaping
     elif cal_layer == 2:
         image = rec_new['z'].reshape((16, 16))
-        if rotate_pc:
-            scat_mat, cent = make_xy_scatter_matrix(
-                rec_new['x'], rec_new['y'], rec_new['z'])
-            paxes, pvars = get_principle_axis(scat_mat)
-            angle = np.arctan2(paxes[0, 0], paxes[0, 1])
-            image = sk.rotate(
-                image, np.rad2deg(angle), order=3)
+    elif cal_layer == 3:
+        image = rec_new['z'].reshape((16, 4))
+    else:
+        log.error('layer {0} is not implemented yet'.format(cal_layer))
+        raise ValueError
+
+    # rotating
+    if rotate_pc:
+        scat_mat, cent = make_xy_scatter_matrix(
+            rec_new['x'], rec_new['y'], rec_new['z'])
+        paxes, pvars = get_principle_axis(scat_mat)
+        angle = np.arctan2(paxes[0, 0], paxes[0, 1])
+        image = sk.rotate(
+            image, np.rad2deg(angle), order=3)
 
     # return image and selected cells eta, phi, ene
     return image, eta_, phi_, ene_
@@ -152,8 +177,19 @@ def process_taus(records, cal_layer=None, do_plot=True, suffix='1p1n'):
         if cal_layer is None:
             image_tuple_s1 = tau_image(rec, cal_layer=1, rotate_pc=False)
             image_tuple_s2 = tau_image(rec, cal_layer=2, rotate_pc=False)
-            if image_tuple_s1 is not None and image_tuple_s2 is not None:
-                images.append((image_tuple_s1[0], image_tuple_s2[0]))
+            image_tuple_s3 = tau_image(rec, cal_layer=3, rotate_pc=False)
+
+            if image_tuple_s1 is None:
+                continue
+            if image_tuple_s2 is None:
+                continue
+            if image_tuple_s1 is None:
+                continue
+
+            images.append((
+                    image_tuple_s1[0], 
+                    image_tuple_s2[0], 
+                    image_tuple_s3[0]))
         else:
             image_tuple = tau_image(rec, cal_layer=cal_layer, rotate_pc=False)
             if image_tuple is not None:
@@ -181,7 +217,7 @@ def process_taus(records, cal_layer=None, do_plot=True, suffix='1p1n'):
                     plt.savefig('plots/imaging/selected_grid_%s_%s.pdf' % (suffix, ir))
                     plt.clf()
                     plt.close()
-                # heatmap
+                    # heatmap
                     plt.imshow(image, interpolation='nearest')
                     plt.title('%s heatmap %s' % (suffix, ir))
                     plt.xlabel('eta')
