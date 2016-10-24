@@ -135,13 +135,13 @@ def tau_image(rec, rotate_pc=True, cal_layer=2):
 
     # reshaping
     if cal_layer == 1:
-        image = rec_new['z'].reshape((4, 97))
+        image = rec_new['z'].reshape((4, 48))
 
     # reshaping
     elif cal_layer == 2:
         image = rec_new['z'].reshape((16, 16))
     elif cal_layer == 3:
-        image = rec_new['z'].reshape((16, 4))
+        image = rec_new['z'].reshape((16, 8))
     else:
         log.error('layer {0} is not implemented yet'.format(cal_layer))
         raise ValueError
@@ -183,7 +183,7 @@ def process_taus(records, cal_layer=None, do_plot=True, suffix='1p1n'):
                 continue
             if image_tuple_s2 is None:
                 continue
-            if image_tuple_s1 is None:
+            if image_tuple_s3 is None:
                 continue
 
             images.append((

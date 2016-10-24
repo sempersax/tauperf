@@ -18,7 +18,7 @@ from tauperf.imaging.plotting import plot_confusion_matrix, get_wp
 from argparse import ArgumentParser
 parser = ArgumentParser()
 parser.add_argument(
-    '--cal-layer', default=2, choices=[None, 1, 2], type=int,
+    '--cal-layer', default=2, choices=[None, 1, 2, 3], type=int,
     help='select layer for the image selection')
 args = parser.parse_args()
 
@@ -29,12 +29,12 @@ log.info('loading data...')
 
 arr_1p1n = np.load(os.path.join(
     os.getenv('DATA_AREA'), 
-    'tauid_ntuples', 'v5', 
+    'tauid_ntuples', 'v6', 
     'images_S{0}_1p1n.npy'.format(cal_layer)))
 
 arr_1p0n = np.load(os.path.join(
     os.getenv('DATA_AREA'), 
-    'tauid_ntuples', 'v5', 
+    'tauid_ntuples', 'v6', 
     'images_S{0}_1p0n.npy'.format(cal_layer)))
 
 

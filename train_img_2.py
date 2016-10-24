@@ -33,23 +33,33 @@ log.info('loading data...')
 
 arr_1p1n_s1 = np.load(os.path.join(
     os.getenv('DATA_AREA'), 
-    'tauid_ntuples', 'v5', 
+    'tauid_ntuples', 'v6', 
     'images_S1_1p1n.npy'))
 
 arr_1p0n_s1 = np.load(os.path.join(
     os.getenv('DATA_AREA'), 
-    'tauid_ntuples', 'v5', 
+    'tauid_ntuples', 'v6', 
     'images_S1_1p0n.npy'))
 
 arr_1p1n_s2 = np.load(os.path.join(
     os.getenv('DATA_AREA'), 
-    'tauid_ntuples', 'v5', 
+    'tauid_ntuples', 'v6', 
     'images_S2_1p1n.npy'))
 
 arr_1p0n_s2 = np.load(os.path.join(
     os.getenv('DATA_AREA'), 
-    'tauid_ntuples', 'v5', 
+    'tauid_ntuples', 'v6', 
     'images_S2_1p0n.npy'))
+
+arr_1p1n_s3 = np.load(os.path.join(
+    os.getenv('DATA_AREA'), 
+    'tauid_ntuples', 'v6', 
+    'images_S3_1p1n.npy'))
+
+arr_1p0n_s3 = np.load(os.path.join(
+    os.getenv('DATA_AREA'), 
+    'tauid_ntuples', 'v6', 
+    'images_S3_1p0n.npy'))
 
 
 
@@ -59,16 +69,21 @@ data_s1 = np.concatenate((
 data_s2 = np.concatenate((
         arr_1p1n_s2, arr_1p0n_s2))
 
+data_s3 = np.concatenate((
+        arr_1p1n_s3, arr_1p0n_s3))
+
+
 reshaped_data_s1 = data_s1.reshape((data_s1.shape[0], data_s1.shape[1] * data_s1.shape[2]))
 reshaped_data_s2 = data_s2.reshape((data_s2.shape[0], data_s2.shape[1] * data_s2.shape[2]))
+reshaped_data_s3 = data_s3.reshape((data_s3.shape[0], data_s3.shape[1] * data_s3.shape[2]))
 
 target = np.concatenate((
     np.ones(arr_1p1n_s1.shape[0],dtype=np.uint8),
     np.zeros(arr_1p0n_s1.shape[0], dtype=np.uint8)))
 
 log.info('splitting')
-data_train_s1, data_test_s1, data_train_s2, data_test_s2, y_train, y_test = model_selection.train_test_split(
-    reshaped_data_s1, reshaped_data_s2, target, test_size=0.2, random_state=42)
+data_train_s1, data_test_s1, data_train_s2, data_test_s2, data_train_s3, data_test_s3, y_train, y_test = model_selection.train_test_split(
+    reshaped_data_s1, reshaped_data_s2, reshaped_data_s3, target, test_size=0.2, random_state=42)
 
 log.info('Training stat: 1p1n = {0} images, 1p0n = {1} images'.format(
         len(y_train[y_train==1]), len(y_train[y_train==0])))
@@ -85,11 +100,17 @@ data_test_s1  = data_test_s1.reshape((data_test_s1.shape[0], data_s1.shape[1], d
 data_train_s2 = data_train_s2.reshape((data_train_s2.shape[0], data_s2.shape[1], data_s2.shape[2]))
 data_test_s2  = data_test_s2.reshape((data_test_s2.shape[0], data_s2.shape[1], data_s2.shape[2]))
 
+data_train_s3 = data_train_s3.reshape((data_train_s3.shape[0], data_s3.shape[1], data_s3.shape[2]))
+data_test_s3  = data_test_s3.reshape((data_test_s3.shape[0], data_s3.shape[1], data_s3.shape[2]))
+
 data_train_s1 = np.expand_dims(data_train_s1, axis=1)
 data_test_s1  = np.expand_dims(data_test_s1, axis=1)
 
 data_train_s2 = np.expand_dims(data_train_s2, axis=1)
 data_test_s2  = np.expand_dims(data_test_s2, axis=1)
+
+data_train_s3 = np.expand_dims(data_train_s3, axis=1)
+data_test_s3  = np.expand_dims(data_test_s3, axis=1)
 
 model_filename = 'cache/crackpot.h5'
 if args.no_train:
@@ -108,10 +129,6 @@ else:
     model_s1.add(Dense(128))
     model_s1.add(Activation('relu'))
     model_s1.add(Dropout(0.2))
-    # model_s1.add(Dense(16))
-    # model_s1.add(Activation('relu'))
-    # model_s1.add(Dense(1))
-    # model_s1.add(Activation('sigmoid'))
     
     model_s2 = Sequential()
     model_s2.add(Convolution2D(
@@ -124,12 +141,21 @@ else:
     model_s2.add(Dense(128))
     model_s2.add(Activation('relu'))
     model_s2.add(Dropout(0.2))
-    # model_s2.add(Dense(16))
-    # model_s2.add(Activation('relu'))
-    # model_s2.add(Dense(1))
-    # model_s2.add(Activation('sigmoid'))
+
+    model_s3 = Sequential()
+    model_s3.add(Convolution2D(
+            64, 6, 6, border_mode='same', 
+            input_shape=(1, data_s3.shape[1], data_s3.shape[2])))
+    model_s3.add(Activation('relu'))
+    model_s3.add(MaxPooling2D((2, 2), dim_ordering='th'))
+    model_s3.add(Dropout(0.2))
+    model_s3.add(Flatten())
+    model_s3.add(Dense(128))
+    model_s3.add(Activation('relu'))
+    model_s3.add(Dropout(0.2))
+
     
-    merged = Merge([model_s1, model_s2], mode='sum')
+    merged = Merge([model_s1, model_s2, model_s3], mode='sum')
     model = Sequential()
     model.add(merged)
     model.add(Dense(16))
@@ -146,10 +172,10 @@ else:
 
     log.info('starting training...')
     try:
-        model.fit([data_train_s1, data_train_s2], y_train, 
+        model.fit([data_train_s1, data_train_s2, data_train_s3], y_train, 
                   nb_epoch=40, 
                   batch_size=128,                
-                  validation_data=([data_test_s1, data_test_s2], y_test),
+                  validation_data=([data_test_s1, data_test_s2, data_test_s3], y_test),
                   callbacks=[
                 EarlyStopping(
                     verbose=True, patience=5, 
@@ -165,11 +191,11 @@ log.info('testing stuff')
 log.info('Testing stat: 1p1n = {0} images, 1p0n = {1} images'.format(
         len(y_test[y_test==1]), len(y_test[y_test==0])))
 
-loss = model.evaluate([data_test_s1, data_test_s2], y_test, batch_size=128)
+loss = model.evaluate([data_test_s1, data_test_s2, data_test_s3], y_test, batch_size=128)
 print
 log.info(loss)
 
-y_pred = model.predict([data_test_s1, data_test_s2], batch_size=32, verbose=0)
+y_pred = model.predict([data_test_s1, data_test_s2, data_test_s3], batch_size=32, verbose=0)
 
 
 
@@ -190,7 +216,7 @@ plt.plot(
 plt.plot([0, opt_fptr], [1, opt_tpr], linestyle='--', linewidth=2)
 plt.xlabel('1p0n miss-classification efficiency')
 plt.ylabel('1p1n classification efficiency')
-plt.title('1p1n vs 1p0n classification with calo sampling s1 and s2')
+plt.title('1p1n vs 1p0n classification with calo sampling s1, s2 and s3')
 plt.legend(loc='lower right', fontsize='small', numpoints=1)
 plt.savefig('./plots/imaging/roc_curve.pdf')
 plt.figure()
@@ -202,7 +228,7 @@ class_names = ['1p0n', '1p1n']
 cm = cnf_mat.T.astype('float') / cnf_mat.T.sum(axis=0)
 plot_confusion_matrix(
     cm, classes=class_names, 
-    title='Confusion matrix with sampling s1 and s2',
+    title='Confusion matrix with sampling s1, s2 and s3',
     name='plots/imaging/confusion_matrix.pdf')
 
 
