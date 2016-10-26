@@ -5,6 +5,7 @@ import matplotlib as mpl; mpl.use('TkAgg')
 import matplotlib.pyplot as plt
 import math
 import skimage.transform as sk
+from sklearn import model_selection
 
 from .. import print_progress
 from . import log; log = log[__name__]
@@ -84,6 +85,12 @@ def tau_image(rec, rotate_pc=True, cal_layer=2):
     phi = rec['off_cells_dphi_digit'].take(indices[0])
     ene = rec['off_cells_e_norm'].take(indices[0])
 
+    kin_arr = np.array([
+            rec['off_pt'], rec['off_eta'], rec['averageintpercrossing']])
+    kin_rec = np.core.records.fromarrays(
+        kin_arr, names='pt, eta, mu', formats='f8, f8, f8')
+    
+    
 
     # define the square used to collect cells for the image
     if cal_layer == 2:
@@ -156,12 +163,13 @@ def tau_image(rec, rotate_pc=True, cal_layer=2):
             image, np.rad2deg(angle), order=3)
 
     # return image and selected cells eta, phi, ene
-    return image, eta_, phi_, ene_
+    return image, kin_rec, eta_, phi_, ene_
 
 
 def process_taus(records, cal_layer=None, do_plot=True, suffix='1p1n'):
     log.info('')
     images = []
+    kin_recs = []
     for ir in xrange(len(records)):
         print_progress(ir, len(records), prefix='Progress')
 
@@ -190,11 +198,13 @@ def process_taus(records, cal_layer=None, do_plot=True, suffix='1p1n'):
                     image_tuple_s1[0], 
                     image_tuple_s2[0], 
                     image_tuple_s3[0]))
+            kin_recs.append(image_tuple_s2[1])
         else:
             image_tuple = tau_image(rec, cal_layer=cal_layer, rotate_pc=False)
             if image_tuple is not None:
-                image, eta, phi, ene = image_tuple
+                image, kin_rec, eta, phi, ene = image_tuple
                 images.append(image)
+                kin_recs.append(kin_rec)
                 if do_plot and ir < 100:
                     # scatter for the selected pixels
                     plt.figure()
@@ -228,5 +238,42 @@ def process_taus(records, cal_layer=None, do_plot=True, suffix='1p1n'):
                     plt.close()
 
     # return the images to be stored
-    print
-    return images
+    return images, kin_recs
+
+
+def prepare_train_test(d_s1, d_s2, d_s3, kin):
+    
+    flat_d_s1 = d_s1.reshape((d_s1.shape[0], d_s1.shape[1] * d_s1.shape[2]))
+    flat_d_s2 = d_s2.reshape((d_s2.shape[0], d_s2.shape[1] * d_s2.shape[2]))
+    flat_d_s3 = d_s3.reshape((d_s3.shape[0], d_s3.shape[1] * d_s3.shape[2]))
+
+    (train_d_s1, test_d_s1, 
+     train_d_s2, test_d_s2,
+     train_d_s3, test_d_s3,
+     train_kin, test_kin) = model_selection.train_test_split(
+        flat_d_s1, flat_d_s2, flat_d_s3, kin,
+        test_size=0.2, random_state=42)
+
+    train_d_s1 = train_d_s1.reshape((train_d_s1.shape[0], d_s1.shape[1], d_s1.shape[2]))
+    train_d_s2 = train_d_s2.reshape((train_d_s2.shape[0], d_s2.shape[1], d_s2.shape[2]))
+    train_d_s3 = train_d_s3.reshape((train_d_s3.shape[0], d_s3.shape[1], d_s3.shape[2]))
+
+    test_d_s1 = test_d_s1.reshape((test_d_s1.shape[0], d_s1.shape[1], d_s1.shape[2]))
+    test_d_s2 = test_d_s2.reshape((test_d_s2.shape[0], d_s2.shape[1], d_s2.shape[2]))
+    test_d_s3 = test_d_s3.reshape((test_d_s3.shape[0], d_s3.shape[1], d_s3.shape[2]))
+
+    train_d_s1 = np.expand_dims(train_d_s1, axis=1)
+    train_d_s2 = np.expand_dims(train_d_s2, axis=1)
+    train_d_s3 = np.expand_dims(train_d_s3, axis=1)
+
+    test_d_s1 = np.expand_dims(test_d_s1, axis=1)
+    test_d_s2 = np.expand_dims(test_d_s2, axis=1)
+    test_d_s3 = np.expand_dims(test_d_s3, axis=1)
+
+    output_tuple = (
+        train_d_s1, test_d_s1,
+        train_d_s2, test_d_s2,
+        train_d_s3, test_d_s3,
+        train_kin, test_kin)
+
+    return output_tuple
