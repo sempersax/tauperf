@@ -76,7 +76,8 @@ def tau_image(rec, rotate_pc=True, cal_layer=2):
 
 
     # retrieve eta, phi and energy arrays in a given layers
-    indices = np.where(rec['off_cells_samp'] == cal_layer)
+    indices = np.where((rec['off_cells_samp'] == cal_layer) * (rec['off_ntracks'] == 1))
+#     indices = np.where(rec['off_cells_samp'] == cal_layer)
     if len(indices) == 0:
         return None
     eta_r = rec['off_cells_deta'].take(indices[0])

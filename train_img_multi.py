@@ -214,6 +214,7 @@ y_pred_pi0 = score_pi0 > opt_thresh_1p1n
 y_pred_twopi0 = score_twopi0 < opt_thresh_1p2n
 cm = matrix_1p(y_true, y_pred_pi0, y_pred_twopi0)
 class_names = ['1p0n', '1p1n', '1p2n']
+plt.figure()
 plot_confusion_matrix(
     cm, classes=class_names, 
     title='Confusion matrix with sampling s1, s2 and s3',

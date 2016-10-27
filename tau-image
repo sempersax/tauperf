@@ -50,7 +50,7 @@ if __name__ == '__main__':
     h5_filename = os.path.join(
         os.getenv('DATA_AREA'), 'tauid_ntuples', 'v6', 'output_210files.h5')
 
-    create_image_data(h5_filename, '1p2n', cal_layer=args.cal_layer)
-#     create_image_data(h5_filename, '1p0n', cal_layer=args.cal_layer)
-#     create_image_data(h5_filename, '1p1n', cal_layer=args.cal_layer)
+#     create_image_data(h5_filename, '1p2n', cal_layer=args.cal_layer)
+    create_image_data(h5_filename, '1p0n', cal_layer=args.cal_layer)
+    create_image_data(h5_filename, '1p1n', cal_layer=args.cal_layer)
 
