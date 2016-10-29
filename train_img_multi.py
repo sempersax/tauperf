@@ -12,7 +12,7 @@ from keras.utils.np_utils import to_categorical
 from tauperf import log; log = log['/train-img-multi']
 from tauperf.imaging.plotting import plot_confusion_matrix, get_eff, get_wp
 from tauperf.imaging.models import binary_2d_model, dense_merged_model
-from tauperf.imaging.processing import prepare_train_test
+from tauperf.imaging.processing import prepare_train_test, create_record
 
 from argparse import ArgumentParser
 parser = ArgumentParser()

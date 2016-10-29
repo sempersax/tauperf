@@ -15,22 +15,17 @@ def create_image_data(filename, tau_type, cal_layer=None):
     h5file = File(filename, mode='r')
     dir_name = os.path.dirname(filename)
     records = h5file.get('rec_' + tau_type)
-    images, kin_rec = process_taus(
+    log.info('process {0}: {1} entries'.format(tau_type, len(records)))
+    images = process_taus(
         records, cal_layer=cal_layer, suffix=tau_type)
 
-    log.info('process {0}: {1} entries'.format(tau_type, len(records)))
     if cal_layer is not None:
-        np.save(os.path.join(dir_name, 'images_S{0}_1p2n.npy'.format(cal_layer)), images)
+        np.save(os.path.join(dir_name, 'images_S{0}_{1}.npy'.format(cal_layer, tau_type)), images)
     else:
-        images_s1 = [im[0] for im in images]
-        images_s2 = [im[1] for im in images]
-        images_s3 = [im[2] for im in images]
-        np.save(os.path.join(dir_name, 'images_S1_{0}.npy'.format(tau_type)), images_s1)
-        np.save(os.path.join(dir_name, 'images_S2_{0}.npy'.format(tau_type)), images_s2)
-        np.save(os.path.join(dir_name, 'images_S3_{0}.npy'.format(tau_type)), images_s3)
+        np.save(os.path.join(dir_name, 'images_{0}.npy'.format(tau_type)), images)
 
-    np.save(os.path.join(dir_name, 'kinematics_{0}.npy'.format(tau_type)), np.asarray(kin_rec))
     log.info('close h5 file {0}'.format(filename))
+    h5file.flush()
     h5file.close()
     log.info('')
         
@@ -39,6 +34,7 @@ def create_image_data(filename, tau_type, cal_layer=None):
 if __name__ == '__main__':
     from argparse import ArgumentParser
     parser = ArgumentParser()
+    parser.add_argument('--tau-type', default='1p1n', choices=['1p0n', '1p1n', '1p2n'])
     parser.add_argument(
         '--cal-layer', default=None, choices=[None, 1, 2], type=int, 
         help='select layer for the image selection')
@@ -46,11 +42,9 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     cal_layer = args.cal_layer
-
+    tau_type = args.tau_type
     h5_filename = os.path.join(
         os.getenv('DATA_AREA'), 'tauid_ntuples', 'v6', 'output_210files.h5')
 
-#     create_image_data(h5_filename, '1p2n', cal_layer=args.cal_layer)
-    create_image_data(h5_filename, '1p0n', cal_layer=args.cal_layer)
-    create_image_data(h5_filename, '1p1n', cal_layer=args.cal_layer)
+    create_image_data(h5_filename, tau_type, cal_layer=args.cal_layer)
 

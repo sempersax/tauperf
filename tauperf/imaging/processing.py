@@ -128,7 +128,7 @@ def tau_image(rec, rotate_pc=True, cal_layer=2):
     rec_new.sort(order=('x', 'y'))
 
     if len(ene) == 0:
-        log.warning('pathologic case with 0 cells --> need to figure out why')
+#         log.warning('pathologic case with 0 cells --> need to figure out why')
         return None
 
     # disgard image with wrong pixelization (need to fix!)
@@ -167,12 +167,16 @@ def tau_image(rec, rotate_pc=True, cal_layer=2):
     return image, kin_rec, eta_, phi_, ene_
 
 
-def process_taus(records, cal_layer=None, do_plot=True, suffix='1p1n'):
+def process_taus(records, nentries=None, cal_layer=None, do_plot=True, suffix='1p1n'):
     log.info('')
     images = []
     kin_recs = []
     for ir in xrange(len(records)):
         print_progress(ir, len(records), prefix='Progress')
+
+        # kill the loop after number of specified entries
+        if nentries is not None and ir == nentries:
+            break
 
         # protect against pathologic arrays
         try:
@@ -194,18 +198,47 @@ def process_taus(records, cal_layer=None, do_plot=True, suffix='1p1n'):
                 continue
             if image_tuple_s3 is None:
                 continue
+            
+            s1 = image_tuple_s1[0]
+            s2 = image_tuple_s2[0]
+            s3 = image_tuple_s3[0]
+            pt = rec['off_pt']
+            eta = rec['off_eta']
+            mu = rec['averageintpercrossing']
 
-            images.append((
-                    image_tuple_s1[0], 
-                    image_tuple_s2[0], 
-                    image_tuple_s3[0]))
-            kin_recs.append(image_tuple_s2[1])
+
+            image = np.array([(s1, s2, s3, pt, eta, mu)],
+                              dtype=[
+                    ('s1', 'f8', s1.shape), 
+                    ('s2', 'f8', s2.shape), 
+                    ('s3', 'f8', s3.shape), 
+                    ('pt', 'f8'), 
+                    ('eta', 'f8'), 
+                    ('mu', 'f8')])
+            images.append(image)
+
+#             images.append((
+#                     image_tuple_s1[0], 
+#                     image_tuple_s2[0], 
+#                     image_tuple_s3[0]))
+#             kin_recs.append(image_tuple_s2[1])
         else:
             image_tuple = tau_image(rec, cal_layer=cal_layer, rotate_pc=False)
             if image_tuple is not None:
-                image, kin_rec, eta, phi, ene = image_tuple
+                image_cal, kin_rec, eta, phi, ene = image_tuple
+
+                
+                image = np.array([(image_cal, pt, eta, mu)],
+                                 dtype=[
+                        ('s{0}'.format(cal_layer), 'f8', image_cal.shape), 
+                        ('pt', 'f8'), 
+                        ('eta', 'f8'), 
+                        ('mu', 'f8')])
                 images.append(image)
-                kin_recs.append(kin_rec)
+
+
+#                 images.append(image)
+#                 kin_recs.append(kin_rec)
                 if do_plot and ir < 100:
                     # scatter for the selected pixels
                     plt.figure()
@@ -239,7 +272,9 @@ def process_taus(records, cal_layer=None, do_plot=True, suffix='1p1n'):
                     plt.close()
 
     # return the images to be stored
-    return images, kin_recs
+    print
+    images = np.asarray(images)
+    return images
 
 
 def prepare_train_test(d_s1, d_s2, d_s3, kin):
