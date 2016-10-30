@@ -48,12 +48,37 @@ def dense_merged_model(data, mode='sum'):
     model.add(Activation('sigmoid'))
     return model
 
+def dense_merged_model_categorical(data, mode='sum'):
+    """
+    """
+    log.info('build 2d convolutional model for s1')
+    model_s1 = binary_2d_model(data['s1'])
+
+    log.info('build 2d convolutional model for s2')
+    model_s2 = binary_2d_model(data['s2'])
+
+    log.info('build 2d convolutional model for s3')
+    model_s3 = binary_2d_model(data['s3'])
+
+    models = [model_s1, model_s2, model_s3]
+
+    log.info('Merge the models to a dense model')
+    merged_model = Merge(models, mode=mode)
+    model = Sequential()
+    model.add(merged_model)
+    model.add(Dense(16))
+    model.add(Activation('relu'))
+    model.add(Dense(3))
+    model.add(Activation('softmax'))
+    return model
+
 
 def load_or_fit(
     model,
     X_train, y_train, 
     X_test, y_test, 
     filename='cache/crackpot.h5',
+    loss='binary_crossentropy',
     overwrite=False,
     no_train=False):
 
@@ -70,7 +95,7 @@ def load_or_fit(
         log.info('Compile model')
         model.compile(
             optimizer='rmsprop',
-            loss='binary_crossentropy',
+            loss=loss,
             metrics=['accuracy'])
 
         log.info('Start training ...')
