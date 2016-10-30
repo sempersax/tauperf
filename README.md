@@ -69,6 +69,7 @@ pip install keras
 pip install h5py
 pip install sklearn
 pip install scikit-image
+pip install matplotlib
 pip install root_numpy
 pip install rootpy
 pip install tabulate
