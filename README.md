@@ -52,28 +52,27 @@ setup_ROOT
 which root
 ```
 
-## Installing the dependencies
-### setuptools (if needed)
+## Install
+### virtual environment
 ```bash
-wget https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py
-python ez_setup.py --user
+virtualenv imaging_ve
+source imaging_ve/bin/activate
 ```
-### rootpy
+### root setup
+you need a working setup of ROOT 6.
+
+### dependencies
 ```bash
-git clone https://github.com/rootpy/rootpy.git
-cd rootpy
-python setup.py install --user
-cd .. 
- ```
-### prettytable 
- ```bash
- git clone https://github.com/qbuat/prettytable.git
- cd prettytable/
- python setup.py install --user
- cd ..
- ```
-### others
-list of dependencies is out-dated for scikit-learn/keras studies.
+pip install pip --upgrade
+pip install theano
+pip install keras
+pip install h5py
+pip install sklearn
+pip install scikit-image
+pip install root_numpy
+pip install rootpy
+pip install tabulate
+```
 
 ## Downloading and setup of the tauperf project
 The set of commands below allows you to download and use the tauperf package. If you want to contribute to the project and also make your work available publicly you need to fork it on github and work with your own copy of tauperf.
@@ -81,6 +80,7 @@ The set of commands below allows you to download and use the tauperf package. If
 ```bash
 git clone https://github.com/qbuat/tauperf.git
 cd tauperf
+git checkout -b imaging origin/imaging
 source setup.sh
 ```
 # Usage
