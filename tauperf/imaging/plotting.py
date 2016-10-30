@@ -48,6 +48,7 @@ def plot_confusion_matrix(cm, classes,
     if normalize:
         cm = cm.astype('float') / cm.sum(axis=0)#[:, np.newaxis]
     else:
+        print
         print('Confusion matrix, without normalization')
         plt.colorbar()
 

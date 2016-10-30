@@ -57,13 +57,14 @@ def load_or_fit(
     overwrite=False,
     no_train=False):
 
+    if no_train:
+        log.info('loading model {0}'.format(os.path.basename(filename)))
+        model = load_model(filename)
+        return True
+
     if not overwrite and os.path.exists(filename):
         log.error('weight file {0} exists, aborting!'.format(filename))
         raise ValueError('overwrite needs to be set to false')
-
-    if no_train:
-        model = load_model(filename)
-        return True
 
     try:
         log.info('Compile model')
