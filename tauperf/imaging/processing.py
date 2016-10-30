@@ -170,7 +170,6 @@ def tau_image(rec, rotate_pc=True, cal_layer=2):
 def process_taus(records, nentries=None, cal_layer=None, do_plot=False, suffix='1p1n'):
     log.info('')
     images = []
-    kin_recs = []
     for ir in xrange(len(records)):
         print_progress(ir, len(records), prefix='Progress')
 
