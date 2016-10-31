@@ -158,7 +158,7 @@ def tau_image(
 
     # reshaping
     if cal_layer == 1:
-        image = rec_new['z'].reshape((4, 132))
+        image = rec_new['z'].reshape((4, 128))
 
     # reshaping
     elif cal_layer == 2:
