@@ -5,7 +5,7 @@ import numpy as np
 from h5py import File
 
 from tauperf import log; log = log['/tau-image']
-from tauperf.imaging import process_taus
+from tauperf.imaging.processing import process_taus
 
 
 def create_image_data(filename, tau_type, cal_layer=None):

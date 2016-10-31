@@ -50,7 +50,7 @@ def merged_3d_model(data):
     model_s1.add(Convolution2D(
             16, 2, 4, border_mode='same',dim_ordering='th'))
     model_s1.add(Activation('relu'))
-    model_s1.add(MaxPooling2D((1, 3), dim_ordering='th'))
+1    model_s1.add(MaxPooling2D((1, 3), dim_ordering='th'))
     model_s1.add(Dropout(0.2))
 
     model_s2 = Sequential()

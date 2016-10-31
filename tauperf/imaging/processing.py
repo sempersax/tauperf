@@ -106,7 +106,7 @@ def tau_image(
         r_eta = 0.201
         r_phi = 0.201
     elif cal_layer == 1:
-        n_eta = 66
+        n_eta = 64
         n_phi = 2
         r_eta = 0.401
         r_phi = 0.401
@@ -130,7 +130,9 @@ def tau_image(
 
     if do_plot is True:
         plot_image(
-            eta_r_, phi_r_, ene_, irec, cal_layer, suffix)
+            rec, eta_r, phi_r, ene, irec, cal_layer, suffix)
+        plot_image(
+            rec, eta_r_, phi_r_, ene_, irec, cal_layer, 'selected_' + suffix)
 
 
     # create the raw image
@@ -203,9 +205,9 @@ def process_taus(records, nentries=None, cal_layer=None, do_plot=False, suffix='
             continue
 
         if cal_layer is None:
-            image_tuple_s1 = tau_image(ir, rec, cal_layer=1, do_plot=do_plot)
-            image_tuple_s2 = tau_image(ir, rec, cal_layer=2, do_plot=do_plot)
-            image_tuple_s3 = tau_image(ir, rec, cal_layer=3, do_plot=do_plot)
+            image_tuple_s1 = tau_image(ir, rec, cal_layer=1, do_plot=do_plot, suffix=suffix)
+            image_tuple_s2 = tau_image(ir, rec, cal_layer=2, do_plot=do_plot, suffix=suffix)
+            image_tuple_s3 = tau_image(ir, rec, cal_layer=3, do_plot=do_plot, suffix=suffix)
 
             if image_tuple_s1 is None:
                 continue

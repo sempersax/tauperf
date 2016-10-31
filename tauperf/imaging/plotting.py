@@ -1,3 +1,4 @@
+import math
 import numpy as np
 import itertools
 import matplotlib as mpl; mpl.use('TkAgg')
@@ -5,6 +6,14 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 
 from . import log; log = log[__name__]
+
+def dphi(phi_1, phi_2):
+    d_phi = phi_1 - phi_2
+    if (d_phi >= math.pi):
+        return 2.0 * math.pi - d_phi
+    if (d_phi < -1.0 * math.pi):
+        return 2.0 * math.pi + d_phi
+    return d_phi
 
 def get_wp(true_pos, false_pos, thresh, method='corner'):
     if (true_pos.ndim, false_pos.ndim, thresh.ndim) != (1, 1, 1):
@@ -71,9 +80,9 @@ def plot_confusion_matrix(cm, classes,
 
 
 # pt efficiency
-from root_numpy import fill_hist
-from rootpy.plotting import Hist, Efficiency
 def calc_eff(accept, total, binning=(20, 0, 100), name='1p1n'):
+    from root_numpy import fill_hist
+    from rootpy.plotting import Hist, Efficiency
     hnum = Hist(binning[0], binning[1], binning[2])
     hden = Hist(binning[0], binning[1], binning[2])
     fill_hist(hnum, accept)
@@ -89,20 +98,31 @@ def get_eff(arr, pred, scale=1., binning=(20, 0, 100), color='red', name='1p1n')
     return eff
 
 
-def plot_image(eta, phi, ene, irec, cal_layer, suffix):
+def plot_image(rec, eta, phi, ene, irec, cal_layer, suffix):
     fig = plt.figure()
     ax = fig.add_subplot(111, aspect='equal')
-    rec = mpatches.Rectangle((-0.2, -0.2), 0.4, 0.4, fill=False, linewidth=3)
+    rect = mpatches.Rectangle(
+        (-0.2, -0.2), 0.4, 0.4, 
+        fill=False, linewidth=3, label='selection')
     plt.scatter(
         eta, phi, c=ene, marker='s', s=40,
         label= 'Number of cells = {0}'.format(len(eta)))
+    plt.colorbar()
+    ax.add_patch(rect)
+    plt.plot(
+        rec['true_charged_eta'] - rec['true_eta'], 
+        dphi(rec['true_charged_phi'], rec['true_phi']), 'ro', 
+        label='charge pi, pT = %1.2f GeV' % (rec['true_charged_pt'] / 1000.))
+    plt.plot(
+        rec['true_neutral_eta'] - rec['true_eta'], 
+        dphi(rec['true_neutral_phi'], rec['true_phi']), 'g^', 
+        label='neutral pi, pT = %1.2f GeV' % (rec['true_neutral_pt'] / 1000.))
     plt.xlim(-0.4, 0.4)
     plt.ylim(-0.4, 0.4)
     plt.xlabel('eta')
     plt.ylabel('phi')
     plt.title('{0}: image {1} sampling {2}'.format(suffix, irec, cal_layer))
     plt.legend(loc='upper right', fontsize='small', numpoints=1)
-    ax.add_patch(rec)
     fig.savefig('plots/imaging/image_{0}_s{1}_{2}.pdf'.format(
             irec, cal_layer, suffix))
     fig.clf()
