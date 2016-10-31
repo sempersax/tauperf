@@ -147,7 +147,7 @@ def tau_image(
         return None
 
     # disgard image with wrong pixelization (need to fix!)
-    if cal_layer == 1 and len(rec_new) != 528:
+    if cal_layer == 1 and len(rec_new) != 512:
         return None
 
     if cal_layer == 2 and len(rec_new) != 256:
