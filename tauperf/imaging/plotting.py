@@ -2,6 +2,7 @@ import numpy as np
 import itertools
 import matplotlib as mpl; mpl.use('TkAgg')
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 
 from . import log; log = log[__name__]
 
@@ -86,3 +87,23 @@ def get_eff(arr, pred, scale=1., binning=(20, 0, 100), color='red', name='1p1n')
     eff = calc_eff(accept, total, binning=binning, name=name)
     eff.color = color
     return eff
+
+
+def plot_image(eta, phi, ene, irec, cal_layer, suffix):
+    fig = plt.figure()
+    ax = fig.add_subplot(111, aspect='equal')
+    rec = mpatches.Rectangle((-0.2, -0.2), 0.4, 0.4, fill=False, linewidth=3)
+    plt.scatter(
+        eta, phi, c=ene, marker='s', s=40,
+        label= 'Number of cells = {0}'.format(len(eta)))
+    plt.xlim(-0.4, 0.4)
+    plt.ylim(-0.4, 0.4)
+    plt.xlabel('eta')
+    plt.ylabel('phi')
+    plt.title('{0}: image {1} sampling {2}'.format(suffix, irec, cal_layer))
+    plt.legend(loc='upper right', fontsize='small', numpoints=1)
+    ax.add_patch(rec)
+    fig.savefig('plots/imaging/image_{0}_s{1}_{2}.pdf'.format(
+            irec, cal_layer, suffix))
+    fig.clf()
+    plt.close()

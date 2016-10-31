@@ -9,7 +9,7 @@ from sklearn import model_selection
 from sklearn.metrics import roc_curve
 
 from tauperf import log; log = log['/fitter']
-from tauperf.imaging.models import dense_merged_model, load_or_fit
+from tauperf.imaging.models import dense_merged_model, load_or_fit, merged_3d_model
 
 from argparse import ArgumentParser
 parser = ArgumentParser()
@@ -61,21 +61,24 @@ print tabulate(sample_size_table, headers=headers, tablefmt='simple')
 log.info('')
 
 # training/testing samples for 1p1n against 1p0n
-train_pi0 = np.concatenate((train_1p0n, train_1p1n))
-test_pi0  = np.concatenate((test_1p0n, test_1p1n))
-val_pi0   = np.concatenate((val_1p0n, val_1p1n))
+train_pi0 = np.concatenate((train_1p0n, train_1p1n, train_1p2n))
+test_pi0  = np.concatenate((test_1p0n, test_1p1n, test_1p2n))
+val_pi0   = np.concatenate((val_1p0n, val_1p1n, val_1p2n))
 
 y_train_pi0 = np.concatenate((
     np.zeros(train_1p0n.shape, dtype=np.uint8),
-    np.ones(train_1p1n.shape, dtype=np.uint8)))
+    np.ones(train_1p1n.shape, dtype=np.uint8),
+    np.ones(train_1p2n.shape, dtype=np.uint8)))
 
 y_test_pi0 = np.concatenate((
     np.zeros(test_1p0n.shape, dtype=np.uint8),
-    np.ones(test_1p1n.shape, dtype=np.uint8)))
+    np.ones(test_1p1n.shape, dtype=np.uint8),
+    np.ones(test_1p2n.shape, dtype=np.uint8)))
 
 y_val_pi0 = np.concatenate((
     np.zeros(val_1p0n.shape, dtype=np.uint8),
-    np.ones(val_1p1n.shape, dtype=np.uint8)))
+    np.ones(val_1p1n.shape, dtype=np.uint8),
+    np.ones(val_1p2n.shape, dtype=np.uint8)))
 
 
 # training/testing samples for 1p1n against 1p2n
@@ -99,7 +102,7 @@ y_val_twopi0 = np.concatenate((
 # ##############################################
 log.info('training stuff')
 model_pi0_filename = 'cache/crackpot_new_pi0.h5'
-model_pi0 = dense_merged_model(train_pi0)
+model_pi0 = merged_3d_model(train_pi0)
 load_or_fit(
     model_pi0,
     train_pi0, y_train_pi0,
@@ -151,7 +154,7 @@ log.info('1p1n vs 1p2n: cutting on the score at {0}'.format(opt_thresh_1p2n))
 
 plt.figure()
 plt.plot([0, 1], [0, 1], '--', color=(0.6, 0.6, 0.6), label='Luck')
-plt.plot(fptr_1p1n, tpr_1p1n, color='red', label='1p1n vs 1p0n')
+plt.plot(fptr_1p1n, tpr_1p1n, color='red', label='1pXn vs 1p0n')
 plt.plot(fptr_1p2n, tpr_1p2n, color='blue', label='1p1n vs 1p2n')
 plt.plot([opt_fptr_1p1n, opt_fptr_1p2n],
           [opt_tpr_1p1n, opt_tpr_1p2n], 'go',

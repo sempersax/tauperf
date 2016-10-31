@@ -22,7 +22,7 @@ def create_image_data(filename, tau_type, cal_layer=None):
     if cal_layer is not None:
         np.save(os.path.join(dir_name, 'images_S{0}_{1}.npy'.format(cal_layer, tau_type)), images)
     else:
-        np.save(os.path.join(dir_name, 'images_{0}.npy'.format(tau_type)), images)
+        np.save(os.path.join(dir_name, 'images_new_{0}.npy'.format(tau_type)), images)
 
     log.info('close h5 file {0}'.format(filename))
     h5file.flush()

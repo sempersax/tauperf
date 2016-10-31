@@ -1,4 +1,5 @@
 import os
+import uuid
 import numpy as np
 from numpy.lib import recfunctions
 import matplotlib as mpl; mpl.use('TkAgg')
@@ -9,6 +10,7 @@ from sklearn import model_selection
 
 from .. import print_progress
 from . import log; log = log[__name__]
+from .plotting import plot_image
 
 def dphi(phi_1, phi_2):
     d_phi = phi_1 - phi_2
@@ -69,7 +71,12 @@ def interpolate_rbf(x, y, z, function='linear', rotate_pc=True):
     return im
 
 
-def tau_image(rec, rotate_pc=True, cal_layer=2):
+def tau_image(
+    irec, rec, 
+    rotate_pc=False, 
+    cal_layer=2, 
+    do_plot=False,
+    suffix='1p1n'):
     """
     return a pixelized image of a tau candidate.
     """
@@ -91,7 +98,6 @@ def tau_image(rec, rotate_pc=True, cal_layer=2):
     kin_rec = np.core.records.fromarrays(
         kin_arr, names='pt, eta, mu', formats='f8, f8, f8')
     
-    
 
     # define the square used to collect cells for the image
     if cal_layer == 2:
@@ -100,9 +106,9 @@ def tau_image(rec, rotate_pc=True, cal_layer=2):
         r_eta = 0.201
         r_phi = 0.201
     elif cal_layer == 1:
-        n_eta = 24
+        n_eta = 66
         n_phi = 2
-        r_eta = 0.201
+        r_eta = 0.401
         r_phi = 0.401
     elif cal_layer == 3:
         n_eta = 4
@@ -116,9 +122,16 @@ def tau_image(rec, rotate_pc=True, cal_layer=2):
 
     # collect cells in a square (or rectangle)
     square_ = (np.abs(eta) < n_eta) * (np.abs(phi) < n_phi) *(np.abs(eta_r) < r_eta) * (np.abs(phi_r) < r_phi)
+    eta_r_ = eta_r[square_]
+    phi_r_ = phi_r[square_]
     eta_ = eta[square_]
     phi_ = phi[square_]
     ene_ = ene[square_]
+
+    if do_plot is True:
+        plot_image(
+            eta_r_, phi_r_, ene_, irec, cal_layer, suffix)
+
 
     # create the raw image
     arr = np.array([eta_, phi_, ene_])
@@ -132,7 +145,7 @@ def tau_image(rec, rotate_pc=True, cal_layer=2):
         return None
 
     # disgard image with wrong pixelization (need to fix!)
-    if cal_layer == 1 and len(rec_new) != 192:
+    if cal_layer == 1 and len(rec_new) != 528:
         return None
 
     if cal_layer == 2 and len(rec_new) != 256:
@@ -143,7 +156,7 @@ def tau_image(rec, rotate_pc=True, cal_layer=2):
 
     # reshaping
     if cal_layer == 1:
-        image = rec_new['z'].reshape((4, 48))
+        image = rec_new['z'].reshape((4, 132))
 
     # reshaping
     elif cal_layer == 2:
@@ -171,8 +184,11 @@ def process_taus(records, nentries=None, cal_layer=None, do_plot=False, suffix='
     log.info('')
     images = []
     for ir in xrange(len(records)):
-        print_progress(ir, len(records), prefix='Progress')
-
+        if nentries is None:
+            print_progress(ir, len(records), prefix='Progress')
+        else:
+            print_progress(ir, nentries, prefix='Progress')
+            
         # kill the loop after number of specified entries
         if nentries is not None and ir == nentries:
             break
@@ -187,9 +203,9 @@ def process_taus(records, nentries=None, cal_layer=None, do_plot=False, suffix='
             continue
 
         if cal_layer is None:
-            image_tuple_s1 = tau_image(rec, cal_layer=1, rotate_pc=False)
-            image_tuple_s2 = tau_image(rec, cal_layer=2, rotate_pc=False)
-            image_tuple_s3 = tau_image(rec, cal_layer=3, rotate_pc=False)
+            image_tuple_s1 = tau_image(ir, rec, cal_layer=1, do_plot=do_plot)
+            image_tuple_s2 = tau_image(ir, rec, cal_layer=2, do_plot=do_plot)
+            image_tuple_s3 = tau_image(ir, rec, cal_layer=3, do_plot=do_plot)
 
             if image_tuple_s1 is None:
                 continue
@@ -217,7 +233,7 @@ def process_taus(records, nentries=None, cal_layer=None, do_plot=False, suffix='
             images.append(image)
 
         else:
-            image_tuple = tau_image(rec, cal_layer=cal_layer, rotate_pc=False)
+            image_tuple = tau_image(ir, rec, cal_layer=cal_layer, rotate_pc=False)
             if image_tuple is not None:
                 image_cal, kin_rec, eta, phi, ene = image_tuple
 
