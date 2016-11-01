@@ -113,10 +113,11 @@ def plot_image(rec, eta, phi, ene, irec, cal_layer, suffix):
         rec['true_charged_eta'] - rec['true_eta'], 
         dphi(rec['true_charged_phi'], rec['true_phi']), 'ro', 
         label='charge pi, pT = %1.2f GeV' % (rec['true_charged_pt'] / 1000.))
-    plt.plot(
-        rec['true_neutral_eta'] - rec['true_eta'], 
-        dphi(rec['true_neutral_phi'], rec['true_phi']), 'g^', 
-        label='neutral pi, pT = %1.2f GeV' % (rec['true_neutral_pt'] / 1000.))
+    if not '0n' in suffix:
+        plt.plot(
+            rec['true_neutral_eta'] - rec['true_eta'], 
+            dphi(rec['true_neutral_phi'], rec['true_phi']), 'g^', 
+            label='neutral pi, pT = %1.2f GeV' % (rec['true_neutral_pt'] / 1000.))
     plt.xlim(-0.4, 0.4)
     plt.ylim(-0.4, 0.4)
     plt.xlabel('eta')

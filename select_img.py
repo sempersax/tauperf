@@ -4,7 +4,7 @@ from h5py import File
 
 from tauperf import log; log = log['/select-img']
 from tauperf.imaging.processing import process_taus
-tau_type = '1p1n'
+tau_type = '1p0n'
 
 h5_filename = os.path.join(
     os.getenv('DATA_AREA'), 'tauid_ntuples', 'v6', 'output_210files.h5')
@@ -34,12 +34,12 @@ process_taus(records, nentries=10, do_plot=True, suffix=tau_type)
 # layer = 2
 
 # s3
-npixels = 128
-n_eta = 4
-r_eta = 0.201
-n_phi = 8
-r_phi = 0.201
-layer = 3
+# npixels = 128
+# n_eta = 4
+# r_eta = 0.201
+# n_phi = 8
+# r_phi = 0.201
+# layer = 3
 
 
 # bad_img = 0

@@ -9,7 +9,7 @@
 
 echo "specific to Quentin's computer"
 thisroot
-source ../crackpot/bin/activate
+source ../imaging_ve/bin/activate
 
 
 SOURCE_TAUPERF_SETUP="${BASH_SOURCE[0]:-$0}"

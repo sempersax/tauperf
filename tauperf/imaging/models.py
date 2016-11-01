@@ -1,5 +1,5 @@
 import os
-from keras.models import Sequential, load_model
+from keras.models import Sequential
 from keras.layers import Merge
 from keras.layers.core import Dense, Dropout, Activation, Flatten
 from keras.layers.convolutional import Convolution1D, Convolution2D, MaxPooling2D
@@ -8,22 +8,6 @@ from keras.callbacks import EarlyStopping, ModelCheckpoint
 from . import log; log = log[__name__]
 
 def binary_2d_model(data):
-    """
-    """
-    model = Sequential()
-    model.add(Convolution2D(
-            64, 6, 6, border_mode='same', 
-            input_shape=data[0].shape))
-    model.add(Activation('relu'))
-    model.add(MaxPooling2D((2, 2), dim_ordering='th'))
-    model.add(Dropout(0.2))
-    model.add(Flatten())
-    model.add(Dense(128))
-    model.add(Activation('relu'))
-    model.add(Dropout(0.2))
-    return model
-
-def binary_3d_model(data):
     """
     """
     model = Sequential()
@@ -50,7 +34,7 @@ def merged_3d_model(data):
     model_s1.add(Convolution2D(
             16, 2, 4, border_mode='same',dim_ordering='th'))
     model_s1.add(Activation('relu'))
-1    model_s1.add(MaxPooling2D((1, 3), dim_ordering='th'))
+    model_s1.add(MaxPooling2D((1, 3), dim_ordering='th'))
     model_s1.add(Dropout(0.2))
 
     model_s2 = Sequential()
@@ -139,7 +123,7 @@ def dense_merged_model_categorical(data, mode='sum'):
     return model
 
 
-def load_or_fit(
+def fit_model(
     model,
     X_train, y_train, 
     X_test, y_test, 
@@ -148,11 +132,7 @@ def load_or_fit(
     overwrite=False,
     no_train=False):
 
-    if no_train:
-        log.info('loading model {0}'.format(os.path.basename(filename)))
-        model = load_model(filename)
-        return True
-
+ 
     if not overwrite and os.path.exists(filename):
         log.error('weight file {0} exists, aborting!'.format(filename))
         raise ValueError('overwrite needs to be set to false')
@@ -180,10 +160,8 @@ def load_or_fit(
                 ])
 
         model.save(filename)
-        return True
     
 
     except KeyboardInterrupt:
         log.info('Ended early..')
-        return False
 

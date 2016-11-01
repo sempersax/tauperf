@@ -7,9 +7,10 @@ from tabulate import tabulate
 
 from sklearn import model_selection
 from sklearn.metrics import roc_curve
+from keras.models import load_model
 
 from tauperf import log; log = log['/fitter']
-from tauperf.imaging.models import dense_merged_model, load_or_fit, merged_3d_model
+from tauperf.imaging.models import fit_model, dense_merged_model, merged_3d_model
 
 from argparse import ArgumentParser
 parser = ArgumentParser()
@@ -30,9 +31,9 @@ data_dir = os.path.join(
     os.getenv('DATA_AREA'), 'tauid_ntuples', 'v6')
                         
 
-images_1p0n  = np.load(os.path.join(data_dir, 'images_1p0n.npy'))
-images_1p1n  = np.load(os.path.join(data_dir, 'images_1p1n.npy'))
-images_1p2n  = np.load(os.path.join(data_dir, 'images_1p2n.npy'))
+images_1p0n  = np.load(os.path.join(data_dir, 'images_new_1p0n.npy'))
+images_1p1n  = np.load(os.path.join(data_dir, 'images_new_1p1n.npy'))
+images_1p2n  = np.load(os.path.join(data_dir, 'images_new_1p2n.npy'))
 
 
 log.info('splitting')
@@ -101,19 +102,27 @@ y_val_twopi0 = np.concatenate((
 
 # ##############################################
 log.info('training stuff')
-model_pi0_filename = 'cache/crackpot_new_pi0.h5'
-model_pi0 = merged_3d_model(train_pi0)
-load_or_fit(
-    model_pi0,
-    train_pi0, y_train_pi0,
-    val_pi0, y_val_pi0,
-    filename=model_pi0_filename,
-    overwrite=args.overwrite,
-    no_train=args.no_train or args.no_train_pi0)
+model_pi0_filename = 'cache/crackpot_dense_pi0.h5'
+if args.no_train or args.no_train_pi0:
+    model_pi0 = load_model(model_pi0_filename)
+else:
+#     model_pi0 = merged_3d_model(train_pi0)
+    model_pi0 = dense_merged_model(train_pi0)
+    fit_model(
+        model_pi0,
+        train_pi0, y_train_pi0,
+        val_pi0, y_val_pi0,
+        filename=model_pi0_filename,
+        overwrite=args.overwrite,
+        no_train=args.no_train or args.no_train_pi0)
 
-model_twopi0_filename = 'cache/crackpot_new_twopi0.h5'
-model_twopi0 = dense_merged_model(train_twopi0)
-load_or_fit(
+model_twopi0_filename = 'cache/crackpot_dense_twopi0.h5'
+if args.no_train or args.no_train_twopi0:
+    model_twopi0 = load_model(model_twopi0_filename)
+else:
+    model_twopi0 = dense_merged_model(train_twopi0)
+#     model_twopi0 = merged_3d_model(train_twopi0)
+    fit_model(
     model_twopi0,
     train_twopi0, y_train_twopi0,
     val_twopi0, y_val_twopi0,
