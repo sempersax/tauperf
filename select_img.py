@@ -4,15 +4,17 @@ from h5py import File
 
 from tauperf import log; log = log['/select-img']
 from tauperf.imaging.processing import process_taus
-tau_type = '1p0n'
 
 h5_filename = os.path.join(
     os.getenv('DATA_AREA'), 'tauid_ntuples', 'v6', 'output_210files.h5')
 
 h5file = File(h5_filename, mode='r')
-records = h5file.get('rec_' + tau_type)
+rec_1p1n = h5file.get('rec_1p1n')
+process_taus(rec_1p1n, nentries=10, do_plot=True, suffix='1p1n')
 
-process_taus(records, nentries=10, do_plot=True, suffix=tau_type)
+rec_1p0n = h5file.get('rec_1p0n')
+process_taus(rec_1p0n, nentries=10, do_plot=True, suffix='1p0n')
+
 
 
 # print 'process 1p1n:', len(rec_1p1n)

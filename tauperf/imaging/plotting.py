@@ -128,3 +128,25 @@ def plot_image(rec, eta, phi, ene, irec, cal_layer, suffix):
             irec, cal_layer, suffix))
     fig.clf()
     plt.close()
+
+def plot_heatmap(image, rec, irec, cal_layer, suffix):
+    fig = plt.figure()
+    plt.imshow(image, extent=[-0.2, 0.2, -0.2, 0.2], interpolation='nearest',  cmap=plt.cm.viridis)
+    plt.colorbar()
+    plt.plot(
+        rec['true_charged_eta'] - rec['true_eta'], 
+        dphi(rec['true_charged_phi'], rec['true_phi']), 'ro', 
+        label='charge pi, pT = %1.2f GeV' % (rec['true_charged_pt'] / 1000.))
+    if not '0n' in suffix:
+        plt.plot(
+            rec['true_neutral_eta'] - rec['true_eta'], 
+            dphi(rec['true_neutral_phi'], rec['true_phi']), 'g^', 
+            label='neutral pi, pT = %1.2f GeV' % (rec['true_neutral_pt'] / 1000.))
+    plt.xlabel('eta')
+    plt.ylabel('phi')
+    plt.title('{0}: image {1} sampling {2}'.format(suffix, irec, cal_layer))
+    plt.legend(loc='upper right', fontsize='small', numpoints=1)
+    fig.savefig('plots/imaging/image_{0}_s{1}_{2}.pdf'.format(
+            irec, cal_layer, suffix))
+    fig.clf()
+    plt.close()

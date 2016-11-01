@@ -10,7 +10,7 @@ from sklearn import model_selection
 
 from .. import print_progress
 from . import log; log = log[__name__]
-from .plotting import plot_image
+from .plotting import plot_image, plot_heatmap
 
 def dphi(phi_1, phi_2):
     d_phi = phi_1 - phi_2
@@ -128,13 +128,6 @@ def tau_image(
     phi_ = phi[square_]
     ene_ = ene[square_]
 
-    if do_plot is True:
-        plot_image(
-            rec, eta_r, phi_r, ene, irec, cal_layer, suffix)
-        plot_image(
-            rec, eta_r_, phi_r_, ene_, irec, cal_layer, 'selected_' + suffix)
-
-
     # create the raw image
     arr = np.array([eta_, phi_, ene_])
     rec_new = np.core.records.fromarrays(
@@ -142,32 +135,25 @@ def tau_image(
     # order the pixels by sorting first by x and then by y
     rec_new.sort(order=('x', 'y'))
 
+    if do_plot is True:
+        plot_image(
+            rec, eta_r, phi_r, ene, irec, cal_layer, suffix)
+
     if len(ene) == 0:
 #         log.warning('pathologic case with 0 cells --> need to figure out why')
         return None
 
     # disgard image with wrong pixelization (need to fix!)
-    if cal_layer == 1 and len(rec_new) != 512:
-        return None
-
-    if cal_layer == 2 and len(rec_new) != 256:
-        return None
-
-    if cal_layer == 3 and len(rec_new) != 128:
+    n_pixels = 2 * n_eta * 2 * n_phi
+    if len(rec_new) != n_pixels:
         return None
 
     # reshaping
-    if cal_layer == 1:
-        image = rec_new['z'].reshape((4, 128))
+    image = rec_new['z'].reshape((2 * n_eta, 2 * n_phi))
 
-    # reshaping
-    elif cal_layer == 2:
-        image = rec_new['z'].reshape((16, 16))
-    elif cal_layer == 3:
-        image = rec_new['z'].reshape((16, 8))
-    else:
-        log.error('layer {0} is not implemented yet'.format(cal_layer))
-        raise ValueError
+    if do_plot is True:
+        plot_heatmap(
+            image.T, rec, irec, cal_layer, 'selected_' + suffix)
 
     # rotating
     if rotate_pc:
