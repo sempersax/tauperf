@@ -12,8 +12,8 @@ h5file = File(h5_filename, mode='r')
 rec_1p1n = h5file.get('rec_1p1n')
 process_taus(rec_1p1n, nentries=10, do_plot=True, suffix='1p1n')
 
-rec_1p0n = h5file.get('rec_1p0n')
-process_taus(rec_1p0n, nentries=10, do_plot=True, suffix='1p0n')
+# rec_1p0n = h5file.get('rec_1p0n')
+# process_taus(rec_1p0n, nentries=10, do_plot=True, suffix='1p0n')
 
 
 

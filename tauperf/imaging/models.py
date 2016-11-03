@@ -30,11 +30,11 @@ def merged_3d_model(data):
     model_s1.add(Convolution2D(
             32, 2, 8, border_mode='same', input_shape=data['s1'][0].shape, dim_ordering='th'))
     model_s1.add(Activation('relu'))
-    model_s1.add(MaxPooling2D((1, 2), dim_ordering='th'))
+    model_s1.add(MaxPooling2D((4, 1), dim_ordering='th'))
     model_s1.add(Convolution2D(
             16, 2, 4, border_mode='same',dim_ordering='th'))
     model_s1.add(Activation('relu'))
-    model_s1.add(MaxPooling2D((1, 3), dim_ordering='th'))
+    model_s1.add(MaxPooling2D((4, 1), dim_ordering='th'))
     model_s1.add(Dropout(0.2))
 
     model_s2 = Sequential()
@@ -45,18 +45,18 @@ def merged_3d_model(data):
     model_s2.add(Convolution2D(
             16, 3, 3, border_mode='same', dim_ordering='th'))
     model_s2.add(Activation('relu'))
-    model_s2.add(MaxPooling2D((2, 1), dim_ordering='th'))
+    model_s2.add(MaxPooling2D((1, 2), dim_ordering='th'))
     model_s2.add(Dropout(0.2))
 
     model_s3 = Sequential()
     model_s3.add(Convolution2D(
             32, 4, 4, border_mode='same', input_shape=data['s3'][0].shape, dim_ordering='th'))
     model_s3.add(Activation('relu'))
-    model_s3.add(MaxPooling2D((2, 1), dim_ordering='th'))
+    model_s3.add(MaxPooling2D((1, 2), dim_ordering='th'))
     model_s3.add(Convolution2D(
             16, 2, 4, border_mode='same', dim_ordering='th'))
     model_s3.add(Activation('relu'))
-    model_s3.add(MaxPooling2D((2, 1), dim_ordering='th'))
+    model_s3.add(MaxPooling2D((1, 2), dim_ordering='th'))
     model_s3.add(Dropout(0.2))
 
     model = Sequential()
@@ -102,13 +102,46 @@ def dense_merged_model_categorical(data, mode='sum'):
     """
     """
     log.info('build 2d convolutional model for s1')
-    model_s1 = binary_2d_model(data['s1'])
+    #     model_s1 = binary_2d_model(data['s1'])
+    model_s1 = Sequential()
+    model_s1.add(Convolution2D(
+            64, 6, 2, border_mode='same', 
+            input_shape=data[0]['s1'].shape))
+    model_s1.add(Activation('relu'))
+    model_s1.add(MaxPooling2D((2, 2), dim_ordering='th'))
+    model_s1.add(Dropout(0.2))
+    model_s1.add(Flatten())
+    model_s1.add(Dense(128))
+    model_s1.add(Activation('relu'))
+    model_s1.add(Dropout(0.2))
 
     log.info('build 2d convolutional model for s2')
-    model_s2 = binary_2d_model(data['s2'])
+    #     model_s2 = binary_2d_model(data['s2'])
+    model_s2 = Sequential()
+    model_s2.add(Convolution2D(
+            64, 2, 2, border_mode='same', 
+            input_shape=data[0]['s2'].shape))
+    model_s2.add(Activation('relu'))
+    model_s2.add(MaxPooling2D((2, 2), dim_ordering='th'))
+    model_s2.add(Dropout(0.2))
+    model_s2.add(Flatten())
+    model_s2.add(Dense(128))
+    model_s2.add(Activation('relu'))
+    model_s2.add(Dropout(0.2))
 
     log.info('build 2d convolutional model for s3')
-    model_s3 = binary_2d_model(data['s3'])
+    #     model_s3 = binary_2d_model(data['s3'])
+    model_s3 = Sequential()
+    model_s3.add(Convolution2D(
+            64, 4, 6, border_mode='same', 
+            input_shape=data[0]['s3'].shape))
+    model_s3.add(Activation('relu'))
+    model_s3.add(MaxPooling2D((2, 2), dim_ordering='th'))
+    model_s3.add(Dropout(0.2))
+    model_s3.add(Flatten())
+    model_s3.add(Dense(128))
+    model_s3.add(Activation('relu'))
+    model_s3.add(Dropout(0.2))
 
     models = [model_s1, model_s2, model_s3]
 

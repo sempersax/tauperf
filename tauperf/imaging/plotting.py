@@ -131,7 +131,10 @@ def plot_image(rec, eta, phi, ene, irec, cal_layer, suffix):
 
 def plot_heatmap(image, rec, irec, cal_layer, suffix):
     fig = plt.figure()
-    plt.imshow(image, extent=[-0.2, 0.2, -0.2, 0.2], interpolation='nearest',  cmap=plt.cm.viridis)
+    plt.imshow(
+        image, 
+        extent=[-0.2, 0.2, -0.2, 0.2], 
+        interpolation='nearest',  cmap=plt.cm.viridis)
     plt.colorbar()
     plt.plot(
         rec['true_charged_eta'] - rec['true_eta'], 

@@ -129,11 +129,11 @@ def tau_image(
     ene_ = ene[square_]
 
     # create the raw image
-    arr = np.array([eta_, phi_, ene_])
+    arr = np.array([eta_r_, phi_r_, ene_])
     rec_new = np.core.records.fromarrays(
         arr, names='x, y, z', formats='f8, f8, f8')
     # order the pixels by sorting first by x and then by y
-    rec_new.sort(order=('x', 'y'))
+    rec_new = np.sort(rec_new, order=['x', 'y'])
 
     if do_plot is True:
         plot_image(
@@ -152,6 +152,12 @@ def tau_image(
     image = rec_new['z'].reshape((2 * n_eta, 2 * n_phi))
 
     if do_plot is True:
+#         plot_image(
+#             rec, eta_, phi_, ene_, irec, cal_layer, 'selected_pix_' + suffix)
+
+        plot_image(
+            rec, eta_r_, phi_r_, ene_, irec, cal_layer, 'selected_real_pix_' + suffix)
+
         plot_heatmap(
             image.T, rec, irec, cal_layer, 'selected_' + suffix)
 
