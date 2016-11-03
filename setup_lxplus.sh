@@ -1,8 +1,10 @@
 #!/bin/bash
 
-echo "specific to Quentin's computer"
-thisroot
-source ../imaging_ve/bin/activate
+
+echo "specific to Quentin's account on lxplus"
+setupATLAS
+lsetup "root 6.04.10-x86_64-slc6-gcc48-opt"
+source ../crackpot/bin/activate
 
 
 SOURCE_TAUPERF_SETUP="${BASH_SOURCE[0]:-$0}"

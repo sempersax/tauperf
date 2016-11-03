@@ -34,7 +34,10 @@ def create_image_data(filename, tau_type, cal_layer=None):
 if __name__ == '__main__':
     from argparse import ArgumentParser
     parser = ArgumentParser()
-    parser.add_argument('--tau-type', default='1p1n', choices=['1p0n', '1p1n', '1p2n'])
+    parser.add_argument('h5file', help='path to the h5 input file')
+    parser.add_argument(
+        '--tau-type', default='1p1n', choices=['1p0n', '1p1n', '1p2n'],
+        help='choice of the type of taus')
     parser.add_argument(
         '--cal-layer', default=None, choices=[None, 1, 2], type=int, 
         help='select layer for the image selection')
@@ -43,8 +46,7 @@ if __name__ == '__main__':
 
     cal_layer = args.cal_layer
     tau_type = args.tau_type
-    h5_filename = os.path.join(
-        os.getenv('DATA_AREA'), 'tauid_ntuples', 'v6', 'output_210files.h5')
+    h5_filename = args.h5file
 
     create_image_data(h5_filename, tau_type, cal_layer=args.cal_layer)
 
