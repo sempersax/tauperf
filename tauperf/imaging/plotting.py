@@ -4,6 +4,7 @@ import itertools
 import matplotlib as mpl; mpl.use('TkAgg')
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
+from matplotlib.colors import Normalize, LogNorm
 
 from . import log; log = log[__name__]
 
@@ -129,22 +130,35 @@ def plot_image(rec, eta, phi, ene, irec, cal_layer, suffix):
     fig.clf()
     plt.close()
 
-def plot_heatmap(image, rec, irec, cal_layer, suffix):
+def plot_heatmap(image, rec, pos_central_cell, irec, cal_layer, suffix, fixed_scale=False):
     fig = plt.figure()
+    if fixed_scale:
+        image[image <= 0] = 0.00001
+
     plt.imshow(
         image, 
         extent=[-0.2, 0.2, -0.2, 0.2], 
-        interpolation='nearest',  cmap=plt.cm.viridis)
+        interpolation='nearest',  
+        cmap=plt.cm.Reds if fixed_scale else plt.cm.viridis,
+        norm=None if fixed_scale is False else LogNorm(0.0001, 1))
+
     plt.colorbar()
     plt.plot(
         rec['true_charged_eta'] - rec['true_eta'], 
         dphi(rec['true_charged_phi'], rec['true_phi']), 'ro', 
-        label='charge pi, pT = %1.2f GeV' % (rec['true_charged_pt'] / 1000.))
+        label='true charge pi, pT = %1.2f GeV' % (rec['true_charged_pt'] / 1000.))
+
+    plt.plot(
+        rec['off_tracks_eta'][0] - pos_central_cell['eta'], 
+        dphi(rec['off_tracks_phi'][0], pos_central_cell['phi']), 'bo', 
+        label='reco charge pi, pT = %1.2f GeV' % (rec['off_tracks_pt'][0] / 1000.))
+
+
     if not '0n' in suffix:
         plt.plot(
             rec['true_neutral_eta'] - rec['true_eta'], 
             dphi(rec['true_neutral_phi'], rec['true_phi']), 'g^', 
-            label='neutral pi, pT = %1.2f GeV' % (rec['true_neutral_pt'] / 1000.))
+            label='true neutral pi, pT = %1.2f GeV' % (rec['true_neutral_pt'] / 1000.))
     plt.xlabel('eta')
     plt.ylabel('phi')
     plt.title('{0}: image {1} sampling {2}'.format(suffix, irec, cal_layer))

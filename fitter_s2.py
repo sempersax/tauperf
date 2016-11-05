@@ -10,8 +10,9 @@ from sklearn.metrics import roc_curve
 from keras.models import load_model
 
 from tauperf import log; log = log['/fitter']
-from tauperf.imaging.models import dense_merged_model
-from tauperf.imaging.utils import fit_model
+from tauperf.imaging.models import single_layer_model_s2
+from tauperf.imaging.utils import fit_model_single_layer
+
 
 from argparse import ArgumentParser
 parser = ArgumentParser()
@@ -23,7 +24,6 @@ parser.add_argument(
     '--no-train-twopi0', default=False, action='store_true')
 parser.add_argument(
     '--overwrite', default=False, action='store_true')
-
 args = parser.parse_args()
 
 
@@ -51,6 +51,8 @@ train_1p2n, test_1p2n = model_selection.train_test_split(
     images_1p2n, test_size=0.3, random_state=42)
 val_1p2n, test_1p2n = np.split(test_1p2n, [len(test_1p2n) / 2])
 
+
+log.info('samples ..')
 headers = ["sample", "Total", "Training", "Validation", "Testing"]
 sample_size_table = [
     ['1p0n', len(images_1p0n), len(train_1p0n), len(val_1p0n), len(test_1p0n)],
@@ -103,33 +105,31 @@ y_val_twopi0 = np.concatenate((
 
 # ##############################################
 log.info('training stuff')
-model_pi0_filename = 'cache/crackpot_dense_pi0.h5'
+model_pi0_filename = 'cache/crackpot_s2_only_pi0.h5'
 if args.no_train or args.no_train_pi0:
     model_pi0 = load_model(model_pi0_filename)
 else:
-#     model_pi0 = merged_3d_model(train_pi0)
-    model_pi0 = dense_merged_model(train_pi0)
-    fit_model(
+    model_pi0 = single_layer_model_s2(train_pi0['s2'])
+    fit_model_single_layer(
         model_pi0,
-        train_pi0, y_train_pi0,
-        val_pi0, y_val_pi0,
+        train_pi0['s2'], y_train_pi0,
+        val_pi0['s2'], y_val_pi0,
         filename=model_pi0_filename,
         overwrite=args.overwrite,
         no_train=args.no_train or args.no_train_pi0)
 
-model_twopi0_filename = 'cache/crackpot_dense_twopi0.h5'
+model_twopi0_filename = 'cache/crackpot_s2_only_twopi0.h5'
 if args.no_train or args.no_train_twopi0:
     model_twopi0 = load_model(model_twopi0_filename)
 else:
-    model_twopi0 = dense_merged_model(train_twopi0)
-#     model_twopi0 = merged_3d_model(train_twopi0)
-    fit_model(
-    model_twopi0,
-    train_twopi0, y_train_twopi0,
-    val_twopi0, y_val_twopi0,
-    filename=model_twopi0_filename,
-    overwrite=args.overwrite,
-    no_train=args.no_train or args.no_train_twopi0)
+    model_twopi0 = single_layer_model_s2(train_twopi0['s2'])
+    fit_model_single_layer(
+        model_twopi0,
+        train_twopi0['s2'], y_train_twopi0,
+        val_twopi0['s2'], y_val_twopi0,
+        filename=model_twopi0_filename,
+        overwrite=args.overwrite,
+        no_train=args.no_train or args.no_train_twopi0)
 
 
 
@@ -138,12 +138,12 @@ log.info('testing stuff')
 
 log.info('compute 1p1n vs 1p0n classifier scores')
 y_pred_pi0 = model_pi0.predict(
-        [test_pi0['s1'], test_pi0['s2'], test_pi0['s3']], 
+        test_pi0['s2'], 
         batch_size=32, verbose=1)
 
 log.info('compute 1p1n vs 1p2n classifier scores')
 y_pred_twopi0 = model_twopi0.predict(
-        [test_twopi0['s1'], test_twopi0['s2'], test_twopi0['s3']], 
+        test_twopi0['s2'], 
         batch_size=32, verbose=1)
 print
 # ######################
@@ -173,7 +173,7 @@ plt.xlabel('miss-classification rate')
 plt.ylabel('classification efficiency')
 plt.title('classification with calo sampling s1, s2 and s3')
 plt.legend(loc='lower right', fontsize='small', numpoints=1)
-plt.savefig('./plots/imaging/roc_curve.pdf')
+plt.savefig('./plots/imaging/roc_curve_s2.pdf')
 
 
 # ######################
@@ -181,11 +181,11 @@ log.info('Drawing the confusion matrix')
 X_test = np.concatenate((test_1p0n, test_1p1n, test_1p2n))
 
 score_pi0 = model_pi0.predict(
-    [X_test['s1'], X_test['s2'], X_test['s3']], 
+    X_test['s2'], 
     batch_size=32, verbose=1)
 
 score_twopi0 = model_twopi0.predict(
-    [X_test['s1'], X_test['s2'], X_test['s3']], 
+    X_test['s2'], 
     batch_size=32, verbose=1)
 
 pred_pi0 = score_pi0 > opt_thresh_1p1n
@@ -203,7 +203,7 @@ plt.figure()
 plot_confusion_matrix(
     cm, classes=class_names, 
     title='Confusion matrix with sampling s1, s2 and s3',
-    name='plots/imaging/confusion_matrix.pdf')
+    name='plots/imaging/confusion_matrix_s2.pdf')
 
 
 # ######################
@@ -232,7 +232,7 @@ plt.title('1p1n vs 1p0n classifier')
 plt.ylabel('Efficiency')
 plt.xlabel('Visible Tau Transverse Momentum [GeV]')
 plt.legend(loc='lower left')
-fig.savefig('plots/imaging/efficiency_pi0_pt.pdf')
+fig.savefig('plots/imaging/efficiency_pi0_pt_s2.pdf')
 
 # 1p1n vs 1p0n - eta
 eff_pi0_eta_1p1n = get_eff(
@@ -249,7 +249,7 @@ plt.title('1p1n vs 1p0n classifier')
 plt.ylabel('Efficiency')
 plt.xlabel('Visible Tau Pseudorapidity')
 plt.legend(loc='lower left')
-fig.savefig('plots/imaging/efficiency_pi0_eta.pdf')
+fig.savefig('plots/imaging/efficiency_pi0_eta_s2.pdf')
 
 # 1p1n vs 1p0n - mu
 eff_pi0_mu_1p1n = get_eff(
@@ -266,7 +266,7 @@ plt.title('1p1n vs 1p0n classifier')
 plt.ylabel('Efficiency')
 plt.xlabel('Average Interaction Per Bunch Crossing')
 plt.legend(loc='lower left')
-fig.savefig('plots/imaging/efficiency_pi0_mu.pdf')
+fig.savefig('plots/imaging/efficiency_pi0_mu_s2.pdf')
 
 # 1p1n vs 1p2n - pt 
 eff_twopi0_pt_1p1n = get_eff(
@@ -283,7 +283,7 @@ plt.title('1p1n vs 1p2n classifier')
 plt.ylabel('Efficiency')
 plt.xlabel('Visible Tau Transverse Momentum [GeV]')
 plt.legend(loc='lower left')
-fig.savefig('plots/imaging/efficiency_twopi0_pt.pdf')
+fig.savefig('plots/imaging/efficiency_twopi0_pt_s2.pdf')
 
 # 1p1n vs 1p2n - eta
 eff_twopi0_eta_1p1n = get_eff(
@@ -300,7 +300,7 @@ plt.title('1p1n vs 1p2n classifier')
 plt.ylabel('Efficiency')
 plt.xlabel('Visible Tau Pseudorapidity')
 plt.legend(loc='lower left')
-fig.savefig('plots/imaging/efficiency_twopi0_eta.pdf')
+fig.savefig('plots/imaging/efficiency_twopi0_eta_s2.pdf')
 
 # 1p1n vs 1p2n - mu
 eff_twopi0_mu_1p1n = get_eff(
@@ -317,4 +317,4 @@ plt.title('1p1n vs 1p2n classifier')
 plt.ylabel('Efficiency')
 plt.xlabel('Average Interaction Per Bunch Crossing')
 plt.legend(loc='lower left')
-fig.savefig('plots/imaging/efficiency_twopi0_mu.pdf')
+fig.savefig('plots/imaging/efficiency_twopi0_mu_s2.pdf')

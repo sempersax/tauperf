@@ -10,7 +10,7 @@ from sklearn.metrics import roc_curve
 from keras.models import load_model
 
 from tauperf import log; log = log['/fitter']
-from tauperf.imaging.models import dense_merged_model
+from tauperf.imaging.models import merged_3d_model
 from tauperf.imaging.utils import fit_model
 
 from argparse import ArgumentParser
@@ -103,12 +103,11 @@ y_val_twopi0 = np.concatenate((
 
 # ##############################################
 log.info('training stuff')
-model_pi0_filename = 'cache/crackpot_dense_pi0.h5'
+model_pi0_filename = 'cache/crackpot_3d_pi0.h5'
 if args.no_train or args.no_train_pi0:
     model_pi0 = load_model(model_pi0_filename)
 else:
-#     model_pi0 = merged_3d_model(train_pi0)
-    model_pi0 = dense_merged_model(train_pi0)
+    model_pi0 = merged_3d_model(train_pi0)
     fit_model(
         model_pi0,
         train_pi0, y_train_pi0,
@@ -117,12 +116,11 @@ else:
         overwrite=args.overwrite,
         no_train=args.no_train or args.no_train_pi0)
 
-model_twopi0_filename = 'cache/crackpot_dense_twopi0.h5'
+model_twopi0_filename = 'cache/crackpot_3d_twopi0.h5'
 if args.no_train or args.no_train_twopi0:
     model_twopi0 = load_model(model_twopi0_filename)
 else:
-    model_twopi0 = dense_merged_model(train_twopi0)
-#     model_twopi0 = merged_3d_model(train_twopi0)
+    model_twopi0 = merged_3d_model(train_twopi0)
     fit_model(
     model_twopi0,
     train_twopi0, y_train_twopi0,
@@ -173,7 +171,7 @@ plt.xlabel('miss-classification rate')
 plt.ylabel('classification efficiency')
 plt.title('classification with calo sampling s1, s2 and s3')
 plt.legend(loc='lower right', fontsize='small', numpoints=1)
-plt.savefig('./plots/imaging/roc_curve.pdf')
+plt.savefig('./plots/imaging/roc_curve_3d.pdf')
 
 
 # ######################
@@ -203,7 +201,7 @@ plt.figure()
 plot_confusion_matrix(
     cm, classes=class_names, 
     title='Confusion matrix with sampling s1, s2 and s3',
-    name='plots/imaging/confusion_matrix.pdf')
+    name='plots/imaging/confusion_matrix_3d.pdf')
 
 
 # ######################
@@ -232,7 +230,7 @@ plt.title('1p1n vs 1p0n classifier')
 plt.ylabel('Efficiency')
 plt.xlabel('Visible Tau Transverse Momentum [GeV]')
 plt.legend(loc='lower left')
-fig.savefig('plots/imaging/efficiency_pi0_pt.pdf')
+fig.savefig('plots/imaging/efficiency_pi0_pt_3d.pdf')
 
 # 1p1n vs 1p0n - eta
 eff_pi0_eta_1p1n = get_eff(
@@ -249,7 +247,7 @@ plt.title('1p1n vs 1p0n classifier')
 plt.ylabel('Efficiency')
 plt.xlabel('Visible Tau Pseudorapidity')
 plt.legend(loc='lower left')
-fig.savefig('plots/imaging/efficiency_pi0_eta.pdf')
+fig.savefig('plots/imaging/efficiency_pi0_eta_3d.pdf')
 
 # 1p1n vs 1p0n - mu
 eff_pi0_mu_1p1n = get_eff(
@@ -266,7 +264,7 @@ plt.title('1p1n vs 1p0n classifier')
 plt.ylabel('Efficiency')
 plt.xlabel('Average Interaction Per Bunch Crossing')
 plt.legend(loc='lower left')
-fig.savefig('plots/imaging/efficiency_pi0_mu.pdf')
+fig.savefig('plots/imaging/efficiency_pi0_mu_3d.pdf')
 
 # 1p1n vs 1p2n - pt 
 eff_twopi0_pt_1p1n = get_eff(
@@ -283,7 +281,7 @@ plt.title('1p1n vs 1p2n classifier')
 plt.ylabel('Efficiency')
 plt.xlabel('Visible Tau Transverse Momentum [GeV]')
 plt.legend(loc='lower left')
-fig.savefig('plots/imaging/efficiency_twopi0_pt.pdf')
+fig.savefig('plots/imaging/efficiency_twopi0_pt_3d.pdf')
 
 # 1p1n vs 1p2n - eta
 eff_twopi0_eta_1p1n = get_eff(
@@ -300,7 +298,7 @@ plt.title('1p1n vs 1p2n classifier')
 plt.ylabel('Efficiency')
 plt.xlabel('Visible Tau Pseudorapidity')
 plt.legend(loc='lower left')
-fig.savefig('plots/imaging/efficiency_twopi0_eta.pdf')
+fig.savefig('plots/imaging/efficiency_twopi0_eta_3d.pdf')
 
 # 1p1n vs 1p2n - mu
 eff_twopi0_mu_1p1n = get_eff(
@@ -317,4 +315,4 @@ plt.title('1p1n vs 1p2n classifier')
 plt.ylabel('Efficiency')
 plt.xlabel('Average Interaction Per Bunch Crossing')
 plt.legend(loc='lower left')
-fig.savefig('plots/imaging/efficiency_twopi0_mu.pdf')
+fig.savefig('plots/imaging/efficiency_twopi0_mu_3d.pdf')

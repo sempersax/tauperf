@@ -152,14 +152,31 @@ def tau_image(
     image = rec_new['z'].reshape((2 * n_eta, 2 * n_phi))
 
     if do_plot is True:
-#         plot_image(
-#             rec, eta_, phi_, ene_, irec, cal_layer, 'selected_pix_' + suffix)
+        
+        # get real eta and phi of the central cell (to compute the distance of the lead trk from)
+        eta_cells = rec['off_cells_eta'].take(indices[0])
+        phi_cells = rec['off_cells_phi'].take(indices[0])
+        eta_cells = eta_cells[square_]
+        phi_cells = phi_cells[square_]
+        dr_cells = eta_r_ * eta_r_ + phi_r_ * phi_r_
+        index = np.argmin(dr_cells)
+        
+        pos_central_cell = {
+            'eta': eta_cells[index], 
+            'phi': phi_cells[index]
+            }
 
         plot_image(
-            rec, eta_r_, phi_r_, ene_, irec, cal_layer, 'selected_real_pix_' + suffix)
+            rec, eta_r_, phi_r_, ene_, irec, cal_layer, 
+            'selected_real_pix_' + suffix)
 
         plot_heatmap(
-            image.T, rec, irec, cal_layer, 'selected_' + suffix)
+            image.T, rec, pos_central_cell, irec, cal_layer, 
+            'selected_' + suffix, fixed_scale=False)
+
+        plot_heatmap(
+            image.T, rec, pos_central_cell, irec, cal_layer, 
+            'selected_fixed_scale_' + suffix, fixed_scale=True)
 
     # rotating
     if rotate_pc:
@@ -174,14 +191,15 @@ def tau_image(
     return image, kin_rec, eta_, phi_, ene_
 
 
-def process_taus(records, nentries=None, cal_layer=None, do_plot=False, suffix='1p1n'):
+def process_taus(records, nentries=None, cal_layer=None, do_plot=False, suffix='1p1n', show_progress=True):
     log.info('')
     images = []
     for ir in xrange(len(records)):
-        if nentries is None:
-            print_progress(ir, len(records), prefix='Progress')
-        else:
-            print_progress(ir, nentries, prefix='Progress')
+        if show_progress: 
+            if nentries is None:
+                print_progress(ir, len(records), prefix='Progress')
+            else:
+                print_progress(ir, nentries, prefix='Progress')
             
         # kill the loop after number of specified entries
         if nentries is not None and ir == nentries:
@@ -240,37 +258,6 @@ def process_taus(records, nentries=None, cal_layer=None, do_plot=False, suffix='
                         ('mu', 'f8')])
                 images.append(image)
 
-                if do_plot and ir < 100:
-                    # scatter for the selected pixels
-                    plt.figure()
-                    plt.scatter(
-                        eta, phi, c=ene, marker='s', s=40,
-                        label= 'Number of cells = {0}'.format(len(eta)))
-                    plt.xlim(-0.4, 0.4)
-                    plt.ylim(-0.4, 0.4)
-                    plt.plot(
-                    rec['true_charged_eta'] - rec['true_eta'], 
-                    dphi(rec['true_charged_phi'], rec['true_phi']), 'ro', 
-                    label='charge pi, pT = %1.2f GeV' % (rec['true_charged_pt'] / 1000.))
-                    plt.plot(
-                        rec['true_neutral_eta'] - rec['true_eta'], 
-                        dphi(rec['true_neutral_phi'], rec['true_phi']), 'g^', 
-                        label='neutral pi, pT = %1.2f GeV' % (rec['true_neutral_pt'] / 1000.))
-                    plt.xlabel('eta')
-                    plt.ylabel('phi')
-                    plt.legend(loc='upper right', fontsize='small', numpoints=1)
-                    plt.savefig('plots/imaging/selected_grid_%s_%s.pdf' % (suffix, ir))
-                    plt.clf()
-                    plt.close()
-                    # heatmap
-                    plt.imshow(image, interpolation='nearest')
-                    plt.title('%s heatmap %s' % (suffix, ir))
-                    plt.xlabel('eta')
-                    plt.ylabel('phi')
-                    plt.legend(loc='upper right', fontsize='small', numpoints=1)
-                    plt.savefig('plots/imaging/heatmap_%s_%s.pdf' % (suffix, ir))
-                    plt.clf()  
-                    plt.close()
 
     # return the images to be stored
     print
