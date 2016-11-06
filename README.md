@@ -66,7 +66,7 @@ you need a working setup of ROOT 6.
 pip install pip --upgrade
 pip install theano
 pip install keras
-pip install pydot
+pip install pydot_ng
 pip install h5py
 pip install sklearn
 pip install scikit-image

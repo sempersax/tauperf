@@ -1,5 +1,6 @@
 import os
 from . import log; log = log[__name__]
+from keras.callbacks import EarlyStopping, ModelCheckpoint
 
 
 

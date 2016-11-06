@@ -3,7 +3,6 @@ from keras.models import Sequential
 from keras.layers import Merge
 from keras.layers.core import Dense, Dropout, Activation, Flatten
 from keras.layers.convolutional import Convolution1D, Convolution2D, MaxPooling2D
-from keras.callbacks import EarlyStopping, ModelCheckpoint
 
 from . import log; log = log[__name__]
 
