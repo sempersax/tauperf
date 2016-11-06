@@ -5,54 +5,21 @@
 3. [Usage](#usage)
 
 # Introduction
-Package to study ATLAS performances for tau leptons
-In the following README, I put a series of instruction to perform the different steps of the ATLAS tauID tuning
+Package to study ATLAS performances for tau leptons. This branch is dedicated to the development of tau imaging algorithms.
 
 # Setup 
-## Setup
-Copy the following lines in a setup script (change the python and root version to more adequate version if needed)
-This setup script should be sourced everytime you log in.
+## Getting started on lxplus
 ```bash
-#!/bin/bash
-
-if [ -z "$PYTHON_VERSION" ]
-then
-    PYTHON_VERSION=2.7.4-x86_64-slc6-gcc48
-fi
-
-if [ -z "$ROOT_VERSION" ]
-then
-    ROOT_VERSION=6.02.12-x86_64-slc6-gcc48-opt
-fi
-
-function setup_CVMFS() {
-    export ATLAS_LOCAL_ROOT_BASE=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase
-    source $ATLAS_LOCAL_ROOT_BASE/user/atlasLocalSetup.sh --quiet
-}
-
-function setup_python()
-{
-    export ATLAS_LOCAL_ROOT_BASE=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase
-    source ${ATLAS_LOCAL_ROOT_BASE}/packageSetups/atlasLocalPythonSetup.sh ${PYTHON_VERSION} --quiet
-}
-
-function setup_ROOT()
-{
-    export ATLAS_LOCAL_ROOT_BASE=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase
-    source ${ATLAS_LOCAL_ROOT_BASE}/packageSetups/atlasLocalROOTSetup.sh --rootVersion ${ROOT_VERSION} --skipConfirm --quiet
-}
-
-echo "------------> CVMFS"
-setup_CVMFS
-echo "------------> Python"
-setup_python
-which  python
-echo "------------> ROOT"
-setup_ROOT
-which root
+git clone https://github.com/qbuat/tauperf.git
+cd tauperf
+git checkout -b imaging origin/imaging
+source setup_lxplus.sh
 ```
+NB: training seems to be broken on lxplus, still trying to figure out why...
 
-## Install
+## Install using a virtual environment
+TODO: provide recipe for anaconda
+
 ### virtual environment
 ```bash
 virtualenv imaging_ve
@@ -68,6 +35,7 @@ pip install theano
 pip install keras
 pip install pydot_ng
 pip install h5py
+pip install tables
 pip install sklearn
 pip install scikit-image
 pip install matplotlib
@@ -75,20 +43,32 @@ pip install root_numpy
 pip install rootpy
 pip install tabulate
 ```
-
-## Downloading and setup of the tauperf project
-The set of commands below allows you to download and use the tauperf package. If you want to contribute to the project and also make your work available publicly you need to fork it on github and work with your own copy of tauperf.
-
+### tauperf project: imaging branch
 ```bash
 git clone https://github.com/qbuat/tauperf.git
 cd tauperf
 git checkout -b imaging origin/imaging
-source setup.sh
 ```
 # Usage
-## Initial setup at each login
-1. Source the initial setup [script](#setup)
-1. Go to the `tauperf` directory
-1. Source the `setup.sh` script in tauperf
+## Creating your own setup script
+1. Copy the file [setup.sh](setup.sh)
+1. Edit the ROOT setup
+1. Edit the variables `DATA_AREA` and `VE_PATH` 
 
-## TO BE WRITTEN
+## Data (as of Nov. 6th, 2016)
+### Flat root ntuples:
+```
+user.qbuat.mc15_13TeV.361108.PowPy8EvtGen_AZNLOCTEQ6L1_Ztautau.recon.ESD.e3601_s2650_s2183_r7823.tauid.v6_OUT
+```
+### hdf5 file:
+```
+/afs/cern.ch/user/q/qbuat/work/public/tau_imaging/tauid_ntuples/v6/output_selected.h5
+```
+### npy images
+```
+/afs/cern.ch/user/q/qbuat/work/public/tau_imaging/tauid_ntuples/v6/images_new_*.npy
+```
+
+
+## Processing/training/testing
+NB: to be written
