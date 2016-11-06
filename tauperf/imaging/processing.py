@@ -12,14 +12,6 @@ from .. import print_progress
 from . import log; log = log[__name__]
 from .plotting import plot_image, plot_heatmap
 
-def dphi(phi_1, phi_2):
-    d_phi = phi_1 - phi_2
-    if (d_phi >= math.pi):
-        return 2.0 * math.pi - d_phi
-    if (d_phi < -1.0 * math.pi):
-        return 2.0 * math.pi + d_phi
-    return d_phi
-
 def make_xy_scatter_matrix(x, y, z, scat_pow=2, mean_pow=1):
 
     cell_values = z
@@ -81,23 +73,18 @@ def tau_image(
     return a pixelized image of a tau candidate.
     """
 
-
     # retrieve eta, phi and energy arrays in a given layers
     indices = np.where((rec['off_cells_samp'] == cal_layer) * (rec['off_ntracks'] == 1))
-#     indices = np.where(rec['off_cells_samp'] == cal_layer)
+    #     indices = np.where(rec['off_cells_samp'] == cal_layer)
+
     if len(indices) == 0:
         return None
+
     eta_r = rec['off_cells_deta'].take(indices[0])
     phi_r = rec['off_cells_dphi'].take(indices[0])
     eta = rec['off_cells_deta_digit'].take(indices[0])
     phi = rec['off_cells_dphi_digit'].take(indices[0])
     ene = rec['off_cells_e_norm'].take(indices[0])
-
-    kin_arr = np.array([
-            rec['off_pt'], rec['off_eta'], rec['averageintpercrossing']])
-    kin_rec = np.core.records.fromarrays(
-        kin_arr, names='pt, eta, mu', formats='f8, f8, f8')
-    
 
     # define the square used to collect cells for the image
     if cal_layer == 2:
@@ -122,6 +109,7 @@ def tau_image(
 
     # collect cells in a square (or rectangle)
     square_ = (np.abs(eta) < n_eta) * (np.abs(phi) < n_phi) *(np.abs(eta_r) < r_eta) * (np.abs(phi_r) < r_phi)
+
     eta_r_ = eta_r[square_]
     phi_r_ = phi_r[square_]
     eta_ = eta[square_]
@@ -132,6 +120,7 @@ def tau_image(
     arr = np.array([eta_r_, phi_r_, ene_])
     rec_new = np.core.records.fromarrays(
         arr, names='x, y, z', formats='f8, f8, f8')
+
     # order the pixels by sorting first by x and then by y
     rec_new = np.sort(rec_new, order=['x', 'y'])
 
@@ -140,7 +129,7 @@ def tau_image(
             rec, eta_r, phi_r, ene, irec, cal_layer, suffix)
 
     if len(ene) == 0:
-#         log.warning('pathologic case with 0 cells --> need to figure out why')
+        # log.warning('pathologic case with 0 cells --> need to figure out why')
         return None
 
     # disgard image with wrong pixelization (need to fix!)
@@ -180,6 +169,7 @@ def tau_image(
 
     # rotating
     if rotate_pc:
+
         scat_mat, cent = make_xy_scatter_matrix(
             rec_new['x'], rec_new['y'], rec_new['z'])
         paxes, pvars = get_principle_axis(scat_mat)
@@ -187,14 +177,31 @@ def tau_image(
         image = sk.rotate(
             image, np.rad2deg(angle), order=3)
 
-    # return image and selected cells eta, phi, ene
-    return image, kin_rec, eta_, phi_, ene_
+    # return image
+    return image
 
 
-def process_taus(records, nentries=None, cal_layer=None, do_plot=False, suffix='1p1n', show_progress=True):
+def process_taus(
+    records, 
+    nentries=None, 
+    cal_layer=None, 
+    do_plot=False, 
+    suffix='1p1n', 
+    show_progress=True):
+    '''
+    process the records one by one and compute the image for each layer
+    ----------
+    returns a record array of the images + basic kinematics of the tau
+    '''
+
     log.info('')
+
+    # make a list (convert to array later)
     images = []
+
     for ir in xrange(len(records)):
+
+        # fancy printout
         if show_progress: 
             if nentries is None:
                 print_progress(ir, len(records), prefix='Progress')
@@ -215,49 +222,56 @@ def process_taus(records, nentries=None, cal_layer=None, do_plot=False, suffix='
             continue
 
         if cal_layer is None:
-            image_tuple_s1 = tau_image(ir, rec, cal_layer=1, do_plot=do_plot, suffix=suffix)
-            image_tuple_s2 = tau_image(ir, rec, cal_layer=2, do_plot=do_plot, suffix=suffix)
-            image_tuple_s3 = tau_image(ir, rec, cal_layer=3, do_plot=do_plot, suffix=suffix)
 
-            if image_tuple_s1 is None:
+            # get the image for each layer
+            s1 = tau_image(ir, rec, cal_layer=1, do_plot=do_plot, suffix=suffix)
+            s2 = tau_image(ir, rec, cal_layer=2, do_plot=do_plot, suffix=suffix)
+            s3 = tau_image(ir, rec, cal_layer=3, do_plot=do_plot, suffix=suffix)
+
+            if s1 is None:
                 continue
-            if image_tuple_s2 is None:
+
+            if s2 is None:
                 continue
-            if image_tuple_s3 is None:
+
+            if s3 is None:
                 continue
             
-            s1 = image_tuple_s1[0]
-            s2 = image_tuple_s2[0]
-            s3 = image_tuple_s3[0]
             pt = rec['off_pt']
             eta = rec['off_eta']
             mu = rec['averageintpercrossing']
 
-
-            image = np.array([(s1, s2, s3, pt, eta, mu)],
-                              dtype=[
+            image = np.array([(
+                        s1, s2, s3, pt, eta, mu)],
+                             dtype=[
                     ('s1', 'f8', s1.shape), 
                     ('s2', 'f8', s2.shape), 
                     ('s3', 'f8', s3.shape), 
                     ('pt', 'f8'), 
                     ('eta', 'f8'), 
                     ('mu', 'f8')])
+
             images.append(image)
 
         else:
-            image_tuple = tau_image(ir, rec, cal_layer=cal_layer, rotate_pc=False)
-            if image_tuple is not None:
-                image_cal, kin_rec, eta, phi, ene = image_tuple
 
+            image_layer = tau_image(ir, rec, cal_layer=cal_layer, do_plot=do_plot, suffix=suffix)
+
+            if image_layer is None:
+                continue
+
+            pt = rec['off_pt']
+            eta = rec['off_eta']
+            mu = rec['averageintpercrossing']
                 
-                image = np.array([(image_cal, pt, eta, mu)],
-                                 dtype=[
-                        ('s{0}'.format(cal_layer), 'f8', image_cal.shape), 
-                        ('pt', 'f8'), 
-                        ('eta', 'f8'), 
-                        ('mu', 'f8')])
-                images.append(image)
-
+            image = np.array([(
+                        image_layer, pt, eta, mu)],
+                             dtype=[
+                    ('s{0}'.format(cal_layer), 'f8', image_layer.shape), 
+                    ('pt', 'f8'), 
+                    ('eta', 'f8'), 
+                    ('mu', 'f8')])
+            images.append(image)
 
     # return the images to be stored
     print
