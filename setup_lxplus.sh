@@ -4,12 +4,15 @@
 echo "specific to lxplus"
 setupATLAS
 lsetup "root 6.04.10-x86_64-slc6-gcc48-opt"
+
+echo 'activating the virtual environment'
 source /afs/cern.ch/user/q/qbuat/work/public/tau_imaging/imaging_ve/bin/activate
+
+export DATA_AREA=/afs/cern.ch/user/q/qbuat/work/public/tau_imaging
 
 
 SOURCE_TAUPERF_SETUP="${BASH_SOURCE[0]:-$0}"
 DIR_TAUPERF_SETUP="$( dirname "$SOURCE_TAUPERF_SETUP" )"
-
 while [ -h "$SOURCE_TAUPERF_SETUP" ]
 do 
   SOURCE_TAUPERF_SETUP="$(readlink "$SOURCE_TAUPERF_SETUP")"
