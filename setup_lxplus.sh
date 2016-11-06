@@ -5,10 +5,12 @@ echo "specific to lxplus"
 setupATLAS
 lsetup "root 6.04.10-x86_64-slc6-gcc48-opt"
 
-echo 'activating the virtual environment'
-source /afs/cern.ch/user/q/qbuat/work/public/tau_imaging/imaging_ve/bin/activate
-
 export DATA_AREA=/afs/cern.ch/user/q/qbuat/work/public/tau_imaging
+export VE_PATH=/Users/quentin/software/imaging_ve
+
+echo 'activating the virtual environment'
+source ${VE_PATH}/bin/activate
+
 
 
 SOURCE_TAUPERF_SETUP="${BASH_SOURCE[0]:-$0}"

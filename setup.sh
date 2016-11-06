@@ -2,7 +2,11 @@
 
 echo "specific to Quentin's computer"
 thisroot
-source ../imaging_ve/bin/activate
+
+export VE_PATH=/Users/quentin/software/imaging_ve
+export DATA_AREA=Users/quentin
+
+source ${VE_PATH}/bin/activate
 
 
 SOURCE_TAUPERF_SETUP="${BASH_SOURCE[0]:-$0}"
