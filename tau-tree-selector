@@ -1,0 +1,49 @@
+#!/usr/bin/env python
+import os
+import argparse
+import logging
+import ROOT
+
+
+logging.basicConfig()
+log = logging.getLogger(os.path.basename(__file__))
+log.setLevel(logging.INFO)
+
+if __name__ == '__main__':
+    
+    parser = argparse.ArgumentParser()
+    parser.add_argument('dir')
+    args = parser.parse_args()
+
+    directory = args.dir
+
+    sel_1p2n = 'true_nprongs == 1 && true_npi0s == 2 && abs(off_eta) < 1.1'
+    sel_1p1n = 'true_nprongs == 1 && true_npi0s == 1 && abs(off_eta) < 1.1'
+    sel_1p0n = 'true_nprongs == 1 && true_npi0s == 0 && abs(off_eta) < 1.1'
+
+    for rfile_name in os.listdir(directory):
+        if not '.root' in rfile_name:
+            continue
+        log.info('read {0}'.format(rfile_name))
+        abs_path = os.path.abspath(rfile_name)
+        new_rfile_name  = abs_path.replace('.root', '.selected.root')
+        log.info(new_rfile_name)
+        
+        rfile = ROOT.TFile(os.path.join(directory, rfile_name), 'read')
+        tree = rfile.Get('tau')
+        print tree
+        new_rfile = ROOT.TFile(new_rfile_name, 'recreate')
+        tree_1p2n = tree.CopyTree(sel_1p2n)
+        tree_1p2n.SetName('tree_1p2n')
+        tree_1p2n.Write()
+
+        tree_1p1n = tree.CopyTree(sel_1p1n)
+        tree_1p1n.SetName('tree_1p1n')
+        tree_1p1n.Write()
+
+        tree_1p0n = tree.CopyTree(sel_1p0n)
+        tree_1p0n.SetName('tree_1p0n')
+        tree_1p0n.Write()
+        new_rfile.Close()
+        rfile.Close()
+
