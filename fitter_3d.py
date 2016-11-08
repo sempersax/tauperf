@@ -171,6 +171,10 @@ plt.xlabel('miss-classification rate')
 plt.ylabel('classification efficiency')
 plt.title('classification with calo sampling s1, s2 and s3')
 plt.legend(loc='lower right', fontsize='small', numpoints=1)
+axes = plt.gca()
+axes.xaxis.set_ticks(np.arange(0, 1, 0.1))
+axes.yaxis.set_ticks(np.arange(0, 1, 0.1))
+axes.grid(True)
 plt.savefig('./plots/imaging/roc_curve_3d.pdf')
 
 

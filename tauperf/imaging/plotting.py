@@ -125,7 +125,7 @@ def plot_image(rec, eta, phi, ene, irec, cal_layer, suffix):
     plt.ylabel('phi')
     plt.title('{0}: image {1} sampling {2}'.format(suffix, irec, cal_layer))
     plt.legend(loc='upper right', fontsize='small', numpoints=1)
-    fig.savefig('plots/imaging/image_{0}_s{1}_{2}.pdf'.format(
+    fig.savefig('plots/imaging/images/image_{0}_s{1}_{2}.pdf'.format(
             irec, cal_layer, suffix))
     fig.clf()
     plt.close()
@@ -163,7 +163,7 @@ def plot_heatmap(image, rec, pos_central_cell, irec, cal_layer, suffix, fixed_sc
     plt.ylabel('phi')
     plt.title('{0}: image {1} sampling {2}'.format(suffix, irec, cal_layer))
     plt.legend(loc='upper right', fontsize='small', numpoints=1)
-    fig.savefig('plots/imaging/image_{0}_s{1}_{2}.pdf'.format(
+    fig.savefig('plots/imaging/images/image_{0}_s{1}_{2}.pdf'.format(
             irec, cal_layer, suffix))
     fig.clf()
     plt.close()
