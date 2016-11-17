@@ -4,7 +4,7 @@ echo "specific to Quentin's computer"
 source /software/root-6.06.08/bin/thisroot.sh
 
 export VE_PATH=/home/qbuat/imaging/imaging_ve
-export DATA_AREA=/cluster/warehouse/qbuat/crackpot/tauid_ntuples
+export DATA_AREA=/cluster/warehouse/qbuat/crackpot
 
 source ${VE_PATH}/bin/activate
 
