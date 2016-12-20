@@ -23,6 +23,8 @@ parser.add_argument(
     '--no-train-twopi0', default=False, action='store_true')
 parser.add_argument(
     '--overwrite', default=False, action='store_true')
+parser.add_argument(
+    '--equal-size', default=False, action='store_true')
 
 args = parser.parse_args()
 
@@ -50,6 +52,16 @@ val_1p1n, test_1p1n = np.split(test_1p1n, [len(test_1p1n) / 2])
 train_1p2n, test_1p2n = model_selection.train_test_split(
     images_1p2n, test_size=0.3, random_state=42)
 val_1p2n, test_1p2n = np.split(test_1p2n, [len(test_1p2n) / 2])
+
+
+if args.equal_size:
+    size = min(len(train_1p0n), len(train_1p1n), len(train_1p2n))
+    train_1p0n = train_1p0n[0:size]
+    train_1p1n = train_1p1n[0:size]
+    train_1p2n = train_1p2n[0:size]
+
+
+
 
 headers = ["sample", "Total", "Training", "Validation", "Testing"]
 sample_size_table = [
