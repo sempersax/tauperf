@@ -17,7 +17,7 @@ def fit_model(
  
     if not overwrite and os.path.exists(filename):
         log.error('weight file {0} exists, aborting!'.format(filename))
-        raise ValueError('overwrite needs to be set to false')
+        raise ValueError('overwrite needs to be set to true')
 
     try:
         log.info('Compile model')

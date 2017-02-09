@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-from tauperf import NTUPLE_PATH
+import ROOT
 from rootpy.io import root_open
-from root_numpy import tree2array
+from tauperf import NTUPLE_PATH
 from h5py import File
 import os
 
@@ -24,6 +24,8 @@ def make_h5_name(root_file):
 
 if __name__ == '__main__':
 
+    import root_numpy
+    from root_numpy import tree2array
     from argparse import ArgumentParser
     parser = ArgumentParser()
     parser.add_argument('file')
