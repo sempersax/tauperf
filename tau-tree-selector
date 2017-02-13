@@ -17,9 +17,12 @@ if __name__ == '__main__':
 
     directory = args.dir
 
-    sel_1p2n = 'true_nprongs == 1 && true_npi0s == 2 && abs(off_eta) < 1.1'
+    sel_1p2n = 'true_nprongs == 1 && true_npi0s >= 2 && abs(off_eta) < 1.1'
     sel_1p1n = 'true_nprongs == 1 && true_npi0s == 1 && abs(off_eta) < 1.1'
     sel_1p0n = 'true_nprongs == 1 && true_npi0s == 0 && abs(off_eta) < 1.1'
+    sel_3p1n = 'true_nprongs == 3 && true_npi0s >= 1 && abs(off_eta) < 1.1'
+    sel_3p0n = 'true_nprongs == 3 && true_npi0s == 0 && abs(off_eta) < 1.1'
+
 
     for rfile_name in os.listdir(directory):
         if not '.root' in rfile_name:
@@ -33,17 +36,36 @@ if __name__ == '__main__':
         tree = rfile.Get('tau')
         print tree
         new_rfile = ROOT.TFile(new_rfile_name, 'recreate')
+
+        log.info('Selecting 3p1n ...')
+        tree_3p1n = tree.CopyTree(sel_3p1n)
+        tree_3p1n.SetName('tree_3p1n')
+        tree_3p1n.Write()
+
+        log.info('Selecting 3p0n ...')
+        tree_3p0n = tree.CopyTree(sel_3p0n)
+        tree_3p0n.SetName('tree_3p0n')
+        tree_3p0n.Write()
+
+        log.info('Selecting 1p2n ...')
         tree_1p2n = tree.CopyTree(sel_1p2n)
         tree_1p2n.SetName('tree_1p2n')
         tree_1p2n.Write()
 
+        log.info('Selecting 1p1n ...')
         tree_1p1n = tree.CopyTree(sel_1p1n)
         tree_1p1n.SetName('tree_1p1n')
         tree_1p1n.Write()
 
+        log.info('Selecting 1p0n ...')
         tree_1p0n = tree.CopyTree(sel_1p0n)
         tree_1p0n.SetName('tree_1p0n')
         tree_1p0n.Write()
+
+
+
+
+
         new_rfile.Close()
         rfile.Close()
 
