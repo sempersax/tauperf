@@ -4,21 +4,26 @@ from tauperf.imaging.processing import process_taus
 import os
 import numpy as np
 from h5py import File
+import tables
 
 from tauperf import log; log = log['/tau-image']
 
 
-def create_image_data(filename, tau_type, cal_layer=None):
+def create_image_data(filename, tau_type, cal_layer=None, show_progress=False):
     """
     """
     log.info('open h5 file {0}'.format(filename))
-    h5file = File(filename, mode='r')
+
+    #     h5file = File(filename, mode='r')
+    h5file = tables.open_file(filename)
     dir_name = os.path.dirname(filename)
-    records = h5file.get('tree_' + tau_type)
-#     records = h5file.get('rec_' + tau_type)
+
+    #     records = h5file.get('tree_' + tau_type)
+    records = getattr(h5file.root, 'tree_' + tau_type)
+
     log.info('process {0}: {1} entries'.format(tau_type, len(records)))
     images = process_taus(
-        records, cal_layer=cal_layer, suffix=tau_type)
+        records, cal_layer=cal_layer, suffix=tau_type, show_progress=show_progress)
 
     if cal_layer is not None:
         np.save(os.path.join(dir_name, 'images_S{0}_{1}.npy'.format(cal_layer, tau_type)), images)
@@ -37,17 +42,17 @@ if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument('h5file', help='path to the h5 input file')
     parser.add_argument(
-        '--tau-type', default='1p1n', choices=['1p0n', '1p1n', '1p2n'],
+        '--tau-type', default='1p1n', choices=['1p0n', '1p1n', '1p2n', '3p0n', '3p1n'],
         help='choice of the type of taus')
     parser.add_argument(
         '--cal-layer', default=None, choices=[None, 1, 2, 3], type=int, 
         help='select layer for the image selection')
-
+    parser.add_argument('--no-progress-bar', default=False, action='store_true')
     args = parser.parse_args()
 
     cal_layer = args.cal_layer
     tau_type = args.tau_type
     h5_filename = args.h5file
 
-    create_image_data(h5_filename, tau_type, cal_layer=args.cal_layer)
+    create_image_data(h5_filename, tau_type, cal_layer=args.cal_layer, show_progress=not args.no_progress_bar)
 

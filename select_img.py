@@ -12,7 +12,9 @@ h5_filename = os.path.join(
 
 h5file = File(h5_filename, mode='r')
 rec = h5file.get('rec_' + tau_type)
-process_taus(rec, do_plot=True, suffix=tau_type, cal_layer=1)
+process_taus(rec, nentries=100, do_plot=True, suffix=tau_type, cal_layer=1, show_progress=True)
+process_taus(rec, nentries=100, do_plot=True, suffix=tau_type, cal_layer=2, show_progress=True)
+process_taus(rec, nentries=100, do_plot=True, suffix=tau_type, cal_layer=3, show_progress=True)
 
 # rec_1p0n = h5file.get('rec_1p0n')
 # process_taus(rec_1p0n, nentries=10, do_plot=True, suffix='1p0n')
