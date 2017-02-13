@@ -26,6 +26,9 @@ parser.add_argument(
 parser.add_argument(
     '--equal-size', default=False, action='store_true')
 
+parser.add_argument(
+    '--debug', default=False, action='store_true')
+
 args = parser.parse_args()
 
 
@@ -53,6 +56,10 @@ train_1p2n, test_1p2n = model_selection.train_test_split(
     images_1p2n, test_size=0.3, random_state=42)
 val_1p2n, test_1p2n = np.split(test_1p2n, [len(test_1p2n) / 2])
 
+log.info('apply track preselection')
+test_1p0n = test_1p0n.take(np.where(test_1p0n['ntracks'] == 1)[0], axis=0)
+test_1p1n = test_1p1n.take(np.where(test_1p1n['ntracks'] == 1)[0], axis=0)
+test_1p2n = test_1p2n.take(np.where(test_1p2n['ntracks'] == 1)[0], axis=0)
 
 if args.equal_size:
     size = min(len(train_1p0n), len(train_1p1n), len(train_1p2n))
@@ -60,7 +67,12 @@ if args.equal_size:
     train_1p1n = train_1p1n[0:size]
     train_1p2n = train_1p2n[0:size]
 
-
+if args.debug:
+    log.info('Train with very small stat for debugging')
+    size = min(len(train_1p0n), len(train_1p1n), len(train_1p2n), 1000)
+    train_1p0n = train_1p0n[0:size]
+    train_1p1n = train_1p1n[0:size]
+    train_1p2n = train_1p2n[0:size]
 
 
 headers = ["sample", "Total", "Training", "Validation", "Testing"]
@@ -79,6 +91,7 @@ train_pi0 = np.concatenate((train_1p0n, train_1p1n, train_1p2n))
 test_pi0  = np.concatenate((test_1p0n, test_1p1n, test_1p2n))
 val_pi0   = np.concatenate((val_1p0n, val_1p1n, val_1p2n))
 
+print test_pi0.shape
 y_train_pi0 = np.concatenate((
     np.zeros(train_1p0n.shape, dtype=np.uint8),
     np.ones(train_1p1n.shape, dtype=np.uint8),
@@ -206,6 +219,7 @@ score_twopi0 = model_twopi0.predict(
 
 pred_pi0 = score_pi0 > opt_thresh_1p1n
 pred_twopi0 = score_twopi0 < opt_thresh_1p2n
+
 
 y_true = np.concatenate((
         np.zeros(test_1p0n.shape, dtype=np.uint8),

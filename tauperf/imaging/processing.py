@@ -254,16 +254,20 @@ def process_taus(
             
             pt = rec['off_pt']
             eta = rec['off_eta']
+            phi = rec['off_phi']
+            ntracks= rec['off_ntracks']
             mu = rec['averageintpercrossing']
 
             image = np.array([(
-                        s1, s2, s3, pt, eta, mu)],
+                        s1, s2, s3, pt, eta, phi, ntracks, mu)],
                              dtype=[
                     ('s1', 'f8', s1.shape), 
                     ('s2', 'f8', s2.shape), 
                     ('s3', 'f8', s3.shape), 
                     ('pt', 'f8'), 
                     ('eta', 'f8'), 
+                    ('phi', 'f8'), 
+                    ('ntracks', 'f8'), 
                     ('mu', 'f8')])
 
             images.append(image)
