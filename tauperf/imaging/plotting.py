@@ -16,7 +16,7 @@ def dphi(phi_1, phi_2):
         return 2.0 * math.pi + d_phi
     return d_phi
 
-def get_wp(true_pos, false_pos, thresh, method='corner'):
+def get_wp(true_pos, false_pos, thresh, method='corner', target_value=0.9):
     if (true_pos.ndim, false_pos.ndim, thresh.ndim) != (1, 1, 1):
         raise ValueError('wrong dimension')
     if len(true_pos) != len(false_pos) or len(true_pos) != len(thresh):
@@ -30,10 +30,11 @@ def get_wp(true_pos, false_pos, thresh, method='corner'):
         index_min = np.argmin(dr_square)
         # return optimal true positive eff, false positive eff and threshold for cut
     elif method == 'target_eff':
-        target_eff = np.abs(true_pos - 0.12)
+        val = target_value
+        target_eff = np.abs(true_pos - val)
         index_min = np.argmin(target_eff)
     elif method == 'target_rej':
-        target_rej = np.abs(false_pos - 0.860)
+        target_rej = np.abs(false_pos - val)
         index_min = np.argmin(target_rej)
     else:
         raise ValueError('wrong method argument')
@@ -74,8 +75,8 @@ def plot_confusion_matrix(cm, classes,
                  horizontalalignment="center",
                  color="white" if cm[i, j] > thresh else "black")
 
-    plt.xlabel('True label')
-    plt.ylabel('Predicted label')
+    plt.xlabel('True Tau Decay Mode')
+    plt.ylabel('Reconstructed Tau Decay Mode')
     plt.tight_layout()
     plt.savefig(name)
 

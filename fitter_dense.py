@@ -127,27 +127,30 @@ log.info('')
 print tabulate(sample_size_table, headers=headers, tablefmt='simple')
 log.info('')
 
-# training/testing samples for 1p1n against 1p0n
+# training/testing samples for 1p0n against 1pXn
+# Signal = 1p0n, Bkg = 1pXn
+
 train_pi0 = np.concatenate((train_1p0n, train_1p1n, train_1p2n))
 test_pi0  = np.concatenate((test_1p0n, test_1p1n, test_1p2n))
 val_pi0   = np.concatenate((val_1p0n, val_1p1n, val_1p2n))
 
 y_train_pi0 = np.concatenate((
-    np.zeros(train_1p0n.shape, dtype=np.uint8),
-    np.ones(train_1p1n.shape, dtype=np.uint8),
-    np.ones(train_1p2n.shape, dtype=np.uint8)))
+    np.ones(train_1p0n.shape, dtype=np.uint8),
+    np.zeros(train_1p1n.shape, dtype=np.uint8),
+    np.zeros(train_1p2n.shape, dtype=np.uint8)))
 
 y_test_pi0 = np.concatenate((
-    np.zeros(test_1p0n.shape, dtype=np.uint8),
-    np.ones(test_1p1n.shape, dtype=np.uint8),
-    np.ones(test_1p2n.shape, dtype=np.uint8)))
+    np.ones(test_1p0n.shape, dtype=np.uint8),
+    np.zeros(test_1p1n.shape, dtype=np.uint8),
+    np.zeros(test_1p2n.shape, dtype=np.uint8)))
 
 y_val_pi0 = np.concatenate((
-    np.zeros(val_1p0n.shape, dtype=np.uint8),
-    np.ones(val_1p1n.shape, dtype=np.uint8),
-    np.ones(val_1p2n.shape, dtype=np.uint8)))
+    np.ones(val_1p0n.shape, dtype=np.uint8),
+    np.zeros(val_1p1n.shape, dtype=np.uint8),
+    np.zeros(val_1p2n.shape, dtype=np.uint8)))
 
 # training/testing samples for 1p1n against 1p2n
+# Signal = 1p1n, Bkg = 1p2n
 train_twopi0 = np.concatenate((train_1p1n, train_1p2n))
 test_twopi0  = np.concatenate((test_1p1n, test_1p2n))       
 val_twopi0   = np.concatenate((val_1p1n, val_1p2n))
@@ -165,22 +168,24 @@ y_val_twopi0 = np.concatenate((
     np.zeros(val_1p2n.shape, dtype=np.uint8)))
 
 
-# training/testing samples for 3p0n / 3p1n
+# training/testing samples for 3p0n / 3pXn
+
+# Signal: 3p0n, Bkg = 3pXn
 train_3p_pi0 = np.concatenate((train_3p0n, train_3p1n))
 test_3p_pi0  = np.concatenate((test_3p0n, test_3p1n))
 val_3p_pi0   = np.concatenate((val_3p0n, val_3p1n))
 
 y_train_3p_pi0 = np.concatenate((
-    np.zeros(train_3p0n.shape, dtype=np.uint8),
-    np.ones(train_3p1n.shape, dtype=np.uint8)))
+    np.ones(train_3p0n.shape, dtype=np.uint8),
+    np.zeros(train_3p1n.shape, dtype=np.uint8)))
 
 y_test_3p_pi0 = np.concatenate((
-    np.zeros(test_3p0n.shape, dtype=np.uint8),
-    np.ones(test_3p1n.shape, dtype=np.uint8)))
+    np.ones(test_3p0n.shape, dtype=np.uint8),
+    np.zeros(test_3p1n.shape, dtype=np.uint8)))
 
 y_val_3p_pi0 = np.concatenate((
-    np.zeros(val_3p0n.shape, dtype=np.uint8),
-    np.ones(val_3p1n.shape, dtype=np.uint8)))
+    np.ones(val_3p0n.shape, dtype=np.uint8),
+    np.zeros(val_3p1n.shape, dtype=np.uint8)))
 
 # ##############################################
 log.info('training stuff')
@@ -244,40 +249,39 @@ print
 log.info('Drawing the roc curve')
 from tauperf.imaging.plotting import plot_confusion_matrix, get_eff, get_wp
 
-fptr_1p1n, tpr_1p1n, thresh_1p1n = roc_curve(y_test_pi0, y_pred_pi0)
-opt_fptr_1p1n, opt_tpr_1p1n, opt_thresh_1p1n = get_wp(
-    fptr_1p1n, tpr_1p1n, thresh_1p1n, method='target_eff')
-log.info('1p1n vs 1p0n: cutting on the score at {0}'.format(opt_thresh_1p1n))
+fpr_1p0n, tpr_1p0n, thresh_1p0n = roc_curve(y_test_pi0, y_pred_pi0)
+opt_tpr_1p0n, opt_fpr_1p0n, opt_thresh_1p0n = get_wp(
+    tpr_1p0n, fpr_1p0n, thresh_1p0n, method='target_eff')
+log.info('1p0n vs 1pXn: cutting on the score at {0}'.format(opt_thresh_1p0n))
 
-fptr_1p2n, tpr_1p2n, thresh_1p2n = roc_curve(y_test_twopi0, y_pred_twopi0)
-opt_fptr_1p2n, opt_tpr_1p2n, opt_thresh_1p2n = get_wp(
-    fptr_1p2n, tpr_1p2n, thresh_1p2n, method='target_rej')
-log.info('1p1n vs 1p2n: cutting on the score at {0}'.format(opt_thresh_1p2n))
+fpr_1p1n, tpr_1p1n, thresh_1p1n = roc_curve(y_test_twopi0, y_pred_twopi0)
+opt_tpr_1p1n, opt_fpr_1p1n, opt_thresh_1p1n = get_wp(
+    tpr_1p1n, fpr_1p1n, thresh_1p1n, method='target_eff')
+log.info('1p1n vs 1p2n: cutting on the score at {0}'.format(opt_thresh_1p1n))
 
-fptr_3p1n, tpr_3p1n, thresh_3p1n = roc_curve(y_test_3p_pi0, y_pred_3p_pi0)
-opt_fptr_3p1n, opt_tpr_3p1n, opt_thresh_3p1n = get_wp(
-    fptr_3p1n, tpr_3p1n, thresh_3p1n, method='target_eff')
-log.info('3p1n vs 3p0n: cutting on the score at {0}'.format(opt_thresh_3p1n))
-
-
+fpr_3p0n, tpr_3p0n, thresh_3p0n = roc_curve(y_test_3p_pi0, y_pred_3p_pi0)
+opt_tpr_3p0n, opt_fpr_3p0n, opt_thresh_3p0n = get_wp(
+    tpr_3p0n, fpr_3p0n, thresh_3p0n, method='target_eff')
+log.info('3p0n vs 3pXn: cutting on the score at {0}'.format(opt_thresh_3p0n))
 
 plt.figure()
-plt.plot([0, 1], [0, 1], '--', color=(0.6, 0.6, 0.6), label='Luck')
-plt.plot(fptr_1p1n, tpr_1p1n, color='red', label='1pXn vs 1p0n')
-plt.plot(fptr_1p2n, tpr_1p2n, color='blue', label='1p1n vs 1p2n')
-plt.plot(fptr_3p1n, tpr_3p1n, color='green', label='3pXn vs 3p0n')
-plt.plot([opt_fptr_1p1n, opt_fptr_1p2n, opt_fptr_3p1n],
-         [opt_tpr_1p1n, opt_tpr_1p2n, opt_tpr_3p1n],
-         'go',
-         label='working points')
-plt.xlabel('miss-classification rate')
-plt.ylabel('classification efficiency')
+plt.plot([1, 0], [0, 1], '--', color=(0.6, 0.6, 0.6), label='Luck')
+plt.plot(tpr_1p0n, 1 - fpr_1p0n, color='red', label='1p0n vs 1pXn')
+plt.plot(tpr_1p1n, 1 - fpr_1p1n, color='blue', label='1p1n vs 1p2n')
+plt.plot(tpr_3p0n, 1 - fpr_3p0n, color='green', label='3p0n vs 3pXn')
+plt.plot(
+    [opt_tpr_1p0n, opt_tpr_1p1n, opt_tpr_3p0n],
+    [1 - opt_fpr_1p0n, 1 - opt_fpr_1p1n, 1 - opt_fpr_3p0n],
+    'go',
+    label='working points')
+plt.xlabel('Signal Efficiency')
+plt.ylabel('Background Rejection')
 axes = plt.gca()
 axes.xaxis.set_ticks(np.arange(0, 1, 0.1))
 axes.yaxis.set_ticks(np.arange(0, 1, 0.1))
 axes.grid(True)
 plt.title('classification with calo sampling s1, s2 and s3')
-plt.legend(loc='lower right', fontsize='small', numpoints=1)
+plt.legend(loc='lower left', fontsize='small', numpoints=1)
 plt.savefig('./plots/imaging/roc_curve.pdf')
 
 
@@ -298,9 +302,9 @@ score_3p_pi0 = model_3p_pi0.predict(
     batch_size=32, verbose=1)
 
 
-pred_pi0    = score_pi0 > opt_thresh_1p1n
-pred_twopi0 = score_twopi0 < opt_thresh_1p2n
-pred_3p_pi0 = score_3p_pi0 > opt_thresh_3p1n
+pred_pi0    = score_pi0    < opt_thresh_1p0n
+pred_twopi0 = score_twopi0 < opt_thresh_1p1n
+pred_3p_pi0 = score_3p_pi0 < opt_thresh_3p0n
 is_1p = X_test['ntracks'] == 1
 
 y_true = np.concatenate((
@@ -312,7 +316,7 @@ y_true = np.concatenate((
 
 from tauperf.imaging.evaluate import matrix_decays
 cm = matrix_decays(y_true, pred_pi0, pred_twopi0, pred_3p_pi0, is_1p)
-class_names = ['1p0n', '1p1n', '1p2n', '3p0n', '3p1n']
+class_names = ['1p0n', '1p1n', '1pXn', '3p0n', '3pXn']
 plt.figure()
 plot_confusion_matrix(
     cm, classes=class_names, 
