@@ -16,7 +16,7 @@ def dphi(phi_1, phi_2):
         return 2.0 * math.pi + d_phi
     return d_phi
 
-def get_wp(true_pos, false_pos, thresh, method='corner', target_value=0.9):
+def get_wp(true_pos, false_pos, thresh, method='corner', target_value=0.8):
     if (true_pos.ndim, false_pos.ndim, thresh.ndim) != (1, 1, 1):
         raise ValueError('wrong dimension')
     if len(true_pos) != len(false_pos) or len(true_pos) != len(thresh):

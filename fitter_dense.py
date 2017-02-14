@@ -274,6 +274,13 @@ plt.plot(
     [1 - opt_fpr_1p0n, 1 - opt_fpr_1p1n, 1 - opt_fpr_3p0n],
     'go',
     label='working points')
+plt.plot(
+    [0.8, 0.8, 0.8],
+    [0.9, 0.5, 0.84],
+    'rv',
+    label='pantau')
+
+
 plt.xlabel('Signal Efficiency')
 plt.ylabel('Background Rejection')
 axes = plt.gca()
