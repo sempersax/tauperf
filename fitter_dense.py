@@ -251,7 +251,7 @@ from tauperf.imaging.plotting import plot_confusion_matrix, get_eff, get_wp
 
 fpr_1p0n, tpr_1p0n, thresh_1p0n = roc_curve(y_test_pi0, y_pred_pi0)
 opt_tpr_1p0n, opt_fpr_1p0n, opt_thresh_1p0n = get_wp(
-    tpr_1p0n, fpr_1p0n, thresh_1p0n, method='target_eff')
+    tpr_1p0n, fpr_1p0n, thresh_1p0n, method='target_eff', target_value=0.83)
 log.info('1p0n vs 1pXn: cutting on the score at {0}'.format(opt_thresh_1p0n))
 
 fpr_1p1n, tpr_1p1n, thresh_1p1n = roc_curve(y_test_twopi0, y_pred_twopi0)
@@ -261,7 +261,7 @@ log.info('1p1n vs 1p2n: cutting on the score at {0}'.format(opt_thresh_1p1n))
 
 fpr_3p0n, tpr_3p0n, thresh_3p0n = roc_curve(y_test_3p_pi0, y_pred_3p_pi0)
 opt_tpr_3p0n, opt_fpr_3p0n, opt_thresh_3p0n = get_wp(
-    tpr_3p0n, fpr_3p0n, thresh_3p0n, method='target_eff')
+    tpr_3p0n, fpr_3p0n, thresh_3p0n, method='target_eff', target_value=0.91)
 log.info('3p0n vs 3pXn: cutting on the score at {0}'.format(opt_thresh_3p0n))
 
 plt.figure()
