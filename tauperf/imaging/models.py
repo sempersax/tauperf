@@ -107,7 +107,7 @@ def dense_merged_model(data, mode='sum'):
             data['s1'][0].shape))
     model_s1 = Sequential()
     model_s1.add(Convolution2D(
-            64, 16, 2, border_mode='same', 
+            64, 24, 4, border_mode='same', 
             input_shape=data['s1'][0].shape))
     model_s1.add(Activation('relu'))
     model_s1.add(MaxPooling2D((2, 2), dim_ordering='th'))
@@ -123,7 +123,7 @@ def dense_merged_model(data, mode='sum'):
             data['s2'][0].shape))
     model_s2 = Sequential()
     model_s2.add(Convolution2D(
-            64, 2, 2, border_mode='same', 
+            64, 5, 5, border_mode='same', 
             input_shape=data['s2'][0].shape))
     model_s2.add(Activation('relu'))
     model_s2.add(MaxPooling2D((2, 2), dim_ordering='th'))
@@ -139,7 +139,7 @@ def dense_merged_model(data, mode='sum'):
             data['s3'][0].shape))
     model_s3 = Sequential()
     model_s3.add(Convolution2D(
-            64, 1, 2, border_mode='same', 
+            64, 3, 6, border_mode='same', 
             input_shape=data['s3'][0].shape))
     model_s3.add(Activation('relu'))
     model_s3.add(MaxPooling2D((2, 2), dim_ordering='th'))
