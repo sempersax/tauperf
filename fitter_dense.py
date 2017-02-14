@@ -322,12 +322,12 @@ y_true = np.concatenate((
         np.ones(test_3p1n.shape, dtype=np.uint8) + 3))
 
 from tauperf.imaging.evaluate import matrix_decays
-cm = matrix_decays(y_true, pred_pi0, pred_twopi0, pred_3p_pi0, is_1p)
+cm, diag = matrix_decays(y_true, pred_pi0, pred_twopi0, pred_3p_pi0, is_1p)
 class_names = ['1p0n', '1p1n', '1pXn', '3p0n', '3pXn']
 plt.figure()
 plot_confusion_matrix(
     cm, classes=class_names, 
-    title='Confusion matrix with sampling s1, s2 and s3',
+    title='Confusion matrix, diagonal = {0:1.2f} %'.format(100 * diag),
     name='plots/imaging/confusion_matrix.pdf')
 
 
