@@ -33,7 +33,7 @@ def single_layer_model_s2(data):
 def binary_2d_model(data):
     """
     """
-    log.info('build 2d convolutional model for s2 with shape {0}'.format(
+    log.info('build 2d convolutional model with shape {0}'.format(
             data[0].shape))
     model = Sequential()
     model.add(Convolution2D(
@@ -127,7 +127,6 @@ def dense_merged_model_categorical(data, mode='sum'):
     """
     """
     log.info('build 2d convolutional model for s1')
-    #     model_s1 = binary_2d_model(data['s1'])
     model_s1 = Sequential()
     model_s1.add(Convolution2D(
             64, 6, 2, border_mode='same', 
@@ -141,7 +140,6 @@ def dense_merged_model_categorical(data, mode='sum'):
     model_s1.add(Dropout(0.2))
 
     log.info('build 2d convolutional model for s2')
-    #     model_s2 = binary_2d_model(data['s2'])
     model_s2 = Sequential()
     model_s2.add(Convolution2D(
             64, 2, 2, border_mode='same', 
@@ -155,7 +153,6 @@ def dense_merged_model_categorical(data, mode='sum'):
     model_s2.add(Dropout(0.2))
 
     log.info('build 2d convolutional model for s3')
-    #     model_s3 = binary_2d_model(data['s3'])
     model_s3 = Sequential()
     model_s3.add(Convolution2D(
             64, 4, 6, border_mode='same', 
