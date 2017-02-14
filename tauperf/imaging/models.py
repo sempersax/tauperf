@@ -103,13 +103,51 @@ def dense_merged_model(data, mode='sum'):
     """
     """
     log.info('build 2d convolutional model for s1')
-    model_s1 = binary_2d_model(data['s1'])
+    log.info('build 2d convolutional model with shape {0}'.format(
+            data['s1'][0].shape))
+    model_s1 = Sequential()
+    model_s1.add(Convolution2D(
+            64, 16, 2, border_mode='same', 
+            input_shape=data['s1'][0].shape))
+    model_s1.add(Activation('relu'))
+    model_s1.add(MaxPooling2D((2, 2), dim_ordering='th'))
+    model_s1.add(Dropout(0.2))
+    model_s1.add(Flatten())
+    model_s1.add(Dense(128))
+    model_s1.add(Activation('relu'))
+    model_s1.add(Dropout(0.2))
+
 
     log.info('build 2d convolutional model for s2')
-    model_s2 = binary_2d_model(data['s2'])
+    log.info('build 2d convolutional model with shape {0}'.format(
+            data['s2'][0].shape))
+    model_s2 = Sequential()
+    model_s2.add(Convolution2D(
+            64, 2, 2, border_mode='same', 
+            input_shape=data['s2'][0].shape))
+    model_s2.add(Activation('relu'))
+    model_s2.add(MaxPooling2D((2, 2), dim_ordering='th'))
+    model_s2.add(Dropout(0.2))
+    model_s2.add(Flatten())
+    model_s2.add(Dense(128))
+    model_s2.add(Activation('relu'))
+    model_s2.add(Dropout(0.2))
 
     log.info('build 2d convolutional model for s3')
     model_s3 = binary_2d_model(data['s3'])
+    log.info('build 2d convolutional model with shape {0}'.format(
+            data['s3'][0].shape))
+    model_s3 = Sequential()
+    model_s3.add(Convolution2D(
+            64, 1, 2, border_mode='same', 
+            input_shape=data['s3'][0].shape))
+    model_s3.add(Activation('relu'))
+    model_s3.add(MaxPooling2D((2, 2), dim_ordering='th'))
+    model_s3.add(Dropout(0.2))
+    model_s3.add(Flatten())
+    model_s3.add(Dense(128))
+    model_s3.add(Activation('relu'))
+    model_s3.add(Dropout(0.2))
 
     models = [model_s1, model_s2, model_s3]
 
