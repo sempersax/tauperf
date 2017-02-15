@@ -52,23 +52,26 @@ def binary_2d_model(data):
 def merged_3d_model(data):
     log.info(data['s1'][0].shape)
     model_s1 = Sequential()
+    print data['s1'][0].shape
+    print data['s2'][0].shape
+    print data['s3'][0].shape
     model_s1.add(Convolution2D(
-            32, 2, 8, border_mode='same', input_shape=data['s1'][0].shape, dim_ordering='th'))
+            30, 2, 8, border_mode='same', input_shape=data['s1'][0].shape, dim_ordering='th'))
     model_s1.add(Activation('relu'))
     model_s1.add(MaxPooling2D((4, 1), dim_ordering='th'))
     model_s1.add(Convolution2D(
-            16, 2, 4, border_mode='same',dim_ordering='th'))
+            15, 2, 4, border_mode='same',dim_ordering='th'))
     model_s1.add(Activation('relu'))
     model_s1.add(MaxPooling2D((4, 1), dim_ordering='th'))
     model_s1.add(Dropout(0.2))
 
     model_s2 = Sequential()
     model_s2.add(Convolution2D(
-            32, 4, 4, border_mode='same', input_shape=data['s2'][0].shape, dim_ordering='th'))
+            30, 4, 4, border_mode='same', input_shape=data['s2'][0].shape, dim_ordering='th'))
     model_s2.add(Activation('relu'))
     model_s2.add(MaxPooling2D((2, 2), dim_ordering='th'))
     model_s2.add(Convolution2D(
-            16, 3, 3, border_mode='same', dim_ordering='th'))
+            15, 3, 3, border_mode='same', dim_ordering='th'))
     model_s2.add(Activation('relu'))
     model_s2.add(MaxPooling2D((1, 2), dim_ordering='th'))
     model_s2.add(Dropout(0.2))
@@ -107,7 +110,7 @@ def dense_merged_model(data, mode='sum'):
             data['s1'][0].shape))
     model_s1 = Sequential()
     model_s1.add(Convolution2D(
-            64, 24, 4, border_mode='same', 
+            64, 4, 24, border_mode='same', 
             input_shape=data['s1'][0].shape))
     model_s1.add(Activation('relu'))
     model_s1.add(MaxPooling2D((2, 2), dim_ordering='th'))
@@ -134,7 +137,6 @@ def dense_merged_model(data, mode='sum'):
     model_s2.add(Dropout(0.2))
 
     log.info('build 2d convolutional model for s3')
-    model_s3 = binary_2d_model(data['s3'])
     log.info('build 2d convolutional model with shape {0}'.format(
             data['s3'][0].shape))
     model_s3 = Sequential()
