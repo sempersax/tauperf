@@ -274,19 +274,24 @@ plt.plot(
     [1 - opt_fpr_1p0n, 1 - opt_fpr_1p1n, 1 - opt_fpr_3p0n],
     'go',
     label='working points')
-plt.plot(
+plt.scatter(
     [0.8, 0.8, 0.8],
     [0.9, 0.5, 0.84],
-    'rv',
+    s=100,
+    marker='v',
+    c=['red', 'blue', 'green'],
     label='pantau')
 
 
 plt.xlabel('Signal Efficiency')
 plt.ylabel('Background Rejection')
+plt.xlim([0, 1.01])
+plt.ylim([0, 1.01])
 axes = plt.gca()
 axes.xaxis.set_ticks(np.arange(0, 1, 0.1))
 axes.yaxis.set_ticks(np.arange(0, 1, 0.1))
 axes.grid(True)
+
 plt.title('classification with calo sampling s1, s2 and s3')
 plt.legend(loc='lower left', fontsize='small', numpoints=1)
 plt.savefig('./plots/imaging/roc_curve.pdf')
@@ -307,7 +312,7 @@ score_twopi0 = model_twopi0.predict(
 score_3p_pi0 = model_3p_pi0.predict(
     [X_test['s1'], X_test['s2'], X_test['s3']], 
     batch_size=32, verbose=1)
-
+print
 
 pred_pi0    = score_pi0    < opt_thresh_1p0n
 pred_twopi0 = score_twopi0 < opt_thresh_1p1n
