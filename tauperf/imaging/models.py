@@ -213,7 +213,7 @@ def dense_merged_model_categorical(data, mode='sum'):
     model.add(merged_model)
     model.add(Dense(16))
     model.add(Activation('relu'))
-    model.add(Dense(3))
+    model.add(Dense(5))
     model.add(Activation('softmax'))
     return model
 

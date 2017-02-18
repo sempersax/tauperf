@@ -27,7 +27,6 @@ parser.add_argument(
     '--overwrite', default=False, action='store_true')
 parser.add_argument(
     '--equal-size', default=False, action='store_true')
-
 parser.add_argument(
     '--debug', default=False, action='store_true')
 
@@ -100,7 +99,13 @@ if args.equal_size:
 
 if args.debug:
     log.info('Train with very small stat for debugging')
-    size = min(len(train_1p0n), len(train_1p1n), len(train_1p2n), 1000)
+    size = min(
+        len(train_1p0n), 
+        len(train_1p1n), 
+        len(train_1p2n), 
+        len(train_3p0n),
+        len(train_3p1n), 
+        1000)
     train_1p0n = train_1p0n[0:size]
     train_1p1n = train_1p1n[0:size]
     train_1p2n = train_1p2n[0:size]
