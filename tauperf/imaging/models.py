@@ -166,6 +166,15 @@ def dense_merged_model(data, mode='sum'):
 def dense_merged_model_categorical(data, mode='sum'):
     """
     """
+    log.info('build the track classification model (only ntracks for now)')
+    model_kin = Sequential()
+    model_kin.add(Dense(256, input_dim=1))
+    model_kin.add(Activation('relu'))
+    model_kin.add(Dropout(0.2))
+    model_kin.add(Dense(128))
+    model_kin.add(Activation('relu'))
+    model_kin.add(Dropout(0.2))
+
     log.info('build 2d convolutional model for s1')
     model_s1 = Sequential()
     model_s1.add(Convolution2D(
@@ -205,7 +214,7 @@ def dense_merged_model_categorical(data, mode='sum'):
     model_s3.add(Activation('relu'))
     model_s3.add(Dropout(0.2))
 
-    models = [model_s1, model_s2, model_s3]
+    models = [model_kin, model_s1, model_s2, model_s3]
 
     log.info('Merge the models to a dense model')
     merged_model = Merge(models, mode=mode)

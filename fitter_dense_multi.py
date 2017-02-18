@@ -12,7 +12,7 @@ from keras.utils.np_utils import to_categorical
 
 from tauperf import log; log = log['/fitter']
 from tauperf.imaging.models import dense_merged_model_categorical
-from tauperf.imaging.utils import fit_model
+from tauperf.imaging.utils import fit_model_multi
 
 from argparse import ArgumentParser
 parser = ArgumentParser()
@@ -138,7 +138,7 @@ print tabulate(sample_size_table, headers=headers, tablefmt='simple')
 log.info('')
 
 train = np.concatenate((train_1p0n, train_1p1n, train_1p2n, train_3p0n, train_3p1n))
-test  = np.concatenate((test_1p0n, test_1p1n, test_1p2n, train_3p0n, train_3p1n))
+test  = np.concatenate((test_1p0n, test_1p1n, test_1p2n, test_3p0n, test_3p1n))
 val   = np.concatenate((val_1p0n, val_1p1n, val_1p2n, val_3p0n, val_3p1n))
 
 y_train = np.concatenate((
@@ -176,7 +176,7 @@ if args.no_train:
 else:
     log.info('training...')
     model = dense_merged_model_categorical(train)
-    fit_model(
+    fit_model_multi(
         model,
         train, y_train_cat,
         val, y_val_cat,
@@ -193,7 +193,7 @@ log.info('testing stuff')
 
 log.info('compute classifier scores')
 y_pred = model.predict(
-        [test['s1'], test['s2'], test['s3']], 
+        [test['ntracks'], test['s1'], test['s2'], test['s3']], 
         batch_size=32, verbose=1)
 
 
