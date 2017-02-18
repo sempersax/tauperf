@@ -84,18 +84,33 @@ test_3p1n = test_3p1n.take(np.where(test_3p1n['ntracks'] != 2)[0], axis=0)
 
 
 if args.equal_size:
-    size = min(
+    size_train = min(
         len(train_1p0n), 
         len(train_1p1n), 
         len(train_1p2n), 
         len(train_3p0n),
         len(train_3p1n))
 
-    train_1p0n = train_1p0n[0:size]
-    train_1p1n = train_1p1n[0:size]
-    train_1p2n = train_1p2n[0:size]
-    train_3p0n = train_3p0n[0:size]
-    train_3p1n = train_3p1n[0:size]
+    train_1p0n = train_1p0n[0:size_train]
+    train_1p1n = train_1p1n[0:size_train]
+    train_1p2n = train_1p2n[0:size_train]
+    train_3p0n = train_3p0n[0:size_train]
+    train_3p1n = train_3p1n[0:size_train]
+
+    size_val = min(
+        len(val_1p0n), 
+        len(val_1p1n), 
+        len(val_1p2n), 
+        len(val_3p0n),
+        len(val_3p1n))
+
+    val_1p0n = val_1p0n[0:size_val]
+    val_1p1n = val_1p1n[0:size_val]
+    val_1p2n = val_1p2n[0:size_val]
+    val_3p0n = val_3p0n[0:size_val]
+    val_3p1n = val_3p1n[0:size_val]
+
+
 
 
 if args.debug:

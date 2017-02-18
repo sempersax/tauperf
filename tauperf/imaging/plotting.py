@@ -71,7 +71,7 @@ def plot_confusion_matrix(cm, classes,
 
     thresh = cm.max() / 2.
     for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
-        plt.text(j, i, int(100 * cm[i, j]),
+        plt.text(j, i, '{0:1.2f}'.format(100 * cm[i, j]),
                  horizontalalignment="center",
                  color="white" if cm[i, j] > 100 * thresh else "black")
 
