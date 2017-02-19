@@ -209,8 +209,8 @@ log.info('testing stuff')
 log.info('compute classifier scores')
 
 kin_test = np.hstack([
-    test['pt'],
-    test['eta'],
+#     test['pt'],
+#     test['eta'],
     test['ntracks'],
     test['empovertrksysp']
     ])

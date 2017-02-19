@@ -29,14 +29,14 @@ def fit_model_multi(
         log.info('Start training ...')
 
         kin_train = np.hstack([
-            X_train['pt'],
-            X_train['eta'],
+#             X_train['pt'],
+#             X_train['eta'],
             X_train['ntracks'],
             X_train['empovertrksysp']
             ])
         kin_test =np.hstack([
-            X_test['pt'],
-            X_test['eta'],
+#             X_test['pt'],
+#             X_test['eta'],
             X_test['ntracks'],
             X_test['empovertrksysp']
             ])
