@@ -1,7 +1,7 @@
 import os
 from . import log; log = log[__name__]
 from keras.callbacks import EarlyStopping, ModelCheckpoint
-
+import numpy as np
 
 
 
@@ -27,13 +27,28 @@ def fit_model_multi(
             metrics=['accuracy'])
 
         log.info('Start training ...')
+
+        kin_train = np.hstack([
+            X_train['pt'],
+            X_train['eta'],
+            X_train['ntracks'],
+            X_train['empovertrksysp']
+            ])
+        kin_test =np.hstack([
+            X_test['pt'],
+            X_test['eta'],
+            X_test['ntracks'],
+            X_test['empovertrksysp']
+            ])
+        
+        
         model.fit(
-            [X_train['ntracks'], X_train['s1'], X_train['s2'], X_train['s3']],
+            [kin_train, X_train['s1'], X_train['s2'], X_train['s3']],
             y_train,
             nb_epoch=100,
             batch_size=128,
             validation_data=(
-                [X_test['ntracks'], X_test['s1'], X_test['s2'], X_test['s3']], y_test),
+                [kin_test, X_test['s1'], X_test['s2'], X_test['s3']], y_test),
             callbacks=[
                 EarlyStopping(verbose=True, patience=10, monitor='val_acc'),
                 ModelCheckpoint(

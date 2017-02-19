@@ -166,9 +166,9 @@ def dense_merged_model(data, mode='sum'):
 def dense_merged_model_categorical(data, mode='sum'):
     """
     """
-    log.info('build the track classification model (only ntracks for now)')
+    log.info('build the kinematic classification model')
     model_kin = Sequential()
-    model_kin.add(Dense(256, input_dim=1))
+    model_kin.add(Dense(256, input_dim=4))
     model_kin.add(Activation('relu'))
     model_kin.add(Dropout(0.2))
     model_kin.add(Dense(128))

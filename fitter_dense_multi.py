@@ -207,8 +207,16 @@ else:
 log.info('testing stuff')
 
 log.info('compute classifier scores')
+
+kin_test = np.hstack([
+    test['pt'],
+    test['eta'],
+    test['ntracks'],
+    test['empovertrksysp']
+    ])
+
 y_pred = model.predict(
-        [test['ntracks'], test['s1'], test['s2'], test['s3']], 
+        [kin_test, test['s1'], test['s2'], test['s3']], 
         batch_size=32, verbose=1)
 
 
