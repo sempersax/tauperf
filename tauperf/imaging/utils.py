@@ -50,9 +50,9 @@ def fit_model_multi(
             validation_data=(
                 [kin_test, X_test['s1'], X_test['s2'], X_test['s3']], y_test),
             callbacks=[
-                EarlyStopping(verbose=True, patience=10, monitor='val_acc'),
+                EarlyStopping(verbose=True, patience=10, monitor='val_loss'),
                 ModelCheckpoint(
-                    filename, monitor='val_acc', 
+                    filename, monitor='val_loss', 
                     verbose=True, save_best_only=True)
                 ])
 
