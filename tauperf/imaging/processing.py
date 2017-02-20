@@ -256,11 +256,14 @@ def process_taus(
             eta = rec['off_eta']
             phi = rec['off_phi']
             ntracks= rec['off_ntracks']
-            mu = rec['averageintpercrossing']
             empovertrksysp = rec['off_EMPOverTrkSysP']
+            chpiemeovercaloeme = rec['off_ChPiEMEOverCaloEME']
+            masstrksys = rec['off_massTrkSys']
+            mu = rec['averageintpercrossing']
 
             image = np.array([(
-                        s1, s2, s3, pt, eta, phi, ntracks, empovertrksysp, mu)],
+                        s1, s2, s3, pt, eta, phi, 
+                        ntracks, empovertrksysp, chpiemeovercaloeme, masstrksys, mu)],
                              dtype=[
                     ('s1', 'f8', s1.shape), 
                     ('s2', 'f8', s2.shape), 
@@ -270,6 +273,8 @@ def process_taus(
                     ('phi', 'f8'), 
                     ('ntracks', 'f8'), 
                     ('empovertrksysp', 'f8'), 
+                    ('chpiemeovercaloeme', 'f8'), 
+                    ('masstrksys', 'f8'), 
                     ('mu', 'f8')])
 
             images.append(image)

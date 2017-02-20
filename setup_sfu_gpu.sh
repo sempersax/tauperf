@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "specific to Quentin's computer"
+echo "specific to SFU GPU cluster"
 source /software/root-6.06.08/bin/thisroot.sh
 
 export VE_PATH=/home/qbuat/imaging/imaging_ve
