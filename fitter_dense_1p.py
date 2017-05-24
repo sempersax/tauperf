@@ -37,8 +37,8 @@ data_dir = os.path.join(
 images_1p0n  = np.load(os.path.join(data_dir, 'images_new_1p0n.npy'))
 images_1p1n  = np.load(os.path.join(data_dir, 'images_new_1p1n.npy'))
 images_1p2n  = np.load(os.path.join(data_dir, 'images_new_1p2n.npy'))
-images_3p0n  = np.load(os.path.join(data_dir, 'images_new_3p0n.npy'))
-images_3p1n  = np.load(os.path.join(data_dir, 'images_new_3p1n.npy'))
+# images_3p0n  = np.load(os.path.join(data_dir, 'images_new_3p0n.npy'))
+# images_3p1n  = np.load(os.path.join(data_dir, 'images_new_3p1n.npy'))
 
 #print images_1p0n
 log.info('splitting')
@@ -55,61 +55,61 @@ train_1p2n, test_1p2n = model_selection.train_test_split(
     images_1p2n, test_size=0.3, random_state=42)
 val_1p2n, test_1p2n = np.split(test_1p2n, [len(test_1p2n) / 2])
 
-train_3p0n, test_3p0n = model_selection.train_test_split(
-    images_3p0n, test_size=0.3, random_state=42)
-val_3p0n, test_3p0n = np.split(test_3p0n, [len(test_3p0n) / 2])
+# train_3p0n, test_3p0n = model_selection.train_test_split(
+#     images_3p0n, test_size=0.3, random_state=42)
+# val_3p0n, test_3p0n = np.split(test_3p0n, [len(test_3p0n) / 2])
 
-train_3p1n, test_3p1n = model_selection.train_test_split(
-    images_3p1n, test_size=0.3, random_state=42)
-val_3p1n, test_3p1n = np.split(test_3p1n, [len(test_3p1n) / 2])
+# train_3p1n, test_3p1n = model_selection.train_test_split(
+#     images_3p1n, test_size=0.3, random_state=42)
+# val_3p1n, test_3p1n = np.split(test_3p1n, [len(test_3p1n) / 2])
 
 
 log.info('apply track preselection')
 test_1p0n = test_1p0n.take(np.where(test_1p0n['ntracks'] > 0)[0], axis=0)
 test_1p1n = test_1p1n.take(np.where(test_1p1n['ntracks'] > 0)[0], axis=0)
 test_1p2n = test_1p2n.take(np.where(test_1p2n['ntracks'] > 0)[0], axis=0)
-test_3p0n = test_3p0n.take(np.where(test_3p0n['ntracks'] > 0)[0], axis=0)
-test_3p1n = test_3p1n.take(np.where(test_3p1n['ntracks'] > 0)[0], axis=0)
+# test_3p0n = test_3p0n.take(np.where(test_3p0n['ntracks'] > 0)[0], axis=0)
+# test_3p1n = test_3p1n.take(np.where(test_3p1n['ntracks'] > 0)[0], axis=0)
 
 test_1p0n = test_1p0n.take(np.where(test_1p0n['ntracks'] < 4)[0], axis=0)
 test_1p1n = test_1p1n.take(np.where(test_1p1n['ntracks'] < 4)[0], axis=0)
 test_1p2n = test_1p2n.take(np.where(test_1p2n['ntracks'] < 4)[0], axis=0)
-test_3p0n = test_3p0n.take(np.where(test_3p0n['ntracks'] < 4)[0], axis=0)
-test_3p1n = test_3p1n.take(np.where(test_3p1n['ntracks'] < 4)[0], axis=0)
+# test_3p0n = test_3p0n.take(np.where(test_3p0n['ntracks'] < 4)[0], axis=0)
+# test_3p1n = test_3p1n.take(np.where(test_3p1n['ntracks'] < 4)[0], axis=0)
 
 test_1p0n = test_1p0n.take(np.where(test_1p0n['ntracks'] != 2)[0], axis=0)
 test_1p1n = test_1p1n.take(np.where(test_1p1n['ntracks'] != 2)[0], axis=0)
 test_1p2n = test_1p2n.take(np.where(test_1p2n['ntracks'] != 2)[0], axis=0)
-test_3p0n = test_3p0n.take(np.where(test_3p0n['ntracks'] != 2)[0], axis=0)
-test_3p1n = test_3p1n.take(np.where(test_3p1n['ntracks'] != 2)[0], axis=0)
+# test_3p0n = test_3p0n.take(np.where(test_3p0n['ntracks'] != 2)[0], axis=0)
+# test_3p1n = test_3p1n.take(np.where(test_3p1n['ntracks'] != 2)[0], axis=0)
 
 
 if args.equal_size:
     size_train = min(
         len(train_1p0n), 
         len(train_1p1n), 
-        len(train_1p2n), 
-        len(train_3p0n),
-        len(train_3p1n))
+        len(train_1p2n)) 
+#         len(train_3p0n),
+#         len(train_3p1n))
 
     train_1p0n = train_1p0n[0:size_train]
     train_1p1n = train_1p1n[0:size_train]
     train_1p2n = train_1p2n[0:size_train]
-    train_3p0n = train_3p0n[0:size_train]
-    train_3p1n = train_3p1n[0:size_train]
+#     train_3p0n = train_3p0n[0:size_train]
+#     train_3p1n = train_3p1n[0:size_train]
 
     size_val = min(
         len(val_1p0n), 
         len(val_1p1n), 
-        len(val_1p2n), 
-        len(val_3p0n),
-        len(val_3p1n))
+        len(val_1p2n)) 
+#         len(val_3p0n),
+#         len(val_3p1n))
 
     val_1p0n = val_1p0n[0:size_val]
     val_1p1n = val_1p1n[0:size_val]
     val_1p2n = val_1p2n[0:size_val]
-    val_3p0n = val_3p0n[0:size_val]
-    val_3p1n = val_3p1n[0:size_val]
+#     val_3p0n = val_3p0n[0:size_val]
+#     val_3p1n = val_3p1n[0:size_val]
 
 
 
@@ -120,24 +120,24 @@ if args.debug:
         len(train_1p0n), 
         len(train_1p1n), 
         len(train_1p2n), 
-        len(train_3p0n),
-        len(train_3p1n), 
+#         len(train_3p0n),
+#         len(train_3p1n), 
         1000)
     train_1p0n = train_1p0n[0:size]
     train_1p1n = train_1p1n[0:size]
     train_1p2n = train_1p2n[0:size]
-    train_3p0n = train_3p0n[0:size]
-    train_3p1n = train_3p1n[0:size]
+#     train_3p0n = train_3p0n[0:size]
+#     train_3p1n = train_3p1n[0:size]
     val_1p0n = val_1p0n[0:size]
     val_1p1n = val_1p1n[0:size]
     val_1p2n = val_1p2n[0:size]
-    val_3p0n = val_3p0n[0:size]
-    val_3p1n = val_3p1n[0:size]
+#     val_3p0n = val_3p0n[0:size]
+#     val_3p1n = val_3p1n[0:size]
     test_1p0n = test_1p0n[0:size]
     test_1p1n = test_1p1n[0:size]
     test_1p2n = test_1p2n[0:size]
-    test_3p0n = test_3p0n[0:size]
-    test_3p1n = test_3p1n[0:size]
+#     test_3p0n = test_3p0n[0:size]
+#     test_3p1n = test_3p1n[0:size]
 
 
 headers = ["sample", "Total", "Training", "Validation", "Testing"]
@@ -145,47 +145,47 @@ sample_size_table = [
     ['1p0n', len(images_1p0n), len(train_1p0n), len(val_1p0n), len(test_1p0n)],
     ['1p1n', len(images_1p1n), len(train_1p1n), len(val_1p1n), len(test_1p1n)],
     ['1p2n', len(images_1p2n), len(train_1p2n), len(val_1p2n), len(test_1p2n)],
-    ['3p0n', len(images_3p0n), len(train_3p0n), len(val_3p0n), len(test_3p0n)],
-    ['3p1n', len(images_3p1n), len(train_3p1n), len(val_3p1n), len(test_3p1n)],
+#     ['3p0n', len(images_3p0n), len(train_3p0n), len(val_3p0n), len(test_3p0n)],
+#     ['3p1n', len(images_3p1n), len(train_3p1n), len(val_3p1n), len(test_3p1n)],
 ]
 
 log.info('')
 print tabulate(sample_size_table, headers=headers, tablefmt='simple')
 log.info('')
 
-train = np.concatenate((train_1p0n, train_1p1n, train_1p2n, train_3p0n, train_3p1n))
-test  = np.concatenate((test_1p0n, test_1p1n, test_1p2n, test_3p0n, test_3p1n))
-val   = np.concatenate((val_1p0n, val_1p1n, val_1p2n, val_3p0n, val_3p1n))
+train = np.concatenate((train_1p0n, train_1p1n, train_1p2n))#, train_3p0n, train_3p1n))
+test  = np.concatenate((test_1p0n, test_1p1n, test_1p2n))#, test_3p0n, test_3p1n))
+val   = np.concatenate((val_1p0n, val_1p1n, val_1p2n))#, val_3p0n, val_3p1n))
 
 y_train = np.concatenate((
         np.zeros(train_1p0n.shape, dtype=np.uint8),
         np.ones(train_1p1n.shape, dtype=np.uint8),
-        np.ones(train_1p2n.shape, dtype=np.uint8) + 1,
-        np.ones(train_3p0n.shape, dtype=np.uint8) + 2,
-        np.ones(train_3p1n.shape, dtype=np.uint8) + 3))
+        np.ones(train_1p2n.shape, dtype=np.uint8) + 1))
+#         np.ones(train_3p0n.shape, dtype=np.uint8) + 2,
+#         np.ones(train_3p1n.shape, dtype=np.uint8) + 3))
 
 y_test = np.concatenate((
         np.zeros(test_1p0n.shape, dtype=np.uint8),
         np.ones(test_1p1n.shape, dtype=np.uint8),
-        np.ones(test_1p2n.shape, dtype=np.uint8) + 1,
-        np.ones(test_3p0n.shape, dtype=np.uint8) + 2,
-        np.ones(test_3p1n.shape, dtype=np.uint8) + 3))
+        np.ones(test_1p2n.shape, dtype=np.uint8) + 1))
+#         np.ones(test_3p0n.shape, dtype=np.uint8) + 2,
+#         np.ones(test_3p1n.shape, dtype=np.uint8) + 3))
 
 y_val = np.concatenate((
         np.zeros(val_1p0n.shape, dtype=np.uint8),
         np.ones(val_1p1n.shape, dtype=np.uint8),
-        np.ones(val_1p2n.shape, dtype=np.uint8) + 1,
-        np.ones(val_3p0n.shape, dtype=np.uint8) + 2,
-        np.ones(val_3p1n.shape, dtype=np.uint8) + 3))
+        np.ones(val_1p2n.shape, dtype=np.uint8) + 1))
+#         np.ones(val_3p0n.shape, dtype=np.uint8) + 2,
+#         np.ones(val_3p1n.shape, dtype=np.uint8) + 3))
 
 
-y_train_cat = to_categorical(y_train, 5)
-y_test_cat  = to_categorical(y_test, 5)
-y_val_cat   = to_categorical(y_val, 5)
+y_train_cat = to_categorical(y_train, 3)
+y_test_cat  = to_categorical(y_test, 3)
+y_val_cat   = to_categorical(y_val, 3)
 
 
 # ##############################################
-model_filename = 'cache/crackpot_dense_multi.h5'
+model_filename = 'cache/crackpot_dense_1p.h5'
 if args.no_train:
     log.info('loading model')
     model = load_model(model_filename)
@@ -232,12 +232,12 @@ cm = cnf_mat.T.astype('float') / cnf_mat.T.sum(axis=0)
 cm = np.rot90(cm.T, 1)
 np.set_printoptions(precision=2)
 from tauperf.imaging.plotting import plot_confusion_matrix
-class_names = ['1p0n', '1p1n', '1pXn', '3p0n', '3pXn']
+class_names = ['1p0n', '1p1n', '1pXn']#, '3p0n', '3pXn']
 plt.figure()
 plot_confusion_matrix(
     cm, classes=class_names, 
     title='Confusion matrix, diagonal = {0:1.2f} %'.format(100 * diagonal),
-    name='plots/imaging/confusion_matrix_categorical.pdf')
+    name='plots/imaging/confusion_matrix_1p.pdf')
 
 
 

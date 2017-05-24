@@ -8,7 +8,7 @@ from tauperf.imaging.processing import process_taus
 
 tau_type = '1p2n'
 h5_filename = os.path.join(
-    os.getenv('DATA_AREA'), 'tauid_ntuples', 'v8', 'output_selected.h5')
+    os.getenv('DATA_AREA'), 'tauid_ntuples', 'v10', 'test', 'output.selected.h5')
 
 # h5file = File(h5_filename, mode='r')
 # rec = h5file.get('rec_' + tau_type)

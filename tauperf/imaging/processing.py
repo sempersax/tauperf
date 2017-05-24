@@ -63,7 +63,7 @@ def interpolate_rbf(x, y, z, function='linear', rotate_pc=True):
     return im
 
 
-def tau_image(
+def tau_calo_image(
     irec, rec, 
     rotate_pc=False, 
     cal_layer=2, 
@@ -221,35 +221,32 @@ def process_taus(
             break
 
         # protect against pathologic arrays
-#         try:
-#             rec = records[ir]
-#         except:
-#             rec = None
-
-#         if rec is None:
-#             print ir
-#             log.warning('record array is broken')
-#             continue
+        #         try:
+        #             rec = records[ir]
+        #         except:
+        #             rec = None
+        
+        #         if rec is None:
+        #             print ir
+        #             log.warning('record array is broken')
+        #             continue
 
         rec = records[ir]
 
         if cal_layer is None:
 
             # get the image for each layer
-            s1 = tau_image(ir, rec, cal_layer=1, do_plot=do_plot, suffix=suffix)
-            s2 = tau_image(ir, rec, cal_layer=2, do_plot=do_plot, suffix=suffix)
-            s3 = tau_image(ir, rec, cal_layer=3, do_plot=do_plot, suffix=suffix)
+            s1 = tau_calo_image(ir, rec, cal_layer=1, do_plot=do_plot, suffix=suffix)
+            s2 = tau_calo_image(ir, rec, cal_layer=2, do_plot=do_plot, suffix=suffix)
+            s3 = tau_calo_image(ir, rec, cal_layer=3, do_plot=do_plot, suffix=suffix)
 
             if s1 is None:
-#                 log.warning('s1: {0}, s2: {1}, s3: {2}'.format(len(s1), len(s2), len(s3)))
                 continue
 
             if s2 is None:
-#                 log.warning('s1: {0}, s2: {1}, s3: {2}'.format(len(s1), len(s2), len(s3)))
                 continue
 
             if s3 is None:
-#                 log.warning('s1: {0}, s2: {1}, s3: {2}'.format(len(s1), len(s2), len(s3)))
                 continue
             
             pt = rec['off_pt']
@@ -281,7 +278,7 @@ def process_taus(
 
         else:
 
-            image_layer = tau_image(ir, rec, cal_layer=cal_layer, do_plot=do_plot, suffix=suffix)
+            image_layer = tau_calo_image(ir, rec, cal_layer=cal_layer, do_plot=do_plot, suffix=suffix)
 
             if image_layer is None:
                 continue
@@ -305,3 +302,10 @@ def process_taus(
     return images
 
 
+def tau_track_image(
+    irec, rec, 
+    do_plot=False,
+    suffix='1p1n'):
+
+    fig = plt.figure()
+    
