@@ -135,12 +135,12 @@ def fit_model_single_layer(
         model.fit(
             X_train,
             y_train,
-            epochs=50,
+            epochs=100,
             batch_size=128,
             validation_data=(
                 X_test, y_test),
             callbacks=[
-                EarlyStopping(verbose=True, patience=5, monitor='val_loss'),
+                EarlyStopping(verbose=True, patience=20, monitor='val_loss'),
                 ModelCheckpoint(
                     filename, monitor='val_loss', 
                     verbose=True, save_best_only=True)
