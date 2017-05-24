@@ -251,7 +251,7 @@ def dense_merged_model_categorical(data, mode='sum'):
     model.add(Activation('softmax'))
     return model
 
-def dense_merged_model_rnn(data, mode='sum'):
+def dense_merged_model_rnn(data, n_classes=3, final_activation='softmax'):
     """
     """
     log.info('build the tracks classification model')
@@ -310,7 +310,7 @@ def dense_merged_model_rnn(data, mode='sum'):
     print merge_calo._keras_shape
     merge_x = LSTM(32)(merge_calo)
     merge_x = Dense(16, activation='relu')(merge_x)
-    output_mod =  Dense(3, activation='softmax')
+    output_mod =  Dense(n_classes, activation=final_activation)
     output_x = output_mod(merge_x)
 
     log.info('Merge the models to a dense model')
