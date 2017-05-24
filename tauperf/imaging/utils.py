@@ -91,12 +91,12 @@ def fit_model(
         model.fit(
             [X_train['s1'], X_train['s2'], X_train['s3']],
             y_train,
-            epochs=50,
+            epochs=100,
             batch_size=128,
             validation_data=(
                 [X_test['s1'], X_test['s2'], X_test['s3']], y_test),
             callbacks=[
-                EarlyStopping(verbose=True, patience=5, monitor='val_loss'),
+                EarlyStopping(verbose=True, patience=20, monitor='val_loss'),
                 ModelCheckpoint(
                     filename, monitor='val_loss', 
                     verbose=True, save_best_only=True)
