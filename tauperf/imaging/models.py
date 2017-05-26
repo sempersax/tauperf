@@ -2,7 +2,7 @@ import os
 from keras.models import Sequential, Model
 from keras.layers import Merge, Input
 from keras.layers.merge import concatenate
-from keras.layers.core import Dense, Dropout, Activation, Flatten, Reshape
+from keras.layers.core import Dense, Dropout, Activation, Flatten, Reshape, Masking
 from keras.layers.convolutional import Convolution1D, Convolution2D, Conv2D
 from keras.layers.pooling import MaxPooling2D
 from keras.layers.recurrent import LSTM
@@ -335,6 +335,70 @@ def dense_merged_model_with_tracks_rnn(data, n_classes=3, final_activation='soft
     tracks_x = Flatten()(tracks_x)
     tracks_x = Dense(128, activation='relu')(tracks_x)
     tracks_x = Dropout(0.2)(tracks_x)
+    tracks_out = Reshape((1, 128))(tracks_x)
+
+    log.info('build 2d convolutional model for s1')
+    s1_input = Input(shape=data[0]['s1'].shape)
+
+    s1_x = Conv2D(64, 6, 2, border_mode='same', activation='relu')(s1_input)
+    s1_x = MaxPooling2D(2, 2, dim_ordering='th')(s1_x)
+    s1_x = Dropout(0.2)(s1_x)
+    s1_x = Flatten()(s1_x)
+    s1_x = Dense(128, activation='relu')(s1_x)
+    s1_x = Dropout(0.2)(s1_x)
+    s1_out = Reshape((1, 128))(s1_x)
+
+    log.info('build 2d convolutional model for s2')
+    s2_input = Input(shape=data[0]['s2'].shape)
+    s2_x = Conv2D(64, 2, 2, border_mode='same', activation='relu')(s2_input)
+    s2_x = MaxPooling2D(2, 2, dim_ordering='th')(s2_x)
+    s2_x = Dropout(0.2)(s2_x)
+    s2_x = Flatten()(s2_x)
+    s2_x = Dense(128, activation='relu')(s2_x)
+    s2_x = Dropout(0.2)(s2_x)
+    s2_out = Reshape((1, 128))(s2_x)
+
+    log.info('build 2d convolutional model for s3')
+    s3_input = Input(shape=data[0]['s3'].shape)
+    s3_x = Conv2D(64, 4, 6, border_mode='same', activation='relu')(s3_input)
+    s3_x = MaxPooling2D(2, 2, dim_ordering='th')(s3_x)
+    s3_x = Dropout(0.2)(s3_x)
+    s3_x = Flatten()(s3_x)
+    s3_x = Dense(128, activation='relu')(s3_x)
+    s3_x = Dropout(0.2)(s3_x)
+    s3_out = Reshape((1, 128))(s3_x)
+
+#     print s1_out._keras_shape
+#     print s2_out._keras_shape
+#     print s3_out._keras_shape
+
+    log.info('merge calo layers')
+
+    merge = concatenate([tracks_out, s1_out, s2_out, s3_out], axis=1)
+
+    merge_x = LSTM(32)(merge)
+    merge_x = Dense(16, activation='relu')(merge_x)
+    output_mod =  Dense(n_classes, activation=final_activation)
+    output_x = output_mod(merge_x)
+
+    log.info('Merge the models to a dense model')
+
+    model = Model(inputs=[tracks_input, s1_input, s2_input, s3_input], outputs=output_x)
+    return model
+
+
+def dense_merged_model_with_tracks_rnn_rnn(data, n_classes=3, final_activation='softmax'):
+    """
+    """
+    log.info('build the tracks classification model')
+
+
+    log.info('build 2d convolutional model for tracks')
+    tracks_input = Input(shape=data[0]['tracks'].shape)
+
+    tracks_x = Masking()(tracks_input)
+    tracks_x = LSTM(32)(tracks_x)
+    tracks_x = Dense(128, activation='relu')(tracks_x)
     tracks_out = Reshape((1, 128))(tracks_x)
 
     log.info('build 2d convolutional model for s1')
