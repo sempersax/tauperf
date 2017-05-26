@@ -11,6 +11,7 @@ from sklearn import model_selection
 from .. import print_progress
 from . import log; log = log[__name__]
 from .plotting import plot_image, plot_heatmap
+from ROOT import TLorentzVector
 
 def make_xy_scatter_matrix(x, y, z, scat_pow=2, mean_pow=1):
 
@@ -70,7 +71,7 @@ def tau_calo_image(
     do_plot=False,
     suffix='1p1n'):
     """
-    return a pixelized image of a tau candidate.
+    return a pixelized image of a tau candidate...
     """
 
     # retrieve eta, phi and energy arrays in a given layers
@@ -188,11 +189,54 @@ def tau_calo_image(
     # return image
     return image
 
+def dphi_corr(phi1, phi2):
+    dphi = phi1 - phi2
+    if dphi > 2 * math.pi:
+        dphi = dphi - 2* math.pi
+    return dphi
+
+def tau_tracks(rec, n_eta=30, n_phi=30):
+    """
+    """
+    indices = np.where(rec['off_tracks_pt'] > 0)
+    pt = rec['off_tracks_pt'].take(indices[0])
+    eta = rec['off_tracks_eta'].take(indices[0])
+    phi = rec['off_tracks_phi'].take(indices[0])
+
+    sum_vec = TLorentzVector()
+    for (p, e, f) in zip(pt, eta, phi):
+        v = TLorentzVector()
+        v.SetPtEtaPhiM(p, e, f, 0)
+        sum_vec += v
+    print sum_vec.Pt()
+    
+    tau_eta = rec['off_eta']
+    tau_phi = rec['off_phi']
+
+    deta = rec['off_tracks_eta'].take(indices[0]) - tau_eta
+    deta_gran = deta / (0.4 / float(n_eta - 1))
+    deta_ind = [math.floor(i) + (n_eta - 1)/2 for i in deta_gran]
+    deta_ind = np.array(deta_ind, dtype=np.int)
+
+    dphi = [dphi_corr(phi, tau_phi) for phi in rec['off_tracks_phi'].take(indices[0])]
+    dphi = np.array(dphi)
+    dphi_gran = dphi / (0.4 / float(n_phi - 1)) 
+    dphi_ind = [math.floor(i) + (n_phi - 1)/2 for i in dphi_gran]
+    dphi_ind = np.array(dphi_ind, dtype=np.int)
+
+    tracks = [[0 for i in range(n_eta)] for j in range(n_phi)]
+    for i, j, e in zip(deta_ind, dphi_ind, pt):
+        tracks[i][j] = e / sum_vec.Pt()
+    tracks = np.asarray(tracks)
+
+    return tracks
+
 
 def process_taus(
     records, 
     nentries=None, 
     cal_layer=None, 
+    do_tracks=False,
     do_plot=False, 
     suffix='1p1n', 
     show_progress=True):
@@ -258,21 +302,42 @@ def process_taus(
             masstrksys = rec['off_massTrkSys']
             mu = rec['averageintpercrossing']
 
-            image = np.array([(
-                        s1, s2, s3, pt, eta, phi, 
-                        ntracks, empovertrksysp, chpiemeovercaloeme, masstrksys, mu)],
-                             dtype=[
-                    ('s1', 'f8', s1.shape), 
-                    ('s2', 'f8', s2.shape), 
-                    ('s3', 'f8', s3.shape), 
-                    ('pt', 'f8'), 
-                    ('eta', 'f8'), 
-                    ('phi', 'f8'), 
-                    ('ntracks', 'f8'), 
-                    ('empovertrksysp', 'f8'), 
-                    ('chpiemeovercaloeme', 'f8'), 
-                    ('masstrksys', 'f8'), 
-                    ('mu', 'f8')])
+            if do_tracks:
+                tracks = tau_tracks(rec, n_eta=30, n_phi=30)
+
+                image = np.array([(
+                            s1, s2, s3, tracks, pt, eta, phi, 
+                            ntracks, empovertrksysp, chpiemeovercaloeme, masstrksys, mu)],
+                                 dtype=[
+                        ('s1', 'f8', s1.shape), 
+                        ('s2', 'f8', s2.shape), 
+                        ('s3', 'f8', s3.shape), 
+                        ('tracks', 'f8', tracks.shape), 
+                        ('pt', 'f8'), 
+                        ('eta', 'f8'), 
+                        ('phi', 'f8'), 
+                        ('ntracks', 'f8'), 
+                        ('empovertrksysp', 'f8'), 
+                        ('chpiemeovercaloeme', 'f8'), 
+                        ('masstrksys', 'f8'), 
+                        ('mu', 'f8')])
+            else:
+                image = np.array([(
+                            s1, s2, s3, pt, eta, phi, 
+                            ntracks, empovertrksysp, chpiemeovercaloeme, masstrksys, mu)],
+                                 dtype=[
+                        ('s1', 'f8', s1.shape), 
+                        ('s2', 'f8', s2.shape), 
+                        ('s3', 'f8', s3.shape), 
+                        ('pt', 'f8'), 
+                        ('eta', 'f8'), 
+                        ('phi', 'f8'), 
+                        ('ntracks', 'f8'), 
+                        ('empovertrksysp', 'f8'), 
+                        ('chpiemeovercaloeme', 'f8'), 
+                        ('masstrksys', 'f8'), 
+                        ('mu', 'f8')])
+
 
             images.append(image)
 
@@ -302,10 +367,3 @@ def process_taus(
     return images
 
 
-def tau_track_image(
-    irec, rec, 
-    do_plot=False,
-    suffix='1p1n'):
-
-    fig = plt.figure()
-    

@@ -318,3 +318,70 @@ def dense_merged_model_rnn(data, n_classes=3, final_activation='softmax'):
     model = Model(inputs=[s1_input, s2_input, s3_input], outputs=output_x)
     return model
 
+def dense_merged_model_with_kin_rnn(data, n_classes=3, final_activation='softmax'):
+    """
+    """
+    log.info('build the tracks classification model')
+
+    kin_input = Input(shape=(3,))
+    kin_x = Dense(128, activation='relu')(kin_input)
+    kin_x = Dropout(0.2)(kin_x)
+    kin_x = Dense(64, activation='relu')(kin_x)
+    kin_x = Dropout(0.2)(kin_x)
+    kin_x = Dense(32, activation='relu')(kin_x)
+    kin_x = Dropout(0.2)(kin_x)
+
+
+    log.info('build 2d convolutional model for s1')
+    s1_input = Input(shape=data[0]['s1'].shape)
+
+    s1_x = Conv2D(64, 6, 2, border_mode='same', activation='relu')(s1_input)
+    s1_x = MaxPooling2D(2, 2, dim_ordering='th')(s1_x)
+    s1_x = Dropout(0.2)(s1_x)
+    s1_x = Flatten()(s1_x)
+    s1_x = Dense(128, activation='relu')(s1_x)
+    s1_x = Dropout(0.2)(s1_x)
+    s1_out = Reshape((1, 128))(s1_x)
+
+    log.info('build 2d convolutional model for s2')
+    s2_input = Input(shape=data[0]['s2'].shape)
+    s2_x = Conv2D(64, 2, 2, border_mode='same', activation='relu')(s2_input)
+    s2_x = MaxPooling2D(2, 2, dim_ordering='th')(s2_x)
+    s2_x = Dropout(0.2)(s2_x)
+    s2_x = Flatten()(s2_x)
+    s2_x = Dense(128, activation='relu')(s2_x)
+    s2_x = Dropout(0.2)(s2_x)
+    s2_out = Reshape((1, 128))(s2_x)
+
+    log.info('build 2d convolutional model for s3')
+    s3_input = Input(shape=data[0]['s3'].shape)
+    s3_x = Conv2D(64, 4, 6, border_mode='same', activation='relu')(s3_input)
+    s3_x = MaxPooling2D(2, 2, dim_ordering='th')(s3_x)
+    s3_x = Dropout(0.2)(s3_x)
+    s3_x = Flatten()(s3_x)
+    s3_x = Dense(128, activation='relu')(s3_x)
+    s3_x = Dropout(0.2)(s3_x)
+    s3_out = Reshape((1, 128))(s3_x)
+
+    print s1_out._keras_shape
+    print s2_out._keras_shape
+    print s3_out._keras_shape
+
+    log.info('merge calo layers')
+#     print s3_x
+#     print s3_x.input_shape
+#     print s3_x.output_shape
+
+
+    merge_calo = concatenate([s1_out, s2_out, s3_out], axis=1)
+    print merge_calo._keras_shape
+    merge_x = LSTM(32)(merge_calo)
+    merge_x = Dense(16, activation='relu')(merge_x)
+    output_mod =  Dense(n_classes, activation=final_activation)
+    output_x = output_mod(merge_x)
+
+    log.info('Merge the models to a dense model')
+
+    model = Model(inputs=[s1_input, s2_input, s3_input], outputs=output_x)
+    return model
+

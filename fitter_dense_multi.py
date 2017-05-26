@@ -212,8 +212,8 @@ log.info('compute classifier scores')
 kin_test = np.hstack([
     test['ntracks'],
     test['empovertrksysp'],
-    test['chpiemeovercaloeme'],
-    test['masstrksys']
+    test['chpiemeovercaloeme']
+#    test['masstrksys']
     ])
 
 y_pred = model.predict(
