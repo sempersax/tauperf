@@ -89,12 +89,12 @@ def fit_model(
 
         log.info('Start training ...')
         model.fit(
-            [X_train['s1'], X_train['s2'], X_train['s3']],
+            [X_train['tracks'], X_train['s1'], X_train['s2'], X_train['s3']],
             y_train,
             epochs=100,
             batch_size=128,
             validation_data=(
-                [X_test['s1'], X_test['s2'], X_test['s3']], y_test),
+                [X_test['tracks'], X_test['s1'], X_test['s2'], X_test['s3']], y_test),
             callbacks=[
                 EarlyStopping(verbose=True, patience=20, monitor='val_loss'),
                 ModelCheckpoint(

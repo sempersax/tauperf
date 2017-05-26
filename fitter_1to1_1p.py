@@ -10,7 +10,7 @@ from sklearn.metrics import roc_curve
 from keras.models import load_model
 
 from tauperf import log; log = log['/fitter']
-from tauperf.imaging.models import dense_merged_model, dense_merged_model_rnn
+from tauperf.imaging.models import dense_merged_model, dense_merged_model_with_tracks_rnn
 from tauperf.imaging.utils import fit_model
 
 from argparse import ArgumentParser
@@ -35,7 +35,7 @@ args = parser.parse_args()
 
 log.info('loading data...')
 data_dir = os.path.join(
-    os.getenv('DATA_AREA'), 'tauid_ntuples', 'v8')
+    os.getenv('DATA_AREA'), 'tauid_ntuples', 'v10')
                         
 
 images_1p0n  = np.load(os.path.join(data_dir, 'images_new_1p0n.npy'))
@@ -157,7 +157,7 @@ model_pi0_filename = 'cache/crackpot_dense_pi0.h5'
 if args.no_train or args.no_train_pi0:
     model_pi0 = load_model(model_pi0_filename)
 else:
-    model_pi0 = dense_merged_model_rnn(train_pi0, n_classes=1, final_activation='sigmoid')
+    model_pi0 = dense_merged_model_with_tracks_rnn(train_pi0, n_classes=1, final_activation='sigmoid')
     fit_model(
         model_pi0,
         train_pi0, y_train_pi0,
@@ -170,7 +170,7 @@ model_twopi0_filename = 'cache/crackpot_dense_twopi0.h5'
 if args.no_train or args.no_train_twopi0:
     model_twopi0 = load_model(model_twopi0_filename)
 else:
-    model_twopi0 = dense_merged_model_rnn(train_twopi0, n_classes=1, final_activation='sigmoid')
+    model_twopi0 = dense_merged_model_with_tracks_rnn(train_twopi0, n_classes=1, final_activation='sigmoid')
     fit_model(
     model_twopi0,
     train_twopi0, y_train_twopi0,
@@ -185,10 +185,10 @@ log.info('testing stuff')
 
 log.info('compute classifier scores')
 y_pred_pi0 = model_pi0.predict(
-        [test_pi0['s1'], test_pi0['s2'], test_pi0['s3']], 
+        [test_pi0['tracks'], test_pi0['s1'], test_pi0['s2'], test_pi0['s3']], 
         batch_size=32, verbose=1)
 y_pred_twopi0 = model_twopi0.predict(
-        [test_twopi0['s1'], test_twopi0['s2'], test_twopi0['s3']], 
+        [test_twopi0['tracks'], test_twopi0['s1'], test_twopi0['s2'], test_twopi0['s3']], 
         batch_size=32, verbose=1)
 
 print
