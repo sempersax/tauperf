@@ -395,8 +395,9 @@ def dense_merged_model_with_tracks_rnn_rnn(data, n_classes=3, final_activation='
 
     log.info('build 2d convolutional model for tracks')
     tracks_input = Input(shape=data[0]['tracks'].shape)
-
+    print tracks_input._keras_shape
     tracks_x = Masking()(tracks_input)
+    print tracks_x._keras_shape
     tracks_x = LSTM(32)(tracks_x)
     tracks_x = Dense(128, activation='relu')(tracks_x)
     tracks_out = Reshape((1, 128))(tracks_x)
