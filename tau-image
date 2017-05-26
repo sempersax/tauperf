@@ -9,7 +9,7 @@ import tables
 from tauperf import log; log = log['/tau-image']
 
 
-def create_image_data(filename, tau_type, cal_layer=None, show_progress=False):
+def create_image_data(filename, tau_type, cal_layer=None, show_progress=False, outdir='.'):
     """
     """
     log.info('open h5 file {0}'.format(filename))
@@ -26,9 +26,9 @@ def create_image_data(filename, tau_type, cal_layer=None, show_progress=False):
         records, cal_layer=cal_layer, do_tracks=True, suffix=tau_type, show_progress=show_progress)
 
     if cal_layer is not None:
-        np.save(os.path.join(dir_name, 'images_S{0}_{1}.npy'.format(cal_layer, tau_type)), images)
+        np.save(os.path.join(outdir, 'images_S{0}_{1}.npy'.format(cal_layer, tau_type)), images)
     else:
-        np.save(os.path.join(dir_name, 'images_new_{0}.npy'.format(tau_type)), images)
+        np.save(os.path.join(outdir, 'images_new_{0}.npy'.format(tau_type)), images)
 
     log.info('close h5 file {0}'.format(filename))
     h5file.flush()
@@ -48,11 +48,12 @@ if __name__ == '__main__':
         '--cal-layer', default=None, choices=[None, 1, 2, 3], type=int, 
         help='select layer for the image selection')
     parser.add_argument('--no-progress-bar', default=False, action='store_true')
+    parser.add_argument('--outdir', default='.')
     args = parser.parse_args()
 
     cal_layer = args.cal_layer
     tau_type = args.tau_type
     h5_filename = args.h5file
 
-    create_image_data(h5_filename, tau_type, cal_layer=args.cal_layer, show_progress=not args.no_progress_bar)
+    create_image_data(h5_filename, tau_type, cal_layer=args.cal_layer, show_progress=not args.no_progress_bar, outdir=args.outdir)
 
