@@ -191,8 +191,12 @@ def tau_calo_image(
 
 def dphi_corr(phi1, phi2):
     dphi = phi1 - phi2
-    if dphi > 2 * math.pi:
+    if dphi > math.pi:
         dphi = dphi - 2* math.pi
+    elif dphi < -math.pi:
+        dphi = dphi + 2 * math.pi
+    else:
+        pass
     return dphi
 
 def tau_tracks(rec, n_eta=30, n_phi=30):
@@ -208,7 +212,6 @@ def tau_tracks(rec, n_eta=30, n_phi=30):
         v = TLorentzVector()
         v.SetPtEtaPhiM(p, e, f, 0)
         sum_vec += v
-    print sum_vec.Pt()
     
     tau_eta = rec['off_eta']
     tau_phi = rec['off_phi']
@@ -218,7 +221,7 @@ def tau_tracks(rec, n_eta=30, n_phi=30):
     deta_ind = [math.floor(i) + (n_eta - 1)/2 for i in deta_gran]
     deta_ind = np.array(deta_ind, dtype=np.int)
 
-    dphi = [dphi_corr(phi, tau_phi) for phi in rec['off_tracks_phi'].take(indices[0])]
+    dphi = [dphi_corr(phi1, tau_phi) for phi1 in rec['off_tracks_phi'].take(indices[0])]
     dphi = np.array(dphi)
     dphi_gran = dphi / (0.4 / float(n_phi - 1)) 
     dphi_ind = [math.floor(i) + (n_phi - 1)/2 for i in dphi_gran]
