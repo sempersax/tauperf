@@ -329,7 +329,7 @@ def dense_merged_model_with_tracks_rnn(data, n_classes=3, final_activation='soft
     log.info('build 2d convolutional model for tracks')
     tracks_input = Input(shape=data[0]['tracks'].shape)
 
-    tracks_x = Conv2D(64, 2, 2, border_mode='same', activation='relu')(tracks_input)
+    tracks_x = Conv2D(64, 6, 6, border_mode='same', activation='relu')(tracks_input)
     tracks_x = MaxPooling2D(2, 2, dim_ordering='th')(tracks_x)
     tracks_x = Dropout(0.2)(tracks_x)
     tracks_x = Flatten()(tracks_x)
