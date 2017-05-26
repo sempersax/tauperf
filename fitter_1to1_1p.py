@@ -42,6 +42,10 @@ images_1p0n  = np.load(os.path.join(data_dir, 'images_new_1p0n.npy'))
 images_1p1n  = np.load(os.path.join(data_dir, 'images_new_1p1n.npy'))
 images_1p2n  = np.load(os.path.join(data_dir, 'images_new_1p2n.npy'))
 
+images_1p0n['tracks'].reshape((10,4))
+images_1p1n['tracks'].reshape((10,4))
+images_1p2n['tracks'].reshape((10,4))
+
 
 log.info('splitting')
 
