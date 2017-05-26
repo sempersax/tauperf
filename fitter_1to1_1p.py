@@ -35,7 +35,8 @@ args = parser.parse_args()
 
 log.info('loading data...')
 data_dir = os.path.join(
-    os.getenv('DATA_AREA'), 'tauid_ntuples', 'v10')
+    '/cluster/warehouse/lkaplan', 'tauid_ntuples', 'v10_tracks2')
+    # os.getenv('DATA_AREA'), 'tauid_ntuples', 'v10')
                         
 
 images_1p0n  = np.load(os.path.join(data_dir, 'images_new_1p0n.npy'))
