@@ -234,6 +234,51 @@ def tau_tracks(rec, n_eta=30, n_phi=30):
 
     return tracks
 
+def tau_tracks_simple(rec):
+    """
+    Laser was here.
+    """
+    maxtracks = 10
+    pt   = []
+    deta = []
+    dphi = []
+    d0   = []
+    z0   = []
+
+    indices = np.where(rec['off_tracks_pt'] > 0)
+    rpt  = rec['off_tracks_pt']            .take(indices[0])
+    reta = rec['off_tracks_eta']           .take(indices[0])
+    rphi = rec['off_tracks_phi']           .take(indices[0])
+    rd0  = rec['off_tracks_d0']            .take(indices[0])
+    rz0  = rec['off_tracks_z0sinThetaTJVA'].take(indices[0])
+
+    sum_vec = TLorentzVector()
+    for (p, e, f) in zip(rpt, reta, rphi):
+        v = TLorentzVector()
+        v.SetPtEtaPhiM(p, e, f, 0)
+        sum_vec += v
+
+    tau_eta = rec['off_eta']
+    tau_phi = rec['off_phi']
+
+    for (p, e, f, d, z) in zip(rpt, reta, rphi, rd0, rz0):
+        pt.append(p / sum_vec.Pt())
+        deta.append(e - tau_eta)
+        dphi.append(dphi_corr(f, tau_phi))
+        d0.append(d)
+        z0.append(z)
+
+    pt   += [0] * (maxtracks - len(pt)  )
+    deta += [0] * (maxtracks - len(deta))
+    dphi += [0] * (maxtracks - len(dphi))
+    d0   += [0] * (maxtracks - len(d0)  )
+    z0   += [0] * (maxtracks - len(z0)  )
+
+    #tracks = zip(pt, deta, dphi, d0, z0)
+    tracks = zip(pt, deta, dphi, d0)
+    tracks = np.asarray(tracks)
+
+    return tracks
 
 def process_taus(
     records, 
@@ -306,7 +351,8 @@ def process_taus(
             mu = rec['averageintpercrossing']
 
             if do_tracks:
-                tracks = tau_tracks(rec, n_eta=30, n_phi=30)
+                #tracks = tau_tracks(rec, n_eta=30, n_phi=30)
+                tracks = tau_tracks_simple(rec)
 
                 image = np.array([(
                             s1, s2, s3, tracks, pt, eta, phi, 
