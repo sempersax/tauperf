@@ -244,11 +244,11 @@ log.info('Drawing the confusion matrix')
 X_test = np.concatenate((test_1p0n, test_1p1n, test_1p2n))
 
 score_pi0 = model_pi0.predict(
-    [X_test['s1'], X_test['s2'], X_test['s3']], 
+    [X_test['tracks'], X_test['s1'], X_test['s2'], X_test['s3']], 
     batch_size=32, verbose=1)
 
 score_twopi0 = model_twopi0.predict(
-    [X_test['s1'], X_test['s2'], X_test['s3']], 
+    [X_test['tracks'], X_test['s1'], X_test['s2'], X_test['s3']], 
     batch_size=32, verbose=1)
 
 print
