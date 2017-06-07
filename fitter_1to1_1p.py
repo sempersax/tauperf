@@ -188,10 +188,10 @@ log.info('testing stuff')
 
 log.info('compute classifier scores')
 y_pred_pi0 = model_pi0.predict(
-        [test_pi0['tracks'], test_pi0['s1'], test_pi0['s2'], test_pi0['s3']], 
+        [test_pi0['tracks'], test_pi0['s1'], test_pi0['s2'], test_pi0['s3'], test_pi0['s4'], test_pi0['s5']], 
         batch_size=32, verbose=1)
 y_pred_twopi0 = model_twopi0.predict(
-        [test_twopi0['tracks'], test_twopi0['s1'], test_twopi0['s2'], test_twopi0['s3']], 
+        [test_twopi0['tracks'], test_twopi0['s1'], test_twopi0['s2'], test_twopi0['s3'], test_pi0['s4'], test_pi0['s5']], 
         batch_size=32, verbose=1)
 
 print
