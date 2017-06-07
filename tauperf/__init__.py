@@ -44,10 +44,12 @@ def print_progress(iteration, total, prefix = '', suffix = '', decimals = 1, bar
         decimals    - Optional  : positive number of decimals in percent complete (Int)
         barLength   - Optional  : character length of bar (Int)
     """
+
+    bar_letter = os.environ.get('USER').strip()[0].capitalize()
     formatStr       = "{0:." + str(decimals) + "f}"
     percents        = formatStr.format(100 * (iteration / float(total)))
     filledLength    = int(round(barLength * iteration / float(total)))
-    bar             = 'Q' * filledLength + '-' * (barLength - filledLength)
+    bar             = bar_letter * filledLength + '-' * (barLength - filledLength)
     sys.stdout.write('\r%s |%s| %s%s %s' % (prefix, bar, percents, '%', suffix)),
     if iteration == total:
         sys.stdout.write('\n')

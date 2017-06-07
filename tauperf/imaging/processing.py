@@ -64,6 +64,26 @@ def interpolate_rbf(x, y, z, function='linear', rotate_pc=True):
     return im
 
 
+def tau_topo_image(irec, rec, cal_layer=2, width=32, height=32):
+    """
+    """
+    indices = np.where(rec['off_cells_samp'] == cal_layer)
+    #     if len(indices[0]) == 0:
+    #         log.warning('event {0}: No cell selected in layer {1} --> need to figure out why'.format(irec, cal_layer))
+
+    ene_ = rec['off_cells_e_norm'].take(indices[0])
+    eta_ = rec['off_cells_deta_digit'].take(indices[0])
+    phi_ = rec['off_cells_dphi_digit'].take(indices[0])
+
+    image = [[0 for j in range(width)] for i in range(height)]
+    for eta, phi, ene in zip(eta_, phi_, ene_):
+        eta_ind = int(eta + math.floor(width / 2))
+        phi_ind = int(phi + math.floor(height / 2))
+        if eta_ind < width  and eta_ind > 0 and phi_ind < height and phi_ind > 0:
+            image[phi_ind][eta_ind] = ene
+    image = np.asarray(image)
+    return image
+
 def tau_calo_image(
     irec, rec, 
     rotate_pc=False, 
@@ -328,9 +348,15 @@ def process_taus(
         if cal_layer is None:
 
             # get the image for each layer
-            s1 = tau_calo_image(ir, rec, cal_layer=1, do_plot=do_plot, suffix=suffix)
-            s2 = tau_calo_image(ir, rec, cal_layer=2, do_plot=do_plot, suffix=suffix)
-            s3 = tau_calo_image(ir, rec, cal_layer=3, do_plot=do_plot, suffix=suffix)
+            s1 = tau_topo_image(ir, rec, cal_layer=1, width=120, height=20)
+            s2 = tau_topo_image(ir, rec, cal_layer=2, width=32, height=32)
+            s3 = tau_topo_image(ir, rec, cal_layer=3, width=16, height=32)
+            s4 = tau_topo_image(ir, rec, cal_layer=12, width=8, height=8)
+            s5 = tau_topo_image(ir, rec, cal_layer=13, width=8, height=8)
+
+#             s1 = tau_calo_image(ir, rec, cal_layer=1, do_plot=do_plot, suffix=suffix)
+#             s2 = tau_calo_image(ir, rec, cal_layer=2, do_plot=do_plot, suffix=suffix)
+#             s3 = tau_calo_image(ir, rec, cal_layer=3, do_plot=do_plot, suffix=suffix)
 
             if s1 is None:
                 continue
@@ -341,6 +367,12 @@ def process_taus(
             if s3 is None:
                 continue
             
+            if s4 is None:
+                continue
+            
+            if s5 is None:
+                continue
+
             pt = rec['off_pt']
             eta = rec['off_eta']
             phi = rec['off_phi']
@@ -355,12 +387,14 @@ def process_taus(
                 tracks = tau_tracks_simple(rec)
 
                 image = np.array([(
-                            s1, s2, s3, tracks, pt, eta, phi, 
+                            s1, s2, s3, s4, s5, tracks, pt, eta, phi, 
                             ntracks, empovertrksysp, chpiemeovercaloeme, masstrksys, mu)],
                                  dtype=[
                         ('s1', 'f8', s1.shape), 
                         ('s2', 'f8', s2.shape), 
                         ('s3', 'f8', s3.shape), 
+                        ('s4', 'f8', s4.shape), 
+                        ('s5', 'f8', s5.shape), 
                         ('tracks', 'f8', tracks.shape), 
                         ('pt', 'f8'), 
                         ('eta', 'f8'), 
@@ -378,6 +412,8 @@ def process_taus(
                         ('s1', 'f8', s1.shape), 
                         ('s2', 'f8', s2.shape), 
                         ('s3', 'f8', s3.shape), 
+                        ('s4', 'f8', s4.shape), 
+                        ('s5', 'f8', s5.shape), 
                         ('pt', 'f8'), 
                         ('eta', 'f8'), 
                         ('phi', 'f8'), 
