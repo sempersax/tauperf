@@ -29,10 +29,11 @@ def create_image_data(filename, tau_type, show_progress=False, outdir='.'):
     train, test = model_selection.train_test_split(images, test_size=0.3, random_state=42)
     val, test = np.split(test, [len(test) / 2])    
 
-    out_h5 = File(os.path.join(outdir, 'images_new_{0}.h5'.format(tau_type)), 'w')
-    out_h5.create_dataset('train', data=train)
-    out_h5.create_dataset('test', data=test)
-    out_h5.create_dataset('val', data=val)
+    out_h5 = tables.open_file(os.path.join(outdir, 'images_new_{0}.h5'.format(tau_type)), mode='w')
+    out_h5.create_table(out_h5.root, 'train', train)
+    out_h5.create_table(out_h5.root, 'test', test)
+    out_h5.create_table(out_h5.root, 'val', val)
+    out_h5.flush()
     out_h5.close()
 
     log.info('close h5 file {0}'.format(filename))
