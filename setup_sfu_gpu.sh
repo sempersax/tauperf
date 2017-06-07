@@ -29,5 +29,5 @@ export PATH=${DIR_TAUPERF_SETUP}${PATH:+:$PATH}
 export PYTHONPATH=${DIR_TAUPERF_SETUP}${PYTHONPATH:+:$PYTHONPATH}
 
 # specific to the gpu cluster
-export THEANO_FLAGS='floatX=float32,device=gpu0,lib.cnmem=0.9'
+export THEANO_FLAGS='floatX=float32,device=gpu0,lib.cnmem=0.8'
 git pull origin imaging

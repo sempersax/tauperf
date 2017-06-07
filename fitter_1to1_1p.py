@@ -37,7 +37,7 @@ args = parser.parse_args()
 log.info('loading data...')
 data_dir = os.path.join(
 #     '/cluster/warehouse/lkaplan', 'tauid_ntuples', 'v10_tracks2')
-    os.getenv('DATA_AREA'), 'tauid_ntuples', 'v11/test')
+    os.getenv('DATA_AREA'), 'tauid_ntuples', 'v11')
                         
 
 h5file_1p0n = tables.open_file(os.path.join(data_dir, "images_new_1p0n.h5"), mode="r", title ="1p0n")
