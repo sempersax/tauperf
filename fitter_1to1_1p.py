@@ -287,11 +287,11 @@ set_style('ATLAS', mpl=True)
 
 # 1p1n vs 1p0n - pt 
 eff_pi0_pt_1p1n = get_eff(
-    test_1p1n['pt'].reshape((test_1p1n.shape[0])), pred_pi0[y_true == 1], 
+    test_1p1n.col('pt').reshape((test_1p1n.shape[0])), pred_pi0[y_true == 1], 
     scale=0.001, color='red', name='1p1n')
 
 eff_pi0_pt_1p0n = get_eff(
-    test_1p0n['pt'].reshape((test_1p0n.shape[0])), pred_pi0[y_true == 0] == 0, 
+    test_1p0n.col('pt').reshape((test_1p0n.shape[0])), pred_pi0[y_true == 0] == 0, 
     scale=0.001, color='black', name='1p0n')
 
 fig = plt.figure()
@@ -304,11 +304,11 @@ fig.savefig('plots/imaging/efficiency_pi0_pt.pdf')
 
 # 1p1n vs 1p0n - eta
 eff_pi0_eta_1p1n = get_eff(
-    test_1p1n['eta'].reshape((test_1p1n.shape[0])), pred_pi0[y_true == 1], 
+    test_1p1ncol('eta').reshape((test_1p1n.shape[0])), pred_pi0[y_true == 1], 
     binning=(10, -1.1, 1.1), color='red', name='1p1n')
 
 eff_pi0_eta_1p0n = get_eff(
-    test_1p0n['eta'].reshape((test_1p0n.shape[0])), pred_pi0[y_true == 0] == 0, 
+    test_1p0n.col('eta').reshape((test_1p0n.shape[0])), pred_pi0[y_true == 0] == 0, 
     binning=(10, -1.1, 1.1), color='black', name='1p0n')
 
 fig = plt.figure()
@@ -321,11 +321,11 @@ fig.savefig('plots/imaging/efficiency_pi0_eta.pdf')
 
 # 1p1n vs 1p0n - mu
 eff_pi0_mu_1p1n = get_eff(
-    test_1p1n['mu'].reshape((test_1p1n.shape[0])), pred_pi0[y_true == 1], 
+    test_1p1n.col('mu').reshape((test_1p1n.shape[0])), pred_pi0[y_true == 1], 
     binning=(10, 0, 40), color='red', name='1p1n')
 
 eff_pi0_mu_1p0n = get_eff(
-    test_1p0n['mu'].reshape((test_1p0n.shape[0])), pred_pi0[y_true == 0] == 0, 
+    test_1p0n.col('mu').reshape((test_1p0n.shape[0])), pred_pi0[y_true == 0] == 0, 
     binning=(10, 0, 40), color='black', name='1p0n')
 
 fig = plt.figure()
@@ -372,11 +372,11 @@ fig.savefig('plots/imaging/efficiency_twopi0_eta.pdf')
 
 # 1p1n vs 1p2n - mu
 eff_twopi0_mu_1p1n = get_eff(
-    test_1p1n['mu'].reshape((test_1p1n.shape[0])), pred_twopi0[y_true == 1] == 0, 
+    test_1p1n.col('mu').reshape((test_1p1n.shape[0])), pred_twopi0[y_true == 1] == 0, 
     binning=(10, 0, 40), color='red', name='1p1n')
 
 eff_twopi0_mu_1p2n = get_eff(
-    test_1p2n['mu'].reshape((test_1p2n.shape[0])), pred_twopi0[y_true == 2], 
+    test_1p2n.col('mu').reshape((test_1p2n.shape[0])), pred_twopi0[y_true == 2], 
     binning=(10, 0, 40), color='black', name='1p2n')
 
 fig = plt.figure()
