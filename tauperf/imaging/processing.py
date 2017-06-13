@@ -352,7 +352,7 @@ def process_taus(
         if cal_layer is None:
 
             # get the image for each layer
-            s1 = tau_topo_image(ir, rec, cal_layer=1, width=120, height=20)
+            s1 = tau_topo_image(ir, rec, cal_layer=1, width=120, height=8)
             s2 = tau_topo_image(ir, rec, cal_layer=2, width=32, height=32)
             s3 = tau_topo_image(ir, rec, cal_layer=3, width=16, height=32)
             s4 = tau_topo_image(ir, rec, cal_layer=12, width=8, height=8)

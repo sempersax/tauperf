@@ -28,6 +28,7 @@ def create_image_data(filename, tau_type, show_progress=False, outdir='.'):
 
     train, test = model_selection.train_test_split(images, test_size=0.3, random_state=42)
     val, test = np.split(test, [len(test) / 2])    
+    n_batches = 20
 
     out_h5 = tables.open_file(os.path.join(outdir, 'images_new_{0}.h5'.format(tau_type)), mode='w')
     out_h5.create_table(out_h5.root, 'train', train)
