@@ -43,14 +43,16 @@ def fit_model_multi(
         
         
         model.fit(
-            [X_train['s1'], X_train['s2'], X_train['s3']],
+            [X_train['tracks'], X_train['s1'], X_train['s2'], X_train['s3'], X_train['s4'], X_train['s5']],
+#             [X_train['s1'], X_train['s2'], X_train['s3']],
 #             [kin_train, X_train['s1'], X_train['s2'], X_train['s3']],
             y_train,
             epochs=100,
             batch_size=128,
             validation_data=(
 #                 [kin_test, X_test['s1'], X_test['s2'], X_test['s3']], y_test),
-                [X_test['s1'], X_test['s2'], X_test['s3']], y_test),
+#                 [X_test['s1'], X_test['s2'], X_test['s3']], y_test),
+                [X_test['tracks'], X_test['s1'], X_test['s2'], X_test['s3'], X_test['s4'], X_test['s5']], y_test),
             callbacks=[
                 EarlyStopping(verbose=True, patience=10, monitor='val_loss'),
                 ModelCheckpoint(
