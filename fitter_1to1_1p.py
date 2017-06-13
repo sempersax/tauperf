@@ -2,6 +2,7 @@ import os
 import numpy as np
 import matplotlib as mpl; mpl.use('TkAgg')
 import matplotlib.pyplot as plt
+import tables
 
 from tabulate import tabulate
 
@@ -39,39 +40,36 @@ data_dir = os.path.join(
     os.getenv('DATA_AREA'), 'tauid_ntuples', 'v11/test')
                         
 
-images_1p0n  = np.load(os.path.join(data_dir, 'images_new_1p0n.npy'))
-images_1p1n  = np.load(os.path.join(data_dir, 'images_new_1p1n.npy'))
-images_1p2n  = np.load(os.path.join(data_dir, 'images_new_1p2n.npy'))
+h5file_1p0n = tables.open_file(os.path.join(data_dir, "images_new_1p0n.h5"), mode="r", title ="1p0n")
+h5file_1p1n = tables.open_file(os.path.join(data_dir, "images_new_1p1n.h5"), mode="r", title ="1p1n")
+h5file_1p2n = tables.open_file(os.path.join(data_dir, "images_new_1p2n.h5"), mode="r", title ="1p2n")
 
 
-log.info('splitting')
+train_1p0n = h5file_1p0n.root.shit.train
+train_1p1n = h5file_1p1n.root.shit.train
+train_1p2n = h5file_1p2n.root.shit.train
 
-train_1p0n, test_1p0n = model_selection.train_test_split(
-    images_1p0n, test_size=0.3, random_state=42)
-val_1p0n, test_1p0n = np.split(test_1p0n, [len(test_1p0n) / 2])
+test_1p0n = h5file_1p0n.root.shit.test
+test_1p1n = h5file_1p1n.root.shit.test
+test_1p2n = h5file_1p2n.root.shit.test
 
-train_1p1n, test_1p1n = model_selection.train_test_split(
-    images_1p1n, test_size=0.3, random_state=42)
-val_1p1n, test_1p1n = np.split(test_1p1n, [len(test_1p1n) / 2])
-
-train_1p2n, test_1p2n = model_selection.train_test_split(
-    images_1p2n, test_size=0.3, random_state=42)
-val_1p2n, test_1p2n = np.split(test_1p2n, [len(test_1p2n) / 2])
-
+val_1p0n = h5file_1p0n.root.shit.val
+val_1p1n = h5file_1p1n.root.shit.val
+val_1p2n = h5file_1p2n.root.shit.val
 
 
 # log.info('apply track preselection')
-test_1p0n = test_1p0n.take(np.where(test_1p0n['ntracks'] > 0)[0], axis=0)
-test_1p1n = test_1p1n.take(np.where(test_1p1n['ntracks'] > 0)[0], axis=0)
-test_1p2n = test_1p2n.take(np.where(test_1p2n['ntracks'] > 0)[0], axis=0)
+# test_1p0n = test_1p0n.take(np.where(test_1p0n['ntracks'] > 0)[0], axis=0)
+# test_1p1n = test_1p1n.take(np.where(test_1p1n['ntracks'] > 0)[0], axis=0)
+# test_1p2n = test_1p2n.take(np.where(test_1p2n['ntracks'] > 0)[0], axis=0)
 
-test_1p0n = test_1p0n.take(np.where(test_1p0n['ntracks'] < 4)[0], axis=0)
-test_1p1n = test_1p1n.take(np.where(test_1p1n['ntracks'] < 4)[0], axis=0)
-test_1p2n = test_1p2n.take(np.where(test_1p2n['ntracks'] < 4)[0], axis=0)
+# test_1p0n = test_1p0n.take(np.where(test_1p0n['ntracks'] < 4)[0], axis=0)
+# test_1p1n = test_1p1n.take(np.where(test_1p1n['ntracks'] < 4)[0], axis=0)
+# test_1p2n = test_1p2n.take(np.where(test_1p2n['ntracks'] < 4)[0], axis=0)
 
-test_1p0n = test_1p0n.take(np.where(test_1p0n['ntracks'] != 2)[0], axis=0)
-test_1p1n = test_1p1n.take(np.where(test_1p1n['ntracks'] != 2)[0], axis=0)
-test_1p2n = test_1p2n.take(np.where(test_1p2n['ntracks'] != 2)[0], axis=0)
+# test_1p0n = test_1p0n.take(np.where(test_1p0n['ntracks'] != 2)[0], axis=0)
+# test_1p1n = test_1p1n.take(np.where(test_1p1n['ntracks'] != 2)[0], axis=0)
+# test_1p2n = test_1p2n.take(np.where(test_1p2n['ntracks'] != 2)[0], axis=0)
 
 
 
@@ -98,11 +96,11 @@ if args.debug:
 
 
 
-headers = ["sample", "Total", "Training", "Validation", "Testing"]
+headers = ["sample", "Train", "Training", "Validation", "Testing"]
 sample_size_table = [
-    ['1p0n', len(images_1p0n), len(train_1p0n), len(val_1p0n), len(test_1p0n)],
-    ['1p1n', len(images_1p1n), len(train_1p1n), len(val_1p1n), len(test_1p1n)],
-    ['1p2n', len(images_1p2n), len(train_1p2n), len(val_1p2n), len(test_1p2n)],
+    ['1p0n', len(train_1p0n), len(train_1p0n), len(val_1p0n), len(test_1p0n)],
+    ['1p1n', len(train_1p1n), len(train_1p1n), len(val_1p1n), len(test_1p1n)],
+    ['1p2n', len(train_1p2n), len(train_1p2n), len(val_1p2n), len(test_1p2n)],
 ]
 
 log.info('')
@@ -114,9 +112,9 @@ log.info('')
 
 
 
-train_pi0 = np.concatenate((train_1p0n, train_1p1n, train_1p2n))
-test_pi0  = np.concatenate((test_1p0n, test_1p1n, test_1p2n))
-val_pi0   = np.concatenate((val_1p0n, val_1p1n, val_1p2n))
+train_pi0 = np.concatenate((train_1p0n.read(), train_1p1n.read(), train_1p2n.read()))
+test_pi0  = np.concatenate((test_1p0n.read(), test_1p1n.read(), test_1p2n.read()))
+val_pi0   = np.concatenate((val_1p0n.read(), val_1p1n.read(), val_1p2n.read()))
 
 y_train_pi0 = np.concatenate((
     np.ones(train_1p0n.shape, dtype=np.uint8),
@@ -135,9 +133,9 @@ y_val_pi0 = np.concatenate((
 
 # training/testing samples for 1p1n against 1p2n
 # Signal = 1p1n, Bkg = 1p2n
-train_twopi0 = np.concatenate((train_1p1n, train_1p2n))
-test_twopi0  = np.concatenate((test_1p1n, test_1p2n))       
-val_twopi0   = np.concatenate((val_1p1n, val_1p2n))
+train_twopi0 = np.concatenate((train_1p1n.read(), train_1p2n.read()))
+test_twopi0  = np.concatenate((test_1p1n.read(), test_1p2n.read()))       
+val_twopi0   = np.concatenate((val_1p1n.read(), val_1p2n.read()))
 
 y_train_twopi0 = np.concatenate((
     np.ones(train_1p1n.shape, dtype=np.uint8),
@@ -246,7 +244,7 @@ plt.savefig('./plots/imaging/roc_curve.pdf')
 
 # ######################
 log.info('Drawing the confusion matrix')
-X_test = np.concatenate((test_1p0n, test_1p1n, test_1p2n))
+X_test = np.concatenate((test_1p0n.read(), test_1p1n.read(), test_1p2n.read()))
 
 score_pi0 = model_pi0.predict(
     [X_test['tracks'], X_test['s1'], X_test['s2'], X_test['s3'], X_test['s4'], X_test['s5']], 

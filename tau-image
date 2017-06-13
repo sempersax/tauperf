@@ -26,14 +26,19 @@ def create_image_data(filename, tau_type, show_progress=False, outdir='.'):
     images = process_taus(
         records, cal_layer=None, do_tracks=True, suffix=tau_type, show_progress=show_progress)
 
+    images = images.take(np.where(images['ntracks'] > 0)[0], axis=0)
+    images = images.take(np.where(images['ntracks'] < 4)[0], axis=0)
+    images = images.take(np.where(images['ntracks'] != 2)[0], axis=0)
+
     train, test = model_selection.train_test_split(images, test_size=0.3, random_state=42)
     val, test = np.split(test, [len(test) / 2])    
     n_batches = 20
 
     out_h5 = tables.open_file(os.path.join(outdir, 'images_new_{0}.h5'.format(tau_type)), mode='w')
-    out_h5.create_table(out_h5.root, 'train', train)
-    out_h5.create_table(out_h5.root, 'test', test)
-    out_h5.create_table(out_h5.root, 'val', val)
+    group = out_h5.create_group("/", 'shit', 'yup')
+    out_h5.create_table(group, 'train', train)
+    out_h5.create_table(group, 'test', test)
+    out_h5.create_table(group, 'val', val)
     out_h5.flush()
     out_h5.close()
 

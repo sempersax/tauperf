@@ -470,9 +470,11 @@ def dense_merged_model_topo(data, n_classes=3, final_activation='softmax'):
     tracks_out = Reshape((1, 128))(tracks_x)
 
     log.info('build 2d convolutional model for s1')
+    print data[0]['s1'].shape
     s1_input = Input(shape=data[0]['s1'].shape)
-
-    s1_x = Conv2D(64, 6, 2, border_mode='same', activation='relu')(s1_input)
+    s1_shape = data[0]['s1'].shape
+    s1_x = Reshape((1, s1_shape[0], s1_shape[1]))(s1_input)
+    s1_x = Conv2D(64, 6, 2, border_mode='same', activation='relu')(s1_x)
     s1_x = MaxPooling2D(2, 2, dim_ordering='th')(s1_x)
     s1_x = Dropout(0.2)(s1_x)
     s1_x = Flatten()(s1_x)
@@ -482,7 +484,9 @@ def dense_merged_model_topo(data, n_classes=3, final_activation='softmax'):
 
     log.info('build 2d convolutional model for s2')
     s2_input = Input(shape=data[0]['s2'].shape)
-    s2_x = Conv2D(64, 2, 2, border_mode='same', activation='relu')(s2_input)
+    s2_shape = data[0]['s2'].shape
+    s2_x = Reshape((1, s2_shape[0], s2_shape[1]))(s2_input)
+    s2_x = Conv2D(64, 2, 2, border_mode='same', activation='relu')(s2_x)
     s2_x = MaxPooling2D(2, 2, dim_ordering='th')(s2_x)
     s2_x = Dropout(0.2)(s2_x)
     s2_x = Flatten()(s2_x)
@@ -492,7 +496,9 @@ def dense_merged_model_topo(data, n_classes=3, final_activation='softmax'):
 
     log.info('build 2d convolutional model for s3')
     s3_input = Input(shape=data[0]['s3'].shape)
-    s3_x = Conv2D(64, 4, 6, border_mode='same', activation='relu')(s3_input)
+    s3_shape = data[0]['s3'].shape
+    s3_x = Reshape((1, s3_shape[0], s3_shape[1]))(s3_input)
+    s3_x = Conv2D(64, 4, 6, border_mode='same', activation='relu')(s3_x)
     s3_x = MaxPooling2D(2, 2, dim_ordering='th')(s3_x)
     s3_x = Dropout(0.2)(s3_x)
     s3_x = Flatten()(s3_x)
@@ -502,7 +508,9 @@ def dense_merged_model_topo(data, n_classes=3, final_activation='softmax'):
 
     log.info('build 2d convolutional model for s4')
     s4_input = Input(shape=data[0]['s4'].shape)
-    s4_x = Conv2D(64, 2, 2, border_mode='same', activation='relu')(s4_input)
+    s4_shape = data[0]['s4'].shape
+    s4_x = Reshape((1, s4_shape[0], s4_shape[1]))(s4_input)
+    s4_x = Conv2D(64, 2, 2, border_mode='same', activation='relu')(s4_x)
     s4_x = MaxPooling2D(2, 2, dim_ordering='th')(s4_x)
     s4_x = Dropout(0.2)(s4_x)
     s4_x = Flatten()(s4_x)
@@ -512,7 +520,9 @@ def dense_merged_model_topo(data, n_classes=3, final_activation='softmax'):
 
     log.info('build 2d convolutional model for s5')
     s5_input = Input(shape=data[0]['s5'].shape)
-    s5_x = Conv2D(64, 2, 2, border_mode='same', activation='relu')(s5_input)
+    s5_shape = data[0]['s5'].shape
+    s5_x = Reshape((1, s5_shape[0], s5_shape[1]))(s5_input)
+    s5_x = Conv2D(64, 2, 2, border_mode='same', activation='relu')(s5_x)
     s5_x = MaxPooling2D(2, 2, dim_ordering='th')(s5_x)
     s5_x = Dropout(0.2)(s5_x)
     s5_x = Flatten()(s5_x)

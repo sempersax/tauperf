@@ -75,9 +75,9 @@ def fit_model(
     overwrite=False,
     no_train=False):
 
-    print X_train['tracks'].shape
-    # X_train['tracks'].reshape((len(X_train), 10, 4)).shape
-    print X_train['tracks'].shape
+#     print X_train['tracks'].shape
+#     # X_train['tracks'].reshape((len(X_train), 10, 4)).shape
+#     print X_train['tracks'].shape
     if not overwrite and os.path.exists(filename):
         log.error('weight file {0} exists, aborting!'.format(filename))
         raise ValueError('overwrite needs to be set to true')
