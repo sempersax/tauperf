@@ -353,10 +353,10 @@ def process_taus(
 
             # get the image for each layer
             s1 = tau_topo_image(ir, rec, cal_layer=1, width=120, height=4)
-            s2 = tau_topo_image(ir, rec, cal_layer=2, width=16, height=16)
-            s3 = tau_topo_image(ir, rec, cal_layer=3, width=8, height=16)
-            s4 = tau_topo_image(ir, rec, cal_layer=12, width=8, height=8)
-            s5 = tau_topo_image(ir, rec, cal_layer=13, width=8, height=8)
+            s2 = tau_topo_image(ir, rec, cal_layer=2, width=32, height=32)
+            s3 = tau_topo_image(ir, rec, cal_layer=3, width=16, height=32)
+            s4 = tau_topo_image(ir, rec, cal_layer=12, width=16, height=16)
+            s5 = tau_topo_image(ir, rec, cal_layer=13, width=16, height=16)
 
 #             s1 = tau_calo_image(ir, rec, cal_layer=1, do_plot=do_plot, suffix=suffix)
 #             s2 = tau_calo_image(ir, rec, cal_layer=2, do_plot=do_plot, suffix=suffix)
