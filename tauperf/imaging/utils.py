@@ -28,31 +28,28 @@ def fit_model_multi(
 
         log.info('Start training ...')
 
-        kin_train = np.hstack([
-            X_train['ntracks'],
-            X_train['empovertrksysp'],
-            X_train['chpiemeovercaloeme'],
-            X_train['masstrksys']
-            ])
-        kin_test =np.hstack([
-            X_test['ntracks'],
-            X_test['empovertrksysp'],
-            X_test['chpiemeovercaloeme'],
-            X_test['masstrksys']
-            ])
-        
         
         model.fit(
-            [X_train['tracks'], X_train['s1'], X_train['s2'], X_train['s3'], X_train['s4'], X_train['s5']],
-#             [X_train['s1'], X_train['s2'], X_train['s3']],
-#             [kin_train, X_train['s1'], X_train['s2'], X_train['s3']],
+            [
+                # X_train['tracks'], 
+                X_train['s1'], 
+                X_train['s2'], 
+                X_train['s3'], 
+                X_train['s4'], 
+                X_train['s5']
+             ],
             y_train,
             epochs=100,
             batch_size=128,
             validation_data=(
-#                 [kin_test, X_test['s1'], X_test['s2'], X_test['s3']], y_test),
-#                 [X_test['s1'], X_test['s2'], X_test['s3']], y_test),
-                [X_test['tracks'], X_test['s1'], X_test['s2'], X_test['s3'], X_test['s4'], X_test['s5']], y_test),
+                [
+                    # X_test['tracks'], 
+                    X_test['s1'], 
+                    X_test['s2'], 
+                    X_test['s3'], 
+                    X_test['s4'], 
+                    X_test['s5']
+                    ], y_test),
             callbacks=[
                 EarlyStopping(verbose=True, patience=10, monitor='val_loss'),
                 ModelCheckpoint(
@@ -77,9 +74,6 @@ def fit_model(
     overwrite=False,
     no_train=False):
 
-#     print X_train['tracks'].shape
-#     # X_train['tracks'].reshape((len(X_train), 10, 4)).shape
-#     print X_train['tracks'].shape
     if not overwrite and os.path.exists(filename):
         log.error('weight file {0} exists, aborting!'.format(filename))
         raise ValueError('overwrite needs to be set to true')
@@ -93,12 +87,26 @@ def fit_model(
 
         log.info('Start training ...')
         model.fit(
-            [X_train['tracks'], X_train['s1'], X_train['s2'], X_train['s3'], X_train['s4'], X_train['s5']],
+            [
+                # X_train['tracks'], 
+                X_train['s1'], 
+                X_train['s2'], 
+                X_train['s3'], 
+                X_train['s4'], 
+                X_train['s5']
+                ],
             y_train,
             epochs=100,
             batch_size=128,
             validation_data=(
-                [X_test['tracks'], X_test['s1'], X_test['s2'], X_test['s3'], X_test['s4'], X_test['s5']], y_test),
+                [
+                    # X_test['tracks'], 
+                    X_test['s1'], 
+                    X_test['s2'], 
+                    X_test['s3'], 
+                    X_test['s4'], 
+                    X_test['s5']
+                    ], y_test),
             callbacks=[
                 EarlyStopping(verbose=True, patience=20, monitor='val_loss'),
                 ModelCheckpoint(

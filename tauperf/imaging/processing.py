@@ -265,7 +265,7 @@ def tau_tracks_simple(rec):
     d0   = []
     z0   = []
 
-    indices = np.where(rec['off_tracks_pt'] > 0)
+    indices = np.where(rec['off_tracks_deta'] > -1000)
     rpt  = rec['off_tracks_pt']            .take(indices[0])
     reta = rec['off_tracks_eta']           .take(indices[0])
     rphi = rec['off_tracks_phi']           .take(indices[0])
@@ -352,9 +352,9 @@ def process_taus(
         if cal_layer is None:
 
             # get the image for each layer
-            s1 = tau_topo_image(ir, rec, cal_layer=1, width=120, height=8)
-            s2 = tau_topo_image(ir, rec, cal_layer=2, width=32, height=32)
-            s3 = tau_topo_image(ir, rec, cal_layer=3, width=16, height=32)
+            s1 = tau_topo_image(ir, rec, cal_layer=1, width=120, height=4)
+            s2 = tau_topo_image(ir, rec, cal_layer=2, width=16, height=16)
+            s3 = tau_topo_image(ir, rec, cal_layer=3, width=8, height=16)
             s4 = tau_topo_image(ir, rec, cal_layer=12, width=8, height=8)
             s5 = tau_topo_image(ir, rec, cal_layer=13, width=8, height=8)
 
