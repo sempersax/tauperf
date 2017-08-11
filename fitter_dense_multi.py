@@ -99,6 +99,7 @@ plot_confusion_matrix(
     name='plots/imaging/confusion_matrix_categorical.pdf')
 
 cnf_mat = confusion_matrix(y_test, test['pantau'])
+diagonal = float(np.trace(cnf_mat)) / float(np.sum(cnf_mat))
 plt.figure()
 plot_confusion_matrix(
     cnf_mat, classes=labels, 
