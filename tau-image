@@ -26,19 +26,19 @@ def create_image_data(filename, tau_type, show_progress=False, outdir='.'):
     images = process_taus(
         records, cal_layer=None, do_tracks=True, suffix=tau_type, show_progress=show_progress)
 
-    images = images.take(np.where(images['ntracks'] > 0)[0], axis=0)
-    images = images.take(np.where(images['ntracks'] < 4)[0], axis=0)
-    images = images.take(np.where(images['ntracks'] != 2)[0], axis=0)
-
     train, test = model_selection.train_test_split(images, test_size=0.3, random_state=42)
     val, test = np.split(test, [len(test) / 2])    
-    n_batches = 20
 
-    out_h5 = tables.open_file(os.path.join(outdir, 'images_new_{0}.h5'.format(tau_type)), mode='w')
-    group = out_h5.create_group("/", 'shit', 'yup')
+    out_name = os.path.join(outdir, 'images_new_{0}.h5'.format(tau_type))
+
+    log.info('create h5 file {0}'.format(out_name))
+    out_h5 = tables.open_file(out_name, mode='w')
+    group = out_h5.create_group("/", 'data', 'yup')
     out_h5.create_table(group, 'train', train)
     out_h5.create_table(group, 'test', test)
     out_h5.create_table(group, 'val', val)
+
+    log.info('close h5 file {0}'.format(out_name))
     out_h5.flush()
     out_h5.close()
 
@@ -54,17 +54,33 @@ if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument('h5file', help='path to the h5 input file')
     parser.add_argument(
-        '--tau-type', default='1p1n', choices=['1p0n', '1p1n', '1p2n', '3p0n', '3p1n'],
+        '--tau-type', default='all', choices=['all', '1p0n', '1p1n', '1p2n', '3p0n', '3p1n'],
         help='choice of the type of taus')
     parser.add_argument('--no-progress-bar', default=False, action='store_true')
-    parser.add_argument('--outdir', default='.')
+    parser.add_argument('--outdir', default=None)
     args = parser.parse_args()
 
+    tau_types = ['1p0n', '1p1n', '1p2n', '3p0n', '3p1n']
     tau_type = args.tau_type
+    
     h5_filename = args.h5file
 
-    create_image_data(
-        h5_filename, tau_type, 
-        show_progress=not args.no_progress_bar, 
-        outdir=args.outdir)
+    if args.outdir is None:
+        outdir = os.path.dirname(os.path.abspath(args.h5file))
+    else:
+        outdir = args.outdir
+    print outdir
+
+    if tau_type == 'all':
+        for tt in tau_types:
+            create_image_data(
+                h5_filename, tt, 
+                show_progress=not args.no_progress_bar, 
+                outdir=outdir)
+
+    else:
+        create_image_data(
+            h5_filename, tau_type, 
+            show_progress=not args.no_progress_bar, 
+            outdir=outdir)
 

@@ -75,7 +75,11 @@ def tau_topo_image(irec, rec, cal_layer=2, width=32, height=32):
     eta_ = rec['off_cells_deta_digit'].take(indices[0])
     phi_ = rec['off_cells_dphi_digit'].take(indices[0])
 
+    # build a rectangle of 0 to start
     image = [[0 for j in range(width)] for i in range(height)]
+
+    # loop over the recorded cells:
+    # locate their position in the rectangle and replace the 0 by the energy value
     for eta, phi, ene in zip(eta_, phi_, ene_):
         eta_ind = int(eta + math.floor(width / 2))
         phi_ind = int(phi + math.floor(height / 2))
@@ -83,6 +87,7 @@ def tau_topo_image(irec, rec, cal_layer=2, width=32, height=32):
             image[phi_ind][eta_ind] = ene
     image = np.asarray(image)
     return image
+
 
 def tau_calo_image(
     irec, rec, 
@@ -337,17 +342,10 @@ def process_taus(
             break
 
         # protect against pathologic arrays
-        #         try:
-        #             rec = records[ir]
-        #         except:
-        #             rec = None
-        
-        #         if rec is None:
-        #             print ir
-        #             log.warning('record array is broken')
-        #             continue
-
-        rec = records[ir]
+        try:
+            rec = records[ir]
+        except:
+            raise ValueError('record array is broken')
 
         if cal_layer is None:
 
@@ -380,19 +378,18 @@ def process_taus(
             pt = rec['off_pt']
             eta = rec['off_eta']
             phi = rec['off_phi']
-            ntracks= rec['off_ntracks']
-            empovertrksysp = rec['off_EMPOverTrkSysP']
-            chpiemeovercaloeme = rec['off_ChPiEMEOverCaloEME']
-            masstrksys = rec['off_massTrkSys']
             mu = rec['averageintpercrossing']
+            pantau = rec['off_decaymode']
+            truthmode = rec['true_decaymode']
 
             if do_tracks:
                 #tracks = tau_tracks(rec, n_eta=30, n_phi=30)
                 tracks = tau_tracks_simple(rec)
 
                 image = np.array([(
-                            s1, s2, s3, s4, s5, tracks, pt, eta, phi, 
-                            ntracks, empovertrksysp, chpiemeovercaloeme, masstrksys, mu)],
+                            s1, s2, s3, s4, s5, tracks, 
+                            pt, eta, phi, mu,
+                            pantau, truthmode)],
                                  dtype=[
                         ('s1', 'f8', s1.shape), 
                         ('s2', 'f8', s2.shape), 
@@ -403,15 +400,12 @@ def process_taus(
                         ('pt', 'f8'), 
                         ('eta', 'f8'), 
                         ('phi', 'f8'), 
-                        ('ntracks', 'f8'), 
-                        ('empovertrksysp', 'f8'), 
-                        ('chpiemeovercaloeme', 'f8'), 
-                        ('masstrksys', 'f8'), 
-                        ('mu', 'f8')])
+                        ('mu', 'f8'),
+                        ('pantau', 'f8'), 
+                        ('truthmode', 'f8'),]) 
             else:
                 image = np.array([(
-                            s1, s2, s3, pt, eta, phi, 
-                            ntracks, empovertrksysp, chpiemeovercaloeme, masstrksys, mu)],
+                            s1, s2, s3, pt, eta, phi, mu)],
                                  dtype=[
                         ('s1', 'f8', s1.shape), 
                         ('s2', 'f8', s2.shape), 
@@ -421,10 +415,6 @@ def process_taus(
                         ('pt', 'f8'), 
                         ('eta', 'f8'), 
                         ('phi', 'f8'), 
-                        ('ntracks', 'f8'), 
-                        ('empovertrksysp', 'f8'), 
-                        ('chpiemeovercaloeme', 'f8'), 
-                        ('masstrksys', 'f8'), 
                         ('mu', 'f8')])
 
 

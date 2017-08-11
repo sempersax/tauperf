@@ -17,25 +17,25 @@ if __name__ == '__main__':
 
     directory = args.dir
 
-    sel_1p2n = 'true_nprongs == 1 && true_npi0s >= 2 && abs(off_eta) < 1.1'
-    sel_1p1n = 'true_nprongs == 1 && true_npi0s == 1 && abs(off_eta) < 1.1'
-    sel_1p0n = 'true_nprongs == 1 && true_npi0s == 0 && abs(off_eta) < 1.1'
-    sel_3p1n = 'true_nprongs == 3 && true_npi0s >= 1 && abs(off_eta) < 1.1'
-    sel_3p0n = 'true_nprongs == 3 && true_npi0s == 0 && abs(off_eta) < 1.1'
+    sel_1p0n = 'true_decaymode == 0 && abs(off_eta) < 1.1'
+    sel_1p1n = 'true_decaymode == 1 && abs(off_eta) < 1.1'
+    sel_1p2n = 'true_decaymode == 2 && abs(off_eta) < 1.1'
+    sel_3p0n = 'true_decaymode == 3 && abs(off_eta) < 1.1'
+    sel_3p1n = 'true_decaymode == 4 && abs(off_eta) < 1.1'
 
 
     for rfile_name in os.listdir(directory):
         if not '.root' in rfile_name:
             continue
         log.info('read {0}'.format(rfile_name))
-        abs_path = os.path.abspath(rfile_name)
-        new_rfile_name  = abs_path.replace('.root', '.selected.root')
+
+        new_rfile_name  = rfile_name.replace('.root', '.selected.root')
         log.info(new_rfile_name)
         
         rfile = ROOT.TFile(os.path.join(directory, rfile_name), 'read')
         tree = rfile.Get('tau')
         print tree
-        new_rfile = ROOT.TFile(new_rfile_name, 'recreate')
+        new_rfile = ROOT.TFile(os.path.join(directory, new_rfile_name), 'recreate')
 
         log.info('Selecting 3p1n ...')
         tree_3p1n = tree.CopyTree(sel_3p1n)

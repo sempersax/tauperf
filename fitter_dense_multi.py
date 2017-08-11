@@ -2,8 +2,8 @@ import os
 import numpy as np
 import matplotlib as mpl; mpl.use('TkAgg')
 import matplotlib.pyplot as plt
-import tables
-from tabulate import tabulate
+# import tables
+# from tabulate import tabulate
 
 from sklearn import model_selection
 from sklearn.metrics import roc_curve
@@ -15,6 +15,7 @@ from tauperf.imaging.models import dense_merged_model_categorical
 from tauperf.imaging.models import dense_merged_model_rnn
 from tauperf.imaging.models import dense_merged_model_topo
 from tauperf.imaging.utils import fit_model_multi
+from tauperf.imaging.load import load_data
 
 from argparse import ArgumentParser
 parser = ArgumentParser()
@@ -32,130 +33,21 @@ args = parser.parse_args()
 
 log.info('loading data...')
 data_dir = os.path.join(
-    # os.getenv('DATA_AREA'), 'tauid_ntuples', 'v11/test')
-    os.getenv('DATA_AREA'), 'tauid_ntuples', 'v11')
+    os.getenv('DATA_AREA'), 'tauid_ntuples', 'v12/test')
                         
-#print data_dir
-h5file_1p0n = tables.open_file(os.path.join(data_dir, "images_new_1p0n.h5"), mode="r", title ="1p0n")
-h5file_1p1n = tables.open_file(os.path.join(data_dir, "images_new_1p1n.h5"), mode="r", title ="1p1n")
-h5file_1p2n = tables.open_file(os.path.join(data_dir, "images_new_1p2n.h5"), mode="r", title ="1p2n")
-h5file_3p0n = tables.open_file(os.path.join(data_dir, "images_new_3p0n.h5"), mode="r", title ="3p0n")
-h5file_3p1n = tables.open_file(os.path.join(data_dir, "images_new_3p1n.h5"), mode="r", title ="3p1n")
 
-#print images_1p0n
-train_1p0n = h5file_1p0n.root.shit.train
-train_1p1n = h5file_1p1n.root.shit.train
-train_1p2n = h5file_1p2n.root.shit.train
-train_3p0n = h5file_3p0n.root.shit.train
-train_3p1n = h5file_3p1n.root.shit.train
-
-test_1p0n = h5file_1p0n.root.shit.test
-test_1p1n = h5file_1p1n.root.shit.test
-test_1p2n = h5file_1p2n.root.shit.test
-test_3p0n = h5file_3p0n.root.shit.test
-test_3p1n = h5file_3p1n.root.shit.test
-
-val_1p0n = h5file_1p0n.root.shit.val
-val_1p1n = h5file_1p1n.root.shit.val
-val_1p2n = h5file_1p2n.root.shit.val
-val_3p0n = h5file_3p0n.root.shit.val
-val_3p1n = h5file_3p1n.root.shit.val
-
-
-
-if args.equal_size:
-    size_train = min(
-        len(train_1p0n), 
-        len(train_1p1n), 
-        len(train_1p2n), 
-        len(train_3p0n),
-        len(train_3p1n))
-
-    train_1p0n = train_1p0n[0:size_train]
-    train_1p1n = train_1p1n[0:size_train]
-    train_1p2n = train_1p2n[0:size_train]
-    train_3p0n = train_3p0n[0:size_train]
-    train_3p1n = train_3p1n[0:size_train]
-
-    size_val = min(
-        len(val_1p0n), 
-        len(val_1p1n), 
-        len(val_1p2n), 
-        len(val_3p0n),
-        len(val_3p1n))
-
-    val_1p0n = val_1p0n[0:size_val]
-    val_1p1n = val_1p1n[0:size_val]
-    val_1p2n = val_1p2n[0:size_val]
-    val_3p0n = val_3p0n[0:size_val]
-    val_3p1n = val_3p1n[0:size_val]
-
-
-
-
-if args.debug:
-    log.info('Train with very small stat for debugging')
-    size = min(
-        len(train_1p0n), 
-        len(train_1p1n), 
-        len(train_1p2n), 
-        len(train_3p0n),
-        len(train_3p1n), 
-        1000)
-    train_1p0n = train_1p0n[0:size]
-    train_1p1n = train_1p1n[0:size]
-    train_1p2n = train_1p2n[0:size]
-    train_3p0n = train_3p0n[0:size]
-    train_3p1n = train_3p1n[0:size]
-    val_1p0n = val_1p0n[0:size]
-    val_1p1n = val_1p1n[0:size]
-    val_1p2n = val_1p2n[0:size]
-    val_3p0n = val_3p0n[0:size]
-    val_3p1n = val_3p1n[0:size]
-    test_1p0n = test_1p0n[0:size]
-    test_1p1n = test_1p1n[0:size]
-    test_1p2n = test_1p2n[0:size]
-    test_3p0n = test_3p0n[0:size]
-    test_3p1n = test_3p1n[0:size]
-
-
-headers = ["sample", "Training", "Validation", "Testing"]
-sample_size_table = [
-    ['1p0n', len(train_1p0n), len(val_1p0n), len(test_1p0n)],
-    ['1p1n', len(train_1p1n), len(val_1p1n), len(test_1p1n)],
-    ['1p2n', len(train_1p2n), len(val_1p2n), len(test_1p2n)],
-    ['3p0n', len(train_3p0n), len(val_3p0n), len(test_3p0n)],
-    ['3p1n', len(train_3p1n), len(val_3p1n), len(test_3p1n)],
+filenames = [
+    os.path.join(data_dir, "images_new_1p0n.h5"),
+    os.path.join(data_dir, "images_new_1p1n.h5"),
+    os.path.join(data_dir, "images_new_1p2n.h5"),
+    os.path.join(data_dir, "images_new_3p0n.h5"),
+    os.path.join(data_dir, "images_new_3p1n.h5"),
 ]
+labels = ['1p0n', '1p1n', '1p2n', '3p0n', '3p1n']
 
-log.info('')
-print tabulate(sample_size_table, headers=headers, tablefmt='simple')
-log.info('')
+train, test, val, y_train, y_test, y_val = load_data(
+    filenames, labels, equal_size=args.equal_size, debug=args.debug)
 
-train = np.concatenate((train_1p0n.read(), train_1p1n.read(), train_1p2n.read(), train_3p0n.read(), train_3p1n.read()))
-test  = np.concatenate((test_1p0n.read(), test_1p1n.read(), test_1p2n.read(), test_3p0n.read(), test_3p1n.read()))
-val   = np.concatenate((val_1p0n.read(), val_1p1n.read(), val_1p2n.read(), val_3p0n.read(), val_3p1n.read()))
-
-y_train = np.concatenate((
-        np.zeros(train_1p0n.shape, dtype=np.uint8),
-        np.ones(train_1p1n.shape, dtype=np.uint8),
-        np.ones(train_1p2n.shape, dtype=np.uint8) + 1,
-        np.ones(train_3p0n.shape, dtype=np.uint8) + 2,
-        np.ones(train_3p1n.shape, dtype=np.uint8) + 3))
-
-y_test = np.concatenate((
-        np.zeros(test_1p0n.shape, dtype=np.uint8),
-        np.ones(test_1p1n.shape, dtype=np.uint8),
-        np.ones(test_1p2n.shape, dtype=np.uint8) + 1,
-        np.ones(test_3p0n.shape, dtype=np.uint8) + 2,
-        np.ones(test_3p1n.shape, dtype=np.uint8) + 3))
-
-y_val = np.concatenate((
-        np.zeros(val_1p0n.shape, dtype=np.uint8),
-        np.ones(val_1p1n.shape, dtype=np.uint8),
-        np.ones(val_1p2n.shape, dtype=np.uint8) + 1,
-        np.ones(val_3p0n.shape, dtype=np.uint8) + 2,
-        np.ones(val_3p1n.shape, dtype=np.uint8) + 3))
 
 
 y_train_cat = to_categorical(y_train, 5)
@@ -189,17 +81,8 @@ log.info('testing stuff')
 
 log.info('compute classifier scores')
 
-# kin_test = np.hstack([
-#     test['ntracks'],
-#     test['empovertrksysp'],
-#     test['chpiemeovercaloeme']
-# #    test['masstrksys']
-#     ])
-
 y_pred = model.predict(
         [test['tracks'], test['s1'], test['s2'], test['s3'], test['s4'], test['s5']], 
-#         [test['s1'], test['s2'], test['s3']], 
-#         [kin_test, test['s1'], test['s2'], test['s3']], 
         batch_size=32, verbose=1)
 
 
@@ -220,7 +103,11 @@ plot_confusion_matrix(
     title='Confusion matrix, diagonal = {0:1.2f} %'.format(100 * diagonal),
     name='plots/imaging/confusion_matrix_categorical.pdf')
 
-
+# h5file_1p0n.close() 
+# h5file_1p1n.close() 
+# h5file_1p2n.close() 
+# h5file_3p0n.close() 
+# h5file_3p1n.close() 
 
 # ######################
 # log.info('drawing the roc curve')
