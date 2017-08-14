@@ -5,11 +5,6 @@ from tabulate import tabulate
 from . import log; log = log[__name__]
 
 
-log.info('loading data...')
-data_dir = os.path.join(
-    os.getenv('DATA_AREA'), 'tauid_ntuples', 'v12/test')
-                        
-
 def get_train_test_val(filename, title):
     log.info('Retrieving data from {0}'.format(filename))
     h5file = tables.open_file(filename, mode='r', title=title)
