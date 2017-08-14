@@ -28,23 +28,9 @@ def fit_model_multi(
 
         log.info('Start training ...')
 
-#         kin_train = np.hstack([
-#             X_train['ntracks'],
-#             X_train['empovertrksysp'],
-#             X_train['chpiemeovercaloeme'],
-#             X_train['masstrksys']
-#             ])
-#         kin_test =np.hstack([
-#             X_test['ntracks'],
-#             X_test['empovertrksysp'],
-#             X_test['chpiemeovercaloeme'],
-#             X_test['masstrksys']
-#             ])
-        
-        
         model.fit(
             [
-                # X_train['tracks'], 
+                X_train['tracks'], 
                 X_train['s1'], 
                 X_train['s2'], 
                 X_train['s3'], 
@@ -56,7 +42,7 @@ def fit_model_multi(
             batch_size=128,
             validation_data=(
                 [
-                    # X_test['tracks'], 
+                    X_test['tracks'], 
                     X_test['s1'], 
                     X_test['s2'], 
                     X_test['s3'], 

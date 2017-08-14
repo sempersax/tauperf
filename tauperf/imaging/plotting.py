@@ -51,6 +51,7 @@ def plot_confusion_matrix(cm, classes,
     This function prints and plots the confusion matrix.
     Normalization can be applied by setting `normalize=True`.
     """
+    plt.figure()
     np.set_printoptions(precision=2)
     diagonal = float(np.trace(cm)) / float(np.sum(cm))
     log.info('Diag / Total = {0} / {1}'.format(np.trace(cm), np.sum(cm)))
@@ -67,15 +68,13 @@ def plot_confusion_matrix(cm, classes,
 
     if normalize:
         cm = cm.astype('float') / cm.sum(axis=0)#[:, np.newaxis]
-    else:
-        print
-        print('Confusion matrix, without normalization')
-        plt.colorbar()
+
+    plt.colorbar()
 
     log.info('Confusion matrix')
-    log.info('')
+    print
     print(cm)
-    log.info('')
+    print 
 
     thresh = cm.max() / 2.
     for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):

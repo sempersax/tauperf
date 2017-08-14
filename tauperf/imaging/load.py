@@ -57,10 +57,11 @@ def load_data(filenames, labels, equal_size=False, debug=False):
     sample_size_table = []
     for l, tr, v, te in zip(labels, trains, vals, tests):
         sample_size_table.append([l, len(tr), len(v), len(te)])
-    print sample_size_table
-    log.info('')
+
+    log.info('Samples:')
+    print 
     print tabulate(sample_size_table, headers=headers, tablefmt='simple')
-    log.info('')
+    print
 
     train_conc = np.concatenate([train for train in trains])
     test_conc = np.concatenate([test for test in tests])
