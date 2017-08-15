@@ -1,8 +1,9 @@
 import os
 from . import log; log = log[__name__]
 from keras.callbacks import EarlyStopping, ModelCheckpoint
-import numpy as np
+from keras.metrics import categorical_accuracy
 
+import numpy as np
 
 
 def fit_model_multi(
@@ -24,31 +25,15 @@ def fit_model_multi(
         model.compile(
             optimizer='rmsprop',
             loss=loss,
-            metrics=['accuracy'])
+            metrics=[categorical_accuracy])
 
         log.info('Start training ...')
-
         model.fit(
-            [
-                X_train['tracks'], 
-                X_train['s1'], 
-                X_train['s2'], 
-                X_train['s3'], 
-                X_train['s4'], 
-                X_train['s5']
-             ],
+            X_train,
             y_train,
             epochs=100,
             batch_size=128,
-            validation_data=(
-                [
-                    X_test['tracks'], 
-                    X_test['s1'], 
-                    X_test['s2'], 
-                    X_test['s3'], 
-                    X_test['s4'], 
-                    X_test['s5']
-                    ], y_test),
+            validation_data=(X_test, y_test),
             callbacks=[
                 EarlyStopping(verbose=True, patience=10, monitor='val_loss'),
                 ModelCheckpoint(

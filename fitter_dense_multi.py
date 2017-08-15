@@ -48,6 +48,11 @@ train, test, val, y_train, y_test, y_val = load_data(
     filenames, labels, equal_size=args.equal_size, debug=args.debug)
 
 
+features = ['tracks', 's1', 's2', 's3', 's4', 's5']
+X_train = [train[feat] for feat in features]
+X_test  = [test[feat] for feat in features]
+X_val   = [val[feat] for feat in features]
+
 y_train_cat = to_categorical(y_train, n_classes)
 y_test_cat  = to_categorical(y_test, n_classes)
 y_val_cat   = to_categorical(y_val, n_classes)
@@ -67,8 +72,8 @@ else:
     from tauperf.imaging.utils import fit_model_multi
     fit_model_multi(
         model,
-        train, y_train_cat,
-        val, y_val_cat,
+        X_train, y_train_cat,
+        X_val, y_val_cat,
         filename=model_filename,
         loss='categorical_crossentropy',
         overwrite=args.overwrite,
@@ -82,9 +87,7 @@ log.info('testing stuff')
 
 log.info('compute classifier scores')
 
-y_pred = model.predict(
-        [test['tracks'], test['s1'], test['s2'], test['s3'], test['s4'], test['s5']], 
-        batch_size=32, verbose=1)
+y_pred = model.predict(X_test, batch_size=32, verbose=1)
 print
 
 log.info('drawing the confusion matrix')

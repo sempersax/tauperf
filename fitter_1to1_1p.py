@@ -11,7 +11,7 @@ from sklearn.metrics import roc_curve
 from keras.models import load_model
 
 from tauperf import log; log = log['/fitter']
-from tauperf.imaging.models import dense_merged_model, dense_merged_model_with_tracks_rnn_rnn, dense_merged_model_topo
+from tauperf.imaging.models import dense_merged_model, dense_merged_model_topo
 from tauperf.imaging.utils import fit_model
 
 from argparse import ArgumentParser
@@ -159,7 +159,6 @@ if args.no_train or args.no_train_pi0:
     model_pi0 = load_model(model_pi0_filename)
 else:
     model_pi0 = dense_merged_model_topo(train_pi0, n_classes=1, final_activation='sigmoid')
-#     model_pi0 = dense_merged_model_with_tracks_rnn_rnn(train_pi0, n_classes=1, final_activation='sigmoid')
     fit_model(
         model_pi0,
         train_pi0, y_train_pi0,
@@ -173,7 +172,6 @@ if args.no_train or args.no_train_twopi0:
     model_twopi0 = load_model(model_twopi0_filename)
 else:
     model_twopi0 = dense_merged_model_topo(train_twopi0, n_classes=1, final_activation='sigmoid')
-#     model_twopi0 = dense_merged_model_with_tracks_rnn_rnn(train_twopi0, n_classes=1, final_activation='sigmoid')
     fit_model(
     model_twopi0,
     train_twopi0, y_train_twopi0,
