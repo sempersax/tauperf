@@ -263,48 +263,34 @@ def tau_tracks_simple(rec):
     """
     Laser was here.
     """
-    maxtracks = 10
-    imp  = []
-    deta = []
-    dphi = []
-    d0   = []
-    z0   = []
+    maxtracks = 15
+
+    imp   = []
+    deta  = []
+    dphi  = []
+    classes  = []
 
     indices = np.where(rec['off_tracks_deta'] > -1000)
-    rpt  = rec['off_tracks_pt']            .take(indices[0])
-    reta = rec['off_tracks_eta']           .take(indices[0])
-    rphi = rec['off_tracks_phi']           .take(indices[0])
-    rd0  = rec['off_tracks_d0']            .take(indices[0])
-    rz0  = rec['off_tracks_z0sinThetaTJVA'].take(indices[0])
-    rdeta = rec['off_tracks_deta']           .take(indices[0])
-    rdphi = rec['off_tracks_dphi']           .take(indices[0])
 
-    rp = rpt * np.cosh(reta)
-#     sum_vec = TLorentzVector()
-#     for (p, e, f) in zip(rpt, reta, rphi):
-#         v = TLorentzVector()
-#         v.SetPtEtaPhiM(p, e, f, 0)
-#         sum_vec += v
+    rp     = rec['off_tracks_p']            .take(indices[0])
+    rdeta  = rec['off_tracks_deta']           .take(indices[0])
+    rdphi  = rec['off_tracks_dphi']           .take(indices[0])
+    rclass = rec['off_tracks_class']          .take(indices[0])
 
-    tau_eta = rec['off_eta']
-    tau_phi = rec['off_phi']
     tau_ene = rec['off_pt'] * np.cosh(rec['off_eta'])
 
-    for (p, e, f, d, z) in zip(rp, rdeta, rdphi, rd0, rz0):
+    for (p, e, f, c) in zip(rp, rdeta, rdphi, rclass):
         imp.append(p / tau_ene)
         deta.append(e)
         dphi.append(f)
-        d0.append(d)
-        z0.append(z)
+        classes.append(c)
 
-    imp  += [0] * (maxtracks - len(imp))
-    deta += [0] * (maxtracks - len(deta))
-    dphi += [0] * (maxtracks - len(dphi))
-    d0   += [0] * (maxtracks - len(d0)  )
-    z0   += [0] * (maxtracks - len(z0)  )
+    imp   += [0] * (maxtracks - len(imp))
+    deta  += [0] * (maxtracks - len(deta))
+    dphi  += [0] * (maxtracks - len(dphi))
+    classes += [0] * (maxtracks - len(classes))
 
-    #tracks = zip(pt, deta, dphi, d0, z0)
-    tracks = zip(imp, deta, dphi, d0)
+    tracks = zip(imp, deta, dphi, classes)
     tracks = np.asarray(tracks)
 
     return tracks
@@ -356,24 +342,9 @@ def process_taus(
             s4 = tau_topo_image(ir, rec, cal_layer=12, width=16, height=16)
             s5 = tau_topo_image(ir, rec, cal_layer=13, width=16, height=16)
 
-#             s1 = tau_calo_image(ir, rec, cal_layer=1, do_plot=do_plot, suffix=suffix)
-#             s2 = tau_calo_image(ir, rec, cal_layer=2, do_plot=do_plot, suffix=suffix)
-#             s3 = tau_calo_image(ir, rec, cal_layer=3, do_plot=do_plot, suffix=suffix)
-
-            if s1 is None:
+            if any(s is None for s in [s1, s2, s3, s4, s5]):
                 continue
 
-            if s2 is None:
-                continue
-
-            if s3 is None:
-                continue
-            
-            if s4 is None:
-                continue
-            
-            if s5 is None:
-                continue
 
             pt = rec['off_pt']
             eta = rec['off_eta']
@@ -402,7 +373,7 @@ def process_taus(
                         ('phi', 'f8'), 
                         ('mu', 'f8'),
                         ('pantau', 'f8'), 
-                        ('truthmode', 'f8'),]) 
+                        ('truthmode', 'f8')])
             else:
                 image = np.array([(
                             s1, s2, s3, pt, eta, phi, mu)],
