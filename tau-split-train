@@ -18,6 +18,7 @@ def split_train(filename, n_chunks=3):
     train = group.train
     trains = np.array_split(train.read(), n_chunks)
     for it, tr in enumerate(trains):
+        print it
         h5file.create_table(group, 'train_{0}'.format(it), tr)
 
     log.info('close h5 file {0}'.format(filename))

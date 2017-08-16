@@ -8,7 +8,7 @@ from h5py import File
 import tables
 
 from tauperf import log; log = log['/tau-image']
-
+from tauperf.parallel import run_pool, FuncWorker
 
 def create_image_data(filename, tau_type, n_chunks=3, show_progress=False, outdir='.'):
     """
@@ -30,7 +30,6 @@ def create_image_data(filename, tau_type, n_chunks=3, show_progress=False, outdi
     train, test = model_selection.train_test_split(
         images, test_size=0.2, random_state=42)
     val, test = np.split(test, [len(test) / 2])    
-
     train = np.array_split(train, n_chunks)
 
     out_name = os.path.join(outdir, 'images_new_{0}.h5'.format(tau_type))
@@ -65,6 +64,9 @@ if __name__ == '__main__':
         help='choice of the type of taus')
     parser.add_argument('--no-progress-bar', default=False, action='store_true')
     parser.add_argument('--outdir', default=None)
+    parser.add_argument('--chunks', default=3, type=int)
+    parser.add_argument('--jobs', default=1, type=int)
+
     args = parser.parse_args()
 
     tau_types = ['1p0n', '1p1n', '1p2n', '3p0n', '3p1n']
@@ -79,15 +81,27 @@ if __name__ == '__main__':
     print outdir
 
     if tau_type == 'all':
-        for tt in tau_types:
-            create_image_data(
-                h5_filename, tt, 
-                show_progress=not args.no_progress_bar, 
-                outdir=outdir)
+        if args.jobs == 1:
+            for tt in tau_types:
+                create_image_data(
+                    h5_filename, tt, 
+                    n_chunks=args.chunks,
+                    show_progress=not args.no_progress_bar, 
+                    outdir=outdir)
+        else:
+            log.info('muliprocess this!')
+            workers = []
+            for tt in tau_types:
+                w = FuncWorker(
+                    create_image_data, h5_filename, tt, 
+                    n_chunks=args.chunks, show_progress=False, outdir=outdir)
+                workers.append(w)
+            run_pool(workers, n_jobs=args.jobs)
 
     else:
         create_image_data(
             h5_filename, tau_type, 
+            n_chunks=args.chunks,
             show_progress=not args.no_progress_bar, 
             outdir=outdir)
-
+            
