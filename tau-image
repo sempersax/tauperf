@@ -10,7 +10,7 @@ import tables
 from tauperf import log; log = log['/tau-image']
 
 
-def create_image_data(filename, tau_type, show_progress=False, outdir='.'):
+def create_image_data(filename, tau_type, n_chunks=3, show_progress=False, outdir='.'):
     """
     """
     log.info('open h5 file {0}'.format(filename))
@@ -28,14 +28,20 @@ def create_image_data(filename, tau_type, show_progress=False, outdir='.'):
         suffix=tau_type, show_progress=show_progress)
 
     train, test = model_selection.train_test_split(
-        images, test_size=0.3, random_state=42)
+        images, test_size=0.2, random_state=42)
     val, test = np.split(test, [len(test) / 2])    
+
+    train = np.array_split(train, n_chunks)
 
     out_name = os.path.join(outdir, 'images_new_{0}.h5'.format(tau_type))
     log.info('create h5 file {0}'.format(out_name))
     out_h5 = tables.open_file(out_name, mode='w')
     group = out_h5.create_group("/", 'data', 'yup')
-    out_h5.create_table(group, 'train', train)
+
+    for it, tr in enumerate(train):
+        h5file.create_table(group, 'train_{0}'.format(it), tr)
+
+#     out_h5.create_table(group, 'train', train)
     out_h5.create_table(group, 'test', test)
     out_h5.create_table(group, 'val', val)
 

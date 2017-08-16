@@ -1,10 +1,93 @@
 import os
 from . import log; log = log[__name__]
+import numpy as np
+import tables
+
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from keras.metrics import categorical_accuracy
+from keras.utils import Sequence
+from keras.utils.np_utils import to_categorical
 
-import numpy as np
+from load import get_X_y
 
+class TrainSequence(Sequence):
+    """
+    See https://keras.io/utils/
+    """
+    def __init__(
+        self, filenames, features, n_chunks, 
+        equal_size=False, debug=False):
+
+        self._files = filenames
+        self.features = features
+        self.n_chunks = n_chunks
+        self._equal_size = equal_size
+        self._debug = debug
+
+    def __len__(self):
+        return self.n_chunks
+
+    def __getitem__(self, idx):
+        h5files = [tables.open_file(f) for f in self._files]
+        X, y = get_X_y(
+            h5files, 'train_{0}'.format(idx), self.features, 
+            equal_size=self._equal_size, debug=self._debug)
+        X = [X[feat] for feat in self.features]
+        for f in h5files:
+            f.close()
+        return X, to_categorical(y, len(self._files))
+
+
+def fit_model_gen(
+    model,
+    h5files, features,
+    X_test, y_test, 
+    n_chunks=3,
+    use_multiprocessing=False,
+    workers=1,
+    filename='cache/crackpot.h5',
+    loss='binary_crossentropy',
+    overwrite=False,
+    no_train=False,
+    equal_size=False,
+    debug=False):
+
+ 
+    if not overwrite and os.path.exists(filename):
+        log.error('weight file {0} exists, aborting!'.format(filename))
+        raise ValueError('overwrite needs to be set to true')
+
+    try:
+        log.info('Compile model')
+        model.compile(
+            optimizer='rmsprop',
+            loss=loss,
+            metrics=[categorical_accuracy])
+
+        log.info('Create the sequence')
+        train_sequence = TrainSequence(h5files, features, n_chunks)
+            
+        log.info('Start training ...')
+
+        model.fit_generator(
+            train_sequence,
+            len(train_sequence),
+            epochs=100,
+            validation_data=(X_test, y_test),
+            use_multiprocessing=use_multiprocessing,
+            workers=workers,
+            callbacks=[
+                EarlyStopping(verbose=True, patience=10, monitor='val_loss'),
+                ModelCheckpoint(
+                    filename, monitor='val_loss', 
+                    verbose=True, save_best_only=True)
+                ])
+
+        model.save(filename)
+    
+
+    except KeyboardInterrupt:
+        print 'Ended early..'
 
 def fit_model_multi(
     model,

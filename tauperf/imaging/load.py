@@ -1,69 +1,75 @@
 import os
 import numpy as np
 import tables
-from tabulate import tabulate
 from . import log; log = log[__name__]
 
 
-def get_train_test_val(filename, title):
-    log.info('Retrieving data from {0}'.format(filename))
-    h5file = tables.open_file(filename, mode='r', title=title)
-    train = h5file.root.data.train
-    test  = h5file.root.data.test
-    val   = h5file.root.data.val
-    return train, test, val
 
-
-def load_data(filenames, labels, equal_size=False, debug=False):
-
+def print_sample_size(filenames, labels):
     if len(filenames) != len(labels):
         raise ValueError('filenames and labels must have the same length')
 
     trains = []
     tests  = []
     vals   = []
-    
-    for filename, label in zip(filenames, labels):
-        train, test, val = get_train_test_val(filename, label)
+    for f in filenames:
+        table = tables.open_file(f)
+        test = len(table.root.data.test)
+        val  = len(table.root.data.val)
+        train = 0
+        for obj in table.root.data:
+            if isinstance(obj, tables.Table):
+                if 'train' in obj.name:
+                    train += len(obj)
+
+        table.close()
         trains.append(train)
         tests.append(test)
         vals.append(val)
-        
-    if equal_size:
-        log.info('Train and validate with equal size for each mode')
-        size_train = min([len(train) for train in trains])
-        size_val = min([len(val) for val in vals])
-
-    if debug:
-        log.info('Train with very small stat for debugging')
-        size_train = min([len(train) for train in trains] + [1000])
-        size_val = min([len(val) for val in vals] + [1000])
-        
-    if equal_size or debug:
-        trains = [train[0:size_train] for train in trains]
-        vals = [val[0:size_val] for val in vals]
-    else:
-        trains = [train.read() for train in trains]
-        vals   = [val.read() for val in vals]
-
-    tests = [test.read() for test in tests]
 
     headers = ["Sample", "Training", "Validation", "Testing"]
     sample_size_table = []
     for l, tr, v, te in zip(labels, trains, vals, tests):
-        sample_size_table.append([l, len(tr), len(v), len(te)])
+        sample_size_table.append([l, tr, v, te])
 
     log.info('Samples:')
     print 
+    from tabulate import tabulate
     print tabulate(sample_size_table, headers=headers, tablefmt='simple')
     print
 
-    train_conc = np.concatenate([train for train in trains])
-    test_conc = np.concatenate([test for test in tests])
-    val_conc = np.concatenate([val for val in vals])
 
-    y_train = np.concatenate([train['truthmode'] for train in trains])
-    y_test = np.concatenate([test['truthmode'] for test in tests])
-    y_val = np.concatenate([val['truthmode'] for val in vals])
+def get_X_y(h5_files, data_type, features, equal_size=False, debug=False):
 
-    return train_conc, test_conc, val_conc, y_train, y_test, y_val
+    data = []
+    for h5_file in h5_files:
+        t = getattr(h5_file.root.data, data_type)
+        data.append(t)
+    
+    if equal_size:
+        log.info('Train and validate with equal size for each mode')
+        min_size = min([len(t) for t in data])
+
+    if debug:
+        log.info('Train with very small stat for debugging')
+        min_size = min([len(t) for t in data] + [1000])
+        
+    if equal_size or debug:
+        data = [t[0:min_size] for t in data]
+    else:
+        data = [t.read() for t in data]
+
+    X_data = np.concatenate([d for d in data])
+    y_data = np.concatenate([d['truthmode'] for d in data])
+
+    return X_data, y_data
+
+
+def load_test_data(filenames, features):
+
+    h5files = [tables.open_file(filename) for filename in filenames]
+    X_test, y_test = get_X_y(h5files, 'test', features)
+    X_val, y_val = get_X_y(h5files, 'val', features)
+    for f in h5files:
+        f.close()
+    return X_test, X_val, y_test, y_val

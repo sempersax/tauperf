@@ -3,9 +3,9 @@ import numpy as np
 from sklearn.metrics import roc_curve, confusion_matrix
 from keras.utils.np_utils import to_categorical
 from tauperf import log; log = log['/fitter']
-from tauperf.imaging.load import load_data
+from tauperf.imaging.load import load_test_data, print_sample_size
 from tauperf.imaging.plotting import plot_confusion_matrix
-
+import tables
 from argparse import ArgumentParser
 parser = ArgumentParser()
 parser.add_argument(
@@ -44,17 +44,16 @@ else:
     n_classes = 5
 
 
-train, test, val, y_train, y_test, y_val = load_data(
-    filenames, labels, equal_size=args.equal_size, debug=args.debug)
-
+print_sample_size(filenames, labels)
 
 features = ['tracks', 's1', 's2', 's3', 's4', 's5']
-X_train = [train[feat] for feat in features]
-X_test  = [test[feat] for feat in features]
-X_val   = [val[feat] for feat in features]
 
-y_train_cat = to_categorical(y_train, n_classes)
-y_test_cat  = to_categorical(y_test, n_classes)
+test, val, y_test, y_val = load_test_data(
+    filenames, features)
+
+X_test  = [test[feat] for feat in features]
+
+X_val   = [val[feat] for feat in features]
 y_val_cat   = to_categorical(y_val, n_classes)
 
 
@@ -67,17 +66,20 @@ if args.no_train:
 else:
     log.info('training...')
     from tauperf.imaging.models import dense_merged_model_topo
-    model = dense_merged_model_topo(train, n_classes=n_classes, final_activation='softmax')
+    model = dense_merged_model_topo(test, n_classes=n_classes, final_activation='softmax')
 
-    from tauperf.imaging.utils import fit_model_multi
-    fit_model_multi(
+    from tauperf.imaging.utils import fit_model_gen
+    fit_model_gen(
         model,
-        X_train, y_train_cat,
+        filenames, features,
         X_val, y_val_cat,
+        use_multiprocessing=False,
         filename=model_filename,
         loss='categorical_crossentropy',
         overwrite=args.overwrite,
-        no_train=args.no_train)
+        no_train=args.no_train, 
+        equal_size=args.equal_size, 
+        debug=args.debug)
 
 
 
