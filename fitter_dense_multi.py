@@ -17,7 +17,10 @@ parser.add_argument(
 parser.add_argument(
     '--debug', default=False, action='store_true')
 parser.add_argument(
+    '--training-chunks', default=3, type=int)
+parser.add_argument(
     '--one-prong-only', default=False, action='store_true')
+
 args = parser.parse_args()
 
 
@@ -73,6 +76,7 @@ else:
         model,
         filenames, features,
         X_val, y_val_cat,
+        n_chunks=args.training_chunks,
         use_multiprocessing=False,
         filename=model_filename,
         loss='categorical_crossentropy',
