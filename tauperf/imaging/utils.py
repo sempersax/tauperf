@@ -89,49 +89,6 @@ def fit_model_gen(
     except KeyboardInterrupt:
         print 'Ended early..'
 
-def fit_model_multi(
-    model,
-    X_train, y_train, 
-    X_test, y_test, 
-    filename='cache/crackpot.h5',
-    loss='binary_crossentropy',
-    overwrite=False,
-    no_train=False):
-
- 
-    if not overwrite and os.path.exists(filename):
-        log.error('weight file {0} exists, aborting!'.format(filename))
-        raise ValueError('overwrite needs to be set to true')
-
-    try:
-        log.info('Compile model')
-        model.compile(
-            optimizer='rmsprop',
-            loss=loss,
-            metrics=[categorical_accuracy])
-
-        log.info('Start training ...')
-        model.fit(
-            X_train,
-            y_train,
-            epochs=100,
-            batch_size=128,
-            validation_data=(X_test, y_test),
-            callbacks=[
-                EarlyStopping(verbose=True, patience=10, monitor='val_loss'),
-                ModelCheckpoint(
-                    filename, monitor='val_loss', 
-                    verbose=True, save_best_only=True)
-                ])
-
-        model.save(filename)
-    
-
-    except KeyboardInterrupt:
-        print 'Ended early..'
-
-
-
 def fit_model(
     model,
     X_train, y_train, 
