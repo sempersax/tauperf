@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "specific to SFU GPU cluster"
+echo "specific to SFU CPU cluster"
 setupATLAS
 lsetup "root 6.04.10-x86_64-slc6-gcc48-opt"
 

@@ -27,23 +27,33 @@ def create_image_data(filename, tau_type, n_chunks=3, show_progress=False, outdi
         records, cal_layer=None, do_tracks=True, 
         suffix=tau_type, show_progress=show_progress)
 
-    train, test = model_selection.train_test_split(
-        images, test_size=0.2, random_state=42)
-    val, test = np.split(test, [len(test) / 2])    
-    train = np.array_split(train, n_chunks)
+    indices = xrange(len(images))
+    train_ind, test_ind = model_selection.train_test_split(
+        indices, test_size=0.2, random_state=42)
+    val_ind, test_ind = np.split(test_ind, [len(test_ind) / 2])
+    train_ind = np.array_split(train_ind, n_chunks)
+
+#     train, test = model_selection.train_test_split(
+#         images, test_size=0.2, random_state=42)
+#     val, test = np.split(test, [len(test) / 2])    
+#     train = np.array_split(train, n_chunks)
 
     out_name = os.path.join(outdir, 'images_new_{0}.h5'.format(tau_type))
     log.info('create h5 file {0}'.format(out_name))
     out_h5 = tables.open_file(out_name, mode='w')
     group = out_h5.create_group("/", 'data', 'yup')
 
-    for it, tr in enumerate(train):
-        h5file.create_table(group, 'train_{0}'.format(it), tr)
+    out_h5.create_table(group, 'images', images)
+    images = out_h5.root.data.images
+
+    for it, tr in enumerate(train_ind):
+        h5file.create_table(group, 'train_{0}'.format(it), images[tr])
 
 #     out_h5.create_table(group, 'train', train)
-    out_h5.create_table(group, 'test', test)
-    out_h5.create_table(group, 'val', val)
+    out_h5.create_table(group, 'test', images[test_ind])
+    out_h5.create_table(group, 'val', images[val_ind])
 
+    out_h5.remove_node(group, 'images')
     log.info('close h5 file {0}'.format(out_name))
     out_h5.flush()
     out_h5.close()
