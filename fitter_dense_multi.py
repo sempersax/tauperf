@@ -4,7 +4,7 @@ from sklearn.metrics import roc_curve, confusion_matrix
 from keras.utils.np_utils import to_categorical
 from tauperf import log; log = log['/fitter']
 from tauperf.imaging.load import load_test_data, print_sample_size
-from tauperf.imaging.plotting import plot_confusion_matrix
+from tauperf.imaging.plotting import plot_confusion_matrix, plot_roc
 import tables
 from argparse import ArgumentParser
 parser = ArgumentParser()
@@ -111,3 +111,7 @@ plot_confusion_matrix(
     cnf_mat, classes=labels, 
     title='Pantau confusion matrix, diagonal = {0:1.2f} %'.format(100 * diagonal),
     name='plots/imaging/confusion_matrix_reference.pdf')
+
+log.info('drawing the roc curves and pantau WP')
+plot_roc(y_test, y_pred, test['pantau'])
+

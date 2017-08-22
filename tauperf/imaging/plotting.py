@@ -175,3 +175,68 @@ def plot_heatmap(image, rec, pos_central_cell, irec, cal_layer, suffix, fixed_sc
             irec, cal_layer, suffix))
     fig.clf()
     plt.close()
+
+
+def plot_roc(y_test, y_pred, y_pant):
+    from sklearn.metrics import roc_curve
+
+    y_test_1p = y_test[np.logical_or(y_test == 0, y_test == 1, y_test == 2)]
+    y_pred_1p = y_pred[np.logical_or(y_test == 0, y_test == 1, y_test == 2)]
+    y_pred_1p = y_pred_1p[:,0] / (y_pred_1p[:,0] + y_pred_1p[:,1] + y_pred_1p[:,2])
+    fpr_1p0n, tpr_1p0n, _ = roc_curve(y_test_1p, y_pred_1p, pos_label=0)
+
+    y_pant_1p0n = y_pant[y_test == 0]
+    y_pant_1pXn = y_pant[np.logical_or(y_test == 1, y_test == 2)]
+    eff_pant_1p0n = float(len(y_pant_1p0n[y_pant_1p0n == 0])) / float(len(y_pant_1p0n))
+    rej_pant_1p0n = float(len(y_pant_1pXn[y_pant_1pXn != 0])) / float(len(y_pant_1pXn))
+    
+    y_test_1pXn = y_test[np.logical_or(y_test == 1, y_test == 2)]
+    y_pred_1pXn = y_pred[np.logical_or(y_test == 1, y_test == 2)]
+    y_pant_1pXn = y_pant[np.logical_or(y_test == 1, y_test == 2)]
+
+    y_pred_1pXn = y_pred_1pXn[:,1] / (y_pred_1pXn[:,1] + y_pred_1pXn[:,2])
+    fpr_1p1n, tpr_1p1n, _ = roc_curve(y_test_1pXn, y_pred_1pXn, pos_label=1)
+
+    y_pant_1p1n = y_pant[y_test == 1]
+    y_pant_1p2n = y_pant[y_test == 2]
+    eff_pant_1p1n = float(len(y_pant_1p1n[y_pant_1p1n == 1])) / float(len(y_pant_1p1n))
+    rej_pant_1p1n = float(len(y_pant_1p2n[y_pant_1p2n != 1])) / float(len(y_pant_1p2n))
+
+    y_test_3p = y_test[np.logical_or(y_test == 3, y_test == 4)]
+    y_pred_3p = y_pred[np.logical_or(y_test == 3, y_test == 4)]
+    y_pant_3p = y_pant[np.logical_or(y_test == 3, y_test == 4)]
+
+    y_pred_3p = y_pred_3p[:,3] / (y_pred_3p[:,3] + y_pred_3p[:,4])
+    fpr_3p0n, tpr_3p0n, _ = roc_curve(y_test_3p, y_pred_3p, pos_label=3)
+
+    y_pant_3p0n = y_pant[y_test == 3]
+    y_pant_3pXn = y_pant[y_test == 4]
+    eff_pant_3p0n = float(len(y_pant_3p0n[y_pant_3p0n == 3])) / float(len(y_pant_3p0n))
+    rej_pant_3p0n = float(len(y_pant_3pXn[y_pant_3pXn != 3])) / float(len(y_pant_3pXn))
+
+    plt.figure()
+    plt.plot(tpr_1p0n, 1 - fpr_1p0n, label='1p0n vs 1pXn', color='red')
+    plt.plot(tpr_1p1n, 1 - fpr_1p1n, label='1p1n vs 1p2n', color='blue')
+    plt.plot(tpr_3p0n, 1 - fpr_3p0n, label='3p0n vs 3pXn', color='purple')
+    plt.xlabel('Signal Efficiency')
+    plt.ylabel('Background Rejection')
+    plt.xlim([0, 1.01])
+    plt.ylim([0, 1.01])
+    plt.scatter(
+        [eff_pant_1p0n, eff_pant_1p1n, eff_pant_3p0n],
+        [rej_pant_1p0n, rej_pant_1p1n, rej_pant_3p0n],
+        s=100,
+        marker='v',
+        c=['red', 'blue', 'purple'],
+        label='pantau')
+
+    
+    axes = plt.gca()
+    axes.xaxis.set_ticks(np.arange(0, 1, 0.1))
+    axes.yaxis.set_ticks(np.arange(0, 1, 0.1))
+    axes.grid(True)
+    
+    plt.legend(loc='lower left', fontsize='small', numpoints=1)
+    plt.savefig('./plots/imaging/roc_curve.pdf')
+
+
