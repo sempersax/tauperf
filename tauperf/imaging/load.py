@@ -19,7 +19,7 @@ def print_sample_size(filenames, labels):
         train = 0
         for obj in table.root.data:
             if isinstance(obj, tables.Table):
-                if 'train' in obj.name:
+                if 'train_' in obj.name:
                     train += len(obj)
 
         table.close()
