@@ -65,6 +65,7 @@ def tau_tracks_simple(rec):
     return tracks
 
 def process_taus(
+    out_h5,
     records, 
     nentries=None, 
     cal_layer=None, 
@@ -78,20 +79,8 @@ def process_taus(
     returns a record array of the images + basic kinematics of the tau
     '''
 
-    log.info('')
-
-    # make a list (convert to array later)
-    images = []
-
     for ir in xrange(len(records)):
 
-        # fancy printout
-        if show_progress: 
-            if nentries is None:
-                print_progress(ir, len(records), prefix='Progress')
-            else:
-                print_progress(ir, nentries, prefix='Progress')
-            
         # kill the loop after number of specified entries
         if nentries is not None and ir == nentries:
             break
@@ -111,9 +100,9 @@ def process_taus(
             s4 = tau_topo_image(ir, rec, cal_layer=12, width=16, height=16)
             s5 = tau_topo_image(ir, rec, cal_layer=13, width=16, height=16)
 
+            # skip if missing a layer
             if any(s is None for s in [s1, s2, s3, s4, s5]):
                 continue
-
 
             pt = rec['off_pt']
             eta = rec['off_eta']
@@ -142,6 +131,8 @@ def process_taus(
                         ('mu', 'f8'),
                         ('pantau', 'f8'), 
                         ('truthmode', 'f8')])
+
+
             else:
                 image = np.array([(
                             s1, s2, s3, pt, eta, phi, mu)],
@@ -156,8 +147,6 @@ def process_taus(
                         ('phi', 'f8'), 
                         ('mu', 'f8')])
 
-
-            images.append(image)
 
         elif cal_layer == 2:
 
@@ -177,13 +166,24 @@ def process_taus(
                     ('pt', 'f8'), 
                     ('eta', 'f8'), 
                     ('mu', 'f8')])
-            images.append(image)
+
         else:
             raise ValueError('Can not process for layer {0} alone'.format(cal_layer))
 
-    # return the images to be stored
+        # fill the table (create it first if needed)
+        try:
+            table = out_h5.root.data.images
+            table.append(image)
+        except:
+            log.warning('table does not exist yet, creating it')
+            out_h5.create_table(out_h5.root.data, 'images', description=image)
+
+        # fancy printout
+        if show_progress: 
+            if nentries is None:
+                print_progress(ir, len(records), prefix='Progress')
+            else:
+                print_progress(ir, nentries, prefix='Progress')
     print
-    images = np.asarray(images)
-    return images
 
 
