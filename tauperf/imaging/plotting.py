@@ -192,8 +192,6 @@ def plot_roc(y_test, y_pred, y_pant):
     
     y_test_1pXn = y_test[np.logical_or(y_test == 1, y_test == 2)]
     y_pred_1pXn = y_pred[np.logical_or(y_test == 1, y_test == 2)]
-    y_pant_1pXn = y_pant[np.logical_or(y_test == 1, y_test == 2)]
-
     y_pred_1pXn = y_pred_1pXn[:,1] / (y_pred_1pXn[:,1] + y_pred_1pXn[:,2])
     fpr_1p1n, tpr_1p1n, _ = roc_curve(y_test_1pXn, y_pred_1pXn, pos_label=1)
 
@@ -215,8 +213,8 @@ def plot_roc(y_test, y_pred, y_pant):
     rej_pant_3p0n = float(len(y_pant_3pXn[y_pant_3pXn != 3])) / float(len(y_pant_3pXn))
 
     plt.figure()
-    plt.plot(tpr_1p0n, 1 - fpr_1p0n, label='1p0n vs 1pXn', color='red')
-    plt.plot(tpr_1p1n, 1 - fpr_1p1n, label='1p1n vs 1p2n', color='blue')
+    plt.plot(tpr_1p0n, 1 - fpr_1p0n, label='1p0n vs 1p(>0)n', color='red')
+    plt.plot(tpr_1p1n, 1 - fpr_1p1n, label='1p1n vs 1pXn', color='blue')
     plt.plot(tpr_3p0n, 1 - fpr_3p0n, label='3p0n vs 3pXn', color='purple')
     plt.xlabel('Signal Efficiency')
     plt.ylabel('Background Rejection')
@@ -236,7 +234,7 @@ def plot_roc(y_test, y_pred, y_pant):
     axes.yaxis.set_ticks(np.arange(0, 1, 0.1))
     axes.grid(True)
     
-    plt.legend(loc='lower left', fontsize='small', numpoints=1)
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/roc_curve.pdf')
 
 
