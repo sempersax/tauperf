@@ -25,7 +25,7 @@ args = parser.parse_args()
 
 
 data_dir = os.path.join(
-    os.getenv('DATA_AREA'), 'tauid_ntuples', 'v12/test_2')
+    os.getenv('DATA_AREA'), 'tauid_ntuples', 'v13/test')
                         
 if args.one_prong_only:
     filenames = [
