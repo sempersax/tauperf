@@ -20,6 +20,8 @@ parser.add_argument(
     '--training-chunks', default=3, type=int)
 parser.add_argument(
     '--one-prong-only', default=False, action='store_true')
+parser.add_argument(
+    '--dev', default=False, action='store_true')
 
 args = parser.parse_args()
 
@@ -61,7 +63,13 @@ y_val_cat   = to_categorical(y_val, n_classes)
 
 
 # ##############################################
-model_filename = 'cache/multi_{0}_classes.h5'.format(n_classes)
+if args.dev:
+    model_filename = 'cache/multi_{0}_classes_{1}_chunks'.format(
+        n_classes, args.training_chunks)
+    model_filename += '_{epoch:02d}_epochs.h5'
+else:
+    model_filename = 'cache/multi_{0}_classes.h5'.format(n_classes)
+
 if args.no_train:
     log.info('loading model')
     from keras.models import load_model
@@ -83,6 +91,7 @@ else:
         overwrite=args.overwrite,
         no_train=args.no_train, 
         equal_size=args.equal_size, 
+        dev=args.dev,
         debug=args.debug)
 
 
