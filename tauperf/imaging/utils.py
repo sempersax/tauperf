@@ -50,6 +50,7 @@ def fit_model_gen(
     overwrite=False,
     no_train=False,
     equal_size=False,
+    dev=False,
     debug=False):
 
  
@@ -69,6 +70,18 @@ def fit_model_gen(
             
         log.info('Start training ...')
 
+        # make a list of callbacks
+        callbacks = []
+        if dev:
+            callbacks = [
+                ModelCheckpoint(filename, monitor='val_loss', verbose=True)
+                ]
+        else:
+            callbacks = [
+                EarlyStopping(verbose=True, patience=10, monitor='val_loss'),
+                ModelCheckpoint(filename, monitor='val_loss', verbose=True, save_best_only=True)
+                ]
+
         model.fit_generator(
             train_sequence,
             len(train_sequence),
@@ -76,14 +89,9 @@ def fit_model_gen(
             validation_data=(X_test, y_test),
             use_multiprocessing=use_multiprocessing,
             workers=workers,
-            callbacks=[
-                EarlyStopping(verbose=True, patience=10, monitor='val_loss'),
-                ModelCheckpoint(
-                    filename, monitor='val_loss', 
-                    verbose=True, save_best_only=True)
-                ])
+            callbacks=callbacks)
 
-        model.save(filename)
+#         model.save(filename)
     
 
     except KeyboardInterrupt:
