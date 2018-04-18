@@ -4,7 +4,7 @@ echo "specific to SFU GPU cluster"
 source /software/root-6.06.08/bin/thisroot.sh
 
 export VE_PATH=/home/qbuat/imaging/imaging_ve
-export DATA_AREA=/cluster/warehouse/qbuat/crackpot
+export DATA_AREA=/cluster/warehouse/qbuat/crackpot/tauid_ntuples
 
 source ${VE_PATH}/bin/activate
 
