@@ -288,10 +288,11 @@ def dense_merged_model_topo(data, n_classes=3, final_activation='softmax'):
         ]
 
     merge = concatenate(layers, axis=1)
-    log.info('\t merged layers shape = {0}'.format(merge._keras_shape))
-    merge_x = LSTM(32)(merge)
+    # log.info('\t merged layers shape = {0}'.format(merge._keras_shape))
+    # merge_x = LSTM(32)(merge)
+    merge_x = Flatten()(merge)
     log.info('\t merged lstm shape   = {0}'.format(merge_x._keras_shape))
-    merge_x = Dense(16, activation='relu')(merge_x)
+    merge_x = Dense(512, activation='relu')(merge_x)
     log.info('\t merged dense shape  = {0}'.format(merge_x._keras_shape))
     output_mod = Dense(n_classes, activation=final_activation)
     output_x = output_mod(merge_x)
