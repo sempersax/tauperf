@@ -5,7 +5,7 @@ setupATLAS
 lsetup "root 6.04.10-x86_64-slc6-gcc48-opt"
 
 export VE_PATH=/home/qbuat/imaging/imaging_ve_cpu
-export DATA_AREA=/cluster/warehouse/qbuat/crackpot
+export DATA_AREA=/cluster/warehouse/qbuat/crackpot/tauid_ntuples
 
 source ${VE_PATH}/bin/activate
 
