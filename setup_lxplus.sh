@@ -31,3 +31,6 @@ echo "sourcing ${SOURCE_TAUPERF_SETUP}..."
 export PATH=${DIR_TAUPERF_SETUP}${PATH:+:$PATH}
 export PYTHONPATH=${DIR_TAUPERF_SETUP}${PYTHONPATH:+:$PYTHONPATH}
 
+
+# specific to lxplus to avoid https://github.com/Theano/Theano/issues/3780#issuecomment-164843114
+export THEANO_FLAGS='gcc.cxxflags="-march=core2"'

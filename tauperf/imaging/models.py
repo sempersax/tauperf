@@ -179,6 +179,7 @@ def dense_merged_model_topo(data, n_classes=3, final_activation='softmax'):
     tracks_x = Reshape((15, 4))(tracks_input)
     log.info('\t tracks input shape = {0}'.format(tracks_x._keras_shape))
     tracks_x = Masking()(tracks_x)
+    log.info('\t tracks input shape = {0}'.format(tracks_x._keras_shape))
     tracks_x = LSTM(32)(tracks_x)
     log.info('\t tracks lstm shape  = {0}'.format(tracks_x._keras_shape))
     tracks_x = Dense(128, activation='relu')(tracks_x)
