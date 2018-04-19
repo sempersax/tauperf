@@ -1,11 +1,11 @@
-# Table of Content
+# Introduction
+Package to study ATLAS performances for tau leptons. 
+This branch is dedicated to the development of computer vision algorithms.
 
+# Table of Content
 1. [Introduction](#introduction)
 2. [Setup](#setup)
 3. [Usage](#usage)
-
-# Introduction
-Package to study ATLAS performances for tau leptons. This branch is dedicated to the development of tau imaging algorithms.
 
 # Setup 
 ## Getting started on lxplus
@@ -51,7 +51,7 @@ git checkout -b imaging origin/imaging
 ```
 # Usage
 ## Creating your own setup script
-1. Copy the file [setup.sh](setup_quentin.sh)
+1. Copy the [setup](setup_quentin.sh) file
 1. Edit the ROOT setup
 1. Edit the variables `DATA_AREA` and `VE_PATH` 
 
