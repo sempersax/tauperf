@@ -18,7 +18,6 @@ source setup_lxplus.sh
 NB: training seems to be broken on lxplus, still trying to figure out why...
 
 ## Install using a virtual environment
-TODO: provide recipe for anaconda
 
 ### virtual environment
 ```bash
@@ -29,19 +28,20 @@ source imaging_ve/bin/activate
 you need a working setup of ROOT 6.
 
 ### dependencies
+note that some of these packages evolve very quickly so the version used can be quite deprecated
 ```bash
 pip install pip --upgrade
-pip install theano
-pip install keras
-pip install pydot_ng
-pip install h5py
-pip install tables
-pip install sklearn
-pip install scikit-image
-pip install matplotlib
-pip install root_numpy
-pip install rootpy
-pip install tabulate
+pip install theano==0.9.0
+pip install keras==2.0.6
+pip install pydot_ng=1.0.0
+pip install h5py==2.6.0
+pip install tables==3.3.0
+pip install sklearn==0.18
+pip install scikit-image==0.12.3
+pip install matplotlib==1.5.3
+pip install root_numpy==4.5.2
+pip install rootpy==0.8.3
+pip install tabulate==0.7.5
 ```
 ### tauperf project: imaging branch
 ```bash
@@ -51,7 +51,7 @@ git checkout -b imaging origin/imaging
 ```
 # Usage
 ## Creating your own setup script
-1. Copy the file [setup.sh](setup.sh)
+1. Copy the file [setup.sh](setup_quentin.sh)
 1. Edit the ROOT setup
 1. Edit the variables `DATA_AREA` and `VE_PATH` 
 
@@ -77,4 +77,4 @@ user.qbuat.mc16_13TeV.425200.Pythia8EvtGen_A14NNPDF23LO_Gammatautau_MassWeight.r
 ```
 
 ## Processing/training/testing
-see the [workflow] (doc/workflow.md)
+see the [workflow](doc/workflow.md)
