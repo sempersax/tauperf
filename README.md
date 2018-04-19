@@ -55,20 +55,26 @@ git checkout -b imaging origin/imaging
 1. Edit the ROOT setup
 1. Edit the variables `DATA_AREA` and `VE_PATH` 
 
-## Data (as of Nov. 6th, 2016)
+## Data (as of Apr. 18th, 2018)
 ### Flat root ntuples:
 ```
-user.qbuat.mc15_13TeV.361108.PowPy8EvtGen_AZNLOCTEQ6L1_Ztautau.recon.ESD.e3601_s2650_s2183_r7823.tauid.v6_OUT
-```
-### hdf5 file:
-```
-/afs/cern.ch/user/q/qbuat/work/public/tau_imaging/tauid_ntuples/v6/output_selected.h5
-```
-### npy images
-```
-/afs/cern.ch/user/q/qbuat/work/public/tau_imaging/tauid_ntuples/v6/images_new_*.npy
+user.qbuat.mc16_13TeV.425200.Pythia8EvtGen_A14NNPDF23LO_Gammatautau_MassWeight.recon.ESD.e5468_s3170_r9466.tauid.v2_OUT
 ```
 
+### root and hdf5 files with selected tau candidates:
+```
+/eos/atlas/user/q/qbuat/IMAGING/v13/test/output.selected.root
+/eos/atlas/user/q/qbuat/IMAGING/v13/test/output.selected.h5
+```
+
+### hdf5 files containing the formated images
+```
+/eos/atlas/user/q/qbuat/IMAGING/v13/test/images_new_1p0n.h5
+/eos/atlas/user/q/qbuat/IMAGING/v13/test/images_new_1p1n.h5
+/eos/atlas/user/q/qbuat/IMAGING/v13/test/images_new_1p2n.h5
+/eos/atlas/user/q/qbuat/IMAGING/v13/test/images_new_3p0n.h5
+/eos/atlas/user/q/qbuat/IMAGING/v13/test/images_new_3p1n.h5
+```
 
 ## Processing/training/testing
-NB: to be written
+see the [workflow] (doc/workflow.md)
