@@ -33,10 +33,10 @@ note that some of these packages evolve very quickly so the version used can be 
 pip install pip --upgrade
 pip install theano==0.9.0
 pip install keras==2.0.6
-pip install pydot_ng=1.0.0
+pip install pydot_ng==1.0.0
 pip install h5py==2.6.0
 pip install tables==3.3.0
-pip install sklearn==0.18
+pip install scikit-learn==0.19.0
 pip install scikit-image==0.12.3
 pip install matplotlib==1.5.3
 pip install root_numpy==4.5.2
