@@ -1,7 +1,15 @@
 import math
 import numpy as np
 import itertools
-import matplotlib as mpl; mpl.use('TkAgg')
+import socket
+import matplotlib as mpl;
+
+if socket.gethostname() == 'techlab-gpu-nvidiak20-03.cern.ch':
+    mpl.use('PS')
+else:
+    mpl.use('TkAgg')
+
+
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from matplotlib.colors import Normalize, LogNorm

@@ -4,9 +4,9 @@ from sklearn.metrics import roc_curve, confusion_matrix
 from keras.utils.np_utils import to_categorical
 from tauperf import log; log = log['/fitter']
 from tauperf.imaging.load import load_test_data, print_sample_size
-from tauperf.imaging.plotting import plot_confusion_matrix, plot_roc
 import tables
 from argparse import ArgumentParser
+
 parser = ArgumentParser()
 parser.add_argument(
     '--no-train', default=False, action='store_true')
@@ -108,6 +108,9 @@ print
 log.info('drawing the confusion matrix')
 cnf_mat = confusion_matrix(y_test, np.argmax(y_pred, axis=1))
 diagonal = float(np.trace(cnf_mat)) / float(np.sum(cnf_mat))
+
+# import plotting here in case there is an import issue unrelated to training
+from tauperf.imaging.plotting import plot_confusion_matrix, plot_roc
 plot_confusion_matrix(
     cnf_mat, classes=labels, 
     title='Confusion matrix, diagonal = {0:1.2f} %'.format(100 * diagonal),
