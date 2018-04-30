@@ -17,6 +17,15 @@ source setup_lxplus.sh
 ```
 NB: training seems to be broken on lxplus, still trying to figure out why...
 
+## Getting started on techlab-gpu-nvidiak20-03
+```bash
+cd /tmp/${USER}
+git clone https://github.com/qbuat/tauperf.git
+cd tauperf
+git checkout -b imaging origin/imaging
+source setup_cern_gpu.sh
+```
+
 ## Install using a virtual environment
 
 ### virtual environment
