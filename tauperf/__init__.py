@@ -1,6 +1,5 @@
 import logging
 import os
-import rootpy
 
 DEFAULT_STUDENT = 'Ztautau'
 DEFAULT_TREE = 'tau'
@@ -17,15 +16,16 @@ else:
 
 
 
-import ROOT
 
+#import rootpy
 # log = logging.getLogger('tauperf')
-from rootpy import log; log = log["/tauperf"]
-if not os.environ.get("DEBUG", False):
-    log.setLevel(logging.INFO)
-rootpy.log.setLevel(logging.INFO)
+# from rootpy import log; log = log["/tauperf"]
+# if not os.environ.get("DEBUG", False):
+#     log.setLevel(logging.INFO)
+# rootpy.log.setLevel(logging.INFO)
 
-ROOT.gROOT.SetBatch(True)
+# import ROOT
+# ROOT.gROOT.SetBatch(True)
 
 ATLAS_LABEL = os.getenv('ATLAS_LABEL', 'Internal').strip()
 

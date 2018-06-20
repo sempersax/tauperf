@@ -1,6 +1,6 @@
 import os
 from keras.models import Sequential, Model
-from keras.layers import Merge, Input
+from keras.layers import Input
 from keras.layers.merge import concatenate
 from keras.layers.core import Dense, Dropout, Activation, Flatten, Reshape, Masking
 from keras.layers.convolutional import Convolution1D, Convolution2D, Conv2D
@@ -8,7 +8,8 @@ from keras.layers.pooling import MaxPooling2D
 from keras.layers.recurrent import LSTM
 
 
-from . import log; log = log[__name__]
+from logging import getLogger; log = getLogger(__name__)
+#from . import log; log = log[__name__]
 
 
 def single_layer_model_s2(data):

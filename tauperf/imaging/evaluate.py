@@ -1,7 +1,8 @@
 import numpy as np
 from sklearn.metrics import confusion_matrix
 
-from . import log; log = log[__name__]
+#from . import log; log = log[__name__]
+from logging import getLogger; log = getLogger(__name__)
 
 def matrix_decays(y_true, y_pred_pi0, y_pred_twopi0, y_pred_3p_pi0, y_is_1p):
 

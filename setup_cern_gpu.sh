@@ -8,7 +8,6 @@ lsetup "root 6.04.10-x86_64-slc6-gcc48-opt"
 export DATA_AREA=/data/qbuat/IMAGING
 export VE_PATH=/data/tsaxton/imaging_ve_gpu
 
-
 echo 'activating the virtual environment'
 source ${VE_PATH}/bin/activate
 
@@ -41,6 +40,10 @@ export CUDA_HOME=${CUDA_HOME}:/usr/local/cuda:/usr/local/cuda-9.0
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/cuda-9.0/lib64
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/extras/CUPTI/lib64
 
+export PATH=${PATH}:/usr/local/cuda-9.0/bin
+export CUDA_HOME=${CUDA_HOME}:/usr/local/cuda:/usr/local/cuda-9.0
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/cuda-9.0/lib64
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/extras/CUPTI/lib64
 
 # specific to lxplus to avoid https://github.com/Theano/Theano/issues/3780#issuecomment-164843114
 export THEANO_FLAGS='floatX=float32 device=cpu cast_policy=numpy+floatX'

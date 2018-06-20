@@ -3,7 +3,8 @@ import numpy as np
 import math
 
 from .. import print_progress
-from . import log; log = log[__name__]
+from logging import getLogger; log = getLogger(__name__)
+#from . import log; log = log[__name__]
 
 
 def tau_topo_image(irec, rec, cal_layer=2, width=32, height=32):

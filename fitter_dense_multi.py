@@ -1,11 +1,13 @@
 import os
 import numpy as np
+from argparse import ArgumentParser
 from sklearn.metrics import roc_curve, confusion_matrix
 from keras.utils.np_utils import to_categorical
-from tauperf import log; log = log['/fitter']
 from tauperf.imaging.load import load_test_data, print_sample_size
-import tables
-from argparse import ArgumentParser
+
+#from tauperf import log; log = log['/fitter']
+from logging import getLogger; log = getLogger(__name__)
+
 
 parser = ArgumentParser()
 parser.add_argument(

@@ -1,8 +1,8 @@
 import os
 import numpy as np
+#from . import log; log = log[__name__]
+from logging import getLogger; log = getLogger(__name__)
 import tables
-from . import log; log = log[__name__]
-
 
 
 def print_sample_size(filenames, labels):
