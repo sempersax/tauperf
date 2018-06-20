@@ -3,7 +3,7 @@ source ${ATLAS_LOCAL_ROOT_BASE}/user/atlasLocalSetup.sh
 lsetup root
 lsetup cmake
 
-cd /tmp/${USER}
+cd /data/${USER}
 
 echo 'create the virtual environement'
 wget https://pypi.python.org/packages/source/v/virtualenv/virtualenv-15.2.0.tar.gz
