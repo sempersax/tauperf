@@ -14,8 +14,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from matplotlib.colors import Normalize, LogNorm
 
-from logging import getLogger; log = getLogger(__name__)
-#from . import log; log = log[__name__]
+from . import log; log = log.getChild(__name__)
 
 def dphi(phi_1, phi_2):
     d_phi = phi_1 - phi_2

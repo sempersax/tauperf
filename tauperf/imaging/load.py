@@ -1,7 +1,6 @@
 import os
 import numpy as np
-#from . import log; log = log[__name__]
-from logging import getLogger; log = getLogger(__name__)
+from . import log; log = log.getChild(__name__)
 import tables
 
 

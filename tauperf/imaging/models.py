@@ -8,8 +8,7 @@ from keras.layers.pooling import MaxPooling2D
 from keras.layers.recurrent import LSTM
 
 
-from logging import getLogger; log = getLogger(__name__)
-#from . import log; log = log[__name__]
+from . import log ; log = log.getChild(__name__)
 
 
 def single_layer_model_s2(data):
