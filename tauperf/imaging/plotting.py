@@ -4,7 +4,11 @@ import itertools
 import socket
 import matplotlib as mpl;
 
-if socket.gethostname() == 'techlab-gpu-nvidiak20-03.cern.ch':
+techlab_hosts = [
+    'techlab-gpu-nvidiak20-03.cern.ch',
+    'techlab-gpu-nvidiagtx1080-07.cern.ch'
+]
+if socket.gethostname() in techlab_hosts:
     mpl.use('PS')
 else:
     mpl.use('TkAgg')
