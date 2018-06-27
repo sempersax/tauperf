@@ -5,9 +5,10 @@ from sklearn.metrics import roc_curve, confusion_matrix
 from keras.utils.np_utils import to_categorical
 from tauperf.imaging.load import load_test_data, print_sample_size
 
-#from tauperf import log; log = log['/fitter']
-from logging import getLogger; log = getLogger(__name__)
 
+import logging
+log = logging.getLogger(os.path.basename(__file__))
+log.setLevel(logging.INFO)
 
 parser = ArgumentParser()
 parser.add_argument(

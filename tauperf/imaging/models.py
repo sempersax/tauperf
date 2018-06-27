@@ -11,8 +11,7 @@ from keras.layers.recurrent import LSTM
 
 #from keras import backend as K
 
-from logging import getLogger; log = getLogger(__name__)
-#from . import log; log = log[__name__]
+from . import log ; log = log.getChild(__name__)
 
 """attempted to implement a 'Noisy ReLU', which is an extension of ReLU to include
 Gaussian Noise.  According to Wikipedia, Noisy ReLUs have been used with some 

@@ -3,7 +3,7 @@ import numpy as np
 import math
 
 from .. import print_progress
-from logging import getLogger; log = getLogger(__name__)
+from . import log; log = log.getChild(__name__)
 #from . import log; log = log[__name__]
 
 
