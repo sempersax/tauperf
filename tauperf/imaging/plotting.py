@@ -84,6 +84,9 @@ def plot_confusion_matrix(cm, classes,
     print
     print(cm)
     print 
+    print 'Diagonal'
+    print diagonal * 100
+    print
 
     thresh = cm.max() / 2.
     for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):

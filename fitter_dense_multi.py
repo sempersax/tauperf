@@ -129,3 +129,5 @@ plot_confusion_matrix(
 log.info('drawing the roc curves and pantau WP')
 plot_roc(y_test, y_pred, test['pantau'])
 
+print 'Conv2D (3,4)'
+

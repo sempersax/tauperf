@@ -1,4 +1,6 @@
 import os
+import sys
+
 from keras.models import Sequential, Model
 from keras.layers import Input
 from keras.layers.merge import concatenate
@@ -7,10 +9,27 @@ from keras.layers.convolutional import Convolution1D, Convolution2D, Conv2D
 from keras.layers.pooling import MaxPooling2D
 from keras.layers.recurrent import LSTM
 
+#from keras import backend as K
 
 from logging import getLogger; log = getLogger(__name__)
 #from . import log; log = log[__name__]
 
+"""attempted to implement a 'Noisy ReLU', which is an extension of ReLU to include
+Gaussian Noise.  According to Wikipedia, Noisy ReLUs have been used with some 
+success in restricted Boltzmann machines for computer vision tasks.  As our problem
+is computer vision based, I thought it might be an avenue of interest.  However,
+Noisy ReLUs are not built into Keras, and the function must therefore be constructed
+by the user.  So far, I have failed to get said function to work."""
+
+#def relu_noise(x):
+#    isPositive = K.greater(x,0)
+#    print isPositive
+#    noise = K.random_normal(K.shape(x), mean=0.5, stddev=0.5)
+    
+#    return (x * isPositive) + noise
+
+#relu_noise(True)
+#sys.exit()
 
 def single_layer_model_s2(data):
     """
@@ -49,7 +68,7 @@ def dense_merged_model(data, mode='sum'):
     model_s1.add(MaxPooling2D((2, 2), dim_ordering='th'))
     model_s1.add(Dropout(0.2))
     model_s1.add(Flatten())
-    model_s1.add(Dense(128))
+    model_s1.add(Dense(130))
     model_s1.add(Activation('relu'))
     model_s1.add(Dropout(0.2))
 
@@ -65,7 +84,7 @@ def dense_merged_model(data, mode='sum'):
     model_s2.add(MaxPooling2D((2, 2), dim_ordering='th'))
     model_s2.add(Dropout(0.2))
     model_s2.add(Flatten())
-    model_s2.add(Dense(128))
+    model_s2.add(Dense(130))
     model_s2.add(Activation('relu'))
     model_s2.add(Dropout(0.2))
 
@@ -80,7 +99,7 @@ def dense_merged_model(data, mode='sum'):
     model_s3.add(MaxPooling2D((2, 2), dim_ordering='th'))
     model_s3.add(Dropout(0.2))
     model_s3.add(Flatten())
-    model_s3.add(Dense(128))
+    model_s3.add(Dense(130))
     model_s3.add(Activation('relu'))
     model_s3.add(Dropout(0.2))
 
@@ -121,7 +140,7 @@ def dense_merged_model_categorical(data, mode='sum'):
     model_s1.add(MaxPooling2D((2, 2), dim_ordering='th'))
     model_s1.add(Dropout(0.2))
     model_s1.add(Flatten())
-    model_s1.add(Dense(128))
+    model_s1.add(Dense(130))
     model_s1.add(Activation('relu'))
     model_s1.add(Dropout(0.2))
 
@@ -134,7 +153,7 @@ def dense_merged_model_categorical(data, mode='sum'):
     model_s2.add(MaxPooling2D((2, 2), dim_ordering='th'))
     model_s2.add(Dropout(0.2))
     model_s2.add(Flatten())
-    model_s2.add(Dense(128))
+    model_s2.add(Dense(130))
     model_s2.add(Activation('relu'))
     model_s2.add(Dropout(0.2))
 
@@ -147,7 +166,7 @@ def dense_merged_model_categorical(data, mode='sum'):
     model_s3.add(MaxPooling2D((2, 2), dim_ordering='th'))
     model_s3.add(Dropout(0.2))
     model_s3.add(Flatten())
-    model_s3.add(Dense(128))
+    model_s3.add(Dense(130))
     model_s3.add(Activation('relu'))
     model_s3.add(Dropout(0.2))
 
@@ -171,6 +190,7 @@ def dense_merged_model_categorical(data, mode='sum'):
     model.add(Activation('softmax'))
     return model
 
+# This is the definition used as of 25 June 18.
 def dense_merged_model_topo(data, n_classes=3, final_activation='softmax'):
     """
     """
@@ -193,7 +213,7 @@ def dense_merged_model_topo(data, n_classes=3, final_activation='softmax'):
     s1_shape = data[0]['s1'].shape
     s1_x = Reshape((s1_shape[0], s1_shape[1], 1))(s1_input)
     log.info('\t s1 input shape   = {0}'.format(s1_x._keras_shape))
-    s1_x = Conv2D(64, (2, 6), padding='same', activation='relu')(s1_x)
+    s1_x = Conv2D(64, (3, 4), padding='same', activation='relu')(s1_x)
     log.info('\t s1 convolu shape = {0}'.format(s1_x._keras_shape))
     s1_x = MaxPooling2D((2, 2))(s1_x)
     log.info('\t s1 maxpool shape = {0}'.format(s1_x._keras_shape))
