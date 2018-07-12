@@ -212,7 +212,7 @@ def dense_merged_model_topo(data, n_classes=3, final_activation='softmax'):
     s1_shape = data[0]['s1'].shape
     s1_x = Reshape((s1_shape[0], s1_shape[1], 1))(s1_input)
     log.info('\t s1 input shape   = {0}'.format(s1_x._keras_shape))
-    s1_x = Conv2D(64, (3, 4), padding='same', activation='relu')(s1_x)
+    s1_x = Conv2D(64, (6, 2), padding='same', activation='relu')(s1_x)
     log.info('\t s1 convolu shape = {0}'.format(s1_x._keras_shape))
     s1_x = MaxPooling2D((2, 2))(s1_x)
     log.info('\t s1 maxpool shape = {0}'.format(s1_x._keras_shape))
@@ -248,7 +248,7 @@ def dense_merged_model_topo(data, n_classes=3, final_activation='softmax'):
     s3_shape = data[0]['s3'].shape
     s3_x = Reshape((s3_shape[0], s3_shape[1], 1))(s3_input)
     log.info('\t s3 input shape = {0}'.format(s3_x._keras_shape))
-    s3_x = Conv2D(64, (4, 2), padding='same', activation='relu')(s3_x)
+    s3_x = Conv2D(64, (2, 2), padding='same', activation='relu')(s3_x)
     log.info('\t s3 convolu shape = {0}'.format(s3_x._keras_shape))
     s3_x = MaxPooling2D((2, 2))(s3_x)
     log.info('\t s3 maxpool shape = {0}'.format(s3_x._keras_shape))

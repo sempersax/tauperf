@@ -3,6 +3,7 @@ import numpy as np
 import itertools
 import socket
 import matplotlib as mpl;
+from mpl_toolkits.mplot3d import Axes3D
 
 techlab_hosts = [
     'techlab-gpu-nvidiak20-03.cern.ch',
@@ -252,4 +253,365 @@ def plot_roc(y_test, y_pred, y_pant):
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/roc_curve.pdf')
 
+def compare_bins(test, y_pred, y_truth):
+###########################################################################
+#new stuff
+#np.unravel_index() obtains the indice of the array for where a value is located
+###########################################################################
 
+# Grab just the TRUE 1p0n decays, same as done originally
+    y_pred_1p0n = y_pred[y_truth == 0]
+    test_1p0n = test[y_truth == 0]
+    true_positive = test_1p0n[np.argmax(y_pred_1p0n, axis=1) == 0]
+    false_positive = test_1p0n[np.argmax(y_pred_1p0n, axis=1) == 1]
+    RANGE = max(len(true_positive), len(false_positive))
+
+# initialize arrays for each calorimeter layer cell location
+    locationS1_x_true = []
+    locationS2_x_true = []
+    locationS3_x_true = []
+    locationS4_x_true = []
+    locationS5_x_true = []
+
+    locationS1_y_true = []
+    locationS2_y_true = []
+    locationS3_y_true = []
+    locationS4_y_true = []
+    locationS5_y_true = []
+
+    locationS1_x_false = []
+    locationS2_x_false = []
+    locationS3_x_false = []
+    locationS4_x_false = []
+    locationS5_x_false = []
+
+    locationS1_y_false = []
+    locationS2_y_false = []
+    locationS3_y_false = []
+    locationS4_y_false = []
+    locationS5_y_false = []
+
+# Loop over the maximum amount of true / false positive
+
+
+    locationS1_x_true = np.argmax(np.amax(true_positive['s1'], axis=2), axis=1) - 2
+    locationS1_y_true = np.argmax(np.amax(true_positive['s1'], axis=1), axis=1) - 60
+    locationS1_x_false = np.argmax(np.amax(false_positive['s1'], axis=2), axis=1) - 2
+    locationS1_y_false = np.argmax(np.amax(false_positive['s1'], axis=1), axis=1) - 60
+
+    locationS2_x_true = np.argmax(np.amax(true_positive['s2'], axis=2), axis=1) - 16
+    locationS2_y_true = np.argmax(np.amax(true_positive['s2'], axis=1), axis=1) - 16
+    locationS2_x_false = np.argmax(np.amax(false_positive['s2'], axis=2), axis=1) - 16
+    locationS2_y_false = np.argmax(np.amax(false_positive['s2'], axis=1), axis=1) - 16
+
+    locationS3_x_true = np.argmax(np.amax(true_positive['s3'], axis=2), axis=1) - 16
+    locationS3_y_true = np.argmax(np.amax(true_positive['s3'], axis=1), axis=1) - 8
+    locationS3_x_false = np.argmax(np.amax(false_positive['s3'], axis=2), axis=1) - 16
+    locationS3_y_false = np.argmax(np.amax(false_positive['s3'], axis=1), axis=1) - 8
+
+    locationS4_x_true = np.argmax(np.amax(true_positive['s4'], axis=2), axis=1) - 8
+    locationS4_y_true = np.argmax(np.amax(true_positive['s4'], axis=1), axis=1) - 8
+    locationS4_x_false = np.argmax(np.amax(false_positive['s4'], axis=2), axis=1) - 8
+    locationS4_y_false = np.argmax(np.amax(false_positive['s4'], axis=1), axis=1) - 8
+
+    locationS5_x_true = np.argmax(np.amax(true_positive['s5'], axis=2), axis=1) - 8
+    locationS5_y_true = np.argmax(np.amax(true_positive['s5'], axis=1), axis=1) - 8
+    locationS5_x_false = np.argmax(np.amax(false_positive['s5'], axis=2), axis=1) - 8
+    locationS5_y_false = np.argmax(np.amax(false_positive['s5'], axis=1), axis=1) - 8
+
+    deltaS1S2_y_true = locationS1_y_true - locationS2_y_true
+    deltaS1S2_x_true = locationS1_x_true - locationS2_x_true
+
+    deltaS2S3_y_true = locationS2_y_true - locationS3_y_true
+    deltaS2S3_x_true = locationS2_x_true - locationS3_x_true
+
+    deltaS1S2_y_false = locationS1_y_false - locationS2_y_false 
+    deltaS1S2_x_false = locationS1_x_false - locationS2_x_false 
+
+    deltaS2S3_y_false = locationS2_y_false - locationS3_y_false 
+    deltaS2S3_x_false = locationS2_x_false - locationS3_x_false 
+
+###########################################################################
+
+    # select only the true 1p0n tau decays
+    test_1p0n = test[y_truth == 0]
+    y_pred_1p0n = y_pred[y_truth == 0]
+    true_positive = test_1p0n[np.argmax(y_pred_1p0n, axis=1) == 0]
+    false_positive = test_1p0n[np.argmax(y_pred_1p0n, axis=1) == 1]
+    plt.figure() 
+    plt.hist(true_positive['eta'], bins=44, range=(-1.1, 1.1), color = 'blue', label='1p0n identified as 1p0n', density = True)
+    plt.hist(false_positive['eta'], bins=44, range=(-1.1, 1.1), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
+    plt.xlabel('eta')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/1p0n_compare_eta.pdf')
+
+# Isolate the S1 layer information
+    testS1_1p0n = test_1p0n['s1']
+    testS1_1p0n = np.sum(testS1_1p0n, axis = (1, 2))
+	
+    yS1_pred_1p0n = y_pred[y_truth == 0]
+    trueS1_positive = testS1_1p0n[np.argmax(yS1_pred_1p0n, axis=1) == 0]
+    falseS1_positive = testS1_1p0n[np.argmax(yS1_pred_1p0n, axis=1) == 1]
+
+
+# Isolate the S2 layer information
+    testS2_1p0n = test_1p0n['s2']
+    testS2_1p0n = np.sum(testS2_1p0n, axis = (1, 2))
+	
+    yS2_pred_1p0n = y_pred[y_truth == 0]
+    trueS2_positive = testS2_1p0n[np.argmax(yS2_pred_1p0n, axis=1) == 0]
+    falseS2_positive = testS2_1p0n[np.argmax(yS2_pred_1p0n, axis=1) == 1]
+
+# Isolate the S3 layer information
+    testS3_1p0n = test_1p0n['s3']
+    testS3_1p0n = np.sum(testS3_1p0n, axis = (1, 2))
+    	
+    yS3_pred_1p0n = y_pred[y_truth == 0]
+    trueS3_positive = testS3_1p0n[np.argmax(yS3_pred_1p0n, axis=1) == 0]
+    falseS3_positive = testS3_1p0n[np.argmax(yS3_pred_1p0n, axis=1) == 1]
+
+# Isolate the S4 layer information
+    testS4_1p0n = test_1p0n['s4']
+    testS4_1p0n = np.sum(testS4_1p0n, axis = (1, 2))
+    	
+    yS4_pred_1p0n = y_pred[y_truth == 0]
+    trueS4_positive = testS4_1p0n[np.argmax(yS4_pred_1p0n, axis=1) == 0]
+    falseS4_positive = testS4_1p0n[np.argmax(yS4_pred_1p0n, axis=1) == 1]
+
+# Isolate the S3 layer information
+    testS5_1p0n = test_1p0n['s5']
+    testS5_1p0n = np.sum(testS5_1p0n, axis = (1, 2))
+    	
+    yS5_pred_1p0n = y_pred[y_truth == 0]
+    trueS5_positive = testS5_1p0n[np.argmax(yS5_pred_1p0n, axis=1) == 0]
+    falseS5_positive = testS5_1p0n[np.argmax(yS5_pred_1p0n, axis=1) == 1]
+
+# Initialize the ratio arrays    
+    
+    S1S2ratio_True = np.divide(trueS1_positive,trueS2_positive)
+    S1S2ratio_False = np.divide(falseS1_positive,falseS2_positive)
+    S2S3ratio_True = np.divide(trueS3_positive,trueS2_positive)
+    S2S3ratio_False = np.divide(falseS3_positive,falseS2_positive)
+    S4S3ratio_True = np.divide(trueS4_positive,trueS3_positive)
+    S4S3ratio_False = np.divide(falseS4_positive,falseS3_positive)
+    S5S4ratio_True = np.divide(trueS5_positive,trueS4_positive)
+    S5S4ratio_False = np.divide(falseS5_positive,falseS4_positive) 
+
+# Deletes nan and inf instance from array, maybe shouldn't be done?  Done to assist with histogram plotting
+    S1S2ratio_True = S1S2ratio_True[np.logical_not(np.isnan(S1S2ratio_True))]
+    S1S2ratio_True = S1S2ratio_True[np.logical_not(np.isinf(S1S2ratio_True))]
+    S1S2ratio_False = S1S2ratio_False [np.logical_not(np.isnan(S1S2ratio_False ))]
+    S1S2ratio_False = S1S2ratio_False [np.logical_not(np.isinf(S1S2ratio_False ))]
+   
+    S2S3ratio_True = S2S3ratio_True[np.logical_not(np.isnan(S2S3ratio_True))]
+    S2S3ratio_True = S2S3ratio_True[np.logical_not(np.isinf(S2S3ratio_True))]
+    S2S3ratio_False = S2S3ratio_False [np.logical_not(np.isnan(S2S3ratio_False ))]
+    S2S3ratio_False = S2S3ratio_False [np.logical_not(np.isinf(S2S3ratio_False ))]
+
+    S4S3ratio_True = S4S3ratio_True[np.logical_not(np.isnan(S4S3ratio_True))]
+    S4S3ratio_True = S4S3ratio_True[np.logical_not(np.isinf(S4S3ratio_True))]
+    S4S3ratio_False = S4S3ratio_False [np.logical_not(np.isnan(S4S3ratio_False ))]
+    S4S3ratio_False = S4S3ratio_False [np.logical_not(np.isinf(S4S3ratio_False ))]
+   
+    S5S4ratio_True = S5S4ratio_True[np.logical_not(np.isnan(S5S4ratio_True))]
+    S5S4ratio_True = S5S4ratio_True[np.logical_not(np.isinf(S5S4ratio_True))]
+    S5S4ratio_False = S5S4ratio_False [np.logical_not(np.isnan(S5S4ratio_False ))]
+    S5S4ratio_False = S5S4ratio_False [np.logical_not(np.isinf(S5S4ratio_False ))]
+
+# Creating the histogram plots of the energy ratio.
+    plt.figure() 
+    plt.hist(S1S2ratio_True, bins=44, range=(-1.1, 1.1), color = 'blue', label='1p0n identified as 1p0n', density = True)
+    plt.hist(S1S2ratio_False, bins=44, range=(-1.1, 1.1), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
+    plt.xlabel('energy ratio s1/s2')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/1p0n_s1s2ratio.pdf')
+
+    plt.figure() 
+    plt.hist(S2S3ratio_True, bins=44, range=(-1.1, 1.1), color = 'blue', label='1p0n identified as 1p0n', density = True)
+    plt.hist(S2S3ratio_False, bins=44, range=(-1.1, 1.1), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
+    plt.xlabel('energy ratio s3/s2')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/1p0n_s2s3ratio.pdf')
+
+    plt.figure() 
+    plt.hist(S4S3ratio_True, bins=44, range=(-1.1, 1.1), color = 'blue', label='1p0n identified as 1p0n', density = True)
+    plt.hist(S4S3ratio_False, bins=44, range=(-1.1, 1.1), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
+    plt.xlabel('energy ratio s4/s3')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/1p0n_s4s3ratio.pdf')
+
+    plt.figure() 
+    plt.hist(S5S4ratio_True, bins=44, range=(-1.1, 1.1), color = 'blue', label='1p0n identified as 1p0n', density = True)
+    plt.hist(S5S4ratio_False, bins=44, range=(-1.1, 1.1), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
+    plt.xlabel('energy ratio s5/s4')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/1p0n_s5s4ratio.pdf')
+
+    plt.figure() 
+    plt.hist(locationS1_x_true, bins=61, range=(-1, 60), color = 'blue', label='s1 true peak location', density = True)
+    plt.hist(locationS2_x_true, bins=61, range=(-1, 60), color = 'red', label='s2 true peak location', density = True, alpha = 0.4)
+    plt.hist(locationS3_x_true, bins=61, range=(-1, 60), color = 'green', label='s3 true peak location', density = True, alpha = 0.4)
+    plt.hist(locationS4_x_true, bins=61, range=(-1, 60), color = 'yellow', label='s4 true peak location', density = True, alpha = 0.4)
+    plt.hist(locationS5_x_true, bins=61, range=(-1, 60), color = 'brown', label='s5 true peak location', density = True, alpha = 0.4)
+    plt.xlabel('x location')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/1p0n_all_X_true_Location.pdf')
+
+    plt.figure() 
+    plt.hist(locationS1_y_true, bins=121, range=(-1, 120), color = 'blue', label='s1 true peak locations', density = True)
+    plt.hist(locationS2_y_true, bins=121, range=(-1, 120), color = 'red', label='s2 true peak locations', density = True, alpha = 0.4)
+    plt.hist(locationS3_y_true, bins=121, range=(-1, 120), color = 'green', label='s3 true peak location', density = True, alpha = 0.4)
+    plt.hist(locationS4_y_true, bins=121, range=(-1, 120), color = 'yellow', label='s4 true peak location', density = True, alpha = 0.4)
+    plt.hist(locationS5_y_true, bins=121, range=(-1, 120), color = 'brown', label='s5 true peak location', density = True, alpha = 0.4)
+    plt.xlabel('y location')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/1p0n_all_Y_true_Location.pdf')
+
+    plt.figure() 
+    plt.hist(locationS1_x_false, bins=4, range=(-2, 2), color = 'blue', label='s1 false peak location', density = True)
+    plt.hist(locationS2_x_false, bins=32, range=(-16, 16), color = 'red', label='s2 false peak location', density = True, alpha = 0.4)
+    plt.hist(locationS3_x_false, bins=32, range=(-16, 16), color = 'green', label='s3 false peak location', density = True, alpha = 0.4)
+    plt.hist(locationS4_x_false, bins=16, range=(-8, 8), color = 'yellow', label='s4 false peak location', density = True, alpha = 0.4)
+    plt.hist(locationS5_x_false, bins=16, range=(-8, 8), color = 'brown', label='s5 false peak location', density = True, alpha = 0.4)
+    plt.xlabel('x location')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/1p0n_all_X_false_Location.pdf')
+
+    plt.figure() 
+    plt.hist(locationS1_y_false, bins=120, range=(-60, 60), color = 'blue', label='s1 false peak locations', density = True)
+    plt.hist(locationS2_y_false, bins=32, range=(-16, 16), color = 'red', label='s2 false peak locations', density = True, alpha = 0.4)
+    plt.hist(locationS3_y_false, bins=32, range=(-16, 16), color = 'green', label='s3 false peak location', density = True, alpha = 0.4)
+    plt.hist(locationS4_y_false, bins=16, range=(-8, 8), color = 'yellow', label='s4 false peak location', density = True, alpha = 0.4)
+    plt.hist(locationS5_y_false, bins=16, range=(-8, 8), color = 'brown', label='s5 false peak location', density = True, alpha = 0.4)
+    plt.xlabel('y location')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/1p0n_all_Y_false_Location.pdf')
+
+    plt.figure() 
+    plt.hist(locationS1_x_true, bins=4, range=(-2, 2), color = 'blue', label='1p0n identified as 1p0n', density = True)
+    plt.hist(locationS1_x_false, bins=4, range=(-2, 2), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
+    plt.xlabel('s1 peak x')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/1p0n_s1_peak_x_locations.pdf')
+
+    plt.figure() 
+    plt.hist(locationS1_y_true, bins=120, range=(-60, 60), color = 'blue', label='1p0n identified as 1p0n', density = True)
+    plt.hist(locationS1_y_false, bins=120, range=(-60, 60), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
+    plt.xlabel('s1 peak y')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/1p0n_s1_peak_y_locations.pdf')
+
+    plt.figure() 
+    plt.hist(locationS2_x_true, bins=32, range=(-16, 16), color = 'blue', label='1p0n identified as 1p0n', density = True)
+    plt.hist(locationS2_x_false, bins=32, range=(-16, 16), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
+    plt.xlabel('s2 peak x')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/1p0n_s2_peak_x_locations.pdf')
+
+    plt.figure() 
+    plt.hist(locationS2_y_true, bins=32, range=(-16, 16), color = 'blue', label='1p0n identified as 1p0n', density = True)
+    plt.hist(locationS2_y_false, bins=32, range=(-16, 16), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
+    plt.xlabel('s2 peak y')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/1p0n_s2_peak_y_locations.pdf')
+
+    plt.figure() 
+    plt.hist(locationS3_x_true, bins=32, range=(-16, 16), color = 'blue', label='1p0n identified as 1p0n', density = True)
+    plt.hist(locationS3_x_false, bins=32, range=(-16, 16), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
+    plt.xlabel('s3 peak x')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/1p0n_s3_peak_x_locations.pdf')
+
+    plt.figure() 
+    plt.hist(locationS3_y_true, bins=16, range=(-8, 8), color = 'blue', label='1p0n identified as 1p0n', density = True)
+    plt.hist(locationS3_y_false, bins=16, range=(-8, 8), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
+    plt.xlabel('s3 peak y')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/1p0n_s3_peak_y_locations.pdf')
+
+    plt.figure() 
+    plt.hist(locationS4_x_true, bins=16, range=(-8, 8), color = 'blue', label='1p0n identified as 1p0n', density = True)
+    plt.hist(locationS4_x_false, bins=16, range=(-8, 8), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
+    plt.xlabel('s4 peak x')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/1p0n_s4_peak_x_locations.pdf')
+
+    plt.figure() 
+    plt.hist(locationS4_y_true, bins=16, range=(-8, 8), color = 'blue', label='1p0n identified as 1p0n', density = True)
+    plt.hist(locationS4_y_false, bins=16, range=(-8, 8), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
+    plt.xlabel('s4 peak y')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/1p0n_s4_peak_y_locations.pdf')
+
+    plt.figure() 
+    plt.hist(locationS5_x_true, bins=16, range=(-8, 8), color = 'blue', label='1p0n identified as 1p0n', density = True)
+    plt.hist(locationS5_x_false, bins=16, range=(-8, 8), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
+    plt.xlabel('s5 peak x')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/1p0n_s5_peak_x_locations.pdf')
+
+    plt.figure() 
+    plt.hist(locationS5_y_true, bins=16, range=(-8, 8), color = 'blue', label='1p0n identified as 1p0n', density = True)
+    plt.hist(locationS5_y_false, bins=16, range=(-8, 8), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
+    plt.xlabel('s5 peak y')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/1p0n_s5_peak_y_locations.pdf')
+
+    plt.figure() 
+    plt.hist(locationS5_y_true, bins=16, range=(-8, 8), color = 'blue', label='1p0n identified as 1p0n', density = True)
+    plt.hist(locationS5_y_false, bins=16, range=(-8, 8), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
+    plt.xlabel('s5 peak y')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/1p0n_s5_peak_y_locations.pdf')
+
+    plt.figure() 
+    plt.hist(deltaS1S2_y_true, bins=152, range=(-76, 76), color = 'blue', label='1p0n identified as 1p0n', density = True)
+    plt.hist(deltaS1S2_y_false , bins=152, range=(-76, 76), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
+    plt.xlabel('s1 - s2')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/deltaS1S2_y.pdf')
+
+    plt.figure() 
+    plt.hist(deltaS1S2_x_true, bins=40, range=(-20, 20), color = 'blue', label='1p0n identified as 1p0n', density = True)
+    plt.hist(deltaS1S2_x_false , bins=40, range=(-20, 20), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
+    plt.xlabel('s1 - s2')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/deltaS1S2_x.pdf')
+
+    plt.figure() 
+    plt.hist(deltaS2S3_y_true, bins=64, range=(-32, 32), color = 'blue', label='1p0n identified as 1p0n', density = True)
+    plt.hist(deltaS2S3_y_false , bins=64, range=(-32, 32), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
+    plt.xlabel('s2 - s3')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/deltaS2S3_y.pdf')
+
+    plt.figure() 
+    plt.hist(deltaS2S3_x_true, bins=48, range=(-24, 24), color = 'blue', label='1p0n identified as 1p0n', density = True)
+    plt.hist(deltaS2S3_x_false , bins=48, range=(-24, 24), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
+    plt.xlabel('s2 - s3')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/deltaS2S3_x.pdf')
