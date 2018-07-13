@@ -256,7 +256,6 @@ def plot_roc(y_test, y_pred, y_pant):
 def compare_bins(test, y_pred, y_truth):
 ###########################################################################
 #new stuff
-#np.unravel_index() obtains the indice of the array for where a value is located
 ###########################################################################
 
 # Grab just the TRUE 1p0n decays, same as done originally
@@ -264,36 +263,8 @@ def compare_bins(test, y_pred, y_truth):
     test_1p0n = test[y_truth == 0]
     true_positive = test_1p0n[np.argmax(y_pred_1p0n, axis=1) == 0]
     false_positive = test_1p0n[np.argmax(y_pred_1p0n, axis=1) == 1]
-    RANGE = max(len(true_positive), len(false_positive))
 
-# initialize arrays for each calorimeter layer cell location
-    locationS1_x_true = []
-    locationS2_x_true = []
-    locationS3_x_true = []
-    locationS4_x_true = []
-    locationS5_x_true = []
-
-    locationS1_y_true = []
-    locationS2_y_true = []
-    locationS3_y_true = []
-    locationS4_y_true = []
-    locationS5_y_true = []
-
-    locationS1_x_false = []
-    locationS2_x_false = []
-    locationS3_x_false = []
-    locationS4_x_false = []
-    locationS5_x_false = []
-
-    locationS1_y_false = []
-    locationS2_y_false = []
-    locationS3_y_false = []
-    locationS4_y_false = []
-    locationS5_y_false = []
-
-# Loop over the maximum amount of true / false positive
-
-
+# Maximum Locations
     locationS1_x_true = np.argmax(np.amax(true_positive['s1'], axis=2), axis=1) - 2
     locationS1_y_true = np.argmax(np.amax(true_positive['s1'], axis=1), axis=1) - 60
     locationS1_x_false = np.argmax(np.amax(false_positive['s1'], axis=2), axis=1) - 2
@@ -318,9 +289,86 @@ def compare_bins(test, y_pred, y_truth):
     locationS5_y_true = np.argmax(np.amax(true_positive['s5'], axis=1), axis=1) - 8
     locationS5_x_false = np.argmax(np.amax(false_positive['s5'], axis=2), axis=1) - 8
     locationS5_y_false = np.argmax(np.amax(false_positive['s5'], axis=1), axis=1) - 8
+# end maximum block
 
-    deltaS1S2_y_true = locationS1_y_true - locationS2_y_true
-    deltaS1S2_x_true = locationS1_x_true - locationS2_x_true
+# minimum locations - 1000000 used to prevent minimum from being zero.
+    locationS1_x_true_min = true_positive['s1'] 
+    locationS1_x_true_min[locationS1_x_true_min == 0.] = 1000000
+    locationS2_x_true_min = true_positive['s2']
+    locationS2_x_true_min[locationS2_x_true_min == 0.] = 1000000
+    locationS3_x_true_min = true_positive['s3']
+    locationS3_x_true_min[locationS3_x_true_min == 0.] = 1000000
+    locationS4_x_true_min = true_positive['s4']
+    locationS4_x_true_min[locationS4_x_true_min == 0.] = 1000000
+    locationS5_x_true_min = true_positive['s5']
+    locationS5_x_true_min[locationS5_x_true_min == 0.] = 1000000
+
+    locationS1_y_true_min = true_positive['s1']
+    locationS1_y_true_min[locationS1_y_true_min == 0.] = 1000000
+    locationS2_y_true_min = true_positive['s2']
+    locationS2_y_true_min[locationS2_y_true_min == 0.] = 1000000
+    locationS3_y_true_min = true_positive['s3']
+    locationS3_y_true_min[locationS3_y_true_min == 0.] = 1000000
+    locationS4_y_true_min = true_positive['s4']
+    locationS4_y_true_min[locationS4_y_true_min == 0.] = 1000000
+    locationS5_y_true_min = true_positive['s5']
+    locationS5_y_true_min[locationS5_y_true_min == 0.] = 1000000
+
+    locationS1_x_false_min = false_positive['s1']
+    locationS1_x_false_min[locationS1_x_false_min == 0.] = 1000000
+    locationS2_x_false_min = false_positive['s2']
+    locationS2_x_false_min[locationS2_x_false_min == 0.] = 1000000
+    locationS3_x_false_min = false_positive['s3']
+    locationS3_x_false_min[locationS3_x_false_min == 0.] = 1000000
+    locationS4_x_false_min = false_positive['s4']
+    locationS4_x_false_min[locationS4_x_false_min == 0.] = 1000000
+    locationS5_x_false_min = false_positive['s5']
+    locationS5_x_false_min[locationS5_x_false_min == 0.] = 1000000
+
+    locationS1_y_false_min = false_positive['s1']
+    locationS1_y_false_min[locationS1_y_false_min == 0.] = 1000000
+    locationS2_y_false_min = false_positive['s2']
+    locationS2_y_false_min[locationS2_y_false_min == 0.] = 1000000
+    locationS3_y_false_min = false_positive['s3']
+    locationS3_y_false_min[locationS3_y_false_min == 0.] = 1000000
+    locationS4_y_false_min = false_positive['s4']
+    locationS4_y_false_min[locationS4_y_false_min == 0.] = 1000000
+    locationS5_y_false_min = false_positive['s5']
+    locationS5_y_false_min[locationS5_y_false_min == 0.] = 1000000
+
+    locationS1_x_true_min = np.argmin(np.nanmin(true_positive['s1'], axis=2), axis=1) - 2
+    locationS1_y_true_min = np.argmin(np.nanmin(true_positive['s1'], axis=1), axis=1) - 60
+    locationS1_x_false_min = np.argmin(np.nanmin(false_positive['s1'], axis=2), axis=1) - 2
+    locationS1_y_false_min = np.argmin(np.nanmin(false_positive['s1'], axis=1), axis=1) - 60
+
+    locationS2_x_true_min = np.argmin(np.nanmin(true_positive['s2'], axis=2), axis=1) - 16
+    locationS2_y_true_min = np.argmin(np.nanmin(true_positive['s2'], axis=1), axis=1) - 16
+    locationS2_x_false_min = np.argmin(np.nanmin(false_positive['s2'], axis=2), axis=1) - 16
+    locationS2_y_false_min = np.argmin(np.nanmin(false_positive['s2'], axis=1), axis=1) - 16
+
+    locationS3_x_true_min = np.argmin(np.nanmin(true_positive['s3'], axis=2), axis=1) - 16
+    locationS3_y_true_min = np.argmin(np.nanmin(true_positive['s3'], axis=1), axis=1) - 8
+    locationS3_x_false_min = np.argmin(np.nanmin(false_positive['s3'], axis=2), axis=1) - 16
+    locationS3_y_false_min = np.argmin(np.nanmin(false_positive['s3'], axis=1), axis=1) - 8
+
+    locationS4_x_true_min = np.argmin(np.nanmin(true_positive['s4'], axis=2), axis=1) - 8
+    locationS4_y_true_min = np.argmin(np.nanmin(true_positive['s4'], axis=1), axis=1) - 8
+    locationS4_x_false_min = np.argmin(np.nanmin(false_positive['s4'], axis=2), axis=1) - 8
+    locationS4_y_false_min = np.argmin(np.nanmin(false_positive['s4'], axis=1), axis=1) - 8
+
+    locationS5_x_true_min = np.argmin(np.nanmin(true_positive['s5'], axis=2), axis=1) - 8
+    locationS5_y_true_min = np.argmin(np.nanmin(true_positive['s5'], axis=1), axis=1) - 8
+    locationS5_x_false_min = np.argmin(np.nanmin(false_positive['s5'], axis=2), axis=1) - 8
+    locationS5_y_false_min = np.argmin(np.nanmin(false_positive['s5'], axis=1), axis=1) - 8
+ 
+    test_1p0n = test[y_truth == 0]
+    true_positive = test_1p0n[np.argmax(y_pred_1p0n, axis=1) == 0]
+    false_positive = test_1p0n[np.argmax(y_pred_1p0n, axis=1) == 1]
+# end minimum block
+
+# Deltas between layers
+    deltaS1S2_y_true = (locationS1_y_true) - (locationS2_y_true)
+    deltaS1S2_x_true = (locationS1_x_true) - (locationS2_x_true)
 
     deltaS2S3_y_true = locationS2_y_true - locationS3_y_true
     deltaS2S3_x_true = locationS2_x_true - locationS3_x_true
@@ -330,6 +378,65 @@ def compare_bins(test, y_pred, y_truth):
 
     deltaS2S3_y_false = locationS2_y_false - locationS3_y_false 
     deltaS2S3_x_false = locationS2_x_false - locationS3_x_false 
+
+    deltaS1S2_y_true_min = locationS1_y_true_min - locationS2_y_true_min
+    deltaS1S2_x_true_min = locationS1_x_true_min - locationS2_x_true_min
+
+    deltaS2S3_y_true_min = locationS2_y_true_min - locationS3_y_true_min
+    deltaS2S3_x_true_min = locationS2_x_true_min - locationS3_x_true_min
+
+    deltaS1S2_y_false_min = locationS1_y_false_min - locationS2_y_false_min 
+    deltaS1S2_x_false_min = locationS1_x_false_min - locationS2_x_false_min 
+
+    deltaS2S3_y_false_min = locationS2_y_false_min - locationS3_y_false_min 
+    deltaS2S3_x_false_min = locationS2_x_false_min - locationS3_x_false_min 
+# end delta block
+
+# Selection of the best events
+    best_Tau_y = np.where(deltaS1S2_y_true == 0)[0]
+    best_Tau_x = np.where(deltaS1S2_x_true == 0)[0]
+
+    best = np.intersect1d(best_Tau_x,best_Tau_y)
+    best = best[0]
+    best_event1 = np.where(test_1p0n['s1'] == true_positive['s1'][best,locationS1_x_true[best]+2,locationS1_y_true[best]+60])[0][0]
+    best_event2 = np.where(test_1p0n['s1'] == true_positive['s1'][best,locationS1_x_true[best]+2,locationS1_y_true[best]+60])[1][0]
+    best_event3 = np.where(test_1p0n['s1'] == true_positive['s1'][best,locationS1_x_true[best]+2,locationS1_y_true[best]+60])[2][0]
+    best_true_event = np.where(test['s1'] == test_1p0n['s1'][best_event1, best_event2, best_event3])[0][0]
+    print 'best true tau is event number ', best_true_event
+
+    best_Tau_y = np.where(deltaS1S2_y_false == 0)[0]
+    best_Tau_x = np.where(deltaS1S2_x_false == 0)[0]
+
+    best = np.intersect1d(best_Tau_x,best_Tau_y)
+    best = best[0]
+    best_event1 = np.where(test_1p0n['s1'] == false_positive['s1'][best,locationS1_x_false[best]+2,locationS1_y_false[best]+60])[0][0]
+    best_event2 = np.where(test_1p0n['s1'] == false_positive['s1'][best,locationS1_x_false[best]+2,locationS1_y_false[best]+60])[1][0]
+    best_event3 = np.where(test_1p0n['s1'] == false_positive['s1'][best,locationS1_x_false[best]+2,locationS1_y_false[best]+60])[2][0]
+    best_false_event = np.where(test['s1'] == test_1p0n['s1'][best_event1, best_event2, best_event3])[0][0]
+    print 'best false tau is event number ', best_false_event
+
+# Selection of the worst events
+    worst_Tau_y = np.where(deltaS1S2_y_true >= 60)[0]
+    worst_Tau_x = np.where(deltaS1S2_y_true >= 16)[0]
+    print
+    worst = np.intersect1d(worst_Tau_x,worst_Tau_y)
+    worst = worst[0]
+    worst_event1 = np.where(test_1p0n['s1'] == true_positive['s1'][worst,locationS1_x_true[worst]+2,locationS1_y_true[worst]+60])[0][0]
+    worst_event2 = np.where(test_1p0n['s1'] == true_positive['s1'][worst,locationS1_x_true[worst]+2,locationS1_y_true[worst]+60])[1][0]
+    worst_event3 = np.where(test_1p0n['s1'] == true_positive['s1'][worst,locationS1_x_true[worst]+2,locationS1_y_true[worst]+60])[2][0]
+    worst_true_event = np.where(test['s1'] == test_1p0n['s1'][worst_event1, worst_event2, worst_event3])[0][0]
+    print 'worst true tau is event number ', worst_true_event
+
+    worst_Tau_y = np.where(deltaS1S2_y_true >= 60)[0]
+    worst_Tau_x = np.where(deltaS1S2_y_true >= 16)[0]
+
+    worst = np.intersect1d(worst_Tau_x,worst_Tau_y)
+    worst = worst[0]
+    worst_event1 = np.where(test_1p0n['s1'] == false_positive['s1'][worst,locationS1_x_false[worst]+2,locationS1_y_false[worst]+60])[0][0]
+    worst_event2 = np.where(test_1p0n['s1'] == false_positive['s1'][worst,locationS1_x_false[worst]+2,locationS1_y_false[worst]+60])[1][0]
+    worst_event3 = np.where(test_1p0n['s1'] == false_positive['s1'][worst,locationS1_x_false[worst]+2,locationS1_y_false[worst]+60])[2][0]
+    worst_false_event = np.where(test['s1'] == test_1p0n['s1'][worst_event1, worst_event2, worst_event3])[0][0]
+    print 'worst false tau is event number ', worst_false_event
 
 ###########################################################################
 
@@ -427,6 +534,7 @@ def compare_bins(test, y_pred, y_truth):
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/1p0n_s1s2ratio.pdf')
+    plt.close()
 
     plt.figure() 
     plt.hist(S2S3ratio_True, bins=44, range=(-1.1, 1.1), color = 'blue', label='1p0n identified as 1p0n', density = True)
@@ -435,6 +543,7 @@ def compare_bins(test, y_pred, y_truth):
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/1p0n_s2s3ratio.pdf')
+    plt.close()
 
     plt.figure() 
     plt.hist(S4S3ratio_True, bins=44, range=(-1.1, 1.1), color = 'blue', label='1p0n identified as 1p0n', density = True)
@@ -443,6 +552,7 @@ def compare_bins(test, y_pred, y_truth):
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/1p0n_s4s3ratio.pdf')
+    plt.close()
 
     plt.figure() 
     plt.hist(S5S4ratio_True, bins=44, range=(-1.1, 1.1), color = 'blue', label='1p0n identified as 1p0n', density = True)
@@ -451,7 +561,10 @@ def compare_bins(test, y_pred, y_truth):
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/1p0n_s5s4ratio.pdf')
+    plt.close()
 
+
+# Maximum location Plots
     plt.figure() 
     plt.hist(locationS1_x_true, bins=61, range=(-1, 60), color = 'blue', label='s1 true peak location', density = True)
     plt.hist(locationS2_x_true, bins=61, range=(-1, 60), color = 'red', label='s2 true peak location', density = True, alpha = 0.4)
@@ -462,6 +575,7 @@ def compare_bins(test, y_pred, y_truth):
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/1p0n_all_X_true_Location.pdf')
+    plt.close()
 
     plt.figure() 
     plt.hist(locationS1_y_true, bins=121, range=(-1, 120), color = 'blue', label='s1 true peak locations', density = True)
@@ -473,6 +587,7 @@ def compare_bins(test, y_pred, y_truth):
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/1p0n_all_Y_true_Location.pdf')
+    plt.close()
 
     plt.figure() 
     plt.hist(locationS1_x_false, bins=4, range=(-2, 2), color = 'blue', label='s1 false peak location', density = True)
@@ -484,6 +599,7 @@ def compare_bins(test, y_pred, y_truth):
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/1p0n_all_X_false_Location.pdf')
+    plt.close()
 
     plt.figure() 
     plt.hist(locationS1_y_false, bins=120, range=(-60, 60), color = 'blue', label='s1 false peak locations', density = True)
@@ -495,6 +611,7 @@ def compare_bins(test, y_pred, y_truth):
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/1p0n_all_Y_false_Location.pdf')
+    plt.close()
 
     plt.figure() 
     plt.hist(locationS1_x_true, bins=4, range=(-2, 2), color = 'blue', label='1p0n identified as 1p0n', density = True)
@@ -503,6 +620,7 @@ def compare_bins(test, y_pred, y_truth):
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/1p0n_s1_peak_x_locations.pdf')
+    plt.close()
 
     plt.figure() 
     plt.hist(locationS1_y_true, bins=120, range=(-60, 60), color = 'blue', label='1p0n identified as 1p0n', density = True)
@@ -511,6 +629,7 @@ def compare_bins(test, y_pred, y_truth):
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/1p0n_s1_peak_y_locations.pdf')
+    plt.close()
 
     plt.figure() 
     plt.hist(locationS2_x_true, bins=32, range=(-16, 16), color = 'blue', label='1p0n identified as 1p0n', density = True)
@@ -519,6 +638,7 @@ def compare_bins(test, y_pred, y_truth):
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/1p0n_s2_peak_x_locations.pdf')
+    plt.close()
 
     plt.figure() 
     plt.hist(locationS2_y_true, bins=32, range=(-16, 16), color = 'blue', label='1p0n identified as 1p0n', density = True)
@@ -527,6 +647,7 @@ def compare_bins(test, y_pred, y_truth):
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/1p0n_s2_peak_y_locations.pdf')
+    plt.close()
 
     plt.figure() 
     plt.hist(locationS3_x_true, bins=32, range=(-16, 16), color = 'blue', label='1p0n identified as 1p0n', density = True)
@@ -535,6 +656,7 @@ def compare_bins(test, y_pred, y_truth):
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/1p0n_s3_peak_x_locations.pdf')
+    plt.close()
 
     plt.figure() 
     plt.hist(locationS3_y_true, bins=16, range=(-8, 8), color = 'blue', label='1p0n identified as 1p0n', density = True)
@@ -543,6 +665,7 @@ def compare_bins(test, y_pred, y_truth):
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/1p0n_s3_peak_y_locations.pdf')
+    plt.close()
 
     plt.figure() 
     plt.hist(locationS4_x_true, bins=16, range=(-8, 8), color = 'blue', label='1p0n identified as 1p0n', density = True)
@@ -551,6 +674,7 @@ def compare_bins(test, y_pred, y_truth):
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/1p0n_s4_peak_x_locations.pdf')
+    plt.close()
 
     plt.figure() 
     plt.hist(locationS4_y_true, bins=16, range=(-8, 8), color = 'blue', label='1p0n identified as 1p0n', density = True)
@@ -559,6 +683,7 @@ def compare_bins(test, y_pred, y_truth):
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/1p0n_s4_peak_y_locations.pdf')
+    plt.close()
 
     plt.figure() 
     plt.hist(locationS5_x_true, bins=16, range=(-8, 8), color = 'blue', label='1p0n identified as 1p0n', density = True)
@@ -567,6 +692,7 @@ def compare_bins(test, y_pred, y_truth):
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/1p0n_s5_peak_x_locations.pdf')
+    plt.close()
 
     plt.figure() 
     plt.hist(locationS5_y_true, bins=16, range=(-8, 8), color = 'blue', label='1p0n identified as 1p0n', density = True)
@@ -575,15 +701,101 @@ def compare_bins(test, y_pred, y_truth):
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/1p0n_s5_peak_y_locations.pdf')
+    plt.close()
+
+# Minimum Plots
+    plt.figure() 
+    plt.hist(locationS1_x_true_min, bins=16, range=(-2, 2), color = 'blue', label='1p0n identified as 1p0n', density = True)
+    plt.hist(locationS1_x_false_min, bins=16, range=(-2, 2), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
+    plt.xlabel('s1 peak x')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/1p0n_s1_min_x_locations.pdf')
+    plt.close()
 
     plt.figure() 
-    plt.hist(locationS5_y_true, bins=16, range=(-8, 8), color = 'blue', label='1p0n identified as 1p0n', density = True)
-    plt.hist(locationS5_y_false, bins=16, range=(-8, 8), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
+    plt.hist(locationS1_y_true_min, bins=120, range=(-60, 60), color = 'blue', label='1p0n identified as 1p0n', density = True)
+    plt.hist(locationS1_y_false_min, bins=120, range=(-60, 60), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
+    plt.xlabel('s1 peak y')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/1p0n_s1_min_y_locations.pdf')
+    plt.close()
+
+    plt.figure() 
+    plt.hist(locationS2_x_true_min, bins=32, range=(-16, 16), color = 'blue', label='1p0n identified as 1p0n', density = True)
+    plt.hist(locationS2_x_false_min, bins=32, range=(-16, 16), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
+    plt.xlabel('s2 min x')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/1p0n_s2_min_x_locations.pdf')
+    plt.close()
+
+    plt.figure() 
+    plt.hist(locationS2_y_true_min, bins=32, range=(-16, 16), color = 'blue', label='1p0n identified as 1p0n', density = True)
+    plt.hist(locationS2_y_false_min, bins=32, range=(-16, 16), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
+    plt.xlabel('s2 min y')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/1p0n_s2_min_y_locations.pdf')
+    plt.close()
+
+    plt.figure() 
+    plt.hist(locationS3_x_true_min, bins=32, range=(-16, 16), color = 'blue', label='1p0n identified as 1p0n', density = True)
+    plt.hist(locationS3_x_false_min, bins=32, range=(-16, 16), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
+    plt.xlabel('s3 peak x')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/1p0n_s3_min_x_locations.pdf')
+    plt.close()
+
+    plt.figure() 
+    plt.hist(locationS3_y_true_min, bins=16, range=(-8, 8), color = 'blue', label='1p0n identified as 1p0n', density = True)
+    plt.hist(locationS3_y_false_min, bins=16, range=(-8, 8), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
+    plt.xlabel('s3 peak y')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/1p0n_s3_min_y_locations.pdf')
+    plt.close()
+
+    plt.figure() 
+    plt.hist(locationS4_x_true_min, bins=16, range=(-8, 8), color = 'blue', label='1p0n identified as 1p0n', density = True)
+    plt.hist(locationS4_x_false_min, bins=16, range=(-8, 8), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
+    plt.xlabel('s4 peak x')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/1p0n_s4_min_x_locations.pdf')
+    plt.close()
+
+    plt.figure() 
+    plt.hist(locationS4_y_true_min, bins=16, range=(-8, 8), color = 'blue', label='1p0n identified as 1p0n', density = True)
+    plt.hist(locationS4_y_false_min, bins=16, range=(-8, 8), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
+    plt.xlabel('s4 peak y')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/1p0n_s4_min_y_locations.pdf')
+    plt.close()
+
+    plt.figure() 
+    plt.hist(locationS5_x_true_min, bins=16, range=(-8, 8), color = 'blue', label='1p0n identified as 1p0n', density = True)
+    plt.hist(locationS5_x_false_min, bins=16, range=(-8, 8), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
+    plt.xlabel('s5 peak x')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/1p0n_s5_min_x_locations.pdf')
+    plt.close()
+
+    plt.figure() 
+    plt.hist(locationS5_y_true_min, bins=16, range=(-8, 8), color = 'blue', label='1p0n identified as 1p0n', density = True)
+    plt.hist(locationS5_y_false_min, bins=16, range=(-8, 8), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
     plt.xlabel('s5 peak y')
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
-    plt.savefig('./plots/imaging/1p0n_s5_peak_y_locations.pdf')
+    plt.savefig('./plots/imaging/1p0n_s5_min_y_locations.pdf')
+    plt.close()
+# end minimum plots
 
+# delta plots
     plt.figure() 
     plt.hist(deltaS1S2_y_true, bins=152, range=(-76, 76), color = 'blue', label='1p0n identified as 1p0n', density = True)
     plt.hist(deltaS1S2_y_false , bins=152, range=(-76, 76), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
@@ -591,6 +803,7 @@ def compare_bins(test, y_pred, y_truth):
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/deltaS1S2_y.pdf')
+    plt.close()
 
     plt.figure() 
     plt.hist(deltaS1S2_x_true, bins=40, range=(-20, 20), color = 'blue', label='1p0n identified as 1p0n', density = True)
@@ -599,6 +812,7 @@ def compare_bins(test, y_pred, y_truth):
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/deltaS1S2_x.pdf')
+    plt.close()
 
     plt.figure() 
     plt.hist(deltaS2S3_y_true, bins=64, range=(-32, 32), color = 'blue', label='1p0n identified as 1p0n', density = True)
@@ -607,6 +821,7 @@ def compare_bins(test, y_pred, y_truth):
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/deltaS2S3_y.pdf')
+    plt.close()
 
     plt.figure() 
     plt.hist(deltaS2S3_x_true, bins=48, range=(-24, 24), color = 'blue', label='1p0n identified as 1p0n', density = True)
@@ -615,3 +830,40 @@ def compare_bins(test, y_pred, y_truth):
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/deltaS2S3_x.pdf')
+    plt.close()
+
+    plt.figure() 
+    plt.hist(deltaS1S2_y_true_min, bins=152, range=(-76, 76), color = 'blue', label='1p0n identified as 1p0n', density = True)
+    plt.hist(deltaS1S2_y_false_min , bins=152, range=(-76, 76), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
+    plt.xlabel('s1 - s2')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/deltaS1S2_y_min.pdf')
+    plt.close()
+
+    plt.figure() 
+    plt.hist(deltaS1S2_x_true_min, bins=40, range=(-20, 20), color = 'blue', label='1p0n identified as 1p0n', density = True)
+    plt.hist(deltaS1S2_x_false_min , bins=40, range=(-20, 20), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
+    plt.xlabel('s1 - s2')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/deltaS1S2_x_min.pdf')
+    plt.close()
+
+    plt.figure() 
+    plt.hist(deltaS2S3_y_true_min, bins=64, range=(-32, 32), color = 'blue', label='1p0n identified as 1p0n', density = True)
+    plt.hist(deltaS2S3_y_false_min, bins=64, range=(-32, 32), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
+    plt.xlabel('s2 - s3')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/deltaS2S3_y_min.pdf')
+    plt.close()
+
+    plt.figure() 
+    plt.hist(deltaS2S3_x_true_min, bins=48, range=(-24, 24), color = 'blue', label='1p0n identified as 1p0n', density = True)
+    plt.hist(deltaS2S3_x_false_min, bins=48, range=(-24, 24), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
+    plt.xlabel('s2 - s3')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/deltaS2S3_x_min.pdf')
+    plt.close()
