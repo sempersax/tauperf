@@ -6,11 +6,14 @@ import numpy as np
 from sklearn import model_selection
 from h5py import File
 import tables
+import logging
+log = logging.getLogger(os.path.basename(__file__))
+log.setLevel(logging.INFO)
 
-from tauperf import log; log = log['/tau-image']
+# from tauperf import log; log = log['/tau-image']
 from tauperf.parallel import run_pool, FuncWorker
 
-def create_image_data(filename, tau_type, n_chunks=3, show_progress=False, outdir='.'):
+def create_image_data(filename, tau_type, n_chunks=3, show_progress=False, outdir='.', nentries=None):
     """
     """
     log.info('open h5 file {0}'.format(filename))
@@ -26,39 +29,26 @@ def create_image_data(filename, tau_type, n_chunks=3, show_progress=False, outdi
     out_name = os.path.join(outdir, 'images_new_{0}.h5'.format(tau_type))
     log.info('create h5 file {0}'.format(out_name))
     out_h5 = tables.open_file(out_name, mode='w')
-    group = out_h5.create_group("/", 'data', 'yup')
-
+    # group = out_h5.create_group("/", 'data', 'yup')
 
     log.info('process {0}: {1} entries'.format(tau_type, len(records)))
+    if nentries is not None:
+        log.info('.. actually only running on {0} entries'.format(nentries))
+    log.info('chunk the training sample in {0}'.format(n_chunks))
+    print
     process_taus(
-        out_h5, records, cal_layer=None, do_tracks=True, 
-        suffix=tau_type, show_progress=show_progress)
-
-    images = out_h5.root.data.images
-
-    # use indices to split train / validation / test
-    indices = xrange(len(images))
-    train_ind, test_ind = model_selection.train_test_split(
-        indices, test_size=0.2, random_state=42)
-    val_ind, test_ind = np.split(test_ind, [len(test_ind) / 2])
-
-    # chunk training
-    train_ind = np.array_split(train_ind, n_chunks)
-
-    for it, tr in enumerate(train_ind):
-        h5file.create_table(group, 'train_{0}'.format(it), images[tr])
-
-    out_h5.create_table(group, 'test', images[test_ind])
-    out_h5.create_table(group, 'val', images[val_ind])
-
-    # clear the file from the full set of images (split in train/val/test)
-    out_h5.remove_node(group, 'images')
+        out_h5, records, 
+        suffix=tau_type, 
+        nentries=nentries,
+        n_chunks=n_chunks,
+        do_plot=False,
+        show_progress=show_progress)
+    print
     log.info('close h5 file {0}'.format(out_name))
     out_h5.flush()
     out_h5.close()
 
     log.info('close h5 file {0}'.format(filename))
-    h5file.flush()
     h5file.close()
     log.info('')
     
@@ -73,6 +63,7 @@ if __name__ == '__main__':
         help='choice of the type of taus')
     parser.add_argument('--no-progress-bar', default=False, action='store_true')
     parser.add_argument('--outdir', default=None)
+    parser.add_argument('--nentries', type=int, default=None)
     parser.add_argument('--chunks', default=3, type=int)
     parser.add_argument('--jobs', default=1, type=int)
 
@@ -87,7 +78,6 @@ if __name__ == '__main__':
         outdir = os.path.dirname(os.path.abspath(args.h5file))
     else:
         outdir = args.outdir
-    print outdir
 
     if tau_type == 'all':
         if args.jobs == 1:
@@ -95,6 +85,7 @@ if __name__ == '__main__':
                 create_image_data(
                     h5_filename, tt, 
                     n_chunks=args.chunks,
+                    nentries=args.nentries,
                     show_progress=not args.no_progress_bar, 
                     outdir=outdir)
         else:
@@ -103,7 +94,8 @@ if __name__ == '__main__':
             for tt in tau_types:
                 w = FuncWorker(
                     create_image_data, h5_filename, tt, 
-                    n_chunks=args.chunks, show_progress=False, outdir=outdir)
+                    n_chunks=args.chunks, show_progress=False, 
+                    outdir=args.outdir, nentries=args.nentries)
                 workers.append(w)
             run_pool(workers, n_jobs=args.jobs)
 
@@ -111,6 +103,7 @@ if __name__ == '__main__':
         create_image_data(
             h5_filename, tau_type, 
             n_chunks=args.chunks,
+            nentries=args.nentries,
             show_progress=not args.no_progress_bar, 
             outdir=outdir)
             
