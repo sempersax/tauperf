@@ -50,7 +50,7 @@ def get_X_y(h5_files, data_type, features, equal_size=False, debug=False):
         min_size = min([len(t) for t in data])
 
     if debug:
-        log.info('Train with very small stat for debugging')
+        # log.info('Train with very small stat for debugging')
         min_size = min([len(t) for t in data] + [1000])
         
     if equal_size or debug:

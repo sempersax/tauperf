@@ -66,7 +66,7 @@ def fit_model_gen(
             metrics=[categorical_accuracy])
 
         log.info('Create the sequence')
-        train_sequence = TrainSequence(h5files, features, n_chunks)
+        train_sequence = TrainSequence(h5files, features, n_chunks, debug=debug)
             
         log.info('Start training ...')
 
