@@ -16,11 +16,11 @@ from matplotlib.colors import LogNorm
 
 class Image(tables.IsDescription):
 
-    s1 = tables.Int32Col(shape=(32, 128), dflt=0.0)
-    s2 = tables.Int32Col(shape=(32, 128), dflt=0.0)
-    s3 = tables.Int32Col(shape=(32, 128), dflt=0.0)
-    s4 = tables.Int32Col(shape=(32, 128), dflt=0.0)
-    s5 = tables.Int32Col(shape=(32, 128), dflt=0.0)
+    s1 = tables.Int32Col(shape=(4, 120), dflt=0.0)
+    s2 = tables.Int32Col(shape=(32, 32), dflt=0.0)
+    s3 = tables.Int32Col(shape=(32, 16), dflt=0.0)
+    s4 = tables.Int32Col(shape=(16, 16), dflt=0.0)
+    s5 = tables.Int32Col(shape=(16, 16), dflt=0.0)
 
     tracks = tables.Float64Col(shape=(15, 4))
     pt = tables.Float64Col()
@@ -160,29 +160,30 @@ def process_taus(
                 continue
 
             # get the image for each layer
-            s1 = tau_topo_image(index, rec, cal_layer=1, width=128, height=4)
+#             s1 = tau_topo_image(index, rec, cal_layer=1, width=128, height=4)
+            s1 = tau_topo_image(index, rec, cal_layer=1, width=120, height=4)
             s2 = tau_topo_image(index, rec, cal_layer=2, width=32, height=32)
             s3 = tau_topo_image(index, rec, cal_layer=3, width=16, height=32)
             s4 = tau_topo_image(index, rec, cal_layer=12, width=16, height=16)
             s5 = tau_topo_image(index, rec, cal_layer=13, width=16, height=16)
 
             # making all the images as (32 X 128)
-            s1_repeat = np.repeat(s1, 8, axis=0)
-            s2_repeat = np.repeat(s2, 4, axis=1)
-            s3_repeat = np.repeat(s3, 8, axis=1)
-            s4_repeat = np.repeat(s4, 2, axis=0)
-            s4_repeat = np.repeat(s4_repeat, 8, axis=1)
-            s5_repeat = np.repeat(s5, 2, axis=0)
-            s5_repeat = np.repeat(s5_repeat, 8, axis=1)
+#             s1_repeat = np.repeat(s1, 8, axis=0)
+#             s2_repeat = np.repeat(s2, 4, axis=1)
+#             s3_repeat = np.repeat(s3, 8, axis=1)
+#             s4_repeat = np.repeat(s4, 2, axis=0)
+#             s4_repeat = np.repeat(s4_repeat, 8, axis=1)
+#             s5_repeat = np.repeat(s5, 2, axis=0)
+#             s5_repeat = np.repeat(s5_repeat, 8, axis=1)
 
         # table_name = locate_index(ir, train_ind, test_ind, val_ind) 
         # table = getattr(out_h5.root.data, table_name)
         # image = table.row
-            image['s1'] = s1_repeat
-            image['s2'] = s2_repeat
-            image['s3'] = s3_repeat
-            image['s4'] = s4_repeat
-            image['s5'] = s5_repeat
+            image['s1'] = s1#_repeat
+            image['s2'] = s2#_repeat
+            image['s3'] = s3#_repeat
+            image['s4'] = s4#_repeat
+            image['s5'] = s5#_repeat
             image['tracks'] = tau_tracks_simple(rec)
             image['pt'] = rec['off_pt']
             image['eta'] = rec['off_eta']
@@ -219,6 +220,7 @@ def process_taus(
                     fig.savefig('s{0}_repeat_tau_{1}.pdf'.format(i + 1, index))
                     fig.clf()
                     plt.close()
+
         # flush the table on disk
         table.flush()
 

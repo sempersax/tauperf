@@ -8,7 +8,7 @@ from tauperf.imaging.processing import process_taus
 
 tau_type = '1p2n'
 h5_filename = os.path.join(
-    os.getenv('DATA_AREA'), 'tauid_ntuples', 'v10', 'test', 'output.selected.h5')
+    os.getenv('DATA_AREA'), 'v13', 'test', 'output.selected.h5')
 
 # h5file = File(h5_filename, mode='r')
 # rec = h5file.get('rec_' + tau_type)
@@ -16,57 +16,8 @@ h5_filename = os.path.join(
 h5file = tables.open_file(h5_filename)
 rec = getattr(h5file.root,  'tree_' + tau_type)
 
-process_taus(rec, nentries=10, do_plot=True, suffix='1p0n', cal_layer=1, show_progress=True)
-process_taus(rec, nentries=10, do_plot=True, suffix='1p0n', cal_layer=2, show_progress=True)
-process_taus(rec, nentries=10, do_plot=True, suffix='1p0n', cal_layer=3, show_progress=True)
-
-process_taus(rec, nentries=10, do_plot=True, suffix='1p1n', cal_layer=1, show_progress=True)
-process_taus(rec, nentries=10, do_plot=True, suffix='1p1n', cal_layer=2, show_progress=True)
-process_taus(rec, nentries=10, do_plot=True, suffix='1p1n', cal_layer=3, show_progress=True)
-
-process_taus(rec, nentries=10, do_plot=True, suffix='1p2n', cal_layer=1, show_progress=True)
-process_taus(rec, nentries=10, do_plot=True, suffix='1p2n', cal_layer=2, show_progress=True)
-process_taus(rec, nentries=10, do_plot=True, suffix='1p2n', cal_layer=3, show_progress=True)
-
-process_taus(rec, nentries=10, do_plot=True, suffix='3p0n', cal_layer=1, show_progress=True)
-process_taus(rec, nentries=10, do_plot=True, suffix='3p0n', cal_layer=2, show_progress=True)
-process_taus(rec, nentries=10, do_plot=True, suffix='3p0n', cal_layer=3, show_progress=True)
-
-process_taus(rec, nentries=10, do_plot=True, suffix='3p1n', cal_layer=1, show_progress=True)
-process_taus(rec, nentries=10, do_plot=True, suffix='3p1n', cal_layer=2, show_progress=True)
-process_taus(rec, nentries=10, do_plot=True, suffix='3p1n', cal_layer=3, show_progress=True)
 
 
-# rec_1p0n = h5file.get('rec_1p0n')
-# process_taus(rec_1p0n, nentries=10, do_plot=True, suffix='1p0n')
-
-
-
-# print 'process 1p1n:', len(rec_1p1n)
-
-# s1
-# npixels = 192
-# n_eta = 24
-# r_eta = 0.2
-# n_phi = 2
-# r_phi = 0.401
-# layer = 1
-
-# s2
-# npixels = 256
-# n_eta = 8
-# r_eta = 0.201
-# n_phi = 8
-# r_phi = 0.401
-# layer = 2
-
-# s3
-# npixels = 128
-# n_eta = 4
-# r_eta = 0.201
-# n_phi = 8
-# r_phi = 0.201
-# layer = 3
 
 
 # bad_img = 0
