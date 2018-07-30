@@ -13,7 +13,14 @@ log.setLevel(logging.INFO)
 # from tauperf import log; log = log['/tau-image']
 from tauperf.parallel import run_pool, FuncWorker
 
-def create_image_data(filename, tau_type, n_chunks=3, show_progress=False, outdir='.', nentries=None):
+def create_image_data(
+    filename, 
+    tau_type, 
+    n_chunks=3, 
+    show_progress=False, 
+    outdir='.', 
+    nentries=None,
+    do_plot=False):
     """
     """
     log.info('open h5 file {0}'.format(filename))
@@ -35,15 +42,15 @@ def create_image_data(filename, tau_type, n_chunks=3, show_progress=False, outdi
     if nentries is not None:
         log.info('.. actually only running on {0} entries'.format(nentries))
     log.info('chunk the training sample in {0}'.format(n_chunks))
-    print
+    log.info('')
     process_taus(
         out_h5, records, 
         suffix=tau_type, 
         nentries=nentries,
         n_chunks=n_chunks,
-        do_plot=False,
+        do_plot=do_plot,
         show_progress=show_progress)
-    print
+    log.info('')
     log.info('close h5 file {0}'.format(out_name))
     out_h5.flush()
     out_h5.close()
@@ -66,6 +73,7 @@ if __name__ == '__main__':
     parser.add_argument('--nentries', type=int, default=None)
     parser.add_argument('--chunks', default=3, type=int)
     parser.add_argument('--jobs', default=1, type=int)
+    parser.add_argument('--plot', default=False, action='store_true')
 
     args = parser.parse_args()
 
@@ -94,8 +102,10 @@ if __name__ == '__main__':
             for tt in tau_types:
                 w = FuncWorker(
                     create_image_data, h5_filename, tt, 
-                    n_chunks=args.chunks, show_progress=False, 
-                    outdir=args.outdir, nentries=args.nentries)
+                    n_chunks=args.chunks, 
+                    show_progress=False, 
+                    outdir=outdir, 
+                    nentries=args.nentries)
                 workers.append(w)
             run_pool(workers, n_jobs=args.jobs)
 
@@ -105,5 +115,6 @@ if __name__ == '__main__':
             n_chunks=args.chunks,
             nentries=args.nentries,
             show_progress=not args.no_progress_bar, 
+            do_plot=args.plot,
             outdir=outdir)
             
