@@ -1,5 +1,6 @@
 import os
 import numpy as np
+import sys
 from argparse import ArgumentParser
 from sklearn.metrics import roc_curve, confusion_matrix
 from keras.utils.np_utils import to_categorical
@@ -25,6 +26,8 @@ parser.add_argument(
     '--one-prong-only', default=False, action='store_true')
 parser.add_argument(
     '--dev', default=False, action='store_true')
+parser.add_argument(
+    '--epochs', default=100, type=int)
 
 args = parser.parse_args()
 
@@ -58,6 +61,9 @@ features = ['tracks', 's1', 's2', 's3', 's4', 's5']
 
 test, val, y_test, y_val = load_test_data(
     filenames, features)
+if args.debug:
+    test = test[:1000]
+    y_test = y_test[:1000]
 
 X_test  = [test[feat] for feat in features]
 
@@ -95,7 +101,8 @@ else:
         no_train=args.no_train, 
         equal_size=args.equal_size, 
         dev=args.dev,
-        debug=args.debug)
+        debug=args.debug,
+        epochs=args.epochs)
 
 
 
@@ -113,7 +120,7 @@ cnf_mat = confusion_matrix(y_test, np.argmax(y_pred, axis=1))
 diagonal = float(np.trace(cnf_mat)) / float(np.sum(cnf_mat))
 
 # import plotting here in case there is an import issue unrelated to training
-from tauperf.imaging.plotting import plot_confusion_matrix, plot_roc
+from tauperf.imaging.plotting import plot_confusion_matrix, plot_roc, compare_bins, plot_event, score_plots
 plot_confusion_matrix(
     cnf_mat, classes=labels, 
     title='Confusion matrix, diagonal = {0:1.2f} %'.format(100 * diagonal),
@@ -130,5 +137,34 @@ plot_confusion_matrix(
 log.info('drawing the roc curves and pantau WP')
 plot_roc(y_test, y_pred, test['pantau'])
 
-print 'Conv2D (3,4)'
+print
+log.info('drawing the score histograms')
+score_plots(y_pred, y_test, '1p0n')
+score_plots(y_pred, y_test, '1p1n')
 
+print
+log.info('drawing the comparison histogram')
+best_true, best_false, worst_true, worst_false = compare_bins(test, y_pred, y_test, '1p0n')
+
+log.info('drawing the heatmaps of selected events')
+plot_event(test, best_true, y_pred, '1p0n', 'best_true_positive')
+plot_event(test, best_false, y_pred, '1p0n', 'best_false_positive')
+plot_event(test, worst_true, y_pred, '1p0n', 'worst_true_positive')
+plot_event(test, worst_false, y_pred, '1p0n', 'worst_false_positive')
+
+print
+log.info('drawing the comparison histogram')
+best_true, best_false, worst_true, worst_false = compare_bins(test, y_pred, y_test, '1p1n')
+
+print
+log.info('drawing the heatmaps of selected events')
+plot_event(test, best_true, y_pred, '1p1n', 'best_true_positive')
+plot_event(test, best_false, y_pred, '1p1n', 'best_false_positive')
+plot_event(test, worst_true, y_pred, '1p1n', 'worst_true_positive')
+plot_event(test, worst_false, y_pred, '1p1n', 'worst_false_positive')
+
+
+print 'Conv2D s1 = 64 (6,2), s2 = 64 (3,3)'
+newpath = r'./plots/imaging/' + 's1_64_6_2.s2_64_3_3' 
+if not os.path.exists(newpath):
+    os.makedirs(newpath)

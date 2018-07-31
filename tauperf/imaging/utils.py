@@ -51,7 +51,8 @@ def fit_model_gen(
     no_train=False,
     equal_size=False,
     dev=False,
-    debug=False):
+    debug=False,
+    epochs=100):
 
  
     if not overwrite and os.path.exists(filename):
@@ -85,7 +86,7 @@ def fit_model_gen(
         model.fit_generator(
             train_sequence,
             len(train_sequence),
-            epochs=100,
+            epochs=epochs,
             validation_data=(X_test, y_test),
             use_multiprocessing=use_multiprocessing,
             workers=workers,

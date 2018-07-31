@@ -1,8 +1,10 @@
 import math
 import numpy as np
 import itertools
+import sys
 import socket
 import matplotlib as mpl;
+import os
 from mpl_toolkits.mplot3d import Axes3D
 
 techlab_hosts = [
@@ -253,16 +255,216 @@ def plot_roc(y_test, y_pred, y_pant):
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/roc_curve.pdf')
 
-def compare_bins(test, y_pred, y_truth):
+def plot_event(test, evts, y_pred, decay_mode, suffix='dummy'):
+# decay_type classification
+    if decay_mode == '1p0n':
+        decay_type = 0
+        decay_compare = 1
+        decay_compare_mode = '1p1n'
+    if decay_mode == '1p1n':
+        decay_type = 1
+        decay_compare = 0
+        decay_compare_mode = '1p0n'
+    if decay_mode == '1pXn':
+        decay_type = 2
+        decay_compare = 1
+        decay_compare_mode = '1p1n'
+    if decay_mode == '3p0n':
+        decay_type = 3
+        decay_compare = 0
+        decay_compare_mode = '1p0n'
+    if decay_mode == '3pXn':
+        decay_type = 4
+        decay_compare = 0
+        decay_compare_mode = '1p0n'
+    newpath = r'./plots/imaging/' + decay_mode 
+    if not os.path.exists(newpath):
+        os.makedirs(newpath)
+
+    for i in range(len(evts)):
+        evt = test[int(evts[i])]
+        fig = plt.figure()
+        fixed_scale = True
+        if fixed_scale:
+            evt['s3'][evt['s3'] <= 0] = 0.00001
+            evt['s2'][evt['s2'] <= 0] = 0.00001
+            evt['s1'][evt['s1'] <= 0] = 0.00001
+
+        plt.imshow(
+            evt['s2'], 
+            extent=[-0.2, 0.2, -0.2, 0.2], 
+            interpolation='nearest',  
+            cmap=plt.cm.Reds if fixed_scale else plt.cm.viridis,
+            norm=None if fixed_scale is False else LogNorm(0.0001, 1))
+
+        for i_track in xrange(len(evt['tracks'])):
+            if evt['tracks'][i_track, 0] == 0.:
+                continue
+            #print evt['tracks'][i_track, 1], evt['tracks'][i_track, 2], int(evt['tracks'][i_track, 3])
+            if math.fabs(evt['tracks'][i_track, 2]) > 0.2:
+                continue
+            if math.fabs(evt['tracks'][i_track, 1]) > 0.2:
+                continue
+            plt.plot(evt['tracks'][i_track, 1], evt['tracks'][i_track, 2], 'bo')
+            plt.text(evt['tracks'][i_track, 1] + 0.02, evt['tracks'][i_track, 2], int(evt['tracks'][i_track, 3]), fontsize=10)
+        plt.colorbar()
+        plt.title('True Mode: ' + decay_mode + ' Event number: ' + str(int(evts[i])) + '\n' + decay_mode + 'Score: ' + str(y_pred[int(evts[i])][decay_type]) + '\n' + decay_compare_mode + 'Score: ' + str(y_pred[int(evts[i])][decay_compare]))
+        plt.savefig('./plots/imaging/' + decay_mode + '/' + suffix + '_' + decay_mode + '_evt_' + str(int(evts[i])) + '_s2_heatmap.pdf')
+        plt.close()
+
+
+        fig = plt.figure()
+        plt.imshow(
+            evt['s1'], 
+            extent=[-0.2, 0.2, -0.2, 0.2], 
+            interpolation='nearest',  
+            cmap=plt.cm.Reds if fixed_scale else plt.cm.viridis,
+            norm=None if fixed_scale is False else LogNorm(0.0001, 1))
+
+        for i_track in xrange(len(evt['tracks'])):
+            if evt['tracks'][i_track, 0] == 0.:
+                continue
+            if math.fabs(evt['tracks'][i_track, 2]) > 0.2:
+                continue
+            if math.fabs(evt['tracks'][i_track, 1]) > 0.2:
+                continue
+            plt.plot(evt['tracks'][i_track, 1], evt['tracks'][i_track, 2], 'bo')
+            plt.text(evt['tracks'][i_track, 1] + 0.02, evt['tracks'][i_track, 2], int(evt['tracks'][i_track, 3]), fontsize=10)
+
+        plt.title('True Mode: ' + decay_mode + ' Event number: ' + str(int(evts[i])) + '\n' + decay_mode + 'Score: ' + str(y_pred[int(evts[i])][decay_type]) + '\n' + decay_compare_mode + 'Score: ' + str(y_pred[int(evts[i])][decay_compare]))
+        plt.colorbar()
+        plt.savefig('./plots/imaging/' + decay_mode + '/' + suffix + '_' + decay_mode + '_evt_' + str(int(evts[i])) + '_s1_heatmap.pdf')
+        plt.close()
+
+        fig = plt.figure()
+        plt.imshow(
+            evt['s3'], 
+            extent=[-0.2, 0.2, -0.2, 0.2], 
+            interpolation='nearest',  
+            cmap=plt.cm.Blues if fixed_scale else plt.cm.viridis,
+            norm=None if fixed_scale is False else LogNorm(0.0001, 1))
+
+        for i_track in xrange(len(evt['tracks'])):
+            if evt['tracks'][i_track, 0] == 0.:
+                continue
+            if math.fabs(evt['tracks'][i_track, 2]) > 0.2:
+                continue
+            if math.fabs(evt['tracks'][i_track, 1]) > 0.2:
+                continue
+            plt.plot(evt['tracks'][i_track, 1], evt['tracks'][i_track, 2], 'bo')
+            plt.text(evt['tracks'][i_track, 1] + 0.02, evt['tracks'][i_track, 2], int(evt['tracks'][i_track, 3]), fontsize=10)
+        plt.title('True Mode: ' + decay_mode + ' Event number: ' + str(int(evts[i])) + '\n' + decay_mode + 'Score: ' + str(y_pred[int(evts[i])][decay_type]) + '\n' + decay_compare_mode + 'Score: ' + str(y_pred[int(evts[i])][decay_compare]))
+        plt.colorbar()
+        plt.savefig('./plots/imaging/' + decay_mode + '/' + suffix + '_' + decay_mode + '_evt_' + str(int(evts[i])) + '_s3_heatmap.pdf')
+        plt.close()
+
+        fig = plt.figure()
+        plt.imshow(
+            evt['s1'], 
+            alpha = 1.,
+            extent=[-0.2, 0.2, -0.2, 0.2], 
+            interpolation='nearest',  
+            cmap=plt.cm.Reds if fixed_scale else plt.cm.viridis,
+            norm=None if fixed_scale is False else LogNorm(0.0001, 1))
+        plt.imshow(
+            evt['s2'], 
+            alpha = 0.65,
+            extent=[-0.2, 0.2, -0.2, 0.2], 
+            interpolation='nearest',  
+            cmap=plt.cm.Reds if fixed_scale else plt.cm.viridis,
+            norm=None if fixed_scale is False else LogNorm(0.0001, 1))
+        plt.imshow(
+            evt['s3'], 
+            alpha = 0.65,
+            extent=[-0.2, 0.2, -0.2, 0.2], 
+            interpolation='nearest',  
+            cmap=plt.cm.Blues if fixed_scale else plt.cm.viridis,
+            norm=None if fixed_scale is False else LogNorm(0.0001, 1))
+
+        for i_track in xrange(len(evt['tracks'])):
+            if evt['tracks'][i_track, 0] == 0.:
+                continue
+            if math.fabs(evt['tracks'][i_track, 2]) > 0.2:
+                continue
+            if math.fabs(evt['tracks'][i_track, 1]) > 0.2:
+                continue
+            plt.plot(evt['tracks'][i_track, 1], evt['tracks'][i_track, 2], 'bo')
+            plt.text(evt['tracks'][i_track, 1] + 0.02, evt['tracks'][i_track, 2], int(evt['tracks'][i_track, 3]), fontsize=10)
+        plt.title('True Mode: ' + decay_mode + ' Event number: ' + str(int(evts[i])) + '\n' + decay_mode + 'Score: ' + str(y_pred[int(evts[i])][decay_type]) + '\n' + decay_compare_mode + 'Score: ' + str(y_pred[int(evts[i])][decay_compare]))
+        plt.colorbar()
+        plt.savefig('./plots/imaging/' + decay_mode + '/' + suffix + '_' + decay_mode + '_evt_' + str(int(evts[i])) + '_s1_s2_s3_overlay.pdf')
+        plt.close()
+
+#######################################################################
+def score_plots(y_pred, y_truth, decay_mode):        
+# decay_type classification
+    if decay_mode == '1p0n':
+        decay_type = 0
+        decay_compare = 1
+    if decay_mode == '1p1n':
+        decay_type = 1
+        decay_compare = 0
+    if decay_mode == '1pXn':
+        decay_type = 2
+        decay_compare = 1
+    if decay_mode == '3p0n':
+        decay_type = 3
+        decay_compare = 0
+    if decay_mode == '3pXn':
+        decay_type = 4
+        decay_compare = 0
+    newpath = r'./plots/imaging/' + decay_mode 
+    print 'decay mode', decay_mode, 'decay compare', decay_compare
+    if not os.path.exists(newpath):
+        os.makedirs(newpath)
+    
+    scores_true = y_pred[y_truth == decay_type]
+    scores_false = scores_true[:,decay_compare]
+    scores_1pXn = scores_true[:,2]
+    scores_true = scores_true[:,decay_type]
+    fig = plt.figure()
+    plt.hist(scores_1pXn, bins=100, range=(0,1), color = 'green', label='1pXn positive', alpha = 0.5, density = True)
+    plt.hist(scores_true, bins=100, range=(0,1), color = 'blue', label='true positive', density = True)
+    plt.hist(scores_false, bins=100, range=(0,1), color = 'red', label='false positive', alpha = 0.5, density = True)
+    plt.xlabel('scores')
+    plt.ylabel('A.U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + 'True_' + decay_mode + '_scores.pdf')
+
+
+
+
+
+def compare_bins(test, y_pred, y_truth, decay_mode):
 ###########################################################################
 #new stuff
 ###########################################################################
+# decay_type classification
+    if decay_mode == '1p0n':
+        decay_type = 0
+        decay_compare = 1
+    if decay_mode == '1p1n':
+        decay_type = 1
+        decay_compare = 0
+    if decay_mode == '1pXn':
+        decay_type = 2
+        decay_compare = 1
+    if decay_mode == '3p0n':
+        decay_type = 3
+        decay_compare = 0
+    if decay_mode == '3pXn':
+        decay_type = 4
+        decay_compare = 0
+    newpath = r'./plots/imaging/' + decay_mode 
+    if not os.path.exists(newpath):
+        os.makedirs(newpath)
 
-# Grab just the TRUE 1p0n decays, same as done originally
-    y_pred_1p0n = y_pred[y_truth == 0]
-    test_1p0n = test[y_truth == 0]
-    true_positive = test_1p0n[np.argmax(y_pred_1p0n, axis=1) == 0]
-    false_positive = test_1p0n[np.argmax(y_pred_1p0n, axis=1) == 1]
+
+# Grab just the TRUE decay_mode decays, same as done originally
+    y_pred_decay_mode = y_pred[y_truth == decay_type]
+    test_decay_mode = test[y_truth == decay_type]
+    true_positive = test_decay_mode[np.argmax(y_pred_decay_mode, axis=1) == decay_type]
+    false_positive = test_decay_mode[np.argmax(y_pred_decay_mode, axis=1) == decay_compare]
 
 # Maximum Locations
     locationS1_x_true = np.argmax(np.amax(true_positive['s1'], axis=2), axis=1) - 2
@@ -361,9 +563,9 @@ def compare_bins(test, y_pred, y_truth):
     locationS5_x_false_min = np.argmin(np.nanmin(false_positive['s5'], axis=2), axis=1) - 8
     locationS5_y_false_min = np.argmin(np.nanmin(false_positive['s5'], axis=1), axis=1) - 8
  
-    test_1p0n = test[y_truth == 0]
-    true_positive = test_1p0n[np.argmax(y_pred_1p0n, axis=1) == 0]
-    false_positive = test_1p0n[np.argmax(y_pred_1p0n, axis=1) == 1]
+    test_decay_mode = test[y_truth == decay_type]
+    true_positive = test_decay_mode[np.argmax(y_pred_decay_mode, axis=1) == decay_type]
+    false_positive = test_decay_mode[np.argmax(y_pred_decay_mode, axis=1) == decay_compare]
 # end minimum block
 
 # Deltas between layers
@@ -393,106 +595,178 @@ def compare_bins(test, y_pred, y_truth):
 # end delta block
 
 # Selection of the best events
+    test_decay_mode = test[y_truth == decay_type]
+    true_positive = test_decay_mode[np.argmax(y_pred_decay_mode, axis=1) == decay_type]
+    false_positive = test_decay_mode[np.argmax(y_pred_decay_mode, axis=1) == decay_compare]
+
     best_Tau_y = np.where(deltaS1S2_y_true == 0)[0]
     best_Tau_x = np.where(deltaS1S2_x_true == 0)[0]
 
     best = np.intersect1d(best_Tau_x,best_Tau_y)
-    best = best[0]
-    best_event1 = np.where(test_1p0n['s1'] == true_positive['s1'][best,locationS1_x_true[best]+2,locationS1_y_true[best]+60])[0][0]
-    best_event2 = np.where(test_1p0n['s1'] == true_positive['s1'][best,locationS1_x_true[best]+2,locationS1_y_true[best]+60])[1][0]
-    best_event3 = np.where(test_1p0n['s1'] == true_positive['s1'][best,locationS1_x_true[best]+2,locationS1_y_true[best]+60])[2][0]
-    best_true_event = np.where(test['s1'] == test_1p0n['s1'][best_event1, best_event2, best_event3])[0][0]
-    print 'best true tau is event number ', best_true_event
+
+    if len(best) > 10:
+        RANGE = 10
+    elif len(best) <= 10:
+        RANGE = len(best)
+
+    best_true = np.zeros(RANGE)
+    for i in range(RANGE):
+        best = np.intersect1d(best_Tau_x,best_Tau_y)
+        best = best[i]
+        best_event1 = np.where(test_decay_mode['s1'] == true_positive['s1'][best,locationS1_x_true[best]+2,locationS1_y_true[best]+60])[0][0]
+        best_event2 = np.where(test_decay_mode['s1'] == true_positive['s1'][best,locationS1_x_true[best]+2,locationS1_y_true[best]+60])[1][0]
+        best_event3 = np.where(test_decay_mode['s1'] == true_positive['s1'][best,locationS1_x_true[best]+2,locationS1_y_true[best]+60])[2][0]
+        best_true_event = np.where(test['s1'] == test_decay_mode['s1'][best_event1, best_event2, best_event3])[0][0]
+        best_true[i] = best_true_event
+#    print 'best true tau is event number ', best_true_event
 
     best_Tau_y = np.where(deltaS1S2_y_false == 0)[0]
     best_Tau_x = np.where(deltaS1S2_x_false == 0)[0]
 
     best = np.intersect1d(best_Tau_x,best_Tau_y)
-    best = best[0]
-    best_event1 = np.where(test_1p0n['s1'] == false_positive['s1'][best,locationS1_x_false[best]+2,locationS1_y_false[best]+60])[0][0]
-    best_event2 = np.where(test_1p0n['s1'] == false_positive['s1'][best,locationS1_x_false[best]+2,locationS1_y_false[best]+60])[1][0]
-    best_event3 = np.where(test_1p0n['s1'] == false_positive['s1'][best,locationS1_x_false[best]+2,locationS1_y_false[best]+60])[2][0]
-    best_false_event = np.where(test['s1'] == test_1p0n['s1'][best_event1, best_event2, best_event3])[0][0]
-    print 'best false tau is event number ', best_false_event
+
+
+    best_false = np.zeros(len(best))
+    best_false_scores = np.zeros((len(best),3))
+
+
+    for i in range(len(best)):
+        best = np.intersect1d(best_Tau_x,best_Tau_y)
+        best = best[i]
+        best_event1 = np.where(test_decay_mode['s1'] == false_positive['s1'][best,locationS1_x_false[best]+2,locationS1_y_false[best]+60])[0][0]
+        best_event2 = np.where(test_decay_mode['s1'] == false_positive['s1'][best,locationS1_x_false[best]+2,locationS1_y_false[best]+60])[1][0]
+        best_event3 = np.where(test_decay_mode['s1'] == false_positive['s1'][best,locationS1_x_false[best]+2,locationS1_y_false[best]+60])[2][0]
+        best_false_event = np.where(test['s1'] == test_decay_mode['s1'][best_event1, best_event2, best_event3])[0][0]
+        best_false[i] = best_false_event
+
+        best_false_scores[i][0] = int(best_false[i])
+        best_false_scores[i][1] = y_pred[int(best_false[i])][decay_compare]
+        best_false_scores[i][2] = y_pred[int(best_false[i])][decay_type]
+    best_false_scores = best_false_scores[best_false_scores[:,1].argsort()]
+
+    best_false = best_false_scores[:,0]
+    best_false = np.flip(best_false,0)
+    best_false = best_false[0:10]
+
+    #arr = y_pred[y_truth == decay_compare]
+    #arr = arr[arr[:,decay_compare].argsort()]
+    #arr = np.flip(arr,0)
+    #print np.where(arr)[0]
+    #arr = arr[:,decay_compare]
+    #print arr, len(arr)
+    #arr = np.where(np.argmax(arr, axis=1) == decay_compare)[0]
+    #print arr, len(arr)
+    #print arr[0:10]
+    #best_false = best_false.astype(int)
+    #print np.sort(best_false)
+
+    #sys.exit()
+
+#    print 'best false tau is event number ', best_false_event
 
 # Selection of the worst events
     worst_Tau_y = np.where(deltaS1S2_y_true >= 60)[0]
-    worst_Tau_x = np.where(deltaS1S2_y_true >= 16)[0]
-    print
-    worst = np.intersect1d(worst_Tau_x,worst_Tau_y)
-    worst = worst[0]
-    worst_event1 = np.where(test_1p0n['s1'] == true_positive['s1'][worst,locationS1_x_true[worst]+2,locationS1_y_true[worst]+60])[0][0]
-    worst_event2 = np.where(test_1p0n['s1'] == true_positive['s1'][worst,locationS1_x_true[worst]+2,locationS1_y_true[worst]+60])[1][0]
-    worst_event3 = np.where(test_1p0n['s1'] == true_positive['s1'][worst,locationS1_x_true[worst]+2,locationS1_y_true[worst]+60])[2][0]
-    worst_true_event = np.where(test['s1'] == test_1p0n['s1'][worst_event1, worst_event2, worst_event3])[0][0]
-    print 'worst true tau is event number ', worst_true_event
-
-    worst_Tau_y = np.where(deltaS1S2_y_true >= 60)[0]
-    worst_Tau_x = np.where(deltaS1S2_y_true >= 16)[0]
+    worst_Tau_x = np.where(deltaS1S2_y_true >= 8)[0]
 
     worst = np.intersect1d(worst_Tau_x,worst_Tau_y)
-    worst = worst[0]
-    worst_event1 = np.where(test_1p0n['s1'] == false_positive['s1'][worst,locationS1_x_false[worst]+2,locationS1_y_false[worst]+60])[0][0]
-    worst_event2 = np.where(test_1p0n['s1'] == false_positive['s1'][worst,locationS1_x_false[worst]+2,locationS1_y_false[worst]+60])[1][0]
-    worst_event3 = np.where(test_1p0n['s1'] == false_positive['s1'][worst,locationS1_x_false[worst]+2,locationS1_y_false[worst]+60])[2][0]
-    worst_false_event = np.where(test['s1'] == test_1p0n['s1'][worst_event1, worst_event2, worst_event3])[0][0]
-    print 'worst false tau is event number ', worst_false_event
+    if len(worst) > 10:
+        RANGE = 10
+    elif len(worst) <= 10:
+        RANGE = len(worst)
+
+    worst_true = np.zeros(RANGE)
+    for i in range(RANGE):
+        worst= np.intersect1d(worst_Tau_x,worst_Tau_y)
+        worst = worst[i]
+        worst_event1 = np.where(test_decay_mode['s1'] == true_positive['s1'][worst,locationS1_x_true[worst]+2,locationS1_y_true[worst]+60])[0][0]
+        worst_event2 = np.where(test_decay_mode['s1'] == true_positive['s1'][worst,locationS1_x_true[worst]+2,locationS1_y_true[worst]+60])[1][0]
+        worst_event3 = np.where(test_decay_mode['s1'] == true_positive['s1'][worst,locationS1_x_true[worst]+2,locationS1_y_true[worst]+60])[2][0]
+        worst_true_event = np.where(test['s1'] == test_decay_mode['s1'][worst_event1, worst_event2, worst_event3])[0][0]
+        worst_true[i] = worst_true_event
+#    print 'worst true tau is event number ', worst_true_event
+
+    worst_Tau_y = np.where(abs(deltaS1S2_y_false) >= 40)[0]
+    worst_Tau_x = np.where(abs(deltaS1S2_x_false) >= 8)[0]
+
+    worst = np.intersect1d(worst_Tau_x,worst_Tau_y)
+
+    worst_false = np.zeros(len(worst))
+    worst_false_scores = np.zeros((len(worst),3))
+    for i in range(len(worst)):
+        worst = np.intersect1d(worst_Tau_x,worst_Tau_y)
+        worst = worst[i]
+        worst_event1 = np.where(test_decay_mode['s1'] == false_positive['s1'][worst,locationS1_x_false[worst]+2,locationS1_y_false[worst]+60])[0][0]
+        worst_event2 = np.where(test_decay_mode['s1'] == false_positive['s1'][worst,locationS1_x_false[worst]+2,locationS1_y_false[worst]+60])[1][0]
+        worst_event3 = np.where(test_decay_mode['s1'] == false_positive['s1'][worst,locationS1_x_false[worst]+2,locationS1_y_false[worst]+60])[2][0]
+        worst_false_event = np.where(test['s1'] == test_decay_mode['s1'][worst_event1, worst_event2, worst_event3])[0][0]
+        worst_false[i] = worst_false_event
+
+        worst_false_scores[i][0] = int(worst_false[i])
+        worst_false_scores[i][1] = y_pred[int(worst_false[i])][decay_compare]
+        worst_false_scores[i][2] = y_pred[int(worst_false[i])][decay_type]
+    worst_false_scores = worst_false_scores[worst_false_scores[:,1].argsort()]
+    
+    worst_false = worst_false_scores[:,0]
+    worst_false = np.flip(worst_false,0)
+    worst_false = worst_false[0:10]
+       
+#    print 'worst false tau is event number ', worst_false_event
 
 ###########################################################################
 
-    # select only the true 1p0n tau decays
-    test_1p0n = test[y_truth == 0]
-    y_pred_1p0n = y_pred[y_truth == 0]
-    true_positive = test_1p0n[np.argmax(y_pred_1p0n, axis=1) == 0]
-    false_positive = test_1p0n[np.argmax(y_pred_1p0n, axis=1) == 1]
+    # select only the true 'decay_mode' tau decays
+    test_decay_mode = test[y_truth == decay_type]
+    y_pred_decay_mode = y_pred[y_truth == decay_type]
+    true_positive = test_decay_mode[np.argmax(y_pred_decay_mode, axis=1) == decay_type]
+    false_positive = test_decay_mode[np.argmax(y_pred_decay_mode, axis=1) == decay_compare]
     plt.figure() 
     plt.hist(true_positive['eta'], bins=44, range=(-1.1, 1.1), color = 'blue', label='1p0n identified as 1p0n', density = True)
     plt.hist(false_positive['eta'], bins=44, range=(-1.1, 1.1), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
     plt.xlabel('eta')
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
-    plt.savefig('./plots/imaging/1p0n_compare_eta.pdf')
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_compare_eta.pdf')
 
 # Isolate the S1 layer information
-    testS1_1p0n = test_1p0n['s1']
-    testS1_1p0n = np.sum(testS1_1p0n, axis = (1, 2))
+    testS1_decay_mode = test_decay_mode['s1']
+    testS1_decay_mode = np.sum(testS1_decay_mode, axis = (1, 2))
 	
-    yS1_pred_1p0n = y_pred[y_truth == 0]
-    trueS1_positive = testS1_1p0n[np.argmax(yS1_pred_1p0n, axis=1) == 0]
-    falseS1_positive = testS1_1p0n[np.argmax(yS1_pred_1p0n, axis=1) == 1]
+    yS1_pred_decay_mode = y_pred[y_truth == decay_type]
+    trueS1_positive = testS1_decay_mode[np.argmax(yS1_pred_decay_mode, axis=1) == decay_type]
+    falseS1_positive = testS1_decay_mode[np.argmax(yS1_pred_decay_mode, axis=1) == decay_compare]
 
 
 # Isolate the S2 layer information
-    testS2_1p0n = test_1p0n['s2']
-    testS2_1p0n = np.sum(testS2_1p0n, axis = (1, 2))
+    testS2_decay_mode = test_decay_mode['s2']
+    testS2_decay_mode = np.sum(testS2_decay_mode, axis = (1, 2))
 	
-    yS2_pred_1p0n = y_pred[y_truth == 0]
-    trueS2_positive = testS2_1p0n[np.argmax(yS2_pred_1p0n, axis=1) == 0]
-    falseS2_positive = testS2_1p0n[np.argmax(yS2_pred_1p0n, axis=1) == 1]
+    yS2_pred_decay_mode = y_pred[y_truth == decay_type]
+    trueS2_positive = testS2_decay_mode[np.argmax(yS2_pred_decay_mode, axis=1) == decay_type]
+    falseS2_positive = testS2_decay_mode[np.argmax(yS2_pred_decay_mode, axis=1) == decay_compare]
 
 # Isolate the S3 layer information
-    testS3_1p0n = test_1p0n['s3']
-    testS3_1p0n = np.sum(testS3_1p0n, axis = (1, 2))
+    testS3_decay_mode = test_decay_mode['s3']
+    testS3_decay_mode = np.sum(testS3_decay_mode, axis = (1, 2))
     	
-    yS3_pred_1p0n = y_pred[y_truth == 0]
-    trueS3_positive = testS3_1p0n[np.argmax(yS3_pred_1p0n, axis=1) == 0]
-    falseS3_positive = testS3_1p0n[np.argmax(yS3_pred_1p0n, axis=1) == 1]
+    yS3_pred_decay_mode = y_pred[y_truth == decay_type]
+    trueS3_positive = testS3_decay_mode[np.argmax(yS3_pred_decay_mode, axis=1) == decay_type]
+    falseS3_positive = testS3_decay_mode[np.argmax(yS3_pred_decay_mode, axis=1) == decay_compare]
 
 # Isolate the S4 layer information
-    testS4_1p0n = test_1p0n['s4']
-    testS4_1p0n = np.sum(testS4_1p0n, axis = (1, 2))
+    testS4_decay_mode = test_decay_mode['s4']
+    testS4_decay_mode = np.sum(testS4_decay_mode, axis = (1, 2))
     	
-    yS4_pred_1p0n = y_pred[y_truth == 0]
-    trueS4_positive = testS4_1p0n[np.argmax(yS4_pred_1p0n, axis=1) == 0]
-    falseS4_positive = testS4_1p0n[np.argmax(yS4_pred_1p0n, axis=1) == 1]
+    yS4_pred_decay_mode = y_pred[y_truth == decay_type]
+    trueS4_positive = testS4_decay_mode[np.argmax(yS4_pred_decay_mode, axis=1) == decay_type]
+    falseS4_positive = testS4_decay_mode[np.argmax(yS4_pred_decay_mode, axis=1) == decay_compare]
 
-# Isolate the S3 layer information
-    testS5_1p0n = test_1p0n['s5']
-    testS5_1p0n = np.sum(testS5_1p0n, axis = (1, 2))
+# Isolate the S5 layer information
+    testS5_decay_mode = test_decay_mode['s5']
+    testS5_decay_mode = np.sum(testS5_decay_mode, axis = (1, 2))
     	
-    yS5_pred_1p0n = y_pred[y_truth == 0]
-    trueS5_positive = testS5_1p0n[np.argmax(yS5_pred_1p0n, axis=1) == 0]
-    falseS5_positive = testS5_1p0n[np.argmax(yS5_pred_1p0n, axis=1) == 1]
+    yS5_pred_decay_mode = y_pred[y_truth == decay_type]
+    trueS5_positive = testS5_decay_mode[np.argmax(yS5_pred_decay_mode, axis=1) == decay_type]
+    falseS5_positive = testS5_decay_mode[np.argmax(yS5_pred_decay_mode, axis=1) == decay_compare]
 
 # Initialize the ratio arrays    
     
@@ -526,6 +800,14 @@ def compare_bins(test, y_pred, y_truth):
     S5S4ratio_False = S5S4ratio_False [np.logical_not(np.isnan(S5S4ratio_False ))]
     S5S4ratio_False = S5S4ratio_False [np.logical_not(np.isinf(S5S4ratio_False ))]
 
+# delta eta tracks
+    true_positive_deta_leadtrack = true_positive['tracks'][:, 0, 1]
+    false_positive_deta_leadtrack = false_positive['tracks'][:, 0, 1]
+
+# delta phi tracks
+    true_positive_dphi_leadtrack = true_positive['tracks'][:, 0, 2]
+    false_positive_dphi_leadtrack = false_positive['tracks'][:, 0, 2]
+
 # Creating the histogram plots of the energy ratio.
     plt.figure() 
     plt.hist(S1S2ratio_True, bins=44, range=(-1.1, 1.1), color = 'blue', label='1p0n identified as 1p0n', density = True)
@@ -533,7 +815,7 @@ def compare_bins(test, y_pred, y_truth):
     plt.xlabel('energy ratio s1/s2')
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
-    plt.savefig('./plots/imaging/1p0n_s1s2ratio.pdf')
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s1s2ratio.pdf')
     plt.close()
 
     plt.figure() 
@@ -542,7 +824,7 @@ def compare_bins(test, y_pred, y_truth):
     plt.xlabel('energy ratio s3/s2')
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
-    plt.savefig('./plots/imaging/1p0n_s2s3ratio.pdf')
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s2s3ratio.pdf')
     plt.close()
 
     plt.figure() 
@@ -551,7 +833,7 @@ def compare_bins(test, y_pred, y_truth):
     plt.xlabel('energy ratio s4/s3')
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
-    plt.savefig('./plots/imaging/1p0n_s4s3ratio.pdf')
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s4s3ratio.pdf')
     plt.close()
 
     plt.figure() 
@@ -560,7 +842,7 @@ def compare_bins(test, y_pred, y_truth):
     plt.xlabel('energy ratio s5/s4')
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
-    plt.savefig('./plots/imaging/1p0n_s5s4ratio.pdf')
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s5s4ratio.pdf')
     plt.close()
 
 
@@ -574,7 +856,7 @@ def compare_bins(test, y_pred, y_truth):
     plt.xlabel('x location')
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
-    plt.savefig('./plots/imaging/1p0n_all_X_true_Location.pdf')
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_all_X_true_Location.pdf')
     plt.close()
 
     plt.figure() 
@@ -586,7 +868,7 @@ def compare_bins(test, y_pred, y_truth):
     plt.xlabel('y location')
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
-    plt.savefig('./plots/imaging/1p0n_all_Y_true_Location.pdf')
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_all_Y_true_Location.pdf')
     plt.close()
 
     plt.figure() 
@@ -598,7 +880,7 @@ def compare_bins(test, y_pred, y_truth):
     plt.xlabel('x location')
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
-    plt.savefig('./plots/imaging/1p0n_all_X_false_Location.pdf')
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_all_X_false_Location.pdf')
     plt.close()
 
     plt.figure() 
@@ -610,116 +892,116 @@ def compare_bins(test, y_pred, y_truth):
     plt.xlabel('y location')
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
-    plt.savefig('./plots/imaging/1p0n_all_Y_false_Location.pdf')
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_all_Y_false_Location.pdf')
     plt.close()
 
     plt.figure() 
     plt.hist(locationS1_x_true, bins=4, range=(-2, 2), color = 'blue', label='1p0n identified as 1p0n', density = True)
     plt.hist(locationS1_x_false, bins=4, range=(-2, 2), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
-    plt.xlabel('s1 peak x')
+    plt.xlabel('s1 peak phi')
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
-    plt.savefig('./plots/imaging/1p0n_s1_peak_x_locations.pdf')
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s1_peak_x_locations.pdf')
     plt.close()
 
     plt.figure() 
     plt.hist(locationS1_y_true, bins=120, range=(-60, 60), color = 'blue', label='1p0n identified as 1p0n', density = True)
     plt.hist(locationS1_y_false, bins=120, range=(-60, 60), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
-    plt.xlabel('s1 peak y')
+    plt.xlabel('s1 peak eta')
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
-    plt.savefig('./plots/imaging/1p0n_s1_peak_y_locations.pdf')
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s1_peak_y_locations.pdf')
     plt.close()
 
     plt.figure() 
     plt.hist(locationS2_x_true, bins=32, range=(-16, 16), color = 'blue', label='1p0n identified as 1p0n', density = True)
     plt.hist(locationS2_x_false, bins=32, range=(-16, 16), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
-    plt.xlabel('s2 peak x')
+    plt.xlabel('s2 peak phi')
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
-    plt.savefig('./plots/imaging/1p0n_s2_peak_x_locations.pdf')
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s2_peak_x_locations.pdf')
     plt.close()
 
     plt.figure() 
     plt.hist(locationS2_y_true, bins=32, range=(-16, 16), color = 'blue', label='1p0n identified as 1p0n', density = True)
     plt.hist(locationS2_y_false, bins=32, range=(-16, 16), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
-    plt.xlabel('s2 peak y')
+    plt.xlabel('s2 peak eta')
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
-    plt.savefig('./plots/imaging/1p0n_s2_peak_y_locations.pdf')
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s2_peak_y_locations.pdf')
     plt.close()
 
     plt.figure() 
     plt.hist(locationS3_x_true, bins=32, range=(-16, 16), color = 'blue', label='1p0n identified as 1p0n', density = True)
     plt.hist(locationS3_x_false, bins=32, range=(-16, 16), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
-    plt.xlabel('s3 peak x')
+    plt.xlabel('s3 peak phi')
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
-    plt.savefig('./plots/imaging/1p0n_s3_peak_x_locations.pdf')
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s3_peak_x_locations.pdf')
     plt.close()
 
     plt.figure() 
     plt.hist(locationS3_y_true, bins=16, range=(-8, 8), color = 'blue', label='1p0n identified as 1p0n', density = True)
     plt.hist(locationS3_y_false, bins=16, range=(-8, 8), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
-    plt.xlabel('s3 peak y')
+    plt.xlabel('s3 peak eta')
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
-    plt.savefig('./plots/imaging/1p0n_s3_peak_y_locations.pdf')
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s3_peak_y_locations.pdf')
     plt.close()
 
     plt.figure() 
     plt.hist(locationS4_x_true, bins=16, range=(-8, 8), color = 'blue', label='1p0n identified as 1p0n', density = True)
     plt.hist(locationS4_x_false, bins=16, range=(-8, 8), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
-    plt.xlabel('s4 peak x')
+    plt.xlabel('s4 peak phi')
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
-    plt.savefig('./plots/imaging/1p0n_s4_peak_x_locations.pdf')
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s4_peak_x_locations.pdf')
     plt.close()
 
     plt.figure() 
     plt.hist(locationS4_y_true, bins=16, range=(-8, 8), color = 'blue', label='1p0n identified as 1p0n', density = True)
     plt.hist(locationS4_y_false, bins=16, range=(-8, 8), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
-    plt.xlabel('s4 peak y')
+    plt.xlabel('s4 peak eta')
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
-    plt.savefig('./plots/imaging/1p0n_s4_peak_y_locations.pdf')
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s4_peak_y_locations.pdf')
     plt.close()
 
     plt.figure() 
     plt.hist(locationS5_x_true, bins=16, range=(-8, 8), color = 'blue', label='1p0n identified as 1p0n', density = True)
     plt.hist(locationS5_x_false, bins=16, range=(-8, 8), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
-    plt.xlabel('s5 peak x')
+    plt.xlabel('s5 peak phi')
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
-    plt.savefig('./plots/imaging/1p0n_s5_peak_x_locations.pdf')
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s5_peak_x_locations.pdf')
     plt.close()
 
     plt.figure() 
     plt.hist(locationS5_y_true, bins=16, range=(-8, 8), color = 'blue', label='1p0n identified as 1p0n', density = True)
     plt.hist(locationS5_y_false, bins=16, range=(-8, 8), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
-    plt.xlabel('s5 peak y')
+    plt.xlabel('s5 peak eta')
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
-    plt.savefig('./plots/imaging/1p0n_s5_peak_y_locations.pdf')
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s5_peak_y_locations.pdf')
     plt.close()
 
 # Minimum Plots
     plt.figure() 
     plt.hist(locationS1_x_true_min, bins=16, range=(-2, 2), color = 'blue', label='1p0n identified as 1p0n', density = True)
     plt.hist(locationS1_x_false_min, bins=16, range=(-2, 2), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
-    plt.xlabel('s1 peak x')
+    plt.xlabel('s1 peak phi')
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
-    plt.savefig('./plots/imaging/1p0n_s1_min_x_locations.pdf')
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s1_min_x_locations.pdf')
     plt.close()
 
     plt.figure() 
     plt.hist(locationS1_y_true_min, bins=120, range=(-60, 60), color = 'blue', label='1p0n identified as 1p0n', density = True)
     plt.hist(locationS1_y_false_min, bins=120, range=(-60, 60), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
-    plt.xlabel('s1 peak y')
+    plt.xlabel('s1 peak eta')
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
-    plt.savefig('./plots/imaging/1p0n_s1_min_y_locations.pdf')
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s1_min_y_locations.pdf')
     plt.close()
 
     plt.figure() 
@@ -728,7 +1010,7 @@ def compare_bins(test, y_pred, y_truth):
     plt.xlabel('s2 min x')
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
-    plt.savefig('./plots/imaging/1p0n_s2_min_x_locations.pdf')
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s2_min_x_locations.pdf')
     plt.close()
 
     plt.figure() 
@@ -737,61 +1019,61 @@ def compare_bins(test, y_pred, y_truth):
     plt.xlabel('s2 min y')
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
-    plt.savefig('./plots/imaging/1p0n_s2_min_y_locations.pdf')
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s2_min_y_locations.pdf')
     plt.close()
 
     plt.figure() 
     plt.hist(locationS3_x_true_min, bins=32, range=(-16, 16), color = 'blue', label='1p0n identified as 1p0n', density = True)
     plt.hist(locationS3_x_false_min, bins=32, range=(-16, 16), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
-    plt.xlabel('s3 peak x')
+    plt.xlabel('s3 peak phi')
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
-    plt.savefig('./plots/imaging/1p0n_s3_min_x_locations.pdf')
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s3_min_x_locations.pdf')
     plt.close()
 
     plt.figure() 
     plt.hist(locationS3_y_true_min, bins=16, range=(-8, 8), color = 'blue', label='1p0n identified as 1p0n', density = True)
     plt.hist(locationS3_y_false_min, bins=16, range=(-8, 8), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
-    plt.xlabel('s3 peak y')
+    plt.xlabel('s3 peak eta')
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
-    plt.savefig('./plots/imaging/1p0n_s3_min_y_locations.pdf')
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s3_min_y_locations.pdf')
     plt.close()
 
     plt.figure() 
     plt.hist(locationS4_x_true_min, bins=16, range=(-8, 8), color = 'blue', label='1p0n identified as 1p0n', density = True)
     plt.hist(locationS4_x_false_min, bins=16, range=(-8, 8), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
-    plt.xlabel('s4 peak x')
+    plt.xlabel('s4 peak phi')
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
-    plt.savefig('./plots/imaging/1p0n_s4_min_x_locations.pdf')
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s4_min_x_locations.pdf')
     plt.close()
 
     plt.figure() 
     plt.hist(locationS4_y_true_min, bins=16, range=(-8, 8), color = 'blue', label='1p0n identified as 1p0n', density = True)
     plt.hist(locationS4_y_false_min, bins=16, range=(-8, 8), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
-    plt.xlabel('s4 peak y')
+    plt.xlabel('s4 peak eta')
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
-    plt.savefig('./plots/imaging/1p0n_s4_min_y_locations.pdf')
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s4_min_y_locations.pdf')
     plt.close()
 
     plt.figure() 
     plt.hist(locationS5_x_true_min, bins=16, range=(-8, 8), color = 'blue', label='1p0n identified as 1p0n', density = True)
     plt.hist(locationS5_x_false_min, bins=16, range=(-8, 8), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
-    plt.xlabel('s5 peak x')
+    plt.xlabel('s5 peak phi')
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
-    plt.savefig('./plots/imaging/1p0n_s5_min_x_locations.pdf')
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s5_min_x_locations.pdf')
     plt.close()
 
     plt.figure() 
     plt.hist(locationS5_y_true_min, bins=16, range=(-8, 8), color = 'blue', label='1p0n identified as 1p0n', density = True)
     plt.hist(locationS5_y_false_min, bins=16, range=(-8, 8), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
-    plt.xlabel('s5 peak y')
+    plt.xlabel('s5 peak eta')
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
-    plt.savefig('./plots/imaging/1p0n_s5_min_y_locations.pdf')
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s5_min_y_locations.pdf')
     plt.close()
 # end minimum plots
 
@@ -802,7 +1084,7 @@ def compare_bins(test, y_pred, y_truth):
     plt.xlabel('s1 - s2')
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
-    plt.savefig('./plots/imaging/deltaS1S2_y.pdf')
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + 'deltaS1S2_y.pdf')
     plt.close()
 
     plt.figure() 
@@ -811,7 +1093,7 @@ def compare_bins(test, y_pred, y_truth):
     plt.xlabel('s1 - s2')
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
-    plt.savefig('./plots/imaging/deltaS1S2_x.pdf')
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + 'deltaS1S2_x.pdf')
     plt.close()
 
     plt.figure() 
@@ -820,7 +1102,7 @@ def compare_bins(test, y_pred, y_truth):
     plt.xlabel('s2 - s3')
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
-    plt.savefig('./plots/imaging/deltaS2S3_y.pdf')
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + 'deltaS2S3_y.pdf')
     plt.close()
 
     plt.figure() 
@@ -829,7 +1111,7 @@ def compare_bins(test, y_pred, y_truth):
     plt.xlabel('s2 - s3')
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
-    plt.savefig('./plots/imaging/deltaS2S3_x.pdf')
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + 'deltaS2S3_x.pdf')
     plt.close()
 
     plt.figure() 
@@ -838,7 +1120,7 @@ def compare_bins(test, y_pred, y_truth):
     plt.xlabel('s1 - s2')
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
-    plt.savefig('./plots/imaging/deltaS1S2_y_min.pdf')
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + 'deltaS1S2_y_min.pdf')
     plt.close()
 
     plt.figure() 
@@ -847,7 +1129,7 @@ def compare_bins(test, y_pred, y_truth):
     plt.xlabel('s1 - s2')
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
-    plt.savefig('./plots/imaging/deltaS1S2_x_min.pdf')
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + 'deltaS1S2_x_min.pdf')
     plt.close()
 
     plt.figure() 
@@ -856,7 +1138,7 @@ def compare_bins(test, y_pred, y_truth):
     plt.xlabel('s2 - s3')
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
-    plt.savefig('./plots/imaging/deltaS2S3_y_min.pdf')
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + 'deltaS2S3_y_min.pdf')
     plt.close()
 
     plt.figure() 
@@ -865,5 +1147,28 @@ def compare_bins(test, y_pred, y_truth):
     plt.xlabel('s2 - s3')
     plt.ylabel('A. U.')
     plt.legend(loc='lower left', fontsize='small', numpoints=3)
-    plt.savefig('./plots/imaging/deltaS2S3_x_min.pdf')
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + 'deltaS2S3_x_min.pdf')
     plt.close()
+
+# deta plots
+    plt.figure() 
+    plt.hist(true_positive_deta_leadtrack , bins=60, range=(-0.3, 0.3), color = 'blue', label='1p0n identified as 1p0n', density = True)
+    plt.hist(false_positive_deta_leadtrack , bins=60, range=(-0.3, 0.3), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
+    plt.xlabel('dEta')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + 'dEta.pdf')
+    plt.close()
+
+# dphi plots
+    plt.figure() 
+    plt.hist(true_positive_dphi_leadtrack , bins=60, range=(-0.3, 0.3), color = 'blue', label='1p0n identified as 1p0n', density = True)
+    plt.hist(false_positive_dphi_leadtrack , bins=60, range=(-0.3, 0.3), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
+    plt.xlabel('dEta')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + 'dPhi.pdf')
+    plt.close()
+
+# return best and worst true/false events
+    return(best_true, best_false, worst_true, worst_false)
