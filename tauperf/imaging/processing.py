@@ -1,10 +1,47 @@
 import os
 import numpy as np
+from sklearn import model_selection
+import tables
 import math
 
 from .. import print_progress
 from . import log; log = log.getChild(__name__)
 #from . import log; log = log[__name__]
+
+
+
+class Image(tables.IsDescription):
+
+#     s1 = tables.Float64Col(shape=(4, 120), dflt=0.0)
+#     s2 = tables.Float64Col(shape=(32, 32), dflt=0.0)
+#     s3 = tables.Float64Col(shape=(32, 16), dflt=0.0)
+#     s4 = tables.Float64Col(shape=(16, 16), dflt=0.0)
+#     s5 = tables.Float64Col(shape=(16, 16), dflt=0.0)
+
+    s1 = tables.Float32Col(shape=(32, 128), dflt=0.0)
+    s2 = tables.Float32Col(shape=(32, 128), dflt=0.0)
+    s3 = tables.Float32Col(shape=(32, 128), dflt=0.0)
+    s4 = tables.Float32Col(shape=(32, 128), dflt=0.0)
+    s5 = tables.Float32Col(shape=(32, 128), dflt=0.0)
+
+    tracks = tables.Float64Col(shape=(15, 4))
+    pt = tables.Float64Col()
+    eta = tables.Float64Col()
+    phi = tables.Float64Col()
+    mu = tables.Float64Col()
+    pantau = tables.Float64Col()
+    truthmode = tables.Float64Col()
+    
+def locate_index(index, training_tables, test_table, val_table):
+    if np.isin(index, test_table):
+        return 'test'
+    
+    if np.isin(index, val_table):
+        return 'val'
+
+    for itr, tr in enumerate(training_tables):
+        if np.isin(index, tr):
+            return 'train_{0}'.format(itr)
 
 
 def tau_topo_image(irec, rec, cal_layer=2, width=32, height=32):
@@ -17,7 +54,8 @@ def tau_topo_image(irec, rec, cal_layer=2, width=32, height=32):
     phi_ = rec['off_cells_dphi_digit'].take(indices[0])
 
     # build a rectangle of 0 to start
-    image = [[0 for j in range(width)] for i in range(height)]
+    # [[0 for j in range(width)] for i in range(height)]
+    image = np.zeros((height, width))
 
     # loop over the recorded cells:
     # locate their position in the rectangle and replace the 0 by the energy value
@@ -25,8 +63,10 @@ def tau_topo_image(irec, rec, cal_layer=2, width=32, height=32):
         eta_ind = int(eta + math.floor(width / 2))
         phi_ind = int(phi + math.floor(height / 2))
         if eta_ind < width  and eta_ind > 0 and phi_ind < height and phi_ind > 0:
+            # print ene, 1e6 * ene, int(1e6 * ene)
             image[phi_ind][eta_ind] = ene
     image = np.asarray(image)
+
     return image
 
 def tau_tracks_simple(rec):
@@ -69,8 +109,7 @@ def process_taus(
     out_h5,
     records, 
     nentries=None, 
-    cal_layer=None, 
-    do_tracks=False,
+    n_chunks=3,
     do_plot=False, 
     suffix='1p1n', 
     show_progress=True):
@@ -80,111 +119,117 @@ def process_taus(
     returns a record array of the images + basic kinematics of the tau
     '''
 
-    for ir in xrange(len(records)):
+    if nentries is None:
+        nentries = len(records)
 
-        # kill the loop after number of specified entries
-        if nentries is not None and ir == nentries:
-            break
 
-        # protect against pathologic arrays
-        try:
-            rec = records[ir]
-        except:
-            raise ValueError('record array is broken')
+    group = out_h5.create_group('/', 'data', 'yup')
 
-        if cal_layer is None:
+    # take 20% of the sample for validation and testing
+    train_ind, test_ind = model_selection.train_test_split(
+        xrange(nentries), test_size=0.2, random_state=42)
+    val_ind, test_ind = np.split(test_ind, [len(test_ind) / 2])
+
+    # chunk training
+    train_ind = np.array_split(train_ind, n_chunks)
+
+    table_names = []
+    # create training tables
+    for it, tr in enumerate(train_ind):
+        table_name = 'train_{0}'.format(it)
+        out_h5.create_table(group, table_name, Image)
+        table_names.append(table_name)
+
+    out_h5.create_table(group, 'test', Image)
+    out_h5.create_table(group, 'val', Image)
+    table_names += ['test', 'val']
+
+    for name, indices in zip(table_names, train_ind + [test_ind, val_ind]):
+        if show_progress:
+            print
+
+        log.info('Filling table {0} for {1} taus'.format(name, suffix))
+        table = getattr(out_h5.root.data, name)
+        image = table.row
+
+        for i_ind, index in enumerate(indices):
+
+            if show_progress: 
+                print_progress(i_ind, len(indices), prefix='Progress')
+            # protect against pathologic arrays
+            try:
+                rec = records[index]
+            except:
+                log.warning('record array is broken')
+                continue
 
             # get the image for each layer
-            s1 = tau_topo_image(ir, rec, cal_layer=1, width=120, height=4)
-            s2 = tau_topo_image(ir, rec, cal_layer=2, width=32, height=32)
-            s3 = tau_topo_image(ir, rec, cal_layer=3, width=16, height=32)
-            s4 = tau_topo_image(ir, rec, cal_layer=12, width=16, height=16)
-            s5 = tau_topo_image(ir, rec, cal_layer=13, width=16, height=16)
+            s1 = tau_topo_image(index, rec, cal_layer=1, width=128, height=4)
+#             s1 = tau_topo_image(index, rec, cal_layer=1, width=120, height=4)
+            s2 = tau_topo_image(index, rec, cal_layer=2, width=32, height=32)
+            s3 = tau_topo_image(index, rec, cal_layer=3, width=16, height=32)
+            s4 = tau_topo_image(index, rec, cal_layer=12, width=16, height=16)
+            s5 = tau_topo_image(index, rec, cal_layer=13, width=16, height=16)
 
-            # skip if missing a layer
-            if any(s is None for s in [s1, s2, s3, s4, s5]):
-                continue
+            # making all the images as (32 X 128)
+            s1_repeat = np.repeat(s1, 8, axis=0)
+            s2_repeat = np.repeat(s2, 4, axis=1)
+            s3_repeat = np.repeat(s3, 8, axis=1)
+            s4_repeat = np.repeat(s4, 2, axis=0)
+            s4_repeat = np.repeat(s4_repeat, 8, axis=1)
+            s5_repeat = np.repeat(s5, 2, axis=0)
+            s5_repeat = np.repeat(s5_repeat, 8, axis=1)
 
-            pt = rec['off_pt']
-            eta = rec['off_eta']
-            phi = rec['off_phi']
-            mu = rec['averageintpercrossing']
-            pantau = rec['off_decaymode']
-            truthmode = rec['true_decaymode']
+        # table_name = locate_index(ir, train_ind, test_ind, val_ind) 
+        # table = getattr(out_h5.root.data, table_name)
+        # image = table.row
+            image['s1'] = s1_repeat
+            image['s2'] = s2_repeat
+            image['s3'] = s3_repeat
+            image['s4'] = s4_repeat
+            image['s5'] = s5_repeat
+            image['tracks'] = tau_tracks_simple(rec)
+            image['pt'] = rec['off_pt']
+            image['eta'] = rec['off_eta']
+            image['phi'] = rec['off_phi']
+            image['mu'] = rec['averageintpercrossing']
+            image['pantau'] = rec['off_decaymode']
+            image['truthmode'] = rec['true_decaymode']
+            image.append()
 
-            if do_tracks:
-                tracks = tau_tracks_simple(rec)
-
-                image = np.array([(
-                            s1, s2, s3, s4, s5, tracks, 
-                            pt, eta, phi, mu,
-                            pantau, truthmode)],
-                                 dtype=[
-                        ('s1', 'f8', s1.shape), 
-                        ('s2', 'f8', s2.shape), 
-                        ('s3', 'f8', s3.shape), 
-                        ('s4', 'f8', s4.shape), 
-                        ('s5', 'f8', s5.shape), 
-                        ('tracks', 'f8', tracks.shape), 
-                        ('pt', 'f8'), 
-                        ('eta', 'f8'), 
-                        ('phi', 'f8'), 
-                        ('mu', 'f8'),
-                        ('pantau', 'f8'), 
-                        ('truthmode', 'f8')])
-
-
-            else:
-                image = np.array([(
-                            s1, s2, s3, pt, eta, phi, mu)],
-                                 dtype=[
-                        ('s1', 'f8', s1.shape), 
-                        ('s2', 'f8', s2.shape), 
-                        ('s3', 'f8', s3.shape), 
-                        ('s4', 'f8', s4.shape), 
-                        ('s5', 'f8', s5.shape), 
-                        ('pt', 'f8'), 
-                        ('eta', 'f8'), 
-                        ('phi', 'f8'), 
-                        ('mu', 'f8')])
-
-
-        elif cal_layer == 2:
-
-            image_layer = tau_topo_image(ir, rec, cal_layer=cal_layer, width=32, height=32)
-
-            if image_layer is None:
-                continue
-
-            pt = rec['off_pt']
-            eta = rec['off_eta']
-            mu = rec['averageintpercrossing']
+            if do_plot:
+                import matplotlib as mpl; mpl.use('PS')
+                import matplotlib.pyplot as plt
+                from matplotlib.colors import LogNorm
+                for i, (im, im_repeat) in enumerate(zip(
+                        [s1, s2, s3, s4, s5],
+                        [s1_repeat, s2_repeat, s3_repeat, s4_repeat, s5_repeat])):
+                    fig = plt.figure()
+                    plt.imshow(
+                        im, extent=[-0.2, 0.2, -0.2, 0.2], cmap=plt.cm.Reds,
+                        interpolation='nearest',
+                        norm=LogNorm(0.0001, 1))
+                    plt.colorbar()
+                    plt.xlabel('eta')
+                    plt.ylabel('phi')
+                    plt.title('{0}: image {1} sampling {2}'.format(suffix, index, i + 1))
+                    fig.savefig('s{0}_tau_{1}.pdf'.format(i + 1, index))
+                    fig.clf()
+                    plt.close()
                 
-            image = np.array([(
-                        image_layer, pt, eta, mu)],
-                             dtype=[
-                    ('s{0}'.format(cal_layer), 'f8', image_layer.shape), 
-                    ('pt', 'f8'), 
-                    ('eta', 'f8'), 
-                    ('mu', 'f8')])
+                    fig = plt.figure()
+                    plt.imshow(
+                        im_repeat, extent=[-0.2, 0.2, -0.2, 0.2], cmap=plt.cm.Reds,
+                        interpolation='nearest',
+                        norm=LogNorm(0.0001, 1))
+                    plt.colorbar()
+                    plt.title('{0}: image {1} sampling {2}'.format(suffix, index, i + 1))
+                    fig.savefig('s{0}_repeat_tau_{1}.pdf'.format(i + 1, index))
+                    fig.clf()
+                    plt.close()
 
-        else:
-            raise ValueError('Can not process for layer {0} alone'.format(cal_layer))
+        # flush the table on disk
+        table.flush()
 
-        # fill the table (create it first if needed)
-        try:
-            table = out_h5.root.data.images
-            table.append(image)
-        except:
-            log.warning('table does not exist yet, creating it')
-            out_h5.create_table(out_h5.root.data, 'images', description=image)
-
-        # fancy printout
-        if show_progress: 
-            if nentries is None:
-                print_progress(ir, len(records), prefix='Progress')
-            else:
-                print_progress(ir, nentries, prefix='Progress')
-    print
 
 
