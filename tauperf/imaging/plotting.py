@@ -414,7 +414,6 @@ def score_plots(y_pred, y_truth, decay_mode):
         decay_type = 4
         decay_compare = 0
     newpath = r'./plots/imaging/' + decay_mode 
-    print 'decay mode', decay_mode, 'decay compare', decay_compare
     if not os.path.exists(newpath):
         os.makedirs(newpath)
     
@@ -423,13 +422,35 @@ def score_plots(y_pred, y_truth, decay_mode):
     scores_1pXn = scores_true[:,2]
     scores_true = scores_true[:,decay_type]
     fig = plt.figure()
-    plt.hist(scores_1pXn, bins=100, range=(0,1), color = 'green', label='1pXn positive', alpha = 0.5, density = True)
     plt.hist(scores_true, bins=100, range=(0,1), color = 'blue', label='true positive', density = True)
     plt.hist(scores_false, bins=100, range=(0,1), color = 'red', label='false positive', alpha = 0.5, density = True)
+    if decay_type == 1:
+        plt.hist(scores_1pXn, bins=100, range=(0,1), color = 'green', label='1pXn positive', alpha = 0.5, density = True)
     plt.xlabel('scores')
     plt.ylabel('A.U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.title('True Mode: ' + decay_mode)
+    plt.legend(loc='upper right', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + 'True_' + decay_mode + '_scores.pdf')
+    plt.close()
+
+    scores_true = y_pred[y_truth == decay_type]
+    scores_false = scores_true[:,decay_compare]
+    scores_1pXn = scores_true[:,2]
+    scores_3p0n = scores_true[:,3]
+    scores_3pXn = scores_true[:,4]
+    scores_true = scores_true[:,decay_type]
+
+    fig = plt.figure()
+    plt.hist(scores_true, bins=100, range=(0,1), color = 'blue', label='true positive', density = True)
+    plt.hist(scores_false, bins=100, range=(0,1), color = 'red', label='false positive', alpha = 0.5, density = True)
+    if decay_type == 1:
+        plt.hist(scores_1pXn, bins=100, range=(0,1), color = 'green', label='1pXn positive', alpha = 0.5, density = True)
+    plt.xlabel('scores')
+    plt.ylabel('A.U.')
+    plt.title('True Mode: ' + decay_mode)
+    plt.legend(loc='upper right', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + 'True_' + decay_mode + '_all_scores.pdf')
+    plt.close()
 
 
 

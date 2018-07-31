@@ -141,6 +141,7 @@ print
 log.info('drawing the score histograms')
 score_plots(y_pred, y_test, '1p0n')
 score_plots(y_pred, y_test, '1p1n')
+sys.exit()
 
 print
 log.info('drawing the comparison histogram')
