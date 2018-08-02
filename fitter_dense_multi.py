@@ -77,7 +77,7 @@ if args.dev:
         n_classes, args.training_chunks)
     model_filename += '_{epoch:02d}_epochs.h5'
 else:
-    model_filename = 'cache/multi_{0}_classes.h5'.format(n_classes)
+    model_filename = 'cache/multi_{0}_classes_original.h5'.format(n_classes)
 
 if args.no_train:
     log.info('loading model')
@@ -120,7 +120,7 @@ cnf_mat = confusion_matrix(y_test, np.argmax(y_pred, axis=1))
 diagonal = float(np.trace(cnf_mat)) / float(np.sum(cnf_mat))
 
 # import plotting here in case there is an import issue unrelated to training
-from tauperf.imaging.plotting import plot_confusion_matrix, plot_roc, compare_bins, plot_event, score_plots
+from tauperf.imaging.plotting import plot_confusion_matrix, plot_roc, compare_bins, plot_event, score_plots,score_outliers
 plot_confusion_matrix(
     cnf_mat, classes=labels, 
     title='Confusion matrix, diagonal = {0:1.2f} %'.format(100 * diagonal),
@@ -141,6 +141,7 @@ print
 log.info('drawing the score histograms')
 score_plots(y_pred, y_test, '1p0n')
 score_plots(y_pred, y_test, '1p1n')
+score_outliers(test, y_pred, y_test, '1p0n')
 sys.exit()
 
 print

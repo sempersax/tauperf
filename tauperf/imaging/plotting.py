@@ -426,6 +426,7 @@ def score_plots(y_pred, y_truth, decay_mode):
     plt.hist(scores_false, bins=100, range=(0,1), color = 'red', label='false positive', alpha = 0.5, density = True)
     if decay_type == 1:
         plt.hist(scores_1pXn, bins=100, range=(0,1), color = 'green', label='1pXn positive', alpha = 0.5, density = True)
+    plt.yscale('log', nonposy='clip')
     plt.xlabel('scores')
     plt.ylabel('A.U.')
     plt.title('True Mode: ' + decay_mode)
@@ -435,22 +436,264 @@ def score_plots(y_pred, y_truth, decay_mode):
 
     scores_true = y_pred[y_truth == decay_type]
     scores_false = scores_true[:,decay_compare]
+    scores_1p0n = scores_true[:,0]
+    scores_1p1n = scores_true[:,1]
     scores_1pXn = scores_true[:,2]
     scores_3p0n = scores_true[:,3]
     scores_3pXn = scores_true[:,4]
     scores_true = scores_true[:,decay_type]
 
     fig = plt.figure()
-    plt.hist(scores_true, bins=100, range=(0,1), color = 'blue', label='true positive', density = True)
-    plt.hist(scores_false, bins=100, range=(0,1), color = 'red', label='false positive', alpha = 0.5, density = True)
-    if decay_type == 1:
-        plt.hist(scores_1pXn, bins=100, range=(0,1), color = 'green', label='1pXn positive', alpha = 0.5, density = True)
+    plt.hist(scores_1p0n, bins=100, range=(0,1), color = 'blue', label='1p0n positive', density = True)
+    plt.hist(scores_1p1n, bins=100, range=(0,1), color = 'red', label='1p1n positive', alpha = 0.5, density = True)
+    plt.hist(scores_1pXn, bins=100, range=(0,1), color = 'green', label='1pXn positive', alpha = 0.5, density = True)
+    plt.hist(scores_3p0n, bins=100, range=(0,1), color = 'orange', label='3p0n positive', alpha = 0.5, density = True)
+    plt.hist(scores_3pXn, bins=100, range=(0,1), color = 'pink', label='3pXn positive', alpha = 0.5, density = True)
+    plt.yscale('log', nonposy='clip')
     plt.xlabel('scores')
     plt.ylabel('A.U.')
     plt.title('True Mode: ' + decay_mode)
     plt.legend(loc='upper right', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + 'True_' + decay_mode + '_all_scores.pdf')
     plt.close()
+
+##############################################################################
+def score_outliers(test, y_pred, y_truth, decay_mode):
+# decay_type classification
+    if decay_mode == '1p0n':
+        decay_type = 0
+        decay_compare = 1
+        decay_compare_mode = '1p1n'
+    if decay_mode == '1p1n':
+        decay_type = 1
+        decay_compare = 0
+        decay_compare_mode = '1p0n'
+    if decay_mode == '1pXn':
+        decay_type = 2
+        decay_compare = 1
+        decay_compare_mode = '1p1n'
+    if decay_mode == '3p0n':
+        decay_type = 3
+        decay_compare = 0
+        decay_compare_mode = '1p0n'
+    if decay_mode == '3pXn':
+        decay_type = 4
+        decay_compare = 0
+        decay_compare_mode = '1p0n'
+    newpath = r'./plots/imaging/' + decay_mode 
+    if not os.path.exists(newpath):
+        os.makedirs(newpath)
+
+    worst_outliers = np.intersect1d(np.where(y_truth == decay_type)[0], np.where(y_pred[:,decay_type] <= 0.01)[0])
+    best_outliers = np.intersect1d(np.where(y_truth == decay_type)[0], np.where(y_pred[:,decay_type] >= 0.99)[0])
+    print len(worst_outliers)
+    print len(best_outliers)
+
+# delta eta tracks
+#    best_positive_deta_leadtrack = best_outliers['tracks'][:, 0, 1]
+#    worst_positive_deta_leadtrack = worst_outliers['tracks'][:, 0, 1]
+
+# delta phi tracks
+#    best_positive_dphi_leadtrack = best_outliers['tracks'][:, 0, 2]
+#    worst_positive_dphi_leadtrack = worst_outliers['tracks'][:, 0, 2]
+
+# deta plots
+    plt.figure() 
+    plt.hist(test[best_outliers[0]]['tracks'][0, 1], bins=60, range=(-0.3, 0.3), color = 'blue', label='>= 99%', density = True)
+    plt.hist(test[worst_outliers[0]]['tracks'][0, 1], bins=60, range=(-0.3, 0.3), color = 'red', label='<= 1%', density = True, alpha = 0.4)
+    plt.xlabel('dEta')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_outliers_' + 'dEta.pdf')
+    plt.close()
+
+# dphi plots
+    plt.figure() 
+    plt.hist(test[best_outliers[0]]['tracks'][0, 2], bins=60, range=(-0.3, 0.3), color = 'blue', label='> 99%', density = True)
+    plt.hist(test[worst_outliers[0]]['tracks'][0, 2], bins=60, range=(-0.3, 0.3), color = 'red', label='<= 1%', density = True, alpha = 0.4)
+    plt.xlabel('dPhi')
+    plt.ylabel('A. U.')
+    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_outliers_' + 'dPhi.pdf')
+    plt.close()
+
+#heatmaps
+
+    fixed_scale = True
+
+    for i in range(10):
+        evt = test[best_outliers[i]]
+        evt2 = test[worst_outliers[i]]
+        if fixed_scale:
+            evt['s3'][evt['s3'] <= 0.00001] = 0.00001
+            evt['s2'][evt['s2'] <= 0.00001] = 0.00001
+            evt['s1'][evt['s1'] <= 0.00001] = 0.00001
+            evt2['s3'][evt['s3'] <= 0.00005] = 0.00001
+            evt2['s2'][evt['s2'] <= 0.00005] = 0.00001
+            evt2['s1'][evt['s1'] <= 0.00005] = 0.00001
+
+        fig = plt.figure()
+        plt.imshow(
+            evt['s1'], 
+            extent=[-0.2, 0.2, -0.2, 0.2], 
+            interpolation='nearest',  
+            cmap=plt.cm.Reds if fixed_scale else plt.cm.viridis,
+            norm=None if fixed_scale is False else LogNorm(0.0001, 1))
+
+        for i_track in xrange(len(evt['tracks'])):
+            if evt['tracks'][i_track, 0] == 0.:
+                continue
+            if math.fabs(evt['tracks'][i_track, 2]) > 0.2:
+                continue
+            if math.fabs(evt['tracks'][i_track, 1]) > 0.2:
+                continue
+            plt.plot(evt['tracks'][i_track, 1], evt['tracks'][i_track, 2], 'bo')
+            plt.text(evt['tracks'][i_track, 1] + 0.02, evt['tracks'][i_track, 2], 
+                     int(evt['tracks'][i_track, 3]), fontsize=10)
+
+        plt.title('True Mode: ' + decay_mode + ' Event number: ' + 
+                   str(int(best_outliers[i])) + '\n' + decay_mode + 
+                   'Score: ' + str(y_pred[best_outliers[i]][decay_type]) + 
+                   '\n' + decay_compare_mode + 'Score: ' + str(y_pred[best_outliers[i]][decay_compare]))
+        plt.colorbar()
+        plt.savefig('./plots/imaging/' + decay_mode + '/' + 'best_outliers' + '_' + decay_mode + '_evt_' + str(best_outliers[i]) + '_s1_heatmap.pdf')
+        plt.close()
+
+        fig = plt.figure()
+        plt.imshow(
+            evt['s2'], 
+            extent=[-0.2, 0.2, -0.2, 0.2], 
+            interpolation='nearest',  
+            cmap=plt.cm.Reds if fixed_scale else plt.cm.viridis,
+            norm=None if fixed_scale is False else LogNorm(0.0001, 1))
+
+        for i_track in xrange(len(evt['tracks'])):
+            if evt['tracks'][i_track, 0] == 0.:
+                continue
+            if math.fabs(evt['tracks'][i_track, 2]) > 0.2:
+                continue
+            if math.fabs(evt['tracks'][i_track, 1]) > 0.2:
+                continue
+            plt.plot(evt['tracks'][i_track, 1], evt['tracks'][i_track, 2], 'bo')
+            plt.text(evt['tracks'][i_track, 1] + 0.02, evt['tracks'][i_track, 2], 
+                     int(evt['tracks'][i_track, 3]), fontsize=10)
+
+        plt.title('True Mode: ' + decay_mode + ' Event number: ' + 
+                   str(int(best_outliers[i])) + '\n' + decay_mode + 
+                   'Score: ' + str(y_pred[best_outliers[i]][decay_type]) + 
+                   '\n' + decay_compare_mode + 'Score: ' + str(y_pred[best_outliers[i]][decay_compare]))
+        plt.colorbar()
+        plt.savefig('./plots/imaging/' + decay_mode + '/' + 'best_outliers' + '_' + decay_mode + '_evt_' + str(best_outliers[i]) + '_s2_heatmap.pdf')
+        plt.close()
+
+        fig = plt.figure()
+        plt.imshow(
+            evt['s3'], 
+            extent=[-0.2, 0.2, -0.2, 0.2], 
+            interpolation='nearest',  
+            cmap=plt.cm.Reds if fixed_scale else plt.cm.viridis,
+            norm=None if fixed_scale is False else LogNorm(0.0001, 1))
+
+        for i_track in xrange(len(evt['tracks'])):
+            if evt['tracks'][i_track, 0] == 0.:
+                continue
+            if math.fabs(evt['tracks'][i_track, 2]) > 0.2:
+                continue
+            if math.fabs(evt['tracks'][i_track, 1]) > 0.2:
+                continue
+            plt.plot(evt['tracks'][i_track, 1], evt['tracks'][i_track, 2], 'bo')
+            plt.text(evt['tracks'][i_track, 1] + 0.02, evt['tracks'][i_track, 2], 
+                     int(evt['tracks'][i_track, 3]), fontsize=10)
+
+        plt.title('True Mode: ' + decay_mode + ' Event number: ' + 
+                   str(int(best_outliers[i])) + '\n' + decay_mode + 
+                   'Score: ' + str(y_pred[best_outliers[i]][decay_type]) + 
+                   '\n' + decay_compare_mode + 'Score: ' + str(y_pred[best_outliers[i]][decay_compare]))
+        plt.colorbar()
+        plt.savefig('./plots/imaging/' + decay_mode + '/' + 'best_outliers' + '_' + decay_mode + '_evt_' + str(best_outliers[i]) + '_s3_heatmap.pdf')
+        plt.close()
+    
+        fig = plt.figure()
+        plt.imshow(
+            evt2['s1'], 
+            extent=[-0.2, 0.2, -0.2, 0.2], 
+            interpolation='nearest',  
+            cmap=plt.cm.Reds if fixed_scale else plt.cm.viridis,
+            norm=None if fixed_scale is False else LogNorm(0.0001, 1))
+
+        for i_track in xrange(len(evt['tracks'])):
+            if evt2['tracks'][i_track, 0] == 0.:
+                continue
+            if math.fabs(evt2['tracks'][i_track, 2]) > 0.2:
+                continue
+            if math.fabs(evt2['tracks'][i_track, 1]) > 0.2:
+                continue
+            plt.plot(evt2['tracks'][i_track, 1], evt2['tracks'][i_track, 2], 'bo')
+            plt.text(evt2['tracks'][i_track, 1] + 0.02, evt2['tracks'][i_track, 2], 
+                     int(evt2['tracks'][i_track, 3]), fontsize=10)
+
+        plt.title('True Mode: ' + decay_mode + ' Event number: ' + 
+                   str(int(worst_outliers[i])) + '\n' + decay_mode + 
+                   'Score: ' + str(y_pred[worst_outliers[i]][decay_type]) + 
+                   '\n' + decay_compare_mode + 'Score: ' + str(y_pred[worst_outliers[i]][decay_compare]))
+        plt.colorbar()
+        plt.savefig('./plots/imaging/' + decay_mode + '/' + 'worst_outliers' + '_' + decay_mode + '_evt_' + str(worst_outliers[i]) + '_s1_heatmap.pdf')
+        plt.close()
+
+        fig = plt.figure()
+        plt.imshow(
+            evt2['s2'], 
+            extent=[-0.2, 0.2, -0.2, 0.2], 
+            interpolation='nearest',  
+            cmap=plt.cm.Reds if fixed_scale else plt.cm.viridis,
+            norm=None if fixed_scale is False else LogNorm(0.0001, 1))
+
+        for i_track in xrange(len(evt['tracks'])):
+            if evt2['tracks'][i_track, 0] == 0.:
+                continue
+            if math.fabs(evt2['tracks'][i_track, 2]) > 0.2:
+                continue
+            if math.fabs(evt2['tracks'][i_track, 1]) > 0.2:
+                continue
+            plt.plot(evt2['tracks'][i_track, 1], evt2['tracks'][i_track, 2], 'bo')
+            plt.text(evt2['tracks'][i_track, 1] + 0.02, evt2['tracks'][i_track, 2], 
+                     int(evt2['tracks'][i_track, 3]), fontsize=10)
+
+        plt.title('True Mode: ' + decay_mode + ' Event number: ' + 
+                   str(int(worst_outliers[i])) + '\n' + decay_mode + 
+                   'Score: ' + str(y_pred[worst_outliers[i]][decay_type]) + 
+                   '\n' + decay_compare_mode + 'Score: ' + str(y_pred[worst_outliers[i]][decay_compare]))
+        plt.colorbar()
+        plt.savefig('./plots/imaging/' + decay_mode + '/' + 'worst_outliers' + '_' + decay_mode + '_evt_' + str(worst_outliers[i]) + '_s2_heatmap.pdf')
+        plt.close()
+
+        fig = plt.figure()
+        plt.imshow(
+            evt2['s3'], 
+            extent=[-0.2, 0.2, -0.2, 0.2], 
+            interpolation='nearest',  
+            cmap=plt.cm.Reds if fixed_scale else plt.cm.viridis,
+            norm=None if fixed_scale is False else LogNorm(0.0001, 1))
+
+        for i_track in xrange(len(evt['tracks'])):
+            if evt2['tracks'][i_track, 0] == 0.:
+                continue
+            if math.fabs(evt2['tracks'][i_track, 2]) > 0.2:
+                continue
+            if math.fabs(evt2['tracks'][i_track, 1]) > 0.2:
+                continue
+            plt.plot(evt2['tracks'][i_track, 1], evt2['tracks'][i_track, 2], 'bo')
+            plt.text(evt2['tracks'][i_track, 1] + 0.02, evt2['tracks'][i_track, 2], 
+                     int(evt2['tracks'][i_track, 3]), fontsize=10)
+
+        plt.title('True Mode: ' + decay_mode + ' Event number: ' + 
+                   str(int(worst_outliers[i])) + '\n' + decay_mode + 
+                   'Score: ' + str(y_pred[worst_outliers[i]][decay_type]) + 
+                   '\n' + decay_compare_mode + 'Score: ' + str(y_pred[worst_outliers[i]][decay_compare]))
+        plt.colorbar()
+        plt.savefig('./plots/imaging/' + decay_mode + '/' + 'worst_outliers' + '_' + decay_mode + '_evt_' + str(worst_outliers[i]) + '_s3_heatmap.pdf')
+        plt.close()
+    
 
 
 
