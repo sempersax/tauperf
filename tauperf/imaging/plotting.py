@@ -418,14 +418,12 @@ def score_plots(y_pred, y_truth, decay_mode):
         os.makedirs(newpath)
     
     scores_true = y_pred[y_truth == decay_type]
-    scores_false = scores_true[:,decay_compare]
-    scores_1pXn = scores_true[:,2]
+    scores_false = y_pred[y_truth == decay_compare]
     scores_true = scores_true[:,decay_type]
+    scores_false = scores_false[:,decay_type]
     fig = plt.figure()
     plt.hist(scores_true, bins=100, range=(0,1), color = 'blue', label='true positive', density = True)
     plt.hist(scores_false, bins=100, range=(0,1), color = 'red', label='false positive', alpha = 0.5, density = True)
-    if decay_type == 1:
-        plt.hist(scores_1pXn, bins=100, range=(0,1), color = 'green', label='1pXn positive', alpha = 0.5, density = True)
     plt.yscale('log', nonposy='clip')
     plt.xlabel('scores')
     plt.ylabel('A.U.')
@@ -435,13 +433,14 @@ def score_plots(y_pred, y_truth, decay_mode):
     plt.close()
 
     scores_true = y_pred[y_truth == decay_type]
-    scores_false = scores_true[:,decay_compare]
-    scores_1p0n = scores_true[:,0]
-    scores_1p1n = scores_true[:,1]
-    scores_1pXn = scores_true[:,2]
-    scores_3p0n = scores_true[:,3]
-    scores_3pXn = scores_true[:,4]
+    scores_false = y_pred[y_truth == decay_compare]
     scores_true = scores_true[:,decay_type]
+    scores_false = scores_false[:,decay_type]
+    scores_1p0n = y_pred[y_truth == decay_type][:,0]
+    scores_1p1n = y_pred[y_truth == decay_type][:,1]
+    scores_1pXn = y_pred[y_truth == decay_type][:,2]
+    scores_3p0n = y_pred[y_truth == decay_type][:,3]
+    scores_3pXn = y_pred[y_truth == decay_type][:,4]
 
     fig = plt.figure()
     plt.hist(scores_1p0n, bins=100, range=(0,1), color = 'blue', label='1p0n positive', density = True)
@@ -528,9 +527,9 @@ def score_outliers(test, y_pred, y_truth, decay_mode):
             evt['s3'][evt['s3'] <= 0.00001] = 0.00001
             evt['s2'][evt['s2'] <= 0.00001] = 0.00001
             evt['s1'][evt['s1'] <= 0.00001] = 0.00001
-            evt2['s3'][evt['s3'] <= 0.00005] = 0.00001
-            evt2['s2'][evt['s2'] <= 0.00005] = 0.00001
-            evt2['s1'][evt['s1'] <= 0.00005] = 0.00001
+            evt2['s3'][evt['s3'] <= 0.0001] = 0.00001
+            evt2['s2'][evt['s2'] <= 0.0001] = 0.0001
+            evt2['s1'][evt['s1'] <= 0.0001] = 0.0001
 
         fig = plt.figure()
         plt.imshow(

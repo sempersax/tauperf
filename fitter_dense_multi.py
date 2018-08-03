@@ -85,8 +85,9 @@ if args.no_train:
     model = load_model(model_filename)
 else:
     log.info('training...')
-    from tauperf.imaging.models import dense_merged_model_topo
-    model = dense_merged_model_topo(test, n_classes=n_classes, final_activation='softmax')
+    from tauperf.imaging.models import dense_merged_model_topo,RGB_like_merged_model
+#    model = dense_merged_model_topo(test, n_classes=n_classes, final_activation='softmax')
+    model = RGB_like_merged_model(test, n_classes=n_classes, final_activation='softmax')
 
     from tauperf.imaging.utils import fit_model_gen
     fit_model_gen(
@@ -142,6 +143,7 @@ log.info('drawing the score histograms')
 score_plots(y_pred, y_test, '1p0n')
 score_plots(y_pred, y_test, '1p1n')
 score_outliers(test, y_pred, y_test, '1p0n')
+score_outliers(test, y_pred, y_test, '1p1n')
 sys.exit()
 
 print
