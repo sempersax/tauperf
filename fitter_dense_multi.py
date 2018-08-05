@@ -34,6 +34,8 @@ args = parser.parse_args()
 
 data_dir = os.path.join(
     os.getenv('DATA_AREA'), 'v13/test')
+print data_dir
+sys.exit()
                         
 if args.one_prong_only:
     filenames = [
