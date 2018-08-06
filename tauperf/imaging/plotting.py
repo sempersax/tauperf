@@ -524,12 +524,14 @@ def score_outliers(test, y_pred, y_truth, decay_mode):
         evt = test[best_outliers[i]]
         evt2 = test[worst_outliers[i]]
         if fixed_scale:
-            evt['s3'][evt['s3'] <= 0.00001] = 0.00001
-            evt['s2'][evt['s2'] <= 0.00001] = 0.00001
-            evt['s1'][evt['s1'] <= 0.00001] = 0.00001
-            evt2['s3'][evt['s3'] <= 0.0001] = 0.00001
-            evt2['s2'][evt['s2'] <= 0.0001] = 0.0001
-            evt2['s1'][evt['s1'] <= 0.0001] = 0.0001
+            evt['s3'][evt['s3'] <= 0.] = 0.00001
+            evt['s2'][evt['s2'] <= 0.] = 0.00001
+            evt['s1'][evt['s1'] <= 0.] = 0.00001
+    
+
+            evt2['s3'][evt2['s3'] <= 0.] = 0.00001
+            evt2['s2'][evt2['s2'] <= 0.] = 0.00001
+            evt2['s1'][evt2['s1'] <= 0.] = 0.00001
 
         fig = plt.figure()
         plt.imshow(

@@ -33,9 +33,7 @@ args = parser.parse_args()
 
 
 data_dir = os.path.join(
-    os.getenv('DATA_AREA'), 'v13/test')
-print data_dir
-sys.exit()
+    os.getenv('DATA_AREA'), 'v13/test_float_s1_128')
                         
 if args.one_prong_only:
     filenames = [
@@ -138,7 +136,7 @@ plot_confusion_matrix(
     name='plots/imaging/confusion_matrix_reference.pdf')
 
 log.info('drawing the roc curves and pantau WP')
-plot_roc(y_test, y_pred, test['pantau'])
+#plot_roc(y_test, y_pred, test['pantau'])
 
 print
 log.info('drawing the score histograms')
@@ -146,7 +144,7 @@ score_plots(y_pred, y_test, '1p0n')
 score_plots(y_pred, y_test, '1p1n')
 score_outliers(test, y_pred, y_test, '1p0n')
 score_outliers(test, y_pred, y_test, '1p1n')
-sys.exit()
+#sys.exit()
 
 print
 log.info('drawing the comparison histogram')
@@ -171,6 +169,6 @@ plot_event(test, worst_false, y_pred, '1p1n', 'worst_false_positive')
 
 
 print 'Conv2D s1 = 64 (6,2), s2 = 64 (3,3)'
-newpath = r'./plots/imaging/' + 's1_64_6_2.s2_64_3_3' 
+newpath = r'./plots/imaging/' + 'RGB_like_small_pool' 
 if not os.path.exists(newpath):
     os.makedirs(newpath)
