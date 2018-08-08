@@ -364,9 +364,9 @@ def RGB_like_merged_model(data, n_classes=3, final_activation='softmax'):
     s1_shape = data[0]['s1'].shape
     s1_x = Reshape((s1_shape[0], s1_shape[1], 1))(s1_input)
     log.info('\t s1 input shape   = {0}'.format(s1_x._keras_shape))
-    s1_x = Conv2D(64, (3, 2), strides=(1,2),padding='same', activation='relu')(s1_x)
+    s1_x = Conv2D(64, (6, 2), strides=(1,8),padding='same', activation='relu')(s1_x)
     log.info('\t s1 convolu shape = {0}'.format(s1_x._keras_shape))
-    s1_x = MaxPooling2D((1, 4))(s1_x)
+    s1_x = MaxPooling2D((1, 1))(s1_x)
     log.info('\t s1 maxpool shape = {0}'.format(s1_x._keras_shape))
     s1_x = Dropout(0.2)(s1_x)
     s1_out = (s1_x)

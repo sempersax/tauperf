@@ -169,6 +169,6 @@ plot_event(test, worst_false, y_pred, '1p1n', 'worst_false_positive')
 
 
 print 'Conv2D s1 = 64 (6,2), s2 = 64 (3,3)'
-newpath = r'./plots/imaging/' + 'RGB_like_stride' 
+newpath = r'./plots/imaging/' + 'RGB_like_stride_2' 
 if not os.path.exists(newpath):
     os.makedirs(newpath)
