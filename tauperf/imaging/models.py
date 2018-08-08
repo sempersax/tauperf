@@ -367,7 +367,7 @@ def dense_merged_model_multi_channels(data, n_classes=3, final_activation='softm
     log.info('* Calo: merge inputs')
     calo_input = concatenate([s1_x, s2_x, s3_x, s4_x, s5_x])
     log.info('\t calo input shape = {0}'.format(calo_input._keras_shape))
-    calo_x = Conv2D(128, (8, 4), padding='same', activation='relu')(calo_input)
+    calo_x = Conv2D(128, (6, 2), padding='same', activation='relu')(calo_input)
     log.info('\t calo convolu shape = {0}'.format(calo_x._keras_shape))
     calo_x = MaxPooling2D((2, 4))(calo_x)
     log.info('\t calo maxpool shape = {0}'.format(calo_x._keras_shape))
