@@ -401,18 +401,23 @@ def score_plots(y_pred, y_truth, decay_mode):
     if decay_mode == '1p0n':
         decay_type = 0
         decay_compare = 1
+        decay_compare_mode = '1p1n'
     if decay_mode == '1p1n':
         decay_type = 1
         decay_compare = 0
+        decay_compare_mode = '1p0n'
     if decay_mode == '1pXn':
         decay_type = 2
         decay_compare = 1
+        decay_compare_mode = '1p1n'
     if decay_mode == '3p0n':
         decay_type = 3
         decay_compare = 0
+        decay_compare_mode = '1p0n'
     if decay_mode == '3pXn':
         decay_type = 4
         decay_compare = 0
+        decay_compare_mode = '1p0n'
     newpath = r'./plots/imaging/' + decay_mode 
     if not os.path.exists(newpath):
         os.makedirs(newpath)
@@ -422,12 +427,12 @@ def score_plots(y_pred, y_truth, decay_mode):
     scores_true = scores_true[:,decay_type]
     scores_false = scores_false[:,decay_type]
     fig = plt.figure()
-    plt.hist(scores_true, bins=100, range=(0,1), color = 'blue', label='true positive', density = True)
-    plt.hist(scores_false, bins=100, range=(0,1), color = 'red', label='false positive', alpha = 0.5, density = True)
+    plt.hist(scores_true, bins=100, range=(0,1), color = 'blue', label= decay_mode, density = True)
+    plt.hist(scores_false, bins=100, range=(0,1), color = 'red', label=decay_compare_mode, alpha = 0.5, density = True)
     plt.yscale('log', nonposy='clip')
     plt.xlabel('scores')
     plt.ylabel('A.U.')
-    plt.title('True Mode: ' + decay_mode)
+    plt.title(decay_mode + ' scores for true 1p0n and 1p1n decay modes')
     plt.legend(loc='upper right', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + 'True_' + decay_mode + '_scores.pdf')
     plt.close()

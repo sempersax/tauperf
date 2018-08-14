@@ -86,8 +86,8 @@ if args.no_train:
 else:
     log.info('training...')
     from tauperf.imaging.models import dense_merged_model_topo,RGB_like_merged_model
-#    model = dense_merged_model_topo(test, n_classes=n_classes, final_activation='softmax')
-    model = RGB_like_merged_model(test, n_classes=n_classes, final_activation='softmax')
+    model = dense_merged_model_topo(test, n_classes=n_classes, final_activation='softmax')
+#    model = RGB_like_merged_model(test, n_classes=n_classes, final_activation='softmax')
 
     from tauperf.imaging.utils import fit_model_gen
     fit_model_gen(
@@ -136,7 +136,7 @@ plot_confusion_matrix(
     name='plots/imaging/confusion_matrix_reference.pdf')
 
 log.info('drawing the roc curves and pantau WP')
-#plot_roc(y_test, y_pred, test['pantau'])
+plot_roc(y_test, y_pred, test['pantau'])
 
 print
 log.info('drawing the score histograms')
@@ -144,7 +144,7 @@ score_plots(y_pred, y_test, '1p0n')
 score_plots(y_pred, y_test, '1p1n')
 score_outliers(test, y_pred, y_test, '1p0n')
 score_outliers(test, y_pred, y_test, '1p1n')
-#sys.exit()
+sys.exit()
 
 print
 log.info('drawing the comparison histogram')
