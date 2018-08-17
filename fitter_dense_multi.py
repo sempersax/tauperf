@@ -144,7 +144,7 @@ score_plots(y_pred, y_test, '1p0n')
 score_plots(y_pred, y_test, '1p1n')
 score_outliers(test, y_pred, y_test, '1p0n')
 score_outliers(test, y_pred, y_test, '1p1n')
-sys.exit()
+#sys.exit()
 
 print
 log.info('drawing the comparison histogram')
@@ -169,6 +169,6 @@ plot_event(test, worst_false, y_pred, '1p1n', 'worst_false_positive')
 
 
 print 'Conv2D s1 = 64 (6,2), s2 = 64 (3,3)'
-newpath = r'./plots/imaging/' + 'RGB_like_stride_2' 
+newpath = r'./plots/imaging/' + 's1_64_6_2.s2_64_3_3' 
 if not os.path.exists(newpath):
     os.makedirs(newpath)

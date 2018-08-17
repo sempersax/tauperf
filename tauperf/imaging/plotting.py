@@ -252,7 +252,7 @@ def plot_roc(y_test, y_pred, y_pant):
     axes.yaxis.set_ticks(np.arange(0, 1, 0.1))
     axes.grid(True)
     
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/roc_curve.pdf')
 
 def plot_event(test, evts, y_pred, decay_mode, suffix='dummy'):
@@ -507,7 +507,7 @@ def score_outliers(test, y_pred, y_truth, decay_mode):
     plt.hist(test[worst_outliers[0]]['tracks'][0, 1], bins=60, range=(-0.3, 0.3), color = 'red', label='<= 1%', density = True, alpha = 0.4)
     plt.xlabel('dEta')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_outliers_' + 'dEta.pdf')
     plt.close()
 
@@ -517,7 +517,7 @@ def score_outliers(test, y_pred, y_truth, decay_mode):
     plt.hist(test[worst_outliers[0]]['tracks'][0, 2], bins=60, range=(-0.3, 0.3), color = 'red', label='<= 1%', density = True, alpha = 0.4)
     plt.xlabel('dPhi')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_outliers_' + 'dPhi.pdf')
     plt.close()
 
@@ -994,7 +994,7 @@ def compare_bins(test, y_pred, y_truth, decay_mode):
     plt.hist(false_positive['eta'], bins=44, range=(-1.1, 1.1), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
     plt.xlabel('eta')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_compare_eta.pdf')
 
 # Isolate the S1 layer information
@@ -1084,7 +1084,7 @@ def compare_bins(test, y_pred, y_truth, decay_mode):
     plt.hist(S1S2ratio_False, bins=44, range=(-1.1, 1.1), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
     plt.xlabel('energy ratio s1/s2')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s1s2ratio.pdf')
     plt.close()
 
@@ -1093,7 +1093,7 @@ def compare_bins(test, y_pred, y_truth, decay_mode):
     plt.hist(S2S3ratio_False, bins=44, range=(-1.1, 1.1), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
     plt.xlabel('energy ratio s3/s2')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s2s3ratio.pdf')
     plt.close()
 
@@ -1102,7 +1102,7 @@ def compare_bins(test, y_pred, y_truth, decay_mode):
     plt.hist(S4S3ratio_False, bins=44, range=(-1.1, 1.1), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
     plt.xlabel('energy ratio s4/s3')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s4s3ratio.pdf')
     plt.close()
 
@@ -1111,7 +1111,7 @@ def compare_bins(test, y_pred, y_truth, decay_mode):
     plt.hist(S5S4ratio_False, bins=44, range=(-1.1, 1.1), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
     plt.xlabel('energy ratio s5/s4')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s5s4ratio.pdf')
     plt.close()
 
@@ -1125,7 +1125,7 @@ def compare_bins(test, y_pred, y_truth, decay_mode):
     plt.hist(locationS5_x_true, bins=61, range=(-1, 60), color = 'brown', label='s5 true peak location', density = True, alpha = 0.4)
     plt.xlabel('x location')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_all_X_true_Location.pdf')
     plt.close()
 
@@ -1137,7 +1137,7 @@ def compare_bins(test, y_pred, y_truth, decay_mode):
     plt.hist(locationS5_y_true, bins=121, range=(-1, 120), color = 'brown', label='s5 true peak location', density = True, alpha = 0.4)
     plt.xlabel('y location')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_all_Y_true_Location.pdf')
     plt.close()
 
@@ -1149,7 +1149,7 @@ def compare_bins(test, y_pred, y_truth, decay_mode):
     plt.hist(locationS5_x_false, bins=16, range=(-8, 8), color = 'brown', label='s5 false peak location', density = True, alpha = 0.4)
     plt.xlabel('x location')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_all_X_false_Location.pdf')
     plt.close()
 
@@ -1161,7 +1161,7 @@ def compare_bins(test, y_pred, y_truth, decay_mode):
     plt.hist(locationS5_y_false, bins=16, range=(-8, 8), color = 'brown', label='s5 false peak location', density = True, alpha = 0.4)
     plt.xlabel('y location')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_all_Y_false_Location.pdf')
     plt.close()
 
@@ -1170,7 +1170,7 @@ def compare_bins(test, y_pred, y_truth, decay_mode):
     plt.hist(locationS1_x_false, bins=4, range=(-2, 2), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
     plt.xlabel('s1 peak phi')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s1_peak_x_locations.pdf')
     plt.close()
 
@@ -1179,7 +1179,7 @@ def compare_bins(test, y_pred, y_truth, decay_mode):
     plt.hist(locationS1_y_false, bins=120, range=(-60, 60), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
     plt.xlabel('s1 peak eta')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s1_peak_y_locations.pdf')
     plt.close()
 
@@ -1188,7 +1188,7 @@ def compare_bins(test, y_pred, y_truth, decay_mode):
     plt.hist(locationS2_x_false, bins=32, range=(-16, 16), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
     plt.xlabel('s2 peak phi')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s2_peak_x_locations.pdf')
     plt.close()
 
@@ -1197,7 +1197,7 @@ def compare_bins(test, y_pred, y_truth, decay_mode):
     plt.hist(locationS2_y_false, bins=32, range=(-16, 16), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
     plt.xlabel('s2 peak eta')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s2_peak_y_locations.pdf')
     plt.close()
 
@@ -1206,7 +1206,7 @@ def compare_bins(test, y_pred, y_truth, decay_mode):
     plt.hist(locationS3_x_false, bins=32, range=(-16, 16), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
     plt.xlabel('s3 peak phi')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s3_peak_x_locations.pdf')
     plt.close()
 
@@ -1215,7 +1215,7 @@ def compare_bins(test, y_pred, y_truth, decay_mode):
     plt.hist(locationS3_y_false, bins=16, range=(-8, 8), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
     plt.xlabel('s3 peak eta')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s3_peak_y_locations.pdf')
     plt.close()
 
@@ -1224,7 +1224,7 @@ def compare_bins(test, y_pred, y_truth, decay_mode):
     plt.hist(locationS4_x_false, bins=16, range=(-8, 8), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
     plt.xlabel('s4 peak phi')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s4_peak_x_locations.pdf')
     plt.close()
 
@@ -1233,7 +1233,7 @@ def compare_bins(test, y_pred, y_truth, decay_mode):
     plt.hist(locationS4_y_false, bins=16, range=(-8, 8), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
     plt.xlabel('s4 peak eta')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s4_peak_y_locations.pdf')
     plt.close()
 
@@ -1242,7 +1242,7 @@ def compare_bins(test, y_pred, y_truth, decay_mode):
     plt.hist(locationS5_x_false, bins=16, range=(-8, 8), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
     plt.xlabel('s5 peak phi')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s5_peak_x_locations.pdf')
     plt.close()
 
@@ -1251,7 +1251,7 @@ def compare_bins(test, y_pred, y_truth, decay_mode):
     plt.hist(locationS5_y_false, bins=16, range=(-8, 8), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
     plt.xlabel('s5 peak eta')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s5_peak_y_locations.pdf')
     plt.close()
 
@@ -1261,7 +1261,7 @@ def compare_bins(test, y_pred, y_truth, decay_mode):
     plt.hist(locationS1_x_false_min, bins=16, range=(-2, 2), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
     plt.xlabel('s1 peak phi')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s1_min_x_locations.pdf')
     plt.close()
 
@@ -1270,7 +1270,7 @@ def compare_bins(test, y_pred, y_truth, decay_mode):
     plt.hist(locationS1_y_false_min, bins=120, range=(-60, 60), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
     plt.xlabel('s1 peak eta')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s1_min_y_locations.pdf')
     plt.close()
 
@@ -1279,7 +1279,7 @@ def compare_bins(test, y_pred, y_truth, decay_mode):
     plt.hist(locationS2_x_false_min, bins=32, range=(-16, 16), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
     plt.xlabel('s2 min x')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s2_min_x_locations.pdf')
     plt.close()
 
@@ -1288,7 +1288,7 @@ def compare_bins(test, y_pred, y_truth, decay_mode):
     plt.hist(locationS2_y_false_min, bins=32, range=(-16, 16), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
     plt.xlabel('s2 min y')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s2_min_y_locations.pdf')
     plt.close()
 
@@ -1297,7 +1297,7 @@ def compare_bins(test, y_pred, y_truth, decay_mode):
     plt.hist(locationS3_x_false_min, bins=32, range=(-16, 16), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
     plt.xlabel('s3 peak phi')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s3_min_x_locations.pdf')
     plt.close()
 
@@ -1306,7 +1306,7 @@ def compare_bins(test, y_pred, y_truth, decay_mode):
     plt.hist(locationS3_y_false_min, bins=16, range=(-8, 8), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
     plt.xlabel('s3 peak eta')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s3_min_y_locations.pdf')
     plt.close()
 
@@ -1315,7 +1315,7 @@ def compare_bins(test, y_pred, y_truth, decay_mode):
     plt.hist(locationS4_x_false_min, bins=16, range=(-8, 8), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
     plt.xlabel('s4 peak phi')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s4_min_x_locations.pdf')
     plt.close()
 
@@ -1324,7 +1324,7 @@ def compare_bins(test, y_pred, y_truth, decay_mode):
     plt.hist(locationS4_y_false_min, bins=16, range=(-8, 8), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
     plt.xlabel('s4 peak eta')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s4_min_y_locations.pdf')
     plt.close()
 
@@ -1333,7 +1333,7 @@ def compare_bins(test, y_pred, y_truth, decay_mode):
     plt.hist(locationS5_x_false_min, bins=16, range=(-8, 8), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
     plt.xlabel('s5 peak phi')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s5_min_x_locations.pdf')
     plt.close()
 
@@ -1342,7 +1342,7 @@ def compare_bins(test, y_pred, y_truth, decay_mode):
     plt.hist(locationS5_y_false_min, bins=16, range=(-8, 8), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
     plt.xlabel('s5 peak eta')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + '_s5_min_y_locations.pdf')
     plt.close()
 # end minimum plots
@@ -1353,7 +1353,7 @@ def compare_bins(test, y_pred, y_truth, decay_mode):
     plt.hist(deltaS1S2_y_false , bins=152, range=(-76, 76), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
     plt.xlabel('s1 - s2')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + 'deltaS1S2_y.pdf')
     plt.close()
 
@@ -1362,7 +1362,7 @@ def compare_bins(test, y_pred, y_truth, decay_mode):
     plt.hist(deltaS1S2_x_false , bins=40, range=(-20, 20), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
     plt.xlabel('s1 - s2')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + 'deltaS1S2_x.pdf')
     plt.close()
 
@@ -1371,7 +1371,7 @@ def compare_bins(test, y_pred, y_truth, decay_mode):
     plt.hist(deltaS2S3_y_false , bins=64, range=(-32, 32), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
     plt.xlabel('s2 - s3')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + 'deltaS2S3_y.pdf')
     plt.close()
 
@@ -1380,7 +1380,7 @@ def compare_bins(test, y_pred, y_truth, decay_mode):
     plt.hist(deltaS2S3_x_false , bins=48, range=(-24, 24), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
     plt.xlabel('s2 - s3')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + 'deltaS2S3_x.pdf')
     plt.close()
 
@@ -1389,7 +1389,7 @@ def compare_bins(test, y_pred, y_truth, decay_mode):
     plt.hist(deltaS1S2_y_false_min , bins=152, range=(-76, 76), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
     plt.xlabel('s1 - s2')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + 'deltaS1S2_y_min.pdf')
     plt.close()
 
@@ -1398,7 +1398,7 @@ def compare_bins(test, y_pred, y_truth, decay_mode):
     plt.hist(deltaS1S2_x_false_min , bins=40, range=(-20, 20), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
     plt.xlabel('s1 - s2')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + 'deltaS1S2_x_min.pdf')
     plt.close()
 
@@ -1407,7 +1407,7 @@ def compare_bins(test, y_pred, y_truth, decay_mode):
     plt.hist(deltaS2S3_y_false_min, bins=64, range=(-32, 32), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
     plt.xlabel('s2 - s3')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + 'deltaS2S3_y_min.pdf')
     plt.close()
 
@@ -1416,7 +1416,7 @@ def compare_bins(test, y_pred, y_truth, decay_mode):
     plt.hist(deltaS2S3_x_false_min, bins=48, range=(-24, 24), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
     plt.xlabel('s2 - s3')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + 'deltaS2S3_x_min.pdf')
     plt.close()
 
@@ -1426,7 +1426,7 @@ def compare_bins(test, y_pred, y_truth, decay_mode):
     plt.hist(false_positive_deta_leadtrack , bins=60, range=(-0.3, 0.3), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
     plt.xlabel('dEta')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + 'dEta.pdf')
     plt.close()
 
@@ -1436,7 +1436,7 @@ def compare_bins(test, y_pred, y_truth, decay_mode):
     plt.hist(false_positive_dphi_leadtrack , bins=60, range=(-0.3, 0.3), color = 'red', label='1p0n identified as 1p1n', density = True, alpha = 0.4)
     plt.xlabel('dEta')
     plt.ylabel('A. U.')
-    plt.legend(loc='lower left', fontsize='small', numpoints=3)
+    plt.legend(loc='upper left', fontsize='small', numpoints=3)
     plt.savefig('./plots/imaging/' + decay_mode + '/' + decay_mode + 'dPhi.pdf')
     plt.close()
 
